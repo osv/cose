@@ -1,0 +1,393 @@
+dnl
+dnl Celestia Open Space Engine autoconf file
+dnl Process this file with autoconf to make a configure script
+dnl
+
+AC_PREREQ(2.57)
+AC_INIT([cose], [0.0.2], [olexandr_syd@users.sourceforge.net])
+
+AC_ARG_ENABLE([theora],
+              AC_HELP_STRING([--enable-theora],
+                             [create Ogg/Theora video]),
+              enable_theora="$enableval", enable_theora="auto")
+
+AC_ARG_ENABLE([gclient],
+              AC_HELP_STRING([--enable-gclient],
+                             [create game client]), ,
+              enable_gclient="yes")
+
+dnl game client flags
+CGAME_CFLAGS=""
+CGAME_CXXFLAGS=""
+CGAME_LIBS=""
+
+check_theora="yes"
+
+dnl "admin/acinclude.m4.in" generates "acinclude.m4", which has a broken
+dnl conditional define for Qt embedded. This does not apply to Celestia
+dnl anyway.
+include_x11_FALSE='#'
+
+dnl This ksh/zsh feature conflicts with `cd blah ; pwd`
+unset CDPATH
+
+dnl Check system type
+AC_CANONICAL_HOST
+dnl Checking host/target/build systems, for make, install etc.
+AC_CANONICAL_SYSTEM
+dnl Perform program name transformation
+AC_ARG_PROGRAM
+
+AM_INIT_AUTOMAKE([-Wno-portability])
+AM_CONFIG_HEADER(config.h)
+
+AM_PO_SUBDIRS
+AM_GNU_GETTEXT([external])
+
+dnl Check for compilers.  Set CFLAGS and CXXFLAGS to null if unset, so
+dnl that these macros won't set the to default values that we don't want.
+if (test "x${CFLAGS-notset}" = "xnotset"); then
+    export CFLAGS
+    CFLAGS=""
+fi
+AC_PROG_CC
+
+if (test "x${CXXFLAGS-notset}" = "xnotset"); then
+    export CXXFLAGS
+    CXXFLAGS=""
+fi
+AC_PROG_CXX
+
+
+dnl Checks for programs.
+AC_PROG_CPP
+AC_PROG_CXXCPP
+AC_PROG_INSTALL
+AC_LIBTOOL_DLOPEN
+AC_PROG_LIBTOOL
+dnl AC_PROG_RANLIB
+
+dnl
+dnl Compilation options
+dnl
+
+OPENSPACE_CPPFLAGS=""
+OPENSPACE_CFLAGS="-O2 -Wall -ffast-math -fexpensive-optimizations"
+OPENSPACE_CXXFLAGS="-O2 -Wall -ffast-math -fexpensive-optimizations"
+
+AC_MSG_CHECKING([whether to include debugging code])
+AC_ARG_ENABLE([debug],
+              AC_HELP_STRING([--enable-debug],
+			                 [Produce an executable with debugging symbols]), ,
+			  enable_debug="no")
+if (test "$enable_debug" = "yes"); then
+	OPENSPACE_CFLAGS="-g -Wall";
+	OPENSPACE_CXXFLAGS="-g -Wall"
+	AC_DEFINE(DEBUG, 1, [Are we debugging ?])
+fi
+AC_MSG_RESULT($enable_debug)
+
+AC_MSG_CHECKING([whether to be pedantic])
+AC_ARG_ENABLE([pedantic],
+              AC_HELP_STRING([--enable-pedantic],
+                             [Enable -pedantic when compiling]), ,
+              enable_pedantic="no")
+if (test "$enable_pedantic" = "yes"); then
+	OPENSPACE_CFLAGS="$OPENSPACE_CFLAGS -ansi -pedantic";
+	OPENSPACE_CXXFLAGS="$OPENSPACE_CXXFLAGS -pedantic"
+fi
+AC_MSG_RESULT($enable_pedantic)
+
+AC_MSG_CHECKING([whether to do profiling])
+AC_ARG_ENABLE([profile],
+              AC_HELP_STRING([--enable-profile],
+                             [Produce a profiled executable[default=no]]), ,
+              enable_profile="no")
+if (test "$enable_profile" = "yes"); then
+	OPENSPACE_CFLAGS="$OPENSPACE_CFLAGS -pg";
+	OPENSPACE_CXXFLAGS="$OPENSPACE_CXXFLAGS -pg"
+else
+	if (test "$enable_debug" != "yes"); then
+		dnl  must be set here instead of above because -pg and
+		dnl -fomit-frame-pointer are incompatible
+		OPENSPACE_CFLAGS="$OPENSPACE_CFLAGS -fomit-frame-pointer";
+		OPENSPACE_CXXFLAGS="$OPENSPACE_CXXFLAGS -fomit-frame-pointer"
+	fi
+fi
+AC_MSG_RESULT($enable_profile)
+
+
+dnl
+dnl GL lib
+dnl
+
+AC_ARG_WITH([gl-libs],
+            AC_HELP_STRING([--with-gl-libs=DIR],
+                           [Specify OpenGL library location]),
+            GLLIBS="$GLLIBS -L$withval")
+
+AC_ARG_WITH([gl-inc],
+            AC_HELP_STRING([--with-gl-inc=DIR],
+                           [Specify OpenGL header file location]),
+            GLFLAGS="$GLFLAGS -I$withval")
+
+dnl
+dnl SPICE lib
+dnl TODO: did we need this?
+AC_ARG_WITH([cspice-dir],
+            AC_HELP_STRING([--with-cspice-dir=DIR], [Specify SPICE directory location]),
+            SPICEFLAGS="-I$withval/include -DUSE_SPICE"; 
+            SPICELIB="$withval/lib/cspice.a")
+AC_SUBST(SPICELIB)
+AC_SUBST(SPICEFLAGS)
+
+AM_CONDITIONAL(ENABLE_SPICE, test "$SPICELIB" != "")
+
+
+LIBS="$LIBS -lm"
+
+AC_PATH_XTRA
+dnl CFLAGS="$CFLAGS $X_CFLAGS"
+dnl CFLAGS="$CFLAGS $GLFLAGS $OPENSPACE_CFLAGS"
+dnl CXXFLAGS="$CXXFLAGS $GLFLAGS $OPENSPACE_CXXFLAGS"
+dnl LIBS="$LIBS $GLLIBS"
+dnl LIBS="$X_PRE_LIBS $LIBS $X_LIBS -lXmu -lXi -lXext -lX11 -lm -lz $X_EXTRA_LIBS"
+CELESTIA_CFLAGS="$CFLAGS $X_CFLAGS $GLFLAGS $OPENSPACE_CFLAGS"
+CELESTIA_CXXFLAGS="$CXXFLAGS $X_CFLAGS $GLFLAGS $OPENSPACE_CXXFLAGS"
+CELESTIA_LIBS="$X_PRE_LIBS $LIBS $GLLIBS"
+OPENSPACE_X_LIBS="$X_LIBS -lXmu -lXi -lXext -lX11 -lm -lz $X_EXTRA_LIBS"
+
+dnl save flags and libs for next test.
+dnl We already specify AC_ARG_WITH([gl-libs]
+LIBS_TEMP="$LIBS"
+CFLAGS_TEMP="$CFLAGS"
+CXXFLAGS_TEMP="$CXXFLAGS"
+
+CFLAGS="$CFLAGS $X_CFLAGS"
+CFLAGS="$CFLAGS $GLFLAGS $OPENSPACE_CFLAGS"
+CXXFLAGS="$CXXFLAGS $GLFLAGS $OPENSPACE_CXXFLAGS"
+
+
+dnl Check for zlib -- libGL requires it.
+AC_CHECK_LIB(z, deflate, ,
+             [AC_MSG_ERROR([zlib not found.])])
+
+CELESTIA_LIBS="$CELESTIA_LIBS -lz"
+dnl Check for OpenGL headers first.
+AC_CHECK_HEADERS(GL/gl.h, ,
+                 [AC_MSG_ERROR([No gl.h found. See INSTALL file for help.])])
+
+LIBS="$LIBS -lGL"
+dnl Check for OpenGL. Taken partly from the plib sources.
+AC_CHECK_LIB(GL, glNewList)
+CELESTIA_LIBS="$CELESTIA_LIBS -lGL"
+
+if (test "x$ac_cv_lib_GL_glNewList" = "xno"); then
+	dnl Check for MesaGL.
+	AC_CHECK_LIB(MesaGL, glNewList, ,
+	             [AC_MSG_ERROR([GL library was not found])])
+fi
+
+dnl Check for GLU headers.
+AC_CHECK_HEADERS(GL/glu.h, ,
+                 [AC_MSG_ERROR([No glu.h found. See INSTALL file for help.])])
+AC_CHECK_LIB(GLU, gluLookAt)
+
+CELESTIA_LIBS="$CELESTIA_LIBS -lGLU"
+
+if (test "x$ac_cv_lib_GLU_gluLookAt" = "xno"); then
+	dnl Check for MesaGLU.
+	AC_CHECK_LIB(MesaGLU, gluLookAt, ,
+	             [AC_MSG_ERROR([GLU library was not found])])
+fi
+
+PKG_PROG_PKG_CONFIG
+
+AGAR_CXXFLAGS=""
+AGAR_LIBS=""
+dnl libAgar check for game client 
+if (test "$enable_gclient" = "yes" ); then
+
+   LIBAGAR_REQUIRED_VERSION=1.3.3
+
+   AC_CHECK_PROG(HAS_AGAR, agar-config, yes)
+   if test "x$HAS_AGAR" != "xyes"; then
+       AC_MSG_ERROR([ AGAR library not found!
+   You need this for game client.
+   You can get a copy at <http://libagar.org/>])
+   fi
+
+   AC_MSG_CHECKING(for libagar libraries >= $LIBAGAR_REQUIRED_VERSION)
+
+   AC_DEFUN([VERSION_TO_NUMBER],
+   [`$1 | sed -e 's/[a-zA-Z]//g' | awk 'BEGIN { FS = "."; } { printf "%d", ([$]1 * 1000 + [$]2) * 1000 + [$]3;}'`])
+
+   vers=VERSION_TO_NUMBER(agar-config --version)
+   AGAR_VERSION=`agar-config --version`
+
+   if test "$vers" -ge VERSION_TO_NUMBER(echo $LIBAGAR_REQUIRED_VERSION);then
+        AGAR_LIBS="`agar-config --libs`"
+	AGAR_CXXFLAGS="`agar-config --cflags`"
+	AC_MSG_RESULT(found version $AGAR_VERSION)
+   else
+	AC_MSG_ERROR(You need at least libagar $LIBAGAR_REQUIRED_VERSION)
+   fi
+fi
+
+AC_SUBST(AGAR_CXXFLAGS)
+AC_SUBST(AGAR_LIBS)
+
+dnl Make certain ARTS is not conditionally defined, like GConf for Gnome
+AM_CONDITIONAL(include_ARTS, test "x" = "y")
+
+if (test "$check_theora" = "yes"); then
+	dnl Check for theora. Default to trying yes. Want this structure to not
+	dnl fail when not found if not explicitly enabled.
+	if (test "x$enable_theora" != "xno"); then
+		PKG_CHECK_MODULES(THEORA, theora, enable_theora="yes",
+		                  if (test "x$enable_theora" = "xauto"); then
+		                      enable_theora="no"
+		                  else
+		                      AC_ERROR([Theora not found (explicitly enabled)!])
+		                  fi)
+	fi
+
+	if (test "x$enable_theora" = "xyes"); then
+		AC_DEFINE(THEORA, 1, [Use OGG Theora for video])
+		CELESTIA_CFLAGS="$CELESTIA_CFLAGS $THEORA_CFLAGS"
+		CELESTIA_CXXFLAGS="$CELESTIA_CXXFLAGS $THEORA_CFLAGS"
+		CELESTIA_LIBS="$CELESTIA_LIBS $THEORA_LIBS"
+	fi
+fi
+AM_CONDITIONAL(ENABLE_THEORA, test "$enable_theora" = "yes")
+
+dnl Check for JPEG library.
+AC_CHECK_LIB(jpeg, jpeg_start_decompress, ,
+             [AC_MSG_ERROR([jpeg library not found])])
+CELESTIA_LIBS="$CELESTIA_LIBS -ljpeg"
+
+dnl Check for PNG library.
+AC_CHECK_LIB(png, png_create_info_struct,,
+             [AC_MSG_ERROR([png library not found])])
+CELESTIA_LIBS="$CELESTIA_LIBS -lpng"
+
+dnl restore vars
+LIBS="$LIBS_TEMP"
+CFLAGS="$CFLAGS_TEMP"
+CXXFLAGS="$CXXFLAGS_TEMP"
+
+dnl Checks for header files.
+AC_HEADER_STDC
+AC_CHECK_HEADERS(byteswap.h)
+AC_C_BIGENDIAN
+
+dnl Establish the main data directory (defined in Makefiles)
+PKGDATADIR='${datadir}'/$PACKAGE
+
+enable_hipparcos="no"
+AC_ARG_ENABLE([hipparcos-dir],
+              AC_HELP_STRING([--enable-hipparcos-dir=DIR],
+                             [Specify location of HIPPARCOS/TYCHO stardata]),
+              HIPDIR="$enableval",HIPDIR="$PKGDATADIR")
+AC_SUBST(HIPDIR)
+AC_MSG_CHECKING([whether we can create a new star database])
+if (test -f "$HIPDIR/hip_main.dat"); then
+	enable_hipparcos="yes"
+fi
+AC_MSG_RESULT($enable_hipparcos)
+AM_CONDITIONAL(ENABLE_HIPPARCOS, test "x$enable_hipparcos" = "xyes")
+
+AC_ARG_WITH([lua],
+            AC_HELP_STRING([--with-lua],
+                           [Use Lua for Celestia Extension Language support]),
+            enable_lua="$withval",
+            enable_lua="auto")
+
+if (test "$enable_lua" != "no"); then
+	LUA_VER=0
+	PKG_CHECK_MODULES(LUA, lua-5.1 >= 5.1.0, LUA_VER=0x050100, 
+		[ PKG_CHECK_MODULES(LUA, lua >= 5.1.0, LUA_VER=0x050100, 
+		  [ PKG_CHECK_MODULES(LUA, lua50 >= 5.0.0 lua50 < 5.1.0, LUA_VER=0x050000,
+		    [ PKG_CHECK_MODULES(LUA, lua >= 5.0.0 lua < 5.1.0, LUA_VER=0x050000, AC_MSG_RESULT([no])) ] 
+		    ) ] 
+		) ]
+	)
+	if (test "$LUA_VER" = "0x050000"); then
+		PKG_CHECK_MODULES(LUALIB, lualib50 >= 5.0.0 lualib50 < 5.1.0, ,
+			[ PKG_CHECK_MODULES(LUALIB, lualib >= 5.0.0 lualib < 5.1.0, , AC_MSG_RESULT([no])) ]
+			)
+	fi
+	if (test "$LUA_VER" = "0"); then
+		if (test "x$enable_lua" != "xauto"); then
+			AC_ERROR([Lua not found (explicitly enabled)!])
+		else
+			enable_lua="no"
+		fi
+	else
+		enable_lua="yes"
+	fi
+fi
+
+if (test "$enable_lua" = "yes"); then
+	CELESTIA_CXXFLAGS="$CELESTIA_CXXFLAGS $LUA_CFLAGS $LUALIB_CFLAGS -DLUA_VER=$LUA_VER -DCELX"
+	CELESTIA_LIBS="$CELESTIA_LIBS $LUA_LIBS $LUALIB_LIBS"
+fi
+
+CGAME_CFLAGS=$CELESTIA_CFLAGS
+CGAME_CXXFLAGS=$CELESTIA_CXXFLAGS
+CGAME_LIBS=$CELESTIA_LIBS
+
+AC_SUBST(CGAME_CXXFLAGS)
+AC_SUBST(CGAME_CLAGS)
+AC_SUBST(CGAME_LIBS)
+AC_SUBST(CELESTIA_CXXFLAGS)
+AC_SUBST(CELESTIA_CLAGS)
+AC_SUBST(CELESTIA_LIBS)
+
+AM_CONDITIONAL(ENABLE_CELX, test "$enable_lua" != "no")
+AM_CONDITIONAL(ENABLE_CGAME, test "$enable_gclient" != "no")
+
+AC_CONFIG_FILES([ Makefile ])
+AC_CONFIG_FILES([ src/Makefile ])
+AC_CONFIG_FILES([ src/celutil/Makefile ])
+AC_CONFIG_FILES([ src/celmath/Makefile ])
+AC_CONFIG_FILES([ src/cel3ds/Makefile ])
+AC_CONFIG_FILES([ src/celtxf/Makefile ])
+AC_CONFIG_FILES([ src/celengine/Makefile ])
+AC_CONFIG_FILES([ src/celestia/Makefile ])
+AC_CONFIG_FILES([ src/common/Makefile ])
+AC_CONFIG_FILES([ src/cgame/Makefile ])
+AC_CONFIG_FILES([ src/cellserv/Makefile ])
+AC_CONFIG_FILES([ src/cmserver/Makefile ])
+AC_CONFIG_FILES([ po/Makefile.in ])
+AC_CONFIG_FILES([ locale/Makefile ])
+AC_CONFIG_FILES([ merge/Makefile ])
+AC_OUTPUT()
+
+AC_MSG_RESULT()
+AC_MSG_RESULT()
+AC_MSG_RESULT(***************************************************************)
+AC_MSG_RESULT(** Celestia Open Space Engine configuration complete.        **)
+AC_MSG_RESULT(** Now do a 'make' followed by 'make install'                **)
+AC_MSG_RESULT(***************************************************************)
+AC_MSG_RESULT()
+
+AC_MSG_RESULT([
+
+   Open space is now configured
+   Source directory:    $srcdir
+   Installation prefix: $prefix
+
+])
+
+AC_MSG_RESULT([Use Lua: $enable_lua]);
+
+if (test "$LUA_VER" = "0x050000"); then
+	AC_MSG_RESULT([    Warning: Lua 5.1 is not available on your system, Lua 5.0 will be used
+    instead but it may not be fully compatible with existing CELX scripts. 
+    It is recommanded that you install Lua 5.0 and rerun configure.]);
+fi
+
+AC_MSG_RESULT([Use Theora: $enable_theora]);
+
+AC_MSG_RESULT([Build game client: $enable_gclient]);

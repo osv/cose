@@ -1,0 +1,2668 @@
+# Simplied Chinese translations for CELESTIA package.
+# Copyright (C) 2006 Chris Laurel
+# This file is distributed under the same license as the CELESTIA package.
+# Joe ZhaoZhengxu <zhaozhengxu@yahoo.com>, 2006.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: CELESTIA-Chinese\n"
+"Report-Msgid-Bugs-To: chris@teyssier.org\n"
+"POT-Creation-Date: 2009-06-21 16:00+0000\n"
+"PO-Revision-Date: 2008-01-29 02:15+0800\n"
+"Last-Translator: Thruth Wang <gubotruth@gmail.com>\n"
+"Language-Team: Chinese <zhaozhengxu@yahoo.com>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+#: src/celengine/astro.cpp:827
+msgid "DST"
+msgstr "DST"
+
+#: src/celengine/astro.cpp:827
+msgid "STD"
+msgstr "STD"
+
+#: src/celengine/dsodb.cpp:387
+msgid "Loaded "
+msgstr "已加载 "
+
+#: src/celengine/dsodb.cpp:387
+msgid " deep space objects"
+msgstr "深度空间物体"
+
+#: src/celengine/fragmentprog.cpp:93
+msgid "Loading NV fragment program: "
+msgstr "正在加载 NV fragment program："
+
+#: src/celengine/fragmentprog.cpp:98
+msgid "Error loading NV fragment program: "
+msgstr "加载 NV fragment program 时出现错误："
+
+#: src/celengine/fragmentprog.cpp:115
+msgid "Error in fragment program "
+msgstr "fragment program 出现错误 "
+
+#: src/celengine/fragmentprog.cpp:126
+msgid "Initializing NV fragment programs . . .\n"
+msgstr "正在对 NV fragment program 进行初始化. . .\n"
+
+#: src/celengine/fragmentprog.cpp:142
+msgid "All NV fragment programs loaded successfully.\n"
+msgstr "所有 NV fragment program 加载成功。\n"
+
+#: src/celengine/fragmentprog.cpp:150
+msgid "Initializing ARB fragment programs . . .\n"
+msgstr "对 ARB fragment program 进行初始化. . .\n"
+
+#: src/celengine/galaxy.cpp:197
+#, c-format
+msgid "Galaxy (Hubble type: %s)"
+msgstr "星河系(赫伯分类: %s)"
+
+#: src/celengine/image.cpp:373
+msgid "Loading image from file "
+msgstr "从文件加载图像 "
+
+#: src/celengine/image.cpp:391
+msgid ": unrecognized or unsupported image file type.\n"
+msgstr " 无法识别或不支持的图像数据格式。\n"
+
+#: src/celengine/image.cpp:654
+msgid "Error opening image file "
+msgstr "打开图像文件错误 "
+
+#: src/celengine/image.cpp:661
+msgid "Error: "
+msgstr "错误："
+
+#: src/celengine/image.cpp:661
+msgid " is not a PNG file.\n"
+msgstr " 不是PNG图像文件。\n"
+
+#: src/celengine/image.cpp:688
+msgid "Error reading PNG image file "
+msgstr "读取PNG图像文件时出错。"
+
+#: src/celengine/meshmanager.cpp:84
+msgid "Loading model: "
+msgstr "加载模型："
+
+#: src/celengine/meshmanager.cpp:162
+msgid "   Model statistics: "
+msgstr "   模型统计数据："
+
+#: src/celengine/meshmanager.cpp:163
+msgid " vertices, "
+msgstr "顶,"
+
+#: src/celengine/meshmanager.cpp:164
+msgid " primitives, "
+msgstr "基元,"
+
+#: src/celengine/meshmanager.cpp:165
+msgid " materials "
+msgstr ""
+
+#: src/celengine/meshmanager.cpp:166
+msgid " unique)\n"
+msgstr "独特)\n"
+
+#: src/celengine/meshmanager.cpp:170
+msgid "Error loading model '"
+msgstr "加载模型时出错 '"
+
+#: src/celengine/nebula.cpp:47 src/celengine/opencluster.cpp:44
+#, c-format
+msgid "%s"
+msgstr "%s"
+
+#: src/celengine/solarsys.cpp:93
+msgid "Error in .ssc file (line "
+msgstr ".ssc 文件出错（行 "
+
+#: src/celengine/solarsys.cpp:1200 src/celengine/solarsys.cpp:1267
+msgid "parent body '"
+msgstr "母天体 '"
+
+#: src/celengine/solarsys.cpp:1200 src/celengine/solarsys.cpp:1267
+msgid "' of '"
+msgstr "'拥有'"
+
+#: src/celengine/solarsys.cpp:1200
+#, fuzzy
+msgid "' not found."
+msgstr "' 找不到。\n"
+
+#: src/celengine/solarsys.cpp:1211
+msgid "warning duplicate definition of "
+msgstr "警告：重复定义"
+
+#: src/celengine/solarsys.cpp:1247
+msgid "bad alternate surface"
+msgstr "不正确的可替换物体表面"
+
+#: src/celengine/solarsys.cpp:1261
+msgid "bad location"
+msgstr "不正确的地理位置"
+
+#: src/celengine/solarsys.cpp:1267
+msgid "' not found.\n"
+msgstr "' 找不到。\n"
+
+#: src/celengine/stardb.cpp:579
+msgid "Bad header for cross index\n"
+msgstr "不正确的交叉检索文件头\n"
+
+#: src/celengine/stardb.cpp:592
+msgid "Bad version for cross index\n"
+msgstr "不正确的交叉检索文件文本\n"
+
+#: src/celengine/stardb.cpp:614
+msgid "Loading cross index failed at record "
+msgstr "加载交叉检索文件失败--出错数据点 "
+
+#: src/celengine/stardb.cpp:696
+msgid "Bad spectral type in star database, star #"
+msgstr "恒星数据库中的恒星光谱特征不正确，恒星编号#"
+
+#: src/celengine/stardb.cpp:711
+msgid " stars in binary database\n"
+msgstr " 恒星在双星系统数据库中\n"
+
+#: src/celengine/stardb.cpp:735
+msgid "Total star count: "
+msgstr "总计恒星数："
+
+#: src/celengine/stardb.cpp:769
+msgid "Error in .stc file (line "
+msgstr ".stc文件出错（行 "
+
+#: src/celengine/stardb.cpp:806
+msgid "Invalid star: bad spectral type.\n"
+msgstr "无效恒星数据：不正确的恒星光谱特征类。\n"
+
+#: src/celengine/stardb.cpp:815
+msgid "Invalid star: missing spectral type.\n"
+msgstr "无效恒星数据：缺少恒星光谱特征类。\n"
+
+#: src/celengine/stardb.cpp:962
+msgid "Barycenter "
+msgstr "质心 "
+
+#: src/celengine/stardb.cpp:962
+msgid " does not exist.\n"
+msgstr " 不存在。\n"
+
+#: src/celengine/stardb.cpp:1008
+msgid "Invalid star: missing right ascension\n"
+msgstr "无效恒星数据：缺少赤经\n"
+
+#: src/celengine/stardb.cpp:1021
+msgid "Invalid star: missing declination.\n"
+msgstr "无效恒星数据：缺少赤纬。\n"
+
+#: src/celengine/stardb.cpp:1034
+msgid "Invalid star: missing distance.\n"
+msgstr "无效恒星数据：缺少距离。\n"
+
+#: src/celengine/stardb.cpp:1070
+msgid "Invalid star: missing magnitude.\n"
+msgstr "无效恒星数据：缺少光度。\n"
+
+#: src/celengine/stardb.cpp:1087
+msgid ""
+"Invalid star: absolute (not apparent) magnitude must be specified for star "
+"near origin\n"
+msgstr ""
+
+#: src/celengine/texture.cpp:1019
+msgid "Creating tiled texture. Width="
+msgstr "正在创建层叠纹理。宽度="
+
+#: src/celengine/texture.cpp:1019
+msgid ", max="
+msgstr ",最大="
+
+#: src/celengine/texture.cpp:1024
+msgid "Creating ordinary texture: "
+msgstr "正在创建正常纹理:"
+
+#: src/celengine/vertexprog.cpp:114
+msgid "Loading NV vertex program: "
+msgstr "加载NV vertex program："
+
+#: src/celengine/vertexprog.cpp:119
+msgid "Error loading NV vertex program: "
+msgstr "加载NV vertex program时出现错误："
+
+#: src/celengine/vertexprog.cpp:136 src/celengine/vertexprog.cpp:195
+msgid "Error in vertex program "
+msgstr "vertex program出现错误 "
+
+#: src/celengine/vertexprog.cpp:163
+msgid "Loading ARB vertex program: "
+msgstr "加载ARB vertex program："
+
+#: src/celengine/vertexprog.cpp:168
+msgid "Error loading ARB vertex program: "
+msgstr "加载ARB vertex program时出现错误："
+
+#: src/celengine/vertexprog.cpp:196
+msgid ", line "
+msgstr "，行"
+
+#: src/celengine/vertexprog.cpp:208
+msgid "Initializing NV vertex programs . . .\n"
+msgstr "对NV vertex program进行初始化 . . .\n"
+
+#: src/celengine/vertexprog.cpp:240
+msgid "All NV vertex programs loaded successfully.\n"
+msgstr "所有NV vertex programs加载成功。\n"
+
+#: src/celengine/vertexprog.cpp:253
+msgid "Initializing ARB vertex programs . . .\n"
+msgstr "对ARB vertex program进行初始化 . . .\n"
+
+#: src/celengine/vertexprog.cpp:314
+msgid "All ARB vertex programs loaded successfully.\n"
+msgstr "所有ARB vertex program加载成功。\n"
+
+#: src/celestia/celestiacore.cpp:421
+msgid "Error reading favorites file."
+msgstr "读出收藏夹中的文件时出错。"
+
+#: src/celestia/celestiacore.cpp:511
+msgid "Orientation: "
+msgstr "方向："
+
+#: src/celestia/celestiacore.cpp:558 src/celestia/celestiacore.cpp:560
+msgid "Error opening script file."
+msgstr "打开脚本文件时出现错误。"
+
+#: src/celestia/celestiacore.cpp:591
+#, c-format
+msgid "Error opening script '%s'"
+msgstr "打开脚本文件'%s'时出现错误"
+
+#: src/celestia/celestiacore.cpp:609
+msgid "Unknown error opening script"
+msgstr "打开脚本文件出现未知错误"
+
+#: src/celestia/celestiacore.cpp:621
+msgid "Script coroutine initialization failed"
+msgstr "脚本协程序初始化失败"
+
+#: src/celestia/celestiacore.cpp:637 src/celestia/celestiacore.cpp:639
+msgid "Invalid filetype"
+msgstr "无效文件格式"
+
+#: src/celestia/celestiacore.cpp:982 src/celestia/celestiacore.cpp:1787
+#: src/celestia/celestiacore.cpp:1805 src/celestia/celestiacore.cpp:2046
+#: src/celestia/celestiacore.cpp:2077
+#, c-format
+msgid "Magnitude limit: %.2f"
+msgstr "光度可视化极限：%.2f"
+
+#: src/celestia/celestiacore.cpp:1417
+msgid "Markers enabled"
+msgstr "标记已启动"
+
+#: src/celestia/celestiacore.cpp:1420
+msgid "Markers disabled"
+msgstr "标记已关闭"
+
+#: src/celestia/celestiacore.cpp:1430
+msgid "Goto surface"
+msgstr "逼近物体表面"
+
+#: src/celestia/celestiacore.cpp:1443
+msgid "Alt-azimuth mode enabled"
+msgstr "地平经仪模式开启"
+
+#: src/celestia/celestiacore.cpp:1446
+msgid "Alt-azimuth mode disabled"
+msgstr "地平经仪模式关闭"
+
+#: src/celestia/celestiacore.cpp:1502
+msgid "Star style: fuzzy points"
+msgstr "星点渲染:模糊点"
+
+#: src/celestia/celestiacore.cpp:1505
+msgid "Star style: points"
+msgstr "星点渲染:正常点"
+
+#: src/celestia/celestiacore.cpp:1508
+msgid "Star style: scaled discs"
+msgstr "星点渲染:缩放点"
+
+#: src/celestia/celestiacore.cpp:1521
+msgid "Comet tails enabled"
+msgstr "开启彗星尾渲染"
+
+#: src/celestia/celestiacore.cpp:1524
+msgid "Comet tails disabled"
+msgstr "关闭彗星尾渲染"
+
+#: src/celestia/celestiacore.cpp:1539
+msgid "Render path: Basic"
+msgstr "渲染通道:基本"
+
+#: src/celestia/celestiacore.cpp:1542
+msgid "Render path: Multitexture"
+msgstr "渲染通道:多纹理"
+
+#: src/celestia/celestiacore.cpp:1545
+msgid "Render path: NVIDIA combiners"
+msgstr "渲染通道: NVIDIA 组合渲染"
+
+#: src/celestia/celestiacore.cpp:1548
+msgid "Render path: OpenGL vertex program"
+msgstr "渲染通道: OpenGL vertex program"
+
+#: src/celestia/celestiacore.cpp:1551
+msgid "Render path: NVIDIA vertex program and combiners"
+msgstr "渲染通道: NVIDIA vertex program and combiners"
+
+#: src/celestia/celestiacore.cpp:1554
+msgid "Render path: OpenGL vertex program/NVIDIA combiners"
+msgstr "渲染通道: OpenGL vertex program/NVIDIA combiners"
+
+#: src/celestia/celestiacore.cpp:1557
+msgid "Render path: OpenGL 1.5 vertex/fragment program"
+msgstr "渲染通道: OpenGL 1.5 vertex/fragment program"
+
+#: src/celestia/celestiacore.cpp:1560
+msgid "Render path: NVIDIA GeForce FX"
+msgstr "渲染通道: NVIDIA GeForce FX"
+
+#: src/celestia/celestiacore.cpp:1563
+msgid "Render path: OpenGL 2.0"
+msgstr "渲染通道: OpenGL 2.0"
+
+#: src/celestia/celestiacore.cpp:1586
+msgid "Auto-magnitude enabled"
+msgstr "开启光度自动调节"
+
+#: src/celestia/celestiacore.cpp:1591
+msgid "Auto-magnitude disabled"
+msgstr "关闭光度自动调节"
+
+#: src/celestia/celestiacore.cpp:1613
+msgid "Cancel"
+msgstr "撤销操作指令"
+
+#: src/celestia/celestiacore.cpp:1649
+msgid "Time and script are paused"
+msgstr "计时和脚本运行暂停"
+
+#: src/celestia/celestiacore.cpp:1651
+msgid "Time is paused"
+msgstr "计时暂停"
+
+#: src/celestia/celestiacore.cpp:1655
+msgid "Resume"
+msgstr "恢复计时或脚本运行"
+
+#: src/celestia/celestiacore.cpp:1730
+#, c-format
+msgid "Light travel time:  %.4f yr "
+msgstr "光传播时间：%.4f年"
+
+#: src/celestia/celestiacore.cpp:1739
+#, c-format
+msgid "Light travel time:  %d min  %.1f s"
+msgstr "光传播时间：%d分%.1f秒"
+
+#: src/celestia/celestiacore.cpp:1742
+#, c-format
+msgid "Light travel time:  %d h  %d min  %.1f s"
+msgstr "光传播时间：%d时%d分%.1f秒"
+
+#: src/celestia/celestiacore.cpp:1761
+msgid "Light travel delay included"
+msgstr "开启光的传播时间补偿"
+
+#: src/celestia/celestiacore.cpp:1766
+msgid "Light travel delay switched off"
+msgstr "关闭光的传播时间补偿"
+
+#: src/celestia/celestiacore.cpp:1772
+msgid "Light travel delay ignored"
+msgstr "忽略光的传播时间补偿"
+
+#: src/celestia/celestiacore.cpp:1817
+msgid "Using normal surface textures."
+msgstr "调用正常表面纹理。"
+
+#: src/celestia/celestiacore.cpp:1822
+msgid "Using limit of knowledge surface textures."
+msgstr "调用表面有限纹理信息"
+
+#: src/celestia/celestiacore.cpp:1889
+msgid "Follow"
+msgstr "跟踪物体"
+
+#: src/celestia/celestiacore.cpp:1914
+msgid "Time: Forward"
+msgstr "时间:正向流逝"
+
+#: src/celestia/celestiacore.cpp:1916
+msgid "Time: Backward"
+msgstr "时间:反向流逝"
+
+#: src/celestia/celestiacore.cpp:1929 src/celestia/celestiacore.cpp:1945
+msgid "Time rate"
+msgstr "时间速率"
+
+#: src/celestia/celestiacore.cpp:2018
+msgid "Sync Orbit"
+msgstr "同步跟踪物体"
+
+#: src/celestia/celestiacore.cpp:2024
+msgid "Lock"
+msgstr "锁住物体"
+
+#: src/celestia/celestiacore.cpp:2030
+msgid "Chase"
+msgstr "追赶物体"
+
+#: src/celestia/celestiacore.cpp:2057 src/celestia/celestiacore.cpp:2088
+#, c-format
+msgid "Auto magnitude limit at 45 degrees:  %.2f"
+msgstr "45度视野区内光度自动调节：%.2f"
+
+#: src/celestia/celestiacore.cpp:2107 src/celestia/celestiacore.cpp:2122
+#, c-format
+msgid "Ambient light level:  %.2f"
+msgstr "氛围光线等级: %.2f"
+
+#: src/celestia/celestiacore.cpp:2133 src/celestia/celestiacore.cpp:2145
+msgid "Light gain"
+msgstr "增加星光"
+
+#: src/celestia/celestiacore.cpp:2165
+#, fuzzy
+msgid "Bloom enabled"
+msgstr "开启彗星尾渲染"
+
+#: src/celestia/celestiacore.cpp:2167
+#, fuzzy
+msgid "Bloom disabled"
+msgstr "关闭彗星尾渲染"
+
+#: src/celestia/celestiacore.cpp:2173 src/celestia/celestiacore.cpp:2181
+msgid "Exposure"
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:2532
+msgid "GL error: "
+msgstr "GL 错误："
+
+#: src/celestia/celestiacore.cpp:2659
+msgid "View too small to be split"
+msgstr "视窗太小不能再分割"
+
+#: src/celestia/celestiacore.cpp:2662
+msgid "Added view"
+msgstr "增加视窗"
+
+#: src/celestia/celestiacore.cpp:2918
+msgid "ly"
+msgstr "光年"
+
+#: src/celestia/celestiacore.cpp:2922
+msgid "au"
+msgstr "天文单位"
+
+#: src/celestia/celestiacore.cpp:2943
+msgid " days"
+msgstr " 天"
+
+#: src/celestia/celestiacore.cpp:2945
+msgid " hours"
+msgstr " 时"
+
+#: src/celestia/celestiacore.cpp:2947
+msgid " minutes"
+msgstr " 分"
+
+#: src/celestia/celestiacore.cpp:3014
+msgid "Apparent diameter: "
+msgstr "观测直径："
+
+#: src/celestia/celestiacore.cpp:3029
+msgid "Apparent magnitude: "
+msgstr "观测光度："
+
+#: src/celestia/celestiacore.cpp:3033
+msgid "Absolute magnitude: "
+msgstr "绝对光度："
+
+#: src/celestia/celestiacore.cpp:3055
+msgid "RA: "
+msgstr "RA: "
+
+#: src/celestia/celestiacore.cpp:3059
+msgid "Dec: "
+msgstr "12 月: "
+
+#: src/celestia/celestiacore.cpp:3123
+msgid "km"
+msgstr "公里"
+
+#: src/celestia/celestiacore.cpp:3152 src/celestia/celestiacore.cpp:3226
+#: src/celestia/celestiacore.cpp:3258 src/celestia/celestiacore.cpp:3359
+msgid "Distance: "
+msgstr "距离："
+
+#: src/celestia/celestiacore.cpp:3158
+msgid "Star system barycenter\n"
+msgstr "星系质心\n"
+
+#: src/celestia/celestiacore.cpp:3162
+#, c-format
+msgid "Abs (app) mag: %.2f (%.2f)\n"
+msgstr "绝对光度(观测光度)：%.2f (%.2f)\n"
+
+#: src/celestia/celestiacore.cpp:3168
+msgid "Luminosity: "
+msgstr "亮度："
+
+#: src/celestia/celestiacore.cpp:3168
+msgid "x Sun"
+msgstr "太阳 x"
+
+#: src/celestia/celestiacore.cpp:3169
+msgid "Class: "
+msgstr "天体类别："
+
+#: src/celestia/celestiacore.cpp:3171
+msgid "Neutron star"
+msgstr "中子星"
+
+#: src/celestia/celestiacore.cpp:3173
+msgid "Black hole"
+msgstr "黑洞"
+
+#: src/celestia/celestiacore.cpp:3183
+msgid "Surface temp: "
+msgstr "表面温度："
+
+#: src/celestia/celestiacore.cpp:3186 src/celestia/celestiacore.cpp:3235
+#: src/celestia/celestiacore.cpp:3268
+msgid "Radius: "
+msgstr "半径："
+
+#: src/celestia/celestiacore.cpp:3189
+msgid "Rsun"
+msgstr "太阳当量半径"
+
+#: src/celestia/celestiacore.cpp:3199 src/celestia/celestiacore.cpp:3320
+msgid "Rotation period: "
+msgstr "公转周期："
+
+#: src/celestia/celestiacore.cpp:3213
+msgid "Planetary companions present\n"
+msgstr "拥有行星\n"
+
+#: src/celestia/celestiacore.cpp:3231
+msgid "Distance from center: "
+msgstr "到中心的距离："
+
+#: src/celestia/celestiacore.cpp:3336
+msgid "Temperature: "
+msgstr "温度："
+
+#: src/celestia/celestiacore.cpp:3348
+#, c-format
+msgid "Apparent mag: %.2f\n"
+msgstr "观测光度：%.2f\n"
+
+#: src/celestia/celestiacore.cpp:3516
+msgid "  LT"
+msgstr "包含时光差"
+
+#: src/celestia/celestiacore.cpp:3525
+msgid "Real time"
+msgstr "实时正计时"
+
+#: src/celestia/celestiacore.cpp:3527
+msgid "-Real time"
+msgstr "-实时倒计时"
+
+#: src/celestia/celestiacore.cpp:3531
+msgid "Time stopped"
+msgstr "停止计时"
+
+#: src/celestia/celestiacore.cpp:3536
+msgid " faster"
+msgstr "倍加快时间流逝"
+
+#: src/celestia/celestiacore.cpp:3541
+msgid " slower"
+msgstr "倍减慢时间流逝"
+
+#: src/celestia/celestiacore.cpp:3547
+msgid " (Paused)"
+msgstr "（暂停渲染）"
+
+#: src/celestia/celestiacore.cpp:3565
+msgid "FPS: "
+msgstr "显真："
+
+#: src/celestia/celestiacore.cpp:3567
+msgid ""
+"\n"
+"Speed: "
+msgstr ""
+"\n"
+"速度："
+
+#: src/celestia/celestiacore.cpp:3571
+msgid " m/s"
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:3573
+msgid " km/s"
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:3577
+msgid " AU/s"
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:3579
+#, fuzzy
+msgid " ly/s"
+msgstr " 天"
+
+#: src/celestia/celestiacore.cpp:3596
+msgid "Travelling "
+msgstr "太空飞行"
+
+#: src/celestia/celestiacore.cpp:3609
+msgid "Track "
+msgstr "监视目标："
+
+#: src/celestia/celestiacore.cpp:3623
+msgid "Follow "
+msgstr "跟踪目标："
+
+#: src/celestia/celestiacore.cpp:3628
+msgid "Sync Orbit "
+msgstr "同步跟踪目标："
+
+#: src/celestia/celestiacore.cpp:3633
+msgid "Lock "
+msgstr "锁住目标："
+
+#: src/celestia/celestiacore.cpp:3642
+msgid "Chase "
+msgstr "追赶目标："
+
+#: src/celestia/celestiacore.cpp:3658
+msgid "FOV: "
+msgstr "视锥："
+
+#: src/celestia/celestiacore.cpp:3688 src/celestia/celestiacore.cpp:3691
+msgid "Sun"
+msgstr "太阳"
+
+#: src/celestia/celestiacore.cpp:3865
+msgid "Target name: "
+msgstr "目标物体名称："
+
+#: src/celestia/celestiacore.cpp:3947
+msgid " at "
+msgstr "采用"
+
+#: src/celestia/celestiacore.cpp:3948
+msgid " fps"
+msgstr " FPS"
+
+#: src/celestia/celestiacore.cpp:3950
+msgid "  Recording"
+msgstr "录像"
+
+#: src/celestia/celestiacore.cpp:3952
+msgid "  Paused"
+msgstr "暂停"
+
+#: src/celestia/celestiacore.cpp:3971
+msgid "F11 Start/Pause    F12 Stop"
+msgstr "F11 开始/暂停    F12 停止"
+
+#: src/celestia/celestiacore.cpp:3980 src/celestia/celestiacore.cpp:3983
+msgid "Edit Mode"
+msgstr "编辑状态"
+
+#: src/celestia/celestiacore.cpp:4049
+msgid "Loading solar system catalog: "
+msgstr "加载太阳系目录文件："
+
+#: src/celestia/celestiacore.cpp:4090
+msgid "Loading "
+msgstr "加载："
+
+#: src/celestia/celestiacore.cpp:4125
+msgid "License file 'License.txt' is missing!"
+msgstr "找不到使用版权说明文件 'License.txt'!"
+
+#: src/celestia/celestiacore.cpp:4146
+msgid "Error reading configuration file."
+msgstr "读出系统构架文件时出错。"
+
+#: src/celestia/celestiacore.cpp:4157
+msgid "Initialization of SPICE library failed."
+msgstr "SPICE 库初始化失败。"
+
+#: src/celestia/celestiacore.cpp:4204
+msgid "Cannot read star database."
+msgstr "不能读出星体数据库。"
+
+#: src/celestia/celestiacore.cpp:4226
+#, fuzzy
+msgid "Error opening deepsky catalog file."
+msgstr "读取恒星目录文件"
+
+#: src/celestia/celestiacore.cpp:4278
+msgid "Error opening solar system catalog.\n"
+msgstr "打开太阳系目录文件时出错。\n"
+
+#: src/celestia/celestiacore.cpp:4311
+msgid "Error opening asterisms file."
+msgstr "打开星座图定义文件时出错"
+
+#: src/celestia/celestiacore.cpp:4326
+msgid "Error opening constellation boundaries files."
+msgstr "打开星座边界文件时出错"
+
+#: src/celestia/celestiacore.cpp:4393
+msgid "render path: "
+msgstr "渲染通道："
+
+#: src/celestia/celestiacore.cpp:4404
+msgid "Failed to initialize renderer"
+msgstr "渲染器初始化失败"
+
+#: src/celestia/celestiacore.cpp:4420
+msgid "Error loading font; text will not be visible.\n"
+msgstr "读取字符文件时出错；文字将无法显示。\n"
+
+#: src/celestia/celestiacore.cpp:4477
+msgid "Error reading cross index "
+msgstr "错误读取交叉检索文件"
+
+#: src/celestia/celestiacore.cpp:4479
+msgid "Loaded cross index "
+msgstr "加载交叉检索文件"
+
+#: src/celestia/celestiacore.cpp:4493 src/celestia/celestiacore.cpp:4515
+msgid "Error opening "
+msgstr "错误读取"
+
+#: src/celestia/celestiacore.cpp:4500
+msgid "Error reading star names file\n"
+msgstr "读取恒星命名文件时出错\n"
+
+#: src/celestia/celestiacore.cpp:4523
+msgid "Error reading stars file\n"
+msgstr "读取恒星文件时出错\n"
+
+#: src/celestia/celestiacore.cpp:4550
+msgid "Error opening star catalog "
+msgstr "读取恒星目录文件"
+
+#: src/celestia/oggtheoracapture.cpp:159
+#, c-format
+msgid "Error in creating ogg file %s for capture.\n"
+msgstr "用于数据捕捉的Ogg文件%s的建立出错\n"
+
+#: src/celestia/oggtheoracapture.cpp:253 src/celestia/oggtheoracapture.cpp:273
+msgid "Internal Ogg library error."
+msgstr "系统内部的Ogg库文件出错。"
+
+#: src/celestia/oggtheoracapture.cpp:308
+#, c-format
+msgid ""
+"OggTheoraCapture::start() - Theora video: %s %.2f(%d/%d) fps quality %d %dx%"
+"d offset (%dx%d)\n"
+msgstr ""
+"OggTheoraCapture::start() - Theora 影像：%s %.2f(%d/%d) FPS质量%d %dx%d 偏移"
+"补偿(%dx%d)\n"
+
+#: src/celestia/oggtheoracapture.cpp:423
+#, c-format
+msgid "OggTheoraCapture::cleanup() - wrote %d frames\n"
+msgstr "OggTheoraCapture::cleanup() - 写入%d显像\n"
+
+#: src/celestia/url.cpp:653
+msgid "Settings"
+msgstr "设置"
+
+#: src/celestia/winmain.cpp:625
+msgid "Vendor: "
+msgstr "开发商："
+
+#: src/celestia/winmain.cpp:630
+msgid "Renderer: "
+msgstr "渲染(&R)"
+
+#: src/celestia/winmain.cpp:635
+msgid "Version: "
+msgstr "版本："
+
+#: src/celestia/winmain.cpp:645
+msgid "GLSL version: "
+msgstr "GLSL 版本："
+
+#: src/celestia/winmain.cpp:656
+msgid "Max simultaneous textures: "
+msgstr "中分辨率纹理"
+
+#: src/celestia/winmain.cpp:663
+msgid "Max texture size: "
+msgstr "最大纹理尺寸："
+
+#: src/celestia/winmain.cpp:672
+msgid "Max cube map size: "
+msgstr "最大立方体图尺寸："
+
+#: src/celestia/winmain.cpp:680
+msgid "Point size range: "
+msgstr "点大小区域："
+
+#: src/celestia/winmain.cpp:685
+msgid "Supported Extensions:"
+msgstr "支持扩展："
+
+#: src/celestia/winmain.cpp:1386
+msgid "Windowed Mode"
+msgstr "带窗口的显示"
+
+#: src/celestia/winmain.cpp:1508
+msgid "Asteroids"
+msgstr "陨石"
+
+#: src/celestia/winmain.cpp:1510
+msgid "Comets"
+msgstr "彗星"
+
+#: src/celestia/winmain.cpp:1512
+msgid "Invisibles"
+msgstr "不可见物体"
+
+#: src/celestia/winmain.cpp:1514
+msgid "Moons"
+msgstr "月亮"
+
+#: src/celestia/winmain.cpp:1516 src/celestia/winmain.cpp:1551
+#: src/celestia/winmain.cpp:1668
+msgid "Planets"
+msgstr "行星"
+
+#: src/celestia/winmain.cpp:1518
+msgid "Spacecraft"
+msgstr "卫星或航天器"
+
+#: src/celestia/winmain.cpp:1608 src/celestia/winmain.cpp:1656
+#: src/celestia/winmain.cpp:1679
+msgid "&Goto"
+msgstr "驶向选择物体(&G)"
+
+#: src/celestia/winmain.cpp:1609 src/celestia/winmain.cpp:1680
+msgid "&Follow"
+msgstr "尾随选择物体(&F)"
+
+#: src/celestia/winmain.cpp:1610
+msgid "S&ync Orbit"
+msgstr "同步于选择物体(&Y)"
+
+#: src/celestia/winmain.cpp:1611 src/celestia/winmain.cpp:1657
+#: src/celestia/winmain.cpp:1681
+msgid "&Info"
+msgstr "更多信息(&I)"
+
+#: src/celestia/winmain.cpp:1613
+msgid "&Reference Vectors"
+msgstr "参考向量(&R)"
+
+#: src/celestia/winmain.cpp:1614
+msgid "Show Body Axes"
+msgstr "显示天体轴线"
+
+#: src/celestia/winmain.cpp:1615
+msgid "Show Frame Axes"
+msgstr "显示窗边"
+
+#: src/celestia/winmain.cpp:1616
+msgid "Show Sun Direction"
+msgstr "显示太阳位置"
+
+#: src/celestia/winmain.cpp:1617
+msgid "Show Velocity Vector"
+msgstr "显示速度向量"
+
+#: src/celestia/winmain.cpp:1618
+#, fuzzy
+msgid "Show Planetographic Grid"
+msgstr "显示行星轨道"
+
+#: src/celestia/winmain.cpp:1619
+#, fuzzy
+msgid "Show Terminator"
+msgstr "显示特征"
+
+#: src/celestia/winmain.cpp:1633
+msgid "&Satellites"
+msgstr "卫星(&S)"
+
+#: src/celestia/winmain.cpp:1643
+msgid "&Alternate Surfaces"
+msgstr "可选表面(&A)"
+
+#: src/celestia/winmain.cpp:1666
+msgid "Orbiting Bodies"
+msgstr "轨道物体"
+
+#: src/celestia/winmain.cpp:1693
+msgid "&Unmark"
+msgstr "关闭标志(&U)"
+
+#: src/celestia/winmain.cpp:1695
+msgid "&Mark"
+msgstr "启动标志(&M)"
+
+#: src/celestia/winmain.cpp:3137
+msgid "Loading: "
+msgstr "加载："
+
+#: src/celestia/winmain.cpp:3305 src/celutil/util.cpp:72
+#: src/celutil/util.cpp:76
+msgid "LANGUAGE"
+msgstr "zh"
+
+#: src/celestia/winmain.cpp:3307
+msgid "WinLangID"
+msgstr "804"
+
+#: src/celestia/winmain.cpp:3809
+msgid "Copied URL"
+msgstr "复制URL地址"
+
+#: src/celestia/winmain.cpp:3903
+msgid "Loading URL"
+msgstr "调用URL"
+
+#: src/celestia/winmain.cpp:3915
+msgid "Error opening script"
+msgstr "打开脚本时出错"
+
+#: src/celestia/winmain.cpp:3934
+msgid "Error loading script"
+msgstr "加载脚本时出错"
+
+#: src/celestia/winmain.cpp:3939
+msgid "Running script"
+msgstr "运行脚本"
+
+#: src/celestia/wineclipses.cpp:58
+msgid "Planet"
+msgstr "行星"
+
+#: src/celestia/wineclipses.cpp:60
+msgid "Satellite"
+msgstr "卫星"
+
+#: src/celestia/wineclipses.cpp:62
+msgid "Date"
+msgstr "日期"
+
+#: src/celestia/wineclipses.cpp:64
+msgid "Start"
+msgstr "开始时间"
+
+#: src/celestia/wineclipses.cpp:66
+msgid "Duration"
+msgstr "持续时间"
+
+#: src/celestia/wineclipses.cpp:316
+msgid "Earth"
+msgstr "地球"
+
+#: src/celestia/wineclipses.cpp:317
+msgid "Jupiter"
+msgstr "木星"
+
+#: src/celestia/wineclipses.cpp:318
+msgid "Saturn"
+msgstr "土星"
+
+#: src/celestia/wineclipses.cpp:319
+msgid "Uranus"
+msgstr "天王星"
+
+#: src/celestia/wineclipses.cpp:320
+msgid "Neptune"
+msgstr "海王星"
+
+#: src/celestia/wineclipses.cpp:321
+msgid "Pluto"
+msgstr "冥王星"
+
+#: src/celestia/winstarbrowser.cpp:70
+msgid "Name"
+msgstr "名称"
+
+#: src/celestia/winstarbrowser.cpp:72
+msgid "Distance (ly)"
+msgstr "距离 (光年)"
+
+#: src/celestia/winstarbrowser.cpp:75
+msgid "App. mag"
+msgstr "观测亮度"
+
+#: src/celestia/winstarbrowser.cpp:77
+msgid "Abs. mag"
+msgstr "绝对亮度"
+
+#: src/celestia/winstarbrowser.cpp:79
+msgid "Type"
+msgstr "类型"
+
+#: src/celestia/wintime.cpp:95
+msgid "Universal Time"
+msgstr "国际统一标准时间"
+
+#: src/celestia/wintime.cpp:96
+msgid "Local Time"
+msgstr "局部时间"
+
+#: src/celestia/wintime.cpp:97
+msgid "Time Zone Name"
+msgstr "时区名称"
+
+#: src/celestia/wintime.cpp:98
+msgid "UTC Offset"
+msgstr "UTF 偏差"
+
+#~ msgid "Celestial Browser"
+#~ msgstr "天体浏览系统"
+
+#~ msgid "Moon"
+#~ msgstr "月亮"
+
+#~ msgid "Asteroid"
+#~ msgstr "陨石"
+
+#~ msgid "Comet"
+#~ msgstr "彗星"
+
+#~ msgid "Invisible"
+#~ msgstr "不可见物体"
+
+#~ msgid "Barycenter"
+#~ msgstr "质心 "
+
+#~ msgid "Small Body"
+#~ msgstr "小天体"
+
+#~ msgid "Dwarf Planet"
+#~ msgstr "矮行星"
+
+#~ msgid "-"
+#~ msgstr "-"
+
+#~ msgid "Eclipse Finder"
+#~ msgstr "预算星月食"
+
+#~ msgid "&Add Bookmark"
+#~ msgstr "标记书签(&A)"
+
+#~ msgid "Add a bookmark for the current document"
+#~ msgstr "对当前文档添加标记书签"
+
+#~ msgid "Add &Relative Bookmark"
+#~ msgstr "添加相对标记书签(&R)"
+
+#~ msgid "Add a relative bookmark for the current document"
+#~ msgstr "对当前文档添加相对标记书签"
+
+#~ msgid "Add &Settings Bookmark"
+#~ msgstr "添加设置标记书签(&S)"
+
+#~ msgid "Add a settings bookmark for the current document"
+#~ msgstr "对当前文档添加设置标记书签"
+
+#~ msgid "Edit your bookmark collection in a separate window"
+#~ msgstr "在另外窗口里编辑标记书签文件"
+
+#~ msgid "&New Folder..."
+#~ msgstr "新文件夹(&N)..."
+
+#~ msgid "Create a new bookmark folder in this menu"
+#~ msgstr "在当前菜单中建立标记书签文件夹"
+
+#~ msgid "Can't add bookmark with empty URL"
+#~ msgstr "空网域址不能加到标记书签中"
+
+#~ msgid ""
+#~ "Something seems to be wrong with your installation of Celestia. The "
+#~ "splash screen directory couldn't be found. \n"
+#~ "Start-up will continue, but Celestia will probably be missing some data "
+#~ "files and may not work correctly, please check your installation."
+#~ msgstr ""
+#~ "您的Celestia系统安装可能存在问题。启动时找不到提示屏幕图像所在的文件夹\n"
+#~ "启动过程将继续，但Celestia系统可能无法加载某些数据文件并且不能保证正常运"
+#~ "行。请检查您的系统安装。"
+
+#~ msgid "Go to &URL..."
+#~ msgstr "转到URL网址(&U)..."
+
+#~ msgid "Go to &Long/Lat..."
+#~ msgstr "驶向经/纬度所示位置(&L)..."
+
+#~ msgid "&Back"
+#~ msgstr "后退(&B)"
+
+#~ msgid "&Forward"
+#~ msgstr "前进(&F)"
+
+#~ msgid "Home"
+#~ msgstr "主页"
+
+#~ msgid "Bookmarks"
+#~ msgstr "书签"
+
+#~ msgid "Full Screen"
+#~ msgstr "切换全屏幕显示"
+
+#~ msgid "Copy URL"
+#~ msgstr "复制URL地址"
+
+#~ msgid "Set Time..."
+#~ msgstr "设置时间..."
+
+#~ msgid "Set Time to Now"
+#~ msgstr "将时间设置为当前时间"
+
+#~ msgid "Accelerate Time"
+#~ msgstr "加快时间流逝"
+
+#~ msgid "Decelerate Time"
+#~ msgstr "减慢时间流逝"
+
+#~ msgid "Accelerate Time (x2)"
+#~ msgstr "加快时间流逝 (x2)"
+
+#~ msgid "Decelerate Time (/2)"
+#~ msgstr "减慢时间流逝 (/2)"
+
+#~ msgid "Pause Time"
+#~ msgstr "暂定时间流逝"
+
+#~ msgid "Reverse Time"
+#~ msgstr "反向时间流逝"
+
+#~ msgid "Split View Vertically"
+#~ msgstr "垂直分割视窗"
+
+#~ msgid "Split View Horizontally"
+#~ msgstr "水平分割视窗"
+
+#~ msgid "Cycle View"
+#~ msgstr "切换视窗"
+
+#~ msgid "Single View"
+#~ msgstr "单视窗"
+
+#~ msgid "Delete View"
+#~ msgstr "删除视窗"
+
+#~ msgid "Frames Visible"
+#~ msgstr "显示视窗边框"
+
+#~ msgid "Active Frame Visible"
+#~ msgstr "显示当前视窗边框"
+
+#~ msgid "Synchronize Time"
+#~ msgstr "时间同步"
+
+#~ msgid "Alt-Azimuth Mode"
+#~ msgstr "地平线视野"
+
+#~ msgid "Go To Surface"
+#~ msgstr "逼近物体表面"
+
+#~ msgid "Show Stars"
+#~ msgstr "显示恒星"
+
+#~ msgid "Show Planets"
+#~ msgstr "显示行星"
+
+#~ msgid "Show Galaxies"
+#~ msgstr "显示银河系"
+
+#, fuzzy
+#~ msgid "Show Globulars"
+#~ msgstr "显示云层"
+
+#~ msgid "Show Partial Trajectories"
+#~ msgstr "显示部分轨道"
+
+#~ msgid "Show Nebulae"
+#~ msgstr "显示星云"
+
+#~ msgid "Show Open Clusters"
+#~ msgstr "显示星族"
+
+#~ msgid "Show Constellations"
+#~ msgstr "显示星座"
+
+#~ msgid "Show CloudMaps"
+#~ msgstr "显示云层"
+
+#~ msgid "Show Cloud Shadows"
+#~ msgstr "显示云层投影"
+
+#~ msgid "Show Orbits"
+#~ msgstr "显示轨道"
+
+#~ msgid "Show Asteroid Orbits"
+#~ msgstr "显示陨石轨道"
+
+#~ msgid "Show Comet Orbits"
+#~ msgstr "显示彗星轨道"
+
+#~ msgid "Show Moon Orbits"
+#~ msgstr "显示月球轨道"
+
+#~ msgid "Show Star Orbits"
+#~ msgstr "显示星星轨道"
+
+#~ msgid "Show Planet Orbits"
+#~ msgstr "显示行星轨道"
+
+#~ msgid "Show Spacecraft Orbits"
+#~ msgstr "显示卫星或航天器轨道"
+
+#~ msgid "Show Celestial Grid"
+#~ msgstr "显示天体坐标线"
+
+#~ msgid "Show Night Side Lights"
+#~ msgstr "显示背光"
+
+#~ msgid "Show Markers"
+#~ msgstr "显示标志"
+
+#~ msgid "Show Atmospheres"
+#~ msgstr "显示大气层"
+
+#~ msgid "Show Smooth Orbit Lines"
+#~ msgstr "显示光滑轨道线"
+
+#~ msgid "Show Eclipse Shadows"
+#~ msgstr "显示日月食投影"
+
+#~ msgid "Cycle Star Mode"
+#~ msgstr "切换恒星显示形状"
+
+#~ msgid "Show Ring Shadows"
+#~ msgstr "显示星环投影"
+
+#~ msgid "Show Boundaries"
+#~ msgstr "显示星座边界线"
+
+#~ msgid "Auto Magnitudes"
+#~ msgstr "光度自动调节"
+
+#~ msgid "Show Comet Tails"
+#~ msgstr "显示彗星尾"
+
+#~ msgid "Show Star Labels"
+#~ msgstr "显示恒星标注"
+
+#~ msgid "Show Planet Labels"
+#~ msgstr "显示行星标注"
+
+#~ msgid "Show Moon Labels"
+#~ msgstr "显示月球标注"
+
+#~ msgid "Show Comet Labels"
+#~ msgstr "显示彗星标注"
+
+#~ msgid "Show Constellation Labels"
+#~ msgstr "显示星座标注"
+
+#~ msgid "Constellation Labels in Latin"
+#~ msgstr "拉丁文星座标注"
+
+#~ msgid "Show Galaxy Labels"
+#~ msgstr "显示银河系标注"
+
+#, fuzzy
+#~ msgid "Show Globular Labels"
+#~ msgstr "显示星云标注"
+
+#~ msgid "Show Nebula Labels"
+#~ msgstr "显示星云标注"
+
+#~ msgid "Show Open Cluster Labels"
+#~ msgstr "显示星族标注"
+
+#~ msgid "Show Asteroid Labels"
+#~ msgstr "显示陨石标注"
+
+#~ msgid "Show Spacecraft Labels"
+#~ msgstr "显示卫星或航天器标注"
+
+#~ msgid "Show Location Labels"
+#~ msgstr "显示地理位置标注"
+
+#~ msgid "Display Local Time"
+#~ msgstr "显示局部时间"
+
+#~ msgid "Show City Locations"
+#~ msgstr "显示城市位置"
+
+#~ msgid "Show Observatory Locations"
+#~ msgstr "显示观测站位置"
+
+#~ msgid "Show Landing Sites Locations"
+#~ msgstr "显示着陆地点位置"
+
+#~ msgid "Show Crater Locations"
+#~ msgstr "显示陨石坑位置"
+
+#~ msgid "Show Mons Locations"
+#~ msgstr "显示山脉位置"
+
+#~ msgid "Show Terra Locations"
+#~ msgstr "显示陆地位置"
+
+#~ msgid "Show Vallis Locations"
+#~ msgstr "显示峡谷位置"
+
+#~ msgid "Show Mare Locations"
+#~ msgstr "显示海洋位置"
+
+#~ msgid "Show Other Locations"
+#~ msgstr "显示其它位置"
+
+#~ msgid "Wireframe Mode"
+#~ msgstr "线框模型显示"
+
+#~ msgid "Center on Orbit"
+#~ msgstr "中心置于轨道"
+
+#~ msgid "Basic"
+#~ msgstr "基本"
+
+#~ msgid "Multitexture"
+#~ msgstr "多纹理"
+
+#~ msgid "NvCombiners"
+#~ msgstr "NvCombiners"
+
+#~ msgid "DOT3 ARBVP"
+#~ msgstr "DOT3 ARBVP"
+
+#~ msgid "NvCombiner NvVP"
+#~ msgstr "NvCombiner NvVP"
+
+#~ msgid "NvCombiner ARBVP"
+#~ msgstr "NvCombiner ARBVP"
+
+#~ msgid "ARBFP ARBVP"
+#~ msgstr "ARBFP ARBVP"
+
+#~ msgid "NV30"
+#~ msgstr "NV30"
+
+#~ msgid "OpenGL 2.0"
+#~ msgstr "OpenGL 2.0版本"
+
+#~ msgid "Cycle OpenGL Render Path"
+#~ msgstr "切换OpenGL渲染通道"
+
+#~ msgid "Sync framerate to video refresh rate"
+#~ msgstr "与视频刷新率同步"
+
+#~ msgid "Grab Image"
+#~ msgstr "捕捉屏幕图像"
+
+#~ msgid "Capture Video"
+#~ msgstr "捕捉屏幕影像"
+
+#~ msgid "OpenGL info"
+#~ msgstr "OpenGL系统信息"
+
+#~ msgid "Show Bookmark Toolbar"
+#~ msgstr "显示标记书签工具栏"
+
+#~ msgid "OpenGL Info"
+#~ msgstr "OpenGL系统信息"
+
+#~ msgid "UTC"
+#~ msgstr "国际统一标准时间"
+
+#~ msgid ""
+#~ "This version of Celestia was not built with support for movie recording."
+#~ msgstr "本版本Celestia系统不支持影像录制功能。"
+
+#~ msgid "Go to URL"
+#~ msgstr "转到URL网址(&U)..."
+
+#~ msgid "Enter URL"
+#~ msgstr "输入URL地址"
+
+#~ msgid "Object: "
+#~ msgstr "物体："
+
+#~ msgid "Longitude: "
+#~ msgstr "经度："
+
+#~ msgid "East"
+#~ msgstr "东"
+
+#~ msgid "West"
+#~ msgstr "西"
+
+#~ msgid "Latitude: "
+#~ msgstr "纬度："
+
+#~ msgid "North"
+#~ msgstr "北"
+
+#~ msgid "South"
+#~ msgstr "南"
+
+#~ msgid "Altitude: "
+#~ msgstr "高度："
+
+#~ msgid "Celestia encountered an error while processing your script"
+#~ msgstr "Celestia系统在处理脚本时出现错误"
+
+#~ msgid "Celestia"
+#~ msgstr "Celestia"
+
+#~ msgid "Use alternate configuration file"
+#~ msgstr "使用不同的系统构架文件"
+
+#~ msgid "Use alternate installation directory"
+#~ msgstr "使用不同的安装路径"
+
+#~ msgid "Use as additional \"extras\" directory"
+#~ msgstr "作为附加\"extras\"文件目录"
+
+#~ msgid "Start fullscreen"
+#~ msgstr "以全屏幕显示启动系统"
+
+#~ msgid "Disable splash screen"
+#~ msgstr "关掉启动提示屏幕显示"
+
+#~ msgid "Start and go to url"
+#~ msgstr "启动系统并转到UTL地址"
+
+#~ msgid "_: NAME OF TRANSLATORS\\nYour names"
+#~ msgstr "系统汉化开发者：ZhaoZhengxu"
+
+#~ msgid "_: EMAIL OF TRANSLATORS\\nYour emails"
+#~ msgstr "zhaozhengxu@yahoo.com"
+
+#~ msgid "Celestia Preferences"
+#~ msgstr "Celestia系统保留数值"
+
+#~ msgid "Rendering"
+#~ msgstr "渲染"
+
+#~ msgid "Show"
+#~ msgstr "显示"
+
+#~ msgid "Stars"
+#~ msgstr "恒星"
+
+#~ msgid "Galaxies"
+#~ msgstr "银河系"
+
+#~ msgid "Nebulae"
+#~ msgstr "星云"
+
+#~ msgid "Open Clusters"
+#~ msgstr "星族"
+
+#~ msgid "Atmospheres"
+#~ msgstr "大气层"
+
+#~ msgid "Clouds"
+#~ msgstr "云层"
+
+#~ msgid "Cloud Shadows"
+#~ msgstr "云层投影"
+
+#~ msgid "Night Side Lights"
+#~ msgstr "背光"
+
+#~ msgid "Eclipse Shadows"
+#~ msgstr "日月食投影"
+
+#~ msgid "Comet Tails"
+#~ msgstr "彗星尾"
+
+#~ msgid "Orbits"
+#~ msgstr "轨道"
+
+#~ msgid "Partial Trajectories"
+#~ msgstr "部分轨迹"
+
+#~ msgid "Smooth Orbit Lines"
+#~ msgstr "光滑轨道线"
+
+#~ msgid "Celestial Grid"
+#~ msgstr "天体坐标线"
+
+#~ msgid "Constellations"
+#~ msgstr "星座"
+
+#~ msgid "Markers"
+#~ msgstr "标志"
+
+#~ msgid "Ring Shadows"
+#~ msgstr "星环投影"
+
+#~ msgid "Constellation Boundaries"
+#~ msgstr "星座边界线"
+
+#~ msgid "Orbits / Labels"
+#~ msgstr "轨道 / 标注"
+
+#~ msgid "Labels"
+#~ msgstr "标注"
+
+#~ msgid "Constellations in Latin"
+#~ msgstr "拉丁文星座标注"
+
+#~ msgid "Spacecrafts"
+#~ msgstr "卫星或航天器"
+
+#~ msgid "Locations"
+#~ msgstr "位置"
+
+#~ msgid "Ambient Light"
+#~ msgstr "光线强度"
+
+#~ msgid "Limiting Magnitude"
+#~ msgstr "光度可视化极限"
+
+#~ msgid "Info Text"
+#~ msgstr "文字显示"
+
+#~ msgid "Level: "
+#~ msgstr "等级："
+
+#~ msgid "None"
+#~ msgstr "无文字"
+
+#~ msgid "Terse"
+#~ msgstr "简练式"
+
+#~ msgid "Verbose"
+#~ msgstr "详尽式"
+
+#~ msgid "Textures"
+#~ msgstr "纹理式"
+
+#~ msgid "Resolution: "
+#~ msgstr "分辨率: "
+
+#~ msgid "Low"
+#~ msgstr "弱"
+
+#~ msgid "Medium"
+#~ msgstr "中"
+
+#~ msgid "High"
+#~ msgstr "强"
+
+#~ msgid "Automatic FOV"
+#~ msgstr "自动调节视锥"
+
+#~ msgid "Screen DPI: "
+#~ msgstr "屏幕 DPI："
+
+#~ msgid "Viewing Distance (cm): "
+#~ msgstr "观测距离(cm)："
+
+#~ msgid "Cities"
+#~ msgstr "城市"
+
+#~ msgid "Observatories"
+#~ msgstr "观测站"
+
+#~ msgid "Landing Sites"
+#~ msgstr "着陆地点位置"
+
+#~ msgid "Craters"
+#~ msgstr "陨石坑"
+
+#~ msgid "Mons"
+#~ msgstr "山脉"
+
+#~ msgid "Terra"
+#~ msgstr "陆地"
+
+#~ msgid "Vallis"
+#~ msgstr "峡谷"
+
+#~ msgid "Mare"
+#~ msgstr "海洋"
+
+#~ msgid "Other"
+#~ msgstr "其它"
+
+#~ msgid "Minimum Feature Size"
+#~ msgstr "地面特征最小显示尺寸"
+
+#~ msgid "Date/Time"
+#~ msgstr "日期/时间"
+
+#~ msgid "Display"
+#~ msgstr "显示"
+
+#~ msgid "Timezone: "
+#~ msgstr "时区："
+
+#~ msgid "Format: "
+#~ msgstr "格式:"
+
+#~ msgid "Local Format"
+#~ msgstr "本地格式"
+
+#~ msgid "Set"
+#~ msgstr "设置"
+
+#~ msgid "Local Time is only supported for dates between 1902 and 2037.\n"
+#~ msgstr "局部时间只能设置在1902和2037年之间\n"
+
+#~ msgid "Julian Date: "
+#~ msgstr "朱力安历日期: "
+
+#~ msgid "Now"
+#~ msgstr "当前"
+
+#~ msgid ""
+#~ "\n"
+#~ "Selection: "
+#~ msgstr ""
+#~ "\n"
+#~ "选择："
+
+#~ msgid "Include Light Travel Time"
+#~ msgstr "考虑光传播时间"
+
+#~ msgid "Ignore Light Travel Time "
+#~ msgstr "忽略光传播时间"
+
+#~ msgid "OpenGL"
+#~ msgstr "OpenGL"
+
+#~ msgid "Key Bindings"
+#~ msgstr "键盘设定"
+
+#~ msgid "<b>Unextended OpenGL 1.1</b>"
+#~ msgstr "<b>未扩展OpenGL 1.1</b>"
+
+#~ msgid "<b>Multiple textures and the ARB_texenv_combine extension</b>"
+#~ msgstr "<b>Multiple textures和ARB_texenv_combine扩展</b>"
+
+#~ msgid "<b>NVIDIA combiners, no vertex programs</b>"
+#~ msgstr "<b>NVIDIA combiners, 无vertex programs程序</b>"
+
+#~ msgid "<b>ARB_texenv_DOT3 extension, ARB_vertex_program extension</b>"
+#~ msgstr "<b>ARB_texenv_DOT3扩展, ARB_vertex_program扩展</b>"
+
+#~ msgid ""
+#~ "<b>NVIDIA Combiners, NV_vertex_program extension</b><br> provide bump "
+#~ "mapping, ring shadows, and specular highlights on any Geforce or ATI "
+#~ "Radeon graphics card, though NvCombiner ARBVP is a slightly better option "
+#~ "for Geforce users"
+#~ msgstr ""
+#~ "<b>NVIDIA Combiners, NV_vertex_program扩展</b><br>尽管NvCombiner ARBVP对使"
+#~ "用Geforce显卡的用户是稍微优先的选择，本扩展在任何Geforce or ATI Radeon显卡"
+#~ "上提供bump mapping, ring shadows和specular highlights"
+
+#~ msgid "<b>NVIDIA Combiners, ARB_vertex_program extension</b>"
+#~ msgstr "<b>NVIDIA Combiners, ARB_vertex_program扩展</b>"
+
+#~ msgid ""
+#~ "<b>ARB_fragment_program and ARB_vertex_program extensions</b><br>provide "
+#~ "advanced effects on Geforce FX and Radeon 9700 cards"
+#~ msgstr ""
+#~ "<b>ARB_fragment_program and ARB_vertex_program扩展</b><br>为GeforceFX和"
+#~ "Radeon9700系列显卡提供更高级绘图效果"
+
+#~ msgid "<b>NV_fragment_program and ARB_vertex_program extensions</b>"
+#~ msgstr "<b>NV_fragment_program和ARB_vertex_program扩展</b>"
+
+#~ msgid "<b>OpenGL 2.0 Shading Language</b>"
+#~ msgstr "<b>OpenGL 2.0 Shading Language编程语言</b>"
+
+#~ msgid ""
+#~ "File %1 does not exist, using default configuration file %2/celestia.cfg"
+#~ msgstr "文件 %1 不存在，使用预置系统构架文件 %2/celestia.cfg"
+
+#~ msgid "Directory %1 does not exist, using default %2"
+#~ msgstr "文件路径 %1 不存在，使用预置路径 %2"
+
+#~ msgid "Extras directory %1 does not exist"
+#~ msgstr "附加路径 %1 不存在"
+
+#~ msgid "Abs (app) mag: "
+#~ msgstr "绝对光度(观测光度)："
+
+#~ msgid "Surface Temp: "
+#~ msgstr "表面温度："
+
+#~ msgid "Marked objects"
+#~ msgstr "标记物体"
+
+#~ msgid "&Select"
+#~ msgstr "选择物体(&S)"
+
+#~ msgid "&Center"
+#~ msgstr "置选择物体于屏幕中心(&C)"
+
+#~ msgid "S&ynch Orbit"
+#~ msgstr "同步于选择物体(&Y)"
+
+#~ msgid "Unmark &All"
+#~ msgstr "关闭所有标志(&A)"
+
+#~ msgid "Diamond"
+#~ msgstr "菱形"
+
+#~ msgid "Triangle"
+#~ msgstr "三角形"
+
+#~ msgid "Square"
+#~ msgstr "方形"
+
+#, fuzzy
+#~ msgid "Filled Square"
+#~ msgstr "恒星筛选"
+
+#~ msgid "Plus"
+#~ msgstr "加号"
+
+#~ msgid "X"
+#~ msgstr "X形"
+
+#~ msgid "Left Arrow"
+#~ msgstr "左箭头"
+
+#~ msgid "Right Arrow"
+#~ msgstr "右箭头"
+
+#~ msgid "Up Arrow"
+#~ msgstr "上箭头"
+
+#~ msgid "Down Arrow"
+#~ msgstr "下箭头"
+
+#~ msgid "Circle"
+#~ msgstr "圆环"
+
+#~ msgid "Disk"
+#~ msgstr "磁盘"
+
+#~ msgid "Normal"
+#~ msgstr "正常"
+
+#~ msgid "Small Bodies"
+#~ msgstr "小天体"
+
+#~ msgid "Dwarf Planets"
+#~ msgstr "矮行星"
+
+#~ msgid "Duration: %1"
+#~ msgstr "持续时间：%1"
+
+#~ msgid "Size: %1 MB"
+#~ msgstr "容量：%1 MB"
+
+#~ msgid "Current size: %1 x %2"
+#~ msgstr "当前尺寸：%1 x %2"
+
+#~ msgid "Current width: %1 x %2"
+#~ msgstr "当前宽度：%1 x %2"
+
+#~ msgid "Current height: %1 x %2"
+#~ msgstr "当前高度：%1 x %2"
+
+#~ msgid "You must specify a file name."
+#~ msgstr "您必须提供文件名。"
+
+#~ msgid "Error initializing movie capture."
+#~ msgstr "影像捕捉初始化出错。"
+
+#~ msgid "&Navigation"
+#~ msgstr "浏览(&N)"
+
+#~ msgid "Options"
+#~ msgstr "选项"
+
+#~ msgid "Objects"
+#~ msgstr "物体"
+
+#~ msgid "OpenGL Render Path"
+#~ msgstr "OpenGL渲染通道"
+
+#~ msgid "Time"
+#~ msgstr "时间"
+
+#~ msgid "MultiView"
+#~ msgstr "多视窗"
+
+#~ msgid "Main Toolbar"
+#~ msgstr "主工具栏"
+
+#~ msgid "Dist."
+#~ msgstr "距离"
+
+#~ msgid "App. Mag."
+#~ msgstr "观测光度"
+
+#~ msgid "Abs. Mag."
+#~ msgstr "绝对光度"
+
+#~ msgid "With Planets"
+#~ msgstr "按拥有行星数目"
+
+#~ msgid "Brightest (Abs.)"
+#~ msgstr "按最大亮度(绝对光度)"
+
+#~ msgid "Brightest (App.)"
+#~ msgstr "按最大亮度(观测光度)"
+
+#~ msgid "Nearest"
+#~ msgstr "按最近距离"
+
+#~ msgid "&Close"
+#~ msgstr "关闭(&C)"
+
+#~ msgid "Alt+C"
+#~ msgstr "Alt+C"
+
+#~ msgid "Refresh"
+#~ msgstr "刷新"
+
+#~ msgid "End"
+#~ msgstr "结束"
+
+#~ msgid "Search parameters"
+#~ msgstr "查找参数"
+
+#~ msgid "Solar Eclipses"
+#~ msgstr "日食"
+
+#~ msgid "On:"
+#~ msgstr "发生于："
+
+#~ msgid "Moon Eclipses"
+#~ msgstr "月食"
+
+#~ msgid "Search"
+#~ msgstr "查找"
+
+#~ msgid "To:"
+#~ msgstr "到："
+
+#~ msgid "From:"
+#~ msgstr "从："
+
+#~ msgid "Close"
+#~ msgstr "关闭"
+
+#~ msgid "Video Capture"
+#~ msgstr "捕捉影像"
+
+#~ msgid "Save As:"
+#~ msgstr "另存为："
+
+#~ msgid "*.ogg"
+#~ msgstr "*.ogg"
+
+#~ msgid "Aspect Ratio:"
+#~ msgstr "方面比："
+
+#~ msgid "Current"
+#~ msgstr "当前"
+
+#~ msgid "11:9"
+#~ msgstr "11:9"
+
+#~ msgid "4:3"
+#~ msgstr "4:3"
+
+#~ msgid "16:9"
+#~ msgstr "16:9"
+
+#~ msgid "Image Size:"
+#~ msgstr "图像尺寸："
+
+#~ msgid "Frame Rate:"
+#~ msgstr "FPS:"
+
+#~ msgid "Video Quality:"
+#~ msgstr "录像质量："
+
+#~ msgid "Play Video when capture is done"
+#~ msgstr "录制完毕后播放录像"
+
+#~ msgid "Usage"
+#~ msgstr "用途"
+
+#~ msgid ""
+#~ "<p>Press <b>F11</b> to start/pause recording<br>\n"
+#~ "Press <b>F12</b> to stop</p>\n"
+#~ "\n"
+#~ "<p>Note that resizing the main window will not be possible until the end "
+#~ "of the capture</p>"
+#~ msgstr ""
+#~ "<p>按<b>F11</b>键开始/暂停录像<br>\n"
+#~ "按<b>F12</b>键停止录像</p>\n"
+#~ "\n"
+#~ "<p>注意：录像没有结束以前您无法改变视窗大小</p>"
+
+#~ msgid "&OK"
+#~ msgstr "确定(&O)"
+
+#~ msgid "&Cancel"
+#~ msgstr "取消(&C)"
+
+#~ msgid "Mercury"
+#~ msgstr "水星"
+
+#~ msgid "Venus"
+#~ msgstr "金星"
+
+#~ msgid "Mars"
+#~ msgstr "火星"
+
+#, fuzzy
+#~ msgid "Phobos"
+#~ msgstr "土卫九"
+
+#, fuzzy
+#~ msgid "Deimos"
+#~ msgstr "菱形"
+
+#, fuzzy
+#~ msgid "Amalthea"
+#~ msgstr "Amalthea"
+
+#~ msgid "Io"
+#~ msgstr "Io"
+
+#~ msgid "Europa"
+#~ msgstr "欧罗巴"
+
+#~ msgid "Ganymede"
+#~ msgstr "木卫三"
+
+#~ msgid "Callisto"
+#~ msgstr "卡利"
+
+#~ msgid "Prometheus"
+#~ msgstr "土卫十六"
+
+#~ msgid "Pandora"
+#~ msgstr "潘多拉"
+
+#~ msgid "Epimetheus"
+#~ msgstr "土卫十一"
+
+#~ msgid "Janus"
+#~ msgstr "杰纳斯"
+
+#~ msgid "Mimas"
+#~ msgstr "土卫一"
+
+#, fuzzy
+#~ msgid "Enceladus"
+#~ msgstr "土卫二"
+
+#~ msgid "Tethys"
+#~ msgstr "土卫三"
+
+#~ msgid "Dione"
+#~ msgstr "Dione"
+
+#~ msgid "Rhea"
+#~ msgstr "土卫五"
+
+#~ msgid "Titan"
+#~ msgstr "土卫六"
+
+#~ msgid "Hyperion"
+#~ msgstr "Hyperion"
+
+#~ msgid "Iapetus"
+#~ msgstr "土卫八"
+
+#~ msgid "Phoebe"
+#~ msgstr "土卫九"
+
+#, fuzzy
+#~ msgid "Miranda"
+#~ msgstr "Miranda"
+
+#~ msgid "Ariel"
+#~ msgstr "Ariel"
+
+#~ msgid "Umbriel"
+#~ msgstr "天卫二"
+
+#~ msgid "Titania"
+#~ msgstr "天卫三"
+
+#~ msgid "Oberon"
+#~ msgstr "天卫四"
+
+#~ msgid "Larissa"
+#~ msgstr "拉里萨"
+
+#~ msgid "Proteus"
+#~ msgstr "普罗透斯"
+
+#~ msgid "Triton"
+#~ msgstr "海卫一"
+
+#~ msgid "Nereid"
+#~ msgstr "海卫二"
+
+#~ msgid "Pluto-Charon"
+#~ msgstr "冥王星-冥卫一"
+
+#~ msgid "Charon"
+#~ msgstr "冥卫一"
+
+#~ msgid "NORTH AMERICA"
+#~ msgstr "北非"
+
+#~ msgid "SOUTH AMERICA"
+#~ msgstr "南美"
+
+#~ msgid "EURASIA"
+#~ msgstr "欧亚大陆"
+
+#~ msgid "AFRICA"
+#~ msgstr "非洲"
+
+#~ msgid "AUSTRALIA"
+#~ msgstr "大洋洲"
+
+#~ msgid "ANTARCTICA"
+#~ msgstr "南极"
+
+#~ msgid "NORTH ATLANTIC OCEAN"
+#~ msgstr "北大西洋"
+
+#~ msgid "SOUTH ATLANTIC OCEAN"
+#~ msgstr "南大西洋"
+
+#~ msgid "NORTH PACIFIC OCEAN"
+#~ msgstr "北太平洋"
+
+#~ msgid "SOUTH PACIFIC OCEAN"
+#~ msgstr "南太平洋"
+
+#~ msgid "INDIAN OCEAN"
+#~ msgstr "印度洋"
+
+#~ msgid "ARCTIC OCEAN"
+#~ msgstr "北冰洋"
+
+#~ msgid "Milky Way"
+#~ msgstr "银河"
+
+#, fuzzy
+#~ msgid "Solar System Barycenter"
+#~ msgstr "星系质心\n"
+
+#~ msgid "&File"
+#~ msgstr "文件(&F)"
+
+#~ msgid "&Open Script..."
+#~ msgstr "打开脚本程序文件(&O)..."
+
+#~ msgid "Scripts"
+#~ msgstr "脚本"
+
+#~ msgid "Placeholder"
+#~ msgstr "分隔符"
+
+#~ msgid "Capture &Image...\tF10"
+#~ msgstr "捕捉图像(&I)...\tF10"
+
+#~ msgid "Capture &Movie...\tShift+F10"
+#~ msgstr "捕捉影像(&M)...\tShift+F10"
+
+#~ msgid "E&xit"
+#~ msgstr "退出(&X)"
+
+#~ msgid "Select &Sol\tH"
+#~ msgstr "选择太阳系(&S)\tH"
+
+#~ msgid "Tour G&uide..."
+#~ msgstr "导向(&G)..."
+
+#~ msgid "Select &Object..."
+#~ msgstr "选择&物体(&O)..."
+
+#~ msgid "Goto Object..."
+#~ msgstr "驶向物体..."
+
+#~ msgid "&Center Selection\tC"
+#~ msgstr "置选择物体于屏幕中心(&C)\tC"
+
+#~ msgid "&Go to Selection\tG"
+#~ msgstr "驶向选择物体(&G)\tG"
+
+#~ msgid "&Follow Selection\tF"
+#~ msgstr "尾随选择物体(&F)\tF"
+
+#~ msgid "S&ync Orbit Selection\tY"
+#~ msgstr "同步于选择物体(&Y)\tY"
+
+#~ msgid "&Track Selection\tT"
+#~ msgstr "监视跟踪选择物体(&T)\tT"
+
+#~ msgid "Solar System &Browser..."
+#~ msgstr "浏览太阳系(&B)..."
+
+#~ msgid "Star B&rowser..."
+#~ msgstr "检索星球系(&R)..."
+
+#~ msgid "&Eclipse Finder"
+#~ msgstr "预算星月食(&E)"
+
+#~ msgid "&Time"
+#~ msgstr "时间(&T)"
+
+#~ msgid "10x &Faster\tL"
+#~ msgstr "加快10倍(&F)\tL"
+
+#~ msgid "10x &Slower\tK"
+#~ msgstr "减慢10倍(&S)\tK"
+
+#~ msgid "Free&ze\tSpace"
+#~ msgstr "停滞(&Z)\tSpace"
+
+#~ msgid "&Real Time\t\\"
+#~ msgstr "实时(&R)\t\\"
+
+#~ msgid "Re&verse Time\tJ"
+#~ msgstr "倒时(&V)\tJ"
+
+#~ msgid "Set &Time..."
+#~ msgstr "设定时间(&T)..."
+
+#~ msgid "Show Local Time"
+#~ msgstr "显示计算机时钟时间"
+
+#~ msgid "&Render"
+#~ msgstr "渲染(&R)"
+
+#~ msgid "Select Display Mode..."
+#~ msgstr "选择显示模式..."
+
+#~ msgid "Toggle Full Screen\tAlt+Enter"
+#~ msgstr "切换全屏幕显示\tAlt+Enter"
+
+#~ msgid "View Options..."
+#~ msgstr "可视化设置..."
+
+#~ msgid "Locations..."
+#~ msgstr "地面特征设置..."
+
+#~ msgid "More Stars Visible\t]"
+#~ msgstr "增加可见星球数目\t]"
+
+#~ msgid "Fewer Stars Visible\t["
+#~ msgstr "减少可见星球数目\t["
+
+#~ msgid "Auto Magnitude\tCtrl+Y"
+#~ msgstr "光度自动调节\tCtrl+Y"
+
+#~ msgid "Star St&yle"
+#~ msgstr "星点显示形状(&Y)"
+
+#~ msgid "&Fuzzy Points"
+#~ msgstr "模糊点(&F)"
+
+#~ msgid "&Points"
+#~ msgstr "正常点(&P)"
+
+#~ msgid "Scaled &Discs"
+#~ msgstr "缩放圆点(&D)"
+
+#~ msgid "&Ambient Light"
+#~ msgstr "光线强度(&A)"
+
+#~ msgid "&None"
+#~ msgstr "无光(&N)"
+
+#~ msgid "&Low"
+#~ msgstr "弱光(&L)"
+
+#~ msgid "&Medium"
+#~ msgstr "正常光(&M)"
+
+#, fuzzy
+#~ msgid "&Texture Resolution"
+#~ msgstr "分辨率"
+
+#, fuzzy
+#~ msgid "&High"
+#~ msgstr "强"
+
+#~ msgid "Antialiasing\tCtrl+X"
+#~ msgstr "圆整场景绘图\tCtrl+X"
+
+#~ msgid "&View"
+#~ msgstr "视窗(&V)"
+
+#~ msgid "Split &Horizontally\tCtrl+R"
+#~ msgstr "水平分割视窗(&H)\tCtrl+R"
+
+#~ msgid "Split &Vertically\tCtrl+U"
+#~ msgstr "纵向分割视窗(&V)\tCtrl+U"
+
+#~ msgid "&Delete Active View\tDEL"
+#~ msgstr "删除当前视窗(&D)\tDEL"
+
+#~ msgid "&Single View\tCtrl+D"
+#~ msgstr "单视窗(&S)\tCtrl+D"
+
+#~ msgid "Show &Frames"
+#~ msgstr "显示窗边(&F)"
+
+#~ msgid "Synchronize &Time"
+#~ msgstr "时间同步(&T)"
+
+#~ msgid "&Bookmarks"
+#~ msgstr "书签(&B)"
+
+#~ msgid "&Add Bookmarks..."
+#~ msgstr "标记书签(&A)..."
+
+#~ msgid "&Organize Bookmarks..."
+#~ msgstr "管理书签(&O)..."
+
+#~ msgid "&Help"
+#~ msgstr "帮助(&H)"
+
+#~ msgid "Run &Demo"
+#~ msgstr "系统演示(&D)"
+
+#~ msgid "&Controls"
+#~ msgstr "键盘操作帮助(&C)"
+
+#~ msgid "&OpenGL Info"
+#~ msgstr "OpenGL系统配置信息(&O)"
+
+#~ msgid "&License"
+#~ msgstr "使用版权说明(&L)"
+
+#~ msgid "&About Celestia"
+#~ msgstr "关于Celestia软件系统(&A)"
+
+#~ msgid "About Celestia"
+#~ msgstr "关于Celestia系统"
+
+#~ msgid "OK"
+#~ msgstr "确定"
+
+#~ msgid "Copyright (C) 2001-2008, Celestia Development Team"
+#~ msgstr "版权所有（C）2001-2008, Celestia 开发团队"
+
+#~ msgid "http://www.shatters.net/celestia"
+#~ msgstr "http://www.shatters.net/celestia"
+
+#~ msgid "Celestia is free software and comes with absolutely no warranty."
+#~ msgstr "Celestia 是免费软件，不提供任何担保。"
+
+#~ msgid "Authors"
+#~ msgstr "软件作者"
+
+#~ msgid "Chris Laurel"
+#~ msgstr "Chris Laurel"
+
+#~ msgid "Clint Weisbrod"
+#~ msgstr "Clint Weisbrod"
+
+#~ msgid "Fridger Schrempp"
+#~ msgstr "Fridger Schrempp"
+
+#~ msgid "Christophe Teyssier"
+#~ msgstr "Christophe Teyssier"
+
+#~ msgid "Grant Hutchison"
+#~ msgstr "Grant Hutchison"
+
+#~ msgid "Pat Suwalski"
+#~ msgstr "Pat Suwalski"
+
+#~ msgid "Toti"
+#~ msgstr "Toti"
+
+#~ msgid "Da Woon Jung"
+#~ msgstr "Da Woon Jung"
+
+#~ msgid "Hank Ramsey"
+#~ msgstr "Hank Ramsey"
+
+#~ msgid "Bob Ippolito"
+#~ msgstr "Bob Ippolito"
+
+#~ msgid "Vincent Giangiulio"
+#~ msgstr "文森特.吉昂里奥"
+
+#~ msgid "Select Object"
+#~ msgstr "选择物体"
+
+#~ msgid "Object Name"
+#~ msgstr "选择物体"
+
+#~ msgid "License"
+#~ msgstr "使用版权说明"
+
+#~ msgid "Celestia Controls"
+#~ msgstr "Celestia常用控制方法"
+
+#~ msgid "OpenGL Driver Info"
+#~ msgstr "OpenGL系统信息"
+
+#~ msgid "Set Simulation Time"
+#~ msgstr "设置时间"
+
+#~ msgid "Time Zone: "
+#~ msgstr "时区："
+
+#~ msgid "Set To Current Time"
+#~ msgstr "使用当前时间"
+
+#~ msgid "Add Bookmark"
+#~ msgstr "添加标记书签"
+
+#~ msgid "Create in >>"
+#~ msgstr "写入 >>"
+
+#~ msgid "New Folder..."
+#~ msgstr "新建文件夹..."
+
+#~ msgid "Solar System Browser"
+#~ msgstr "太阳系浏览"
+
+#~ msgid "Solar System"
+#~ msgstr "太阳系"
+
+#~ msgid "&Go To"
+#~ msgstr "驶向(&G)"
+
+#~ msgid "Solar System Objects"
+#~ msgstr "太阳系物体"
+
+#~ msgid "Star Browser"
+#~ msgstr "星系浏览"
+
+#~ msgid "Brightest"
+#~ msgstr "按最大亮度"
+
+#~ msgid "With planets"
+#~ msgstr "按拥有行星数目"
+
+#~ msgid "&Refresh"
+#~ msgstr "刷新(&R)"
+
+#~ msgid "Star Search Criteria"
+#~ msgstr "星系查找准则"
+
+#~ msgid "Maximum Stars Displayed in List"
+#~ msgstr "栏目中最多所显示的星系数目"
+
+#~ msgid "Tour Guide"
+#~ msgstr "导向"
+
+#~ msgid "Go To"
+#~ msgstr "驶向"
+
+#~ msgid "Select your destination:"
+#~ msgstr "选择遨游目的地："
+
+#~ msgid "Go to Object"
+#~ msgstr "驶向目标物体"
+
+#~ msgid "radii"
+#~ msgstr "半径"
+
+#~ msgid "Object"
+#~ msgstr "物体"
+
+#~ msgid "Long."
+#~ msgstr "经度"
+
+#~ msgid "Lat."
+#~ msgstr "纬度"
+
+#~ msgid "Distance"
+#~ msgstr "距离"
+
+#~ msgid "Size:"
+#~ msgstr "影像尺寸："
+
+#~ msgid "Frame rate:"
+#~ msgstr "FPS显真："
+
+#~ msgid "Select Display Mode"
+#~ msgstr "屏幕显示设置"
+
+#~ msgid "Resolution"
+#~ msgstr "分辨率"
+
+#~ msgid "View Options"
+#~ msgstr "可视化设置"
+
+#, fuzzy
+#~ msgid "Celestial"
+#~ msgstr "Celestia"
+
+#, fuzzy
+#~ msgid "Horizontal"
+#~ msgstr "水平分割视窗"
+
+#, fuzzy
+#~ msgid "Galactic"
+#~ msgstr "银河系"
+
+#, fuzzy
+#~ msgid "Minor Moons"
+#~ msgstr "月亮"
+
+#, fuzzy
+#~ msgid "DSO Labels"
+#~ msgstr "标注"
+
+#, fuzzy
+#~ msgid "Boundaries"
+#~ msgstr "显示星座边界线"
+
+#, fuzzy
+#~ msgid "Latin Names"
+#~ msgstr "位置"
+
+#~ msgid "Information Text"
+#~ msgstr "文字显示方式"
+
+#~ msgid "Filter Stars"
+#~ msgstr "恒星筛选"
+
+#~ msgid "Montes (Mountains)"
+#~ msgstr "Montes (山脉)"
+
+#~ msgid "Maria (Seas)"
+#~ msgstr "Maria (海洋)"
+
+#~ msgid "Valles (Valleys)"
+#~ msgstr "Valles (峡谷)"
+
+#~ msgid "Terrae (Land masses)"
+#~ msgstr "Terrae (陆地)"
+
+#, fuzzy
+#~ msgid "Volcanoes"
+#~ msgstr "行星"
+
+#~ msgid "Other features"
+#~ msgstr "其它特征"
+
+#~ msgid "Label Features"
+#~ msgstr "特征标签"
+
+#~ msgid "Show Features"
+#~ msgstr "显示特征"
+
+#~ msgid "Minimum Labeled Feature Size"
+#~ msgstr "地面特征最小显示尺寸"
+
+#~ msgid "Add New Bookmark Folder"
+#~ msgstr "新建游览记录文件夹"
+
+#~ msgid "Folder Name"
+#~ msgstr "文件夹名称"
+
+#~ msgid "Organize Bookmarks"
+#~ msgstr "管理书签"
+
+#~ msgid "Rename..."
+#~ msgstr "重命名..."
+
+#~ msgid "Delete"
+#~ msgstr "删除"
+
+#~ msgid "Rename Bookmark or Folder"
+#~ msgstr "重新命名记录或文件夹"
+
+#~ msgid "New Name"
+#~ msgstr "新命名"
+
+#~ msgid "Compute"
+#~ msgstr "计算"
+
+#~ msgid "Set Date and Go to Planet"
+#~ msgstr "设定日期并驶向行星"
+
+#~ msgid "Lunar Eclipses"
+#~ msgstr "月食"
+
+#~ msgid "Jan"
+#~ msgstr "1 月"
+
+#~ msgid "Feb"
+#~ msgstr "2 月"
+
+#~ msgid "Mar"
+#~ msgstr "3 月"
+
+#~ msgid "Apr"
+#~ msgstr "4 月"
+
+#~ msgid "May"
+#~ msgstr "5 月"
+
+#~ msgid "Jun"
+#~ msgstr "6 月"
+
+#~ msgid "Jul"
+#~ msgstr "7 月"
+
+#~ msgid "Aug"
+#~ msgstr "8 月"
+
+#~ msgid "Sep"
+#~ msgstr "9 月"
+
+#~ msgid "Oct"
+#~ msgstr "10 月"
+
+#~ msgid "Nov"
+#~ msgstr "11 月"
+
+#~ msgid "Dec"
+#~ msgstr "12 月"
+
+#~ msgid "limit of knowledge"
+#~ msgstr "有限信息"
+
+#, fuzzy
+#~ msgid "Phobos:Mars I"
+#~ msgstr "火卫一"
+
+#, fuzzy
+#~ msgid "Deimos:Mars II"
+#~ msgstr "火卫二"
+
+#, fuzzy
+#~ msgid "Io:Jupiter I"
+#~ msgstr "木星"
+
+#, fuzzy
+#~ msgid "Mimas:Saturn I"
+#~ msgstr "土星"
+
+#, fuzzy
+#~ msgid "Rhea:Saturn V"
+#~ msgstr "土星"
+
+#, fuzzy
+#~ msgid "Ariel:Uranus I"
+#~ msgstr "天王星"
+
+#, fuzzy
+#~ msgid "Triton:Neptune I"
+#~ msgstr "海王星"
+
+#~ msgid "Day length: "
+#~ msgstr "昼夜时数："
+
+#~ msgid " must be in same star system\n"
+#~ msgstr "必须在同一个恒星系中\n"
+
+#~ msgid "Bad spectral type in star database, star #\n"
+#~ msgstr "恒星数据库中的恒星光谱特征不正确，恒星编号#\n"
+
+#~ msgid " star(s) with duplicate catalog numbers deleted.)\n"
+#~ msgstr " 具有重复分类编号的恒星被删除掉。）\n"
+
+#~ msgid "Low res textures"
+#~ msgstr "低分辨率纹理"
+
+#~ msgid "Medium res textures"
+#~ msgstr "中分辨率纹理"
+
+#~ msgid "High res textures"
+#~ msgstr "高分辨率纹理"
+
+#~ msgid "Error reading deep sky file\n"
+#~ msgstr "读出深层空间物体定义文件时出错\n"
+
+#~ msgid "Version"
+#~ msgstr "版本"
+
+#~ msgid "Constellation Borders"
+#~ msgstr "星座边界线"
+
+#~ msgid "Orbit / Label"
+#~ msgstr "轨道 / 标注"

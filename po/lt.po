@@ -1,0 +1,2597 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: celestia lt\n"
+"Report-Msgid-Bugs-To: chris@teyssier.org\n"
+"POT-Creation-Date: 2009-06-21 16:00+0000\n"
+"PO-Revision-Date: 2008-12-05 20:02+0100\n"
+"Last-Translator: Marius Mikalainis <neoromancer@gmail.com>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Poedit-Language: Lithuanian\n"
+"X-Poedit-Country: LITHUANIA\n"
+
+#: src/celengine/astro.cpp:827
+msgid "DST"
+msgstr "DST"
+
+#: src/celengine/astro.cpp:827
+msgid "STD"
+msgstr "STD"
+
+#: src/celengine/dsodb.cpp:387
+msgid "Loaded "
+msgstr "Pakrautas"
+
+#: src/celengine/dsodb.cpp:387
+msgid " deep space objects"
+msgstr "Gilaus dangaus objektai"
+
+#: src/celengine/fragmentprog.cpp:93
+msgid "Loading NV fragment program: "
+msgstr "Įkeliami NV programos fragmentai:"
+
+#: src/celengine/fragmentprog.cpp:98
+msgid "Error loading NV fragment program: "
+msgstr "Klaida pakraunant NV programos fragmentus:"
+
+#: src/celengine/fragmentprog.cpp:115
+msgid "Error in fragment program "
+msgstr "Klaida programos fragmentuose"
+
+#: src/celengine/fragmentprog.cpp:126
+msgid "Initializing NV fragment programs . . .\n"
+msgstr "NV fragmento programų inicijavimas . . .\n"
+
+#: src/celengine/fragmentprog.cpp:142
+msgid "All NV fragment programs loaded successfully.\n"
+msgstr "Visos NV fragmento programos, pakrautos sėkmingai.\n"
+
+#: src/celengine/fragmentprog.cpp:150
+msgid "Initializing ARB fragment programs . . .\n"
+msgstr "ARB fragmento programų inicijavimas . . .\n"
+
+#: src/celengine/galaxy.cpp:197
+#, c-format
+msgid "Galaxy (Hubble type: %s)"
+msgstr "Galaktikos (Hubble tipas: %s)"
+
+#: src/celengine/image.cpp:373
+msgid "Loading image from file "
+msgstr "Atvaizdas pakraunamas iš rinkmenos"
+
+#: src/celengine/image.cpp:391
+msgid ": unrecognized or unsupported image file type.\n"
+msgstr ": nežinomas arba nepalaikomas atvaizdo rinkmenos tipas.\n"
+
+#: src/celengine/image.cpp:654
+msgid "Error opening image file "
+msgstr "Klaida įkeliant atvaizdo rinkmeną"
+
+#: src/celengine/image.cpp:661
+msgid "Error: "
+msgstr "Klaida:"
+
+#: src/celengine/image.cpp:661
+msgid " is not a PNG file.\n"
+msgstr "tai ne PNG rinkmena.\n"
+
+#: src/celengine/image.cpp:688
+msgid "Error reading PNG image file "
+msgstr "Klaida skaitant PNG atvaizdo rinkmeną"
+
+#: src/celengine/meshmanager.cpp:84
+msgid "Loading model: "
+msgstr "Modelio krovimas:"
+
+#: src/celengine/meshmanager.cpp:162
+msgid "   Model statistics: "
+msgstr "Modelio statistika:"
+
+#: src/celengine/meshmanager.cpp:163
+msgid " vertices, "
+msgstr " viršūnės, "
+
+#: src/celengine/meshmanager.cpp:164
+msgid " primitives, "
+msgstr " primityvai, "
+
+#: src/celengine/meshmanager.cpp:165
+msgid " materials "
+msgstr " medžiagos"
+
+#: src/celengine/meshmanager.cpp:166
+msgid " unique)\n"
+msgstr " unikalus)\n"
+
+#: src/celengine/meshmanager.cpp:170
+msgid "Error loading model '"
+msgstr "Klaida kraunant modelį '"
+
+#: src/celengine/nebula.cpp:47 src/celengine/opencluster.cpp:44
+#, c-format
+msgid "%s"
+msgstr "%s"
+
+#: src/celengine/solarsys.cpp:93
+msgid "Error in .ssc file (line "
+msgstr "Klaida .ssc rinkmenoje (eilutė  "
+
+#: src/celengine/solarsys.cpp:1200 src/celengine/solarsys.cpp:1267
+msgid "parent body '"
+msgstr "esminis kūnas '"
+
+#: src/celengine/solarsys.cpp:1200 src/celengine/solarsys.cpp:1267
+msgid "' of '"
+msgstr "' iš '"
+
+#: src/celengine/solarsys.cpp:1200
+msgid "' not found."
+msgstr "' nerasta."
+
+#: src/celengine/solarsys.cpp:1211
+msgid "warning duplicate definition of "
+msgstr "Įspėjimas, rasta vienodumų iš"
+
+#: src/celengine/solarsys.cpp:1247
+msgid "bad alternate surface"
+msgstr "blogas alternatyvus paviršius"
+
+#: src/celengine/solarsys.cpp:1261
+msgid "bad location"
+msgstr "bloga vieta"
+
+#: src/celengine/solarsys.cpp:1267
+msgid "' not found.\n"
+msgstr "' nerasta.\n"
+
+#: src/celengine/stardb.cpp:579
+msgid "Bad header for cross index\n"
+msgstr "Bloga antraštė cross rodikliui\n"
+
+#: src/celengine/stardb.cpp:592
+msgid "Bad version for cross index\n"
+msgstr "Bloga versija cross rodikliui\n"
+
+#: src/celengine/stardb.cpp:614
+msgid "Loading cross index failed at record "
+msgstr "Įvyko klaida įkeliant ir įrašant cross rodiklius"
+
+#: src/celengine/stardb.cpp:696
+msgid "Bad spectral type in star database, star #"
+msgstr "Blogas spektrinis tipas žvaigždžių  bazėje, žvaigždė #"
+
+#: src/celengine/stardb.cpp:711
+msgid " stars in binary database\n"
+msgstr "žvaigždžių dvejetainėje bazėje yra\n"
+
+#: src/celengine/stardb.cpp:735
+msgid "Total star count: "
+msgstr "Viso suskaičiuota žvaigždžių:"
+
+#: src/celengine/stardb.cpp:769
+msgid "Error in .stc file (line "
+msgstr "Klaida .stc rinkmenoje (eilutėje  "
+
+#: src/celengine/stardb.cpp:806
+msgid "Invalid star: bad spectral type.\n"
+msgstr "Negaliojanti žvaigždė: blogas spektrinis tipas.\n"
+
+#: src/celengine/stardb.cpp:815
+msgid "Invalid star: missing spectral type.\n"
+msgstr "Negaliojanti žvaigždė: prarastas spektrinis tipas.\n"
+
+#: src/celengine/stardb.cpp:962
+msgid "Barycenter "
+msgstr "Baricentras"
+
+#: src/celengine/stardb.cpp:962
+msgid " does not exist.\n"
+msgstr " neegzistuoja.\n"
+
+#: src/celengine/stardb.cpp:1008
+msgid "Invalid star: missing right ascension\n"
+msgstr "Negaliojanti žvaigždė: prarasta prieeiga\n"
+
+#: src/celengine/stardb.cpp:1021
+msgid "Invalid star: missing declination.\n"
+msgstr "Negaliojanti žvaigždė: prarasta deklinacija.\n"
+
+#: src/celengine/stardb.cpp:1034
+msgid "Invalid star: missing distance.\n"
+msgstr "Negaliojanti žvaigždė: prarastas atstumas.\n"
+
+#: src/celengine/stardb.cpp:1070
+msgid "Invalid star: missing magnitude.\n"
+msgstr "Negaliojanti žvaigždė: prarastas ryškis.\n"
+
+#: src/celengine/stardb.cpp:1087
+msgid ""
+"Invalid star: absolute (not apparent) magnitude must be specified for star "
+"near origin\n"
+msgstr ""
+"Negaliojanti žvaigždė: turi būti nurodytas absoliutus (neįžiūrimas) "
+"žvaigždės ryškis\n"
+
+#: src/celengine/texture.cpp:1019
+msgid "Creating tiled texture. Width="
+msgstr "Sukuriama skaidyta tekstūra. Plotis="
+
+#: src/celengine/texture.cpp:1019
+msgid ", max="
+msgstr ", maksimalus= "
+
+#: src/celengine/texture.cpp:1024
+msgid "Creating ordinary texture: "
+msgstr "Kuriama paprastoji tekstūra:"
+
+#: src/celengine/vertexprog.cpp:114
+msgid "Loading NV vertex program: "
+msgstr "Pakraunama NV vertex programa:"
+
+#: src/celengine/vertexprog.cpp:119
+msgid "Error loading NV vertex program: "
+msgstr "Klaida pakraunant NV vertex programą: "
+
+#: src/celengine/vertexprog.cpp:136 src/celengine/vertexprog.cpp:195
+msgid "Error in vertex program "
+msgstr "Klaida vertex programoje"
+
+#: src/celengine/vertexprog.cpp:163
+msgid "Loading ARB vertex program: "
+msgstr "Pakraunama ARB vertex programa:"
+
+#: src/celengine/vertexprog.cpp:168
+msgid "Error loading ARB vertex program: "
+msgstr "Klaida pakraunant ARB vertex programą:"
+
+#: src/celengine/vertexprog.cpp:196
+msgid ", line "
+msgstr ", eilutė"
+
+#: src/celengine/vertexprog.cpp:208
+msgid "Initializing NV vertex programs . . .\n"
+msgstr "NV vertex programos inicijavimas. . .\n"
+
+#: src/celengine/vertexprog.cpp:240
+msgid "All NV vertex programs loaded successfully.\n"
+msgstr "Visos NV vertex programos, pakrautos sėkmingai.\n"
+
+#: src/celengine/vertexprog.cpp:253
+msgid "Initializing ARB vertex programs . . .\n"
+msgstr "ARB vertex programos inicijavimas . . .\n"
+
+#: src/celengine/vertexprog.cpp:314
+msgid "All ARB vertex programs loaded successfully.\n"
+msgstr "Visos ARB programos pakrautos sėkmingai.\n"
+
+#: src/celestia/celestiacore.cpp:421
+msgid "Error reading favorites file."
+msgstr "Klaida nuskaitant mėgiamiausių rinkmeną."
+
+#: src/celestia/celestiacore.cpp:511
+msgid "Orientation: "
+msgstr "Orientacija:"
+
+#: src/celestia/celestiacore.cpp:558 src/celestia/celestiacore.cpp:560
+msgid "Error opening script file."
+msgstr "Klaida atidarant scenarijaus rinkmeną."
+
+#: src/celestia/celestiacore.cpp:591
+#, c-format
+msgid "Error opening script '%s'"
+msgstr "Klaida atidarant scenarijų '%s'"
+
+#: src/celestia/celestiacore.cpp:609
+msgid "Unknown error opening script"
+msgstr "Nežinoma klaida atidarant scenarijų"
+
+#: src/celestia/celestiacore.cpp:621
+msgid "Script coroutine initialization failed"
+msgstr "Scenarijaus coroutine iniciacijos nepavyko"
+
+#: src/celestia/celestiacore.cpp:637 src/celestia/celestiacore.cpp:639
+msgid "Invalid filetype"
+msgstr "Netinkamas rinkmenos tipas"
+
+#: src/celestia/celestiacore.cpp:982 src/celestia/celestiacore.cpp:1787
+#: src/celestia/celestiacore.cpp:1805 src/celestia/celestiacore.cpp:2046
+#: src/celestia/celestiacore.cpp:2077
+#, c-format
+msgid "Magnitude limit: %.2f"
+msgstr "Ryškumo limitas: %.2f"
+
+#: src/celestia/celestiacore.cpp:1417
+msgid "Markers enabled"
+msgstr "Žymekliai įjungti"
+
+#: src/celestia/celestiacore.cpp:1420
+msgid "Markers disabled"
+msgstr "Žymekliai išjungti"
+
+#: src/celestia/celestiacore.cpp:1430
+msgid "Goto surface"
+msgstr "Aplankyti paviršių"
+
+#: src/celestia/celestiacore.cpp:1443
+msgid "Alt-azimuth mode enabled"
+msgstr "Alt-azimuth režimas įjungtas"
+
+#: src/celestia/celestiacore.cpp:1446
+msgid "Alt-azimuth mode disabled"
+msgstr "Alt-azimuth režimas išjungtas"
+
+#: src/celestia/celestiacore.cpp:1502
+msgid "Star style: fuzzy points"
+msgstr "Žvaigždžių tipas: išplaukę taškai"
+
+#: src/celestia/celestiacore.cpp:1505
+msgid "Star style: points"
+msgstr "Žvaigždžių tipas: taškai"
+
+#: src/celestia/celestiacore.cpp:1508
+msgid "Star style: scaled discs"
+msgstr "Žvaigždžių tipas: grūdėti diskai"
+
+#: src/celestia/celestiacore.cpp:1521
+msgid "Comet tails enabled"
+msgstr "Kometų uodegos įjungtos"
+
+#: src/celestia/celestiacore.cpp:1524
+msgid "Comet tails disabled"
+msgstr "Kometų uodegos išjungtos"
+
+#: src/celestia/celestiacore.cpp:1539
+msgid "Render path: Basic"
+msgstr "Atvaizdavimas: Pagrindinis"
+
+#: src/celestia/celestiacore.cpp:1542
+msgid "Render path: Multitexture"
+msgstr "Atvaizdavimas: Multipadengimas"
+
+#: src/celestia/celestiacore.cpp:1545
+msgid "Render path: NVIDIA combiners"
+msgstr "Atvaizdavimas: NVIDIA combiners"
+
+#: src/celestia/celestiacore.cpp:1548
+msgid "Render path: OpenGL vertex program"
+msgstr "Atvaizdavimas: OpenGL vertex programa"
+
+#: src/celestia/celestiacore.cpp:1551
+msgid "Render path: NVIDIA vertex program and combiners"
+msgstr "Atvaizdavimas: NVIDIA vertex programa ir combiners"
+
+#: src/celestia/celestiacore.cpp:1554
+msgid "Render path: OpenGL vertex program/NVIDIA combiners"
+msgstr "Atvaizdavimas: OpenGL vertex programa/NVIDIA combiners"
+
+#: src/celestia/celestiacore.cpp:1557
+msgid "Render path: OpenGL 1.5 vertex/fragment program"
+msgstr "Atvaizdavimas: OpenGL 1.5 vertex/fragmentų programa"
+
+#: src/celestia/celestiacore.cpp:1560
+msgid "Render path: NVIDIA GeForce FX"
+msgstr "Atvaizdavimas: NVIDIA GeForce FX"
+
+#: src/celestia/celestiacore.cpp:1563
+msgid "Render path: OpenGL 2.0"
+msgstr "Atvaizdavimas: OpenGL ."
+
+#: src/celestia/celestiacore.cpp:1586
+msgid "Auto-magnitude enabled"
+msgstr "Auto-ryškis įjungta"
+
+#: src/celestia/celestiacore.cpp:1591
+msgid "Auto-magnitude disabled"
+msgstr "Auto-ryškis išjungta"
+
+#: src/celestia/celestiacore.cpp:1613
+msgid "Cancel"
+msgstr "Atšaukti"
+
+#: src/celestia/celestiacore.cpp:1649
+msgid "Time and script are paused"
+msgstr "Laikas ir scenarijus sustabdyti"
+
+#: src/celestia/celestiacore.cpp:1651
+msgid "Time is paused"
+msgstr "Laikas sustabdytas"
+
+#: src/celestia/celestiacore.cpp:1655
+msgid "Resume"
+msgstr "Tęsti"
+
+#: src/celestia/celestiacore.cpp:1730
+#, c-format
+msgid "Light travel time:  %.4f yr "
+msgstr "Šviesos kelionės trukmė:  %.4f yr "
+
+#: src/celestia/celestiacore.cpp:1739
+#, c-format
+msgid "Light travel time:  %d min  %.1f s"
+msgstr "Šviesos kelionės trukmė: %d min  %.1f s"
+
+#: src/celestia/celestiacore.cpp:1742
+#, c-format
+msgid "Light travel time:  %d h  %d min  %.1f s"
+msgstr "Šviesos kelionės trukmė: %d h  %d min  %.1f s"
+
+#: src/celestia/celestiacore.cpp:1761
+msgid "Light travel delay included"
+msgstr "Šviesos kelionės delsimas įtraukti"
+
+#: src/celestia/celestiacore.cpp:1766
+msgid "Light travel delay switched off"
+msgstr "Šviesos kelionės delsimas išjungtas"
+
+#: src/celestia/celestiacore.cpp:1772
+msgid "Light travel delay ignored"
+msgstr "Šviesos kelionės delsimas ignoruojamas"
+
+#: src/celestia/celestiacore.cpp:1817
+msgid "Using normal surface textures."
+msgstr "Naudojamos normalios paviršiaus tekstūros."
+
+#: src/celestia/celestiacore.cpp:1822
+msgid "Using limit of knowledge surface textures."
+msgstr "Naudojamos ribotų žinių paviršiaus tekstūros."
+
+#: src/celestia/celestiacore.cpp:1889
+msgid "Follow"
+msgstr "Sekti"
+
+#: src/celestia/celestiacore.cpp:1914
+msgid "Time: Forward"
+msgstr "Laikas: pirmyn"
+
+#: src/celestia/celestiacore.cpp:1916
+msgid "Time: Backward"
+msgstr "Laikas: atgal"
+
+#: src/celestia/celestiacore.cpp:1929 src/celestia/celestiacore.cpp:1945
+msgid "Time rate"
+msgstr "Laiko norma"
+
+#: src/celestia/celestiacore.cpp:2018
+msgid "Sync Orbit"
+msgstr "Sinchronizuoti orbitą"
+
+#: src/celestia/celestiacore.cpp:2024
+msgid "Lock"
+msgstr "Užrakinti"
+
+#: src/celestia/celestiacore.cpp:2030
+msgid "Chase"
+msgstr "Surišti"
+
+#: src/celestia/celestiacore.cpp:2057 src/celestia/celestiacore.cpp:2088
+#, c-format
+msgid "Auto magnitude limit at 45 degrees:  %.2f"
+msgstr "Auto ryškio limitas ties 45 laipsniais:  %.2f"
+
+#: src/celestia/celestiacore.cpp:2107 src/celestia/celestiacore.cpp:2122
+#, c-format
+msgid "Ambient light level:  %.2f"
+msgstr "Aplinkos šviesos lygis:  %.2f"
+
+#: src/celestia/celestiacore.cpp:2133 src/celestia/celestiacore.cpp:2145
+msgid "Light gain"
+msgstr "Šviesos lygis"
+
+#: src/celestia/celestiacore.cpp:2165
+msgid "Bloom enabled"
+msgstr "Bloom įjungtas"
+
+#: src/celestia/celestiacore.cpp:2167
+msgid "Bloom disabled"
+msgstr "Bloom išjungtas"
+
+#: src/celestia/celestiacore.cpp:2173 src/celestia/celestiacore.cpp:2181
+msgid "Exposure"
+msgstr "Ekspozicija"
+
+#: src/celestia/celestiacore.cpp:2532
+msgid "GL error: "
+msgstr "GL klaida:"
+
+#: src/celestia/celestiacore.cpp:2659
+msgid "View too small to be split"
+msgstr "Vaizdas per mažas padalinimui"
+
+#: src/celestia/celestiacore.cpp:2662
+msgid "Added view"
+msgstr "Vaizdas įtrauktas"
+
+#: src/celestia/celestiacore.cpp:2918
+msgid "ly"
+msgstr "šm"
+
+#: src/celestia/celestiacore.cpp:2922
+msgid "au"
+msgstr "av"
+
+#: src/celestia/celestiacore.cpp:2943
+msgid " days"
+msgstr "dienos"
+
+#: src/celestia/celestiacore.cpp:2945
+msgid " hours"
+msgstr "valandos"
+
+#: src/celestia/celestiacore.cpp:2947
+msgid " minutes"
+msgstr "minutės"
+
+#: src/celestia/celestiacore.cpp:3014
+msgid "Apparent diameter: "
+msgstr "Regimasis skersmuo:"
+
+#: src/celestia/celestiacore.cpp:3029
+msgid "Apparent magnitude: "
+msgstr "Regimasis ryškis:"
+
+#: src/celestia/celestiacore.cpp:3033
+msgid "Absolute magnitude: "
+msgstr "Absoliutus ryškis:"
+
+#: src/celestia/celestiacore.cpp:3055
+msgid "RA: "
+msgstr "RA: "
+
+#: src/celestia/celestiacore.cpp:3059
+msgid "Dec: "
+msgstr "Dec: "
+
+#: src/celestia/celestiacore.cpp:3123
+msgid "km"
+msgstr "km"
+
+#: src/celestia/celestiacore.cpp:3152 src/celestia/celestiacore.cpp:3226
+#: src/celestia/celestiacore.cpp:3258 src/celestia/celestiacore.cpp:3359
+msgid "Distance: "
+msgstr "Atstumas:"
+
+#: src/celestia/celestiacore.cpp:3158
+msgid "Star system barycenter\n"
+msgstr "Žvaigždžių sistemos baricentras\n"
+
+#: src/celestia/celestiacore.cpp:3162
+#, c-format
+msgid "Abs (app) mag: %.2f (%.2f)\n"
+msgstr "Abs (app) ryšk: %.2f (%.2f)\n"
+
+#: src/celestia/celestiacore.cpp:3168
+msgid "Luminosity: "
+msgstr "Šviesumas:"
+
+#: src/celestia/celestiacore.cpp:3168
+msgid "x Sun"
+msgstr "x Saulė"
+
+#: src/celestia/celestiacore.cpp:3169
+msgid "Class: "
+msgstr "Klasė:"
+
+#: src/celestia/celestiacore.cpp:3171
+msgid "Neutron star"
+msgstr "Neutroninė žvaigždė"
+
+#: src/celestia/celestiacore.cpp:3173
+msgid "Black hole"
+msgstr "Juodoji bedugnė"
+
+#: src/celestia/celestiacore.cpp:3183
+msgid "Surface temp: "
+msgstr "Paviršiaus temperatūra:"
+
+#: src/celestia/celestiacore.cpp:3186 src/celestia/celestiacore.cpp:3235
+#: src/celestia/celestiacore.cpp:3268
+msgid "Radius: "
+msgstr "Spindulys:"
+
+#: src/celestia/celestiacore.cpp:3189
+msgid "Rsun"
+msgstr "Rsun"
+
+#: src/celestia/celestiacore.cpp:3199 src/celestia/celestiacore.cpp:3320
+msgid "Rotation period: "
+msgstr "Apsisukimo periodas:"
+
+#: src/celestia/celestiacore.cpp:3213
+msgid "Planetary companions present\n"
+msgstr "Dabartiniai planetų palydovai\n"
+
+#: src/celestia/celestiacore.cpp:3231
+msgid "Distance from center: "
+msgstr "Atstumas nuo centro:"
+
+#: src/celestia/celestiacore.cpp:3336
+msgid "Temperature: "
+msgstr "Temperatūra:"
+
+#: src/celestia/celestiacore.cpp:3348
+#, c-format
+msgid "Apparent mag: %.2f\n"
+msgstr "Menamas ryšk: %.2f\n"
+
+#: src/celestia/celestiacore.cpp:3516
+msgid "  LT"
+msgstr "LT"
+
+#: src/celestia/celestiacore.cpp:3525
+msgid "Real time"
+msgstr "Realus laikas"
+
+#: src/celestia/celestiacore.cpp:3527
+msgid "-Real time"
+msgstr "-Realus laikas"
+
+#: src/celestia/celestiacore.cpp:3531
+msgid "Time stopped"
+msgstr "Laikas sustabdytas"
+
+#: src/celestia/celestiacore.cpp:3536
+msgid " faster"
+msgstr "greičiau"
+
+#: src/celestia/celestiacore.cpp:3541
+msgid " slower"
+msgstr "lėčiau"
+
+#: src/celestia/celestiacore.cpp:3547
+msgid " (Paused)"
+msgstr "(Sustabdyta)"
+
+#: src/celestia/celestiacore.cpp:3565
+msgid "FPS: "
+msgstr "FPS: "
+
+#: src/celestia/celestiacore.cpp:3567
+msgid ""
+"\n"
+"Speed: "
+msgstr ""
+"\n"
+"Greitis: "
+
+#: src/celestia/celestiacore.cpp:3571
+msgid " m/s"
+msgstr " m/s"
+
+#: src/celestia/celestiacore.cpp:3573
+msgid " km/s"
+msgstr " km/s"
+
+#: src/celestia/celestiacore.cpp:3577
+msgid " AU/s"
+msgstr " AV/s"
+
+#: src/celestia/celestiacore.cpp:3579
+msgid " ly/s"
+msgstr " šm/s"
+
+#: src/celestia/celestiacore.cpp:3596
+msgid "Travelling "
+msgstr "Keliaujama"
+
+#: src/celestia/celestiacore.cpp:3609
+msgid "Track "
+msgstr "Takas"
+
+#: src/celestia/celestiacore.cpp:3623
+msgid "Follow "
+msgstr "Sekti "
+
+#: src/celestia/celestiacore.cpp:3628
+msgid "Sync Orbit "
+msgstr "Sinchronizuoti orbitą"
+
+#: src/celestia/celestiacore.cpp:3633
+msgid "Lock "
+msgstr "Užrakinti"
+
+#: src/celestia/celestiacore.cpp:3642
+msgid "Chase "
+msgstr "Persekioti"
+
+#: src/celestia/celestiacore.cpp:3658
+msgid "FOV: "
+msgstr "FOV: "
+
+#: src/celestia/celestiacore.cpp:3688 src/celestia/celestiacore.cpp:3691
+msgid "Sun"
+msgstr "Saulė"
+
+#: src/celestia/celestiacore.cpp:3865
+msgid "Target name: "
+msgstr "Taikinio pavadinimas:"
+
+#: src/celestia/celestiacore.cpp:3947
+msgid " at "
+msgstr "į"
+
+#: src/celestia/celestiacore.cpp:3948
+msgid " fps"
+msgstr "fps"
+
+#: src/celestia/celestiacore.cpp:3950
+msgid "  Recording"
+msgstr "Įrašinėjama"
+
+#: src/celestia/celestiacore.cpp:3952
+msgid "  Paused"
+msgstr "Sustabdyta"
+
+#: src/celestia/celestiacore.cpp:3971
+msgid "F11 Start/Pause    F12 Stop"
+msgstr "F11 Pradėti/Pauzė    F12 Sustabdyti"
+
+#: src/celestia/celestiacore.cpp:3980 src/celestia/celestiacore.cpp:3983
+msgid "Edit Mode"
+msgstr "Redagavimo režimas"
+
+#: src/celestia/celestiacore.cpp:4049
+msgid "Loading solar system catalog: "
+msgstr "Įkeliamas saulės sistemos katalogas:"
+
+#: src/celestia/celestiacore.cpp:4090
+msgid "Loading "
+msgstr "Įkeliama"
+
+#: src/celestia/celestiacore.cpp:4125
+msgid "License file 'License.txt' is missing!"
+msgstr "Prarasta 'License.txt' rinkmena!"
+
+#: src/celestia/celestiacore.cpp:4146
+msgid "Error reading configuration file."
+msgstr "Klaida nuskaitant konfigūracijos rinkmeną."
+
+#: src/celestia/celestiacore.cpp:4157
+msgid "Initialization of SPICE library failed."
+msgstr "Nesėkmingas SPICE bibliotekos inicijavimas."
+
+#: src/celestia/celestiacore.cpp:4204
+msgid "Cannot read star database."
+msgstr "Neįmanoma nuskaityti žvaigždžių duomenų bazės."
+
+#: src/celestia/celestiacore.cpp:4226
+msgid "Error opening deepsky catalog file."
+msgstr "Klaida atidarant gilaus dangaus katalogo rinkmeną."
+
+#: src/celestia/celestiacore.cpp:4278
+msgid "Error opening solar system catalog.\n"
+msgstr "Klaida atidarant saulės sistemos katalogo bylą.\n"
+
+#: src/celestia/celestiacore.cpp:4311
+msgid "Error opening asterisms file."
+msgstr "Klaida atidarant asterisms rinkmeną."
+
+#: src/celestia/celestiacore.cpp:4326
+msgid "Error opening constellation boundaries files."
+msgstr "Klaida atidarant žvaigždynų rinkmeną."
+
+#: src/celestia/celestiacore.cpp:4393
+msgid "render path: "
+msgstr "atvaizdavimas:"
+
+#: src/celestia/celestiacore.cpp:4404
+msgid "Failed to initialize renderer"
+msgstr "Nesėkmingas atvaizdavimo inicijavimas"
+
+#: src/celestia/celestiacore.cpp:4420
+msgid "Error loading font; text will not be visible.\n"
+msgstr "Klaida įkeliant simbolius; tekstas nebus matomas.\n"
+
+#: src/celestia/celestiacore.cpp:4477
+msgid "Error reading cross index "
+msgstr "Klaida skaitant cross rodiklius"
+
+#: src/celestia/celestiacore.cpp:4479
+msgid "Loaded cross index "
+msgstr "Pakrautas cross rodiklis"
+
+#: src/celestia/celestiacore.cpp:4493 src/celestia/celestiacore.cpp:4515
+msgid "Error opening "
+msgstr "Klaida atidarant"
+
+#: src/celestia/celestiacore.cpp:4500
+msgid "Error reading star names file\n"
+msgstr "Klaida nuskaitant žvaigždžių pavadinimų rinkmeną\n"
+
+#: src/celestia/celestiacore.cpp:4523
+msgid "Error reading stars file\n"
+msgstr "Klaida nuskaitant žvaigždžių rinkmeną\n"
+
+#: src/celestia/celestiacore.cpp:4550
+msgid "Error opening star catalog "
+msgstr "Klaida atidarant žvaigždžių katalogą"
+
+#: src/celestia/oggtheoracapture.cpp:159
+#, c-format
+msgid "Error in creating ogg file %s for capture.\n"
+msgstr "Klaida sukuriant ogg rinkmeną %s įrašymui.\n"
+
+#: src/celestia/oggtheoracapture.cpp:253 src/celestia/oggtheoracapture.cpp:273
+msgid "Internal Ogg library error."
+msgstr "Vidinė Ogg bibliotekos klaida."
+
+#: src/celestia/oggtheoracapture.cpp:308
+#, c-format
+msgid ""
+"OggTheoraCapture::start() - Theora video: %s %.2f(%d/%d) fps quality %d %dx%"
+"d offset (%dx%d)\n"
+msgstr ""
+"OggTheoraCapture::pradėta() - Theora video: %s %.2f(%d/%d) fps kokybė %d %dx%"
+"d ofsetas (%dx%d)\n"
+
+#: src/celestia/oggtheoracapture.cpp:423
+#, c-format
+msgid "OggTheoraCapture::cleanup() - wrote %d frames\n"
+msgstr "OggTheoraCapture:: išvalymas () - parašė %d frames\n"
+
+#: src/celestia/url.cpp:653
+msgid "Settings"
+msgstr "Nustatymai"
+
+#: src/celestia/winmain.cpp:625
+msgid "Vendor: "
+msgstr "Gamintojas:"
+
+#: src/celestia/winmain.cpp:630
+msgid "Renderer: "
+msgstr "Plokštė:"
+
+#: src/celestia/winmain.cpp:635
+msgid "Version: "
+msgstr "Versija:"
+
+#: src/celestia/winmain.cpp:645
+msgid "GLSL version: "
+msgstr "GLSL versija:"
+
+#: src/celestia/winmain.cpp:656
+msgid "Max simultaneous textures: "
+msgstr "Maksimalus tekstūrų kiekis:"
+
+#: src/celestia/winmain.cpp:663
+msgid "Max texture size: "
+msgstr "Maksimalus tekstūros dydis:"
+
+#: src/celestia/winmain.cpp:672
+msgid "Max cube map size: "
+msgstr "Maksimalus žemėlapio dydis:"
+
+#: src/celestia/winmain.cpp:680
+msgid "Point size range: "
+msgstr "Taško dydžio diapazonas:"
+
+#: src/celestia/winmain.cpp:685
+msgid "Supported Extensions:"
+msgstr "Palaikomos plėtros:"
+
+#: src/celestia/winmain.cpp:1386
+msgid "Windowed Mode"
+msgstr "Lango režimas"
+
+#: src/celestia/winmain.cpp:1508
+msgid "Asteroids"
+msgstr "Asteroidai"
+
+#: src/celestia/winmain.cpp:1510
+msgid "Comets"
+msgstr "Kometos"
+
+#: src/celestia/winmain.cpp:1512
+msgid "Invisibles"
+msgstr "Nematomi"
+
+#: src/celestia/winmain.cpp:1514
+msgid "Moons"
+msgstr "Palydovai"
+
+#: src/celestia/winmain.cpp:1516 src/celestia/winmain.cpp:1551
+#: src/celestia/winmain.cpp:1668
+msgid "Planets"
+msgstr "Planetos"
+
+#: src/celestia/winmain.cpp:1518
+msgid "Spacecraft"
+msgstr "Kosminiai aparatai"
+
+#: src/celestia/winmain.cpp:1608 src/celestia/winmain.cpp:1656
+#: src/celestia/winmain.cpp:1679
+msgid "&Goto"
+msgstr "&Aplankyti"
+
+#: src/celestia/winmain.cpp:1609 src/celestia/winmain.cpp:1680
+msgid "&Follow"
+msgstr "&Sekti"
+
+#: src/celestia/winmain.cpp:1610
+msgid "S&ync Orbit"
+msgstr "S&inch orbitą"
+
+#: src/celestia/winmain.cpp:1611 src/celestia/winmain.cpp:1657
+#: src/celestia/winmain.cpp:1681
+msgid "&Info"
+msgstr "&Info"
+
+#: src/celestia/winmain.cpp:1613
+msgid "&Reference Vectors"
+msgstr "&Nuorodos vektoriai"
+
+#: src/celestia/winmain.cpp:1614
+msgid "Show Body Axes"
+msgstr "Rodyti kūno ašis"
+
+#: src/celestia/winmain.cpp:1615
+msgid "Show Frame Axes"
+msgstr "Rodyti rėmelio ašis"
+
+#: src/celestia/winmain.cpp:1616
+msgid "Show Sun Direction"
+msgstr "Rodyti saulės kryptį"
+
+#: src/celestia/winmain.cpp:1617
+msgid "Show Velocity Vector"
+msgstr "Rodyti greičio vektorių"
+
+#: src/celestia/winmain.cpp:1618
+msgid "Show Planetographic Grid"
+msgstr "Rodyti planetografinį tinklelį"
+
+#: src/celestia/winmain.cpp:1619
+msgid "Show Terminator"
+msgstr "Rodyti terminatorių"
+
+#: src/celestia/winmain.cpp:1633
+msgid "&Satellites"
+msgstr "&Palydovai"
+
+#: src/celestia/winmain.cpp:1643
+msgid "&Alternate Surfaces"
+msgstr "&Alternatyvus paviršius"
+
+#: src/celestia/winmain.cpp:1666
+msgid "Orbiting Bodies"
+msgstr "Kūnai orbitoje"
+
+#: src/celestia/winmain.cpp:1693
+msgid "&Unmark"
+msgstr "&Nuimti žym."
+
+#: src/celestia/winmain.cpp:1695
+msgid "&Mark"
+msgstr "&Žymėti"
+
+#: src/celestia/winmain.cpp:3137
+msgid "Loading: "
+msgstr "Įkeliama:"
+
+#: src/celestia/winmain.cpp:3305 src/celutil/util.cpp:72
+#: src/celutil/util.cpp:76
+msgid "LANGUAGE"
+msgstr "lt"
+
+#: src/celestia/winmain.cpp:3307
+msgid "WinLangID"
+msgstr "WinKalbID"
+
+#: src/celestia/winmain.cpp:3809
+msgid "Copied URL"
+msgstr "Kopijuojamas URL"
+
+#: src/celestia/winmain.cpp:3903
+msgid "Loading URL"
+msgstr "Įkeliamas URL"
+
+#: src/celestia/winmain.cpp:3915
+msgid "Error opening script"
+msgstr "Klaida atveriant scenarijų"
+
+#: src/celestia/winmain.cpp:3934
+msgid "Error loading script"
+msgstr "Klaida įkeliant scenarijų"
+
+#: src/celestia/winmain.cpp:3939
+msgid "Running script"
+msgstr "Paleidžiamas scenarijus"
+
+#: src/celestia/wineclipses.cpp:58
+msgid "Planet"
+msgstr "Planeta"
+
+#: src/celestia/wineclipses.cpp:60
+msgid "Satellite"
+msgstr "Palydovas"
+
+#: src/celestia/wineclipses.cpp:62
+msgid "Date"
+msgstr "Data"
+
+#: src/celestia/wineclipses.cpp:64
+msgid "Start"
+msgstr "Pradžia"
+
+#: src/celestia/wineclipses.cpp:66
+msgid "Duration"
+msgstr "Trukmė"
+
+#: src/celestia/wineclipses.cpp:316
+msgid "Earth"
+msgstr "Žemė"
+
+#: src/celestia/wineclipses.cpp:317
+msgid "Jupiter"
+msgstr "Jupiteris"
+
+#: src/celestia/wineclipses.cpp:318
+msgid "Saturn"
+msgstr "Saturnas"
+
+#: src/celestia/wineclipses.cpp:319
+msgid "Uranus"
+msgstr "Uranas"
+
+#: src/celestia/wineclipses.cpp:320
+msgid "Neptune"
+msgstr "Neptūnas"
+
+#: src/celestia/wineclipses.cpp:321
+msgid "Pluto"
+msgstr "Plutonas"
+
+#: src/celestia/winstarbrowser.cpp:70
+msgid "Name"
+msgstr "Pavadinimas"
+
+#: src/celestia/winstarbrowser.cpp:72
+msgid "Distance (ly)"
+msgstr "Atstumas (šm)"
+
+#: src/celestia/winstarbrowser.cpp:75
+msgid "App. mag"
+msgstr "App. ryšk"
+
+#: src/celestia/winstarbrowser.cpp:77
+msgid "Abs. mag"
+msgstr "Abs. ryšk"
+
+#: src/celestia/winstarbrowser.cpp:79
+msgid "Type"
+msgstr "Tipas"
+
+#: src/celestia/wintime.cpp:95
+msgid "Universal Time"
+msgstr "Grinvičo laikas"
+
+#: src/celestia/wintime.cpp:96
+msgid "Local Time"
+msgstr "Vietinis laikas"
+
+#: src/celestia/wintime.cpp:97
+msgid "Time Zone Name"
+msgstr "Laiko zonos pavadinimas"
+
+#: src/celestia/wintime.cpp:98
+msgid "UTC Offset"
+msgstr "UTC kompensacija"
+
+#~ msgid "Celestial Browser"
+#~ msgstr "Dangaus naršyklė"
+
+#~ msgid "Moon"
+#~ msgstr "Mėnulis"
+
+#~ msgid "Asteroid"
+#~ msgstr "Asteroidai"
+
+#~ msgid "Comet"
+#~ msgstr "Kometos"
+
+#~ msgid "Invisible"
+#~ msgstr "Nematomi"
+
+#~ msgid "Barycenter"
+#~ msgstr "Baricentrai"
+
+#~ msgid "Small Body"
+#~ msgstr "Maži kūnai"
+
+#~ msgid "Dwarf Planet"
+#~ msgstr "Nykštukinės planetos"
+
+#~ msgid "-"
+#~ msgstr "-"
+
+#~ msgid "Eclipse Finder"
+#~ msgstr "Užtemimų paiška"
+
+#~ msgid "&Add Bookmark"
+#~ msgstr "&Pridėti žymelę"
+
+#~ msgid "Add a bookmark for the current document"
+#~ msgstr "Pridėti žymelę į dabartinį dokumentą"
+
+#~ msgid "Add &Relative Bookmark"
+#~ msgstr "Pridėti &santykinius į žymeles"
+
+#~ msgid "Add a relative bookmark for the current document"
+#~ msgstr "Pridėti santykinę žymelę šiame dokumente"
+
+#~ msgid "Add &Settings Bookmark"
+#~ msgstr "Pridėti &žymelių nustatymus"
+
+#~ msgid "Add a settings bookmark for the current document"
+#~ msgstr "Pridėti žymelių nustatymus į esamą dokumentą"
+
+#~ msgid "Edit your bookmark collection in a separate window"
+#~ msgstr "Redaguokite žymelių kolekciją atskirame lange"
+
+#~ msgid "&New Folder..."
+#~ msgstr "&Naujas aplankas..."
+
+#~ msgid "Create a new bookmark folder in this menu"
+#~ msgstr "Sukurti naują žymelių aplanką šitame meniu"
+
+#~ msgid "Can't add bookmark with empty URL"
+#~ msgstr "Negalima įtraukti žymelės su tuščiu URL"
+
+#~ msgid ""
+#~ "Something seems to be wrong with your installation of Celestia. The "
+#~ "splash screen directory couldn't be found. \n"
+#~ "Start-up will continue, but Celestia will probably be missing some data "
+#~ "files and may not work correctly, please check your installation."
+#~ msgstr ""
+#~ "Atrodo, kažkas neteisinga su jūsų Celestia įdiegimu. Sensacijos ekrano "
+#~ "žinynas negalėjo būti surastas. \n"
+#~ "Paleidimas tęsis, bet Celestia turbūt praleis kažkokį duomenų failą ir "
+#~ "galbūt nedirbs teisingai, prašom tikrinti savo įdiegimą."
+
+#~ msgid "Go to &URL..."
+#~ msgstr "Aplankyti &URL..."
+
+#~ msgid "Go to &Long/Lat..."
+#~ msgstr "Aplankyti &Ilg/Plat..."
+
+#~ msgid "&Back"
+#~ msgstr "&Atgal"
+
+#~ msgid "&Forward"
+#~ msgstr "&Pirmyn"
+
+#~ msgid "Home"
+#~ msgstr "Namai"
+
+#~ msgid "Bookmarks"
+#~ msgstr "Žymelės"
+
+#~ msgid "Full Screen"
+#~ msgstr "Pilnas ekranas"
+
+#~ msgid "Copy URL"
+#~ msgstr "Nukopijuoti URL"
+
+#~ msgid "Set Time..."
+#~ msgstr "Nustatyti laiką..."
+
+#~ msgid "Set Time to Now"
+#~ msgstr "Nustatyti dabartinį laiką"
+
+#~ msgid "Accelerate Time"
+#~ msgstr "Pagreitinti laiką"
+
+#~ msgid "Decelerate Time"
+#~ msgstr "Sumažinti laiką"
+
+#~ msgid "Accelerate Time (x2)"
+#~ msgstr "Pagreitinti laiką (x2)"
+
+#~ msgid "Decelerate Time (/2)"
+#~ msgstr "Sulėtinti laiką (/2)"
+
+#~ msgid "Pause Time"
+#~ msgstr "Laiko pauzė"
+
+#~ msgid "Reverse Time"
+#~ msgstr "Laiko reversas"
+
+#~ msgid "Split View Vertically"
+#~ msgstr "Padalinti vaizdą vertikaliai"
+
+#~ msgid "Split View Horizontally"
+#~ msgstr "Padalinti vaizdą horizontaliai"
+
+#~ msgid "Cycle View"
+#~ msgstr "Ciklinis vaizdas"
+
+#~ msgid "Single View"
+#~ msgstr "Vientisas vaizdas"
+
+#~ msgid "Delete View"
+#~ msgstr "Ištrinti vaizdą"
+
+#~ msgid "Frames Visible"
+#~ msgstr "Matomas rėmelis"
+
+#~ msgid "Active Frame Visible"
+#~ msgstr "Matomas aktyvus rėmelis"
+
+#~ msgid "Synchronize Time"
+#~ msgstr "Sinchronizuoti laiką"
+
+#~ msgid "Alt-Azimuth Mode"
+#~ msgstr "Alt-Azimuth režimas"
+
+#~ msgid "Go To Surface"
+#~ msgstr "Aplankyti paviršių"
+
+#~ msgid "Show Stars"
+#~ msgstr "Rodyti žvaigždes"
+
+#~ msgid "Show Planets"
+#~ msgstr "Rodyti planetas"
+
+#~ msgid "Show Galaxies"
+#~ msgstr "Rodyti galaktikas"
+
+#~ msgid "Show Globulars"
+#~ msgstr "Rodyti kamuolinius spiečius"
+
+#~ msgid "Show Partial Trajectories"
+#~ msgstr "Rodyti dalines trajektorijas"
+
+#~ msgid "Show Nebulae"
+#~ msgstr "Rodyti ūkus"
+
+#~ msgid "Show Open Clusters"
+#~ msgstr "Rodyti padrikuosius spiečius"
+
+#~ msgid "Show Constellations"
+#~ msgstr "Rodyti žvaigždynus"
+
+#~ msgid "Show CloudMaps"
+#~ msgstr "Rodyti debesis"
+
+#~ msgid "Show Cloud Shadows"
+#~ msgstr "Rodyti debesų šešėlius"
+
+#~ msgid "Show Orbits"
+#~ msgstr "Rodyti orbitas"
+
+#~ msgid "Show Asteroid Orbits"
+#~ msgstr "Rodyti asteroidų orbitas"
+
+#~ msgid "Show Comet Orbits"
+#~ msgstr "Rodyti kometų orbitas"
+
+#~ msgid "Show Moon Orbits"
+#~ msgstr "Rodyti palydovų orbitas"
+
+#~ msgid "Show Star Orbits"
+#~ msgstr "Rodyti žvaigždžių orbitas"
+
+#~ msgid "Show Planet Orbits"
+#~ msgstr "Rodyti planetų orbitas"
+
+#~ msgid "Show Spacecraft Orbits"
+#~ msgstr "Rodyti kosminių aparatų orbitas"
+
+#~ msgid "Show Celestial Grid"
+#~ msgstr "Rodyti dangaus tinklelį"
+
+#~ msgid "Show Night Side Lights"
+#~ msgstr "Rodyti naktinę pusę"
+
+#~ msgid "Show Markers"
+#~ msgstr "Rodyti žymeklius"
+
+#~ msgid "Show Atmospheres"
+#~ msgstr "Rodyti atmosferą"
+
+#~ msgid "Show Smooth Orbit Lines"
+#~ msgstr "Rodyti orbitų linijas"
+
+#~ msgid "Show Eclipse Shadows"
+#~ msgstr "Rodyti užtemimų šešėlius"
+
+#~ msgid "Cycle Star Mode"
+#~ msgstr "Ciklinis žvaigždžių režimas"
+
+#~ msgid "Show Ring Shadows"
+#~ msgstr "Rodyti žiedų šešėlius"
+
+#~ msgid "Show Boundaries"
+#~ msgstr "Rodyti kontūrus"
+
+#~ msgid "Auto Magnitudes"
+#~ msgstr "Auto ryškis"
+
+#~ msgid "Show Comet Tails"
+#~ msgstr "Rodyti kometų uodegas"
+
+#~ msgid "Show Star Labels"
+#~ msgstr "Rodyti žvaigždžių pavadinimus"
+
+#~ msgid "Show Planet Labels"
+#~ msgstr "Rodyti planetų pavadinimus"
+
+#~ msgid "Show Moon Labels"
+#~ msgstr "Rodyti palydovų pavadinimus"
+
+#~ msgid "Show Comet Labels"
+#~ msgstr "Rodyti kometų pavadinimus"
+
+#~ msgid "Show Constellation Labels"
+#~ msgstr "Rodyti žvaigždynų pavadinimus"
+
+#~ msgid "Constellation Labels in Latin"
+#~ msgstr "Lotyniški žvaigždynų pavadinimai"
+
+#~ msgid "Show Galaxy Labels"
+#~ msgstr "Rodyti galaktikų pavadinimus"
+
+#~ msgid "Show Globular Labels"
+#~ msgstr "Rodyti kamuolinių spiečių pavadinimus"
+
+#~ msgid "Show Nebula Labels"
+#~ msgstr "Rodyti ūkų pavadinimus"
+
+#~ msgid "Show Open Cluster Labels"
+#~ msgstr "Rodyti padrikųjų spiečių pavadinimus"
+
+#~ msgid "Show Asteroid Labels"
+#~ msgstr "Rodyti asteroidų pavadinimus"
+
+#~ msgid "Show Spacecraft Labels"
+#~ msgstr "Rodyti kosminių aparatų pavadinimus"
+
+#~ msgid "Show Location Labels"
+#~ msgstr "Rodyti vietovių pavadinimus"
+
+#~ msgid "Display Local Time"
+#~ msgstr "Rodyti dabartinį laiką"
+
+#~ msgid "Show City Locations"
+#~ msgstr "Rodyti miestus"
+
+#~ msgid "Show Observatory Locations"
+#~ msgstr "Rodyti observatorijos vietas"
+
+#~ msgid "Show Landing Sites Locations"
+#~ msgstr "Rodyti nusileidimo vietas"
+
+#~ msgid "Show Crater Locations"
+#~ msgstr "Rodyti kraterius"
+
+#~ msgid "Show Mons Locations"
+#~ msgstr "Rodyti Mons"
+
+#~ msgid "Show Terra Locations"
+#~ msgstr "Rodyti žemynus"
+
+#~ msgid "Show Vallis Locations"
+#~ msgstr "Rodyti slėnius"
+
+#~ msgid "Show Mare Locations"
+#~ msgstr "Rodyti vandenynus"
+
+#~ msgid "Show Other Locations"
+#~ msgstr "Rodyti kitas vietoves"
+
+#~ msgid "Wireframe Mode"
+#~ msgstr "Wireframe režimas"
+
+#~ msgid "Center on Orbit"
+#~ msgstr "Į orbitos centrą"
+
+#~ msgid "Basic"
+#~ msgstr "Pagrindinis"
+
+#~ msgid "Multitexture"
+#~ msgstr "Multitekstūros"
+
+#~ msgid "NvCombiners"
+#~ msgstr "NvCombiners"
+
+#~ msgid "DOT3 ARBVP"
+#~ msgstr "DOT3 ARBVP"
+
+#~ msgid "NvCombiner NvVP"
+#~ msgstr "NvCombiner NvVP"
+
+#~ msgid "NvCombiner ARBVP"
+#~ msgstr "NvCombiner ARBVP"
+
+#~ msgid "ARBFP ARBVP"
+#~ msgstr "ARBFP ARBVP"
+
+#~ msgid "NV30"
+#~ msgstr "NV30"
+
+#~ msgid "OpenGL 2.0"
+#~ msgstr "OpenGL 2.0"
+
+#~ msgid "Cycle OpenGL Render Path"
+#~ msgstr "OpenGL atkūrimo kelio ciklas"
+
+#~ msgid "Sync framerate to video refresh rate"
+#~ msgstr "Sinchronizuoti video atnaujinimo dažnį"
+
+#~ msgid "Grab Image"
+#~ msgstr "Padaryti ekr. atvaizdą"
+
+#~ msgid "Capture Video"
+#~ msgstr "Įrašyti video"
+
+#~ msgid "OpenGL info"
+#~ msgstr "OpenGL info"
+
+#~ msgid "Show Bookmark Toolbar"
+#~ msgstr "Rodyti žymelių įrankinę"
+
+#~ msgid "OpenGL Info"
+#~ msgstr "OpenGL info"
+
+#~ msgid "UTC"
+#~ msgstr "UTC"
+
+#~ msgid ""
+#~ "This version of Celestia was not built with support for movie recording."
+#~ msgstr "Šioje Celestia versijoje nėra vaizdo įrašymo galimybės."
+
+#~ msgid "Go to URL"
+#~ msgstr "Aplankyti URL"
+
+#~ msgid "Enter URL"
+#~ msgstr "Įveskite URL"
+
+#~ msgid "Object: "
+#~ msgstr "Objektas:"
+
+#~ msgid "Longitude: "
+#~ msgstr "Ilguma:"
+
+#~ msgid "East"
+#~ msgstr "Rytai"
+
+#~ msgid "West"
+#~ msgstr "Vakarai"
+
+#~ msgid "Latitude: "
+#~ msgstr "Platuma:"
+
+#~ msgid "North"
+#~ msgstr "Šiaurė"
+
+#~ msgid "South"
+#~ msgstr "Pietūs"
+
+#~ msgid "Altitude: "
+#~ msgstr "Aukštis:"
+
+#~ msgid "Celestia encountered an error while processing your script"
+#~ msgstr "Celestia susidūrė su klaida apdorojant scenarijų"
+
+#~ msgid "Celestia"
+#~ msgstr "Celestia"
+
+#~ msgid "Use alternate configuration file"
+#~ msgstr "Naudoti alternatyvią konfiguracijos rinkmeną"
+
+#~ msgid "Use alternate installation directory"
+#~ msgstr "Naudoti alternatyvų įdiegimo aplanką"
+
+#~ msgid "Use as additional \"extras\" directory"
+#~ msgstr "Naudoti kaip papildomą \"extras\" aplanką"
+
+#~ msgid "Start fullscreen"
+#~ msgstr "Pradėti per visą ekraną"
+
+#~ msgid "Disable splash screen"
+#~ msgstr "Išjungti ekrano užsklandą"
+
+#~ msgid "Start and go to url"
+#~ msgstr "Pradėti ir aplankyti url"
+
+#~ msgid "_: NAME OF TRANSLATORS\\nYour names"
+#~ msgstr "_: VERTĖJO VARDAS\\nMarius Mikalainis"
+
+#~ msgid "_: EMAIL OF TRANSLATORS\\nYour emails"
+#~ msgstr "_: EMAIL OF TRANSLATORS\\nneoromancer@gmail.com"
+
+#~ msgid "Celestia Preferences"
+#~ msgstr "Celestia nustatymai"
+
+#~ msgid "Rendering"
+#~ msgstr "Vaizdavimas"
+
+#~ msgid "Show"
+#~ msgstr "Rodyti"
+
+#~ msgid "Stars"
+#~ msgstr "Žvaigždės"
+
+#~ msgid "Galaxies"
+#~ msgstr "Galaktikos"
+
+#~ msgid "Nebulae"
+#~ msgstr "Ūkai"
+
+#~ msgid "Open Clusters"
+#~ msgstr "Padrikieji spiečiai"
+
+#~ msgid "Atmospheres"
+#~ msgstr "Atmosfera"
+
+#~ msgid "Clouds"
+#~ msgstr "Debesys"
+
+#~ msgid "Cloud Shadows"
+#~ msgstr "Debesų šešėliai"
+
+#~ msgid "Night Side Lights"
+#~ msgstr "Naktinė pusė"
+
+#~ msgid "Eclipse Shadows"
+#~ msgstr "Užtemimų šešėliai"
+
+#~ msgid "Comet Tails"
+#~ msgstr "Kometų uodegos"
+
+#~ msgid "Orbits"
+#~ msgstr "Orbitos"
+
+#~ msgid "Partial Trajectories"
+#~ msgstr "Dalinės trajektorijos"
+
+#~ msgid "Smooth Orbit Lines"
+#~ msgstr "Oorbitų linijas"
+
+#~ msgid "Celestial Grid"
+#~ msgstr "Dangaus tinklelis"
+
+#~ msgid "Constellations"
+#~ msgstr "Žvaigždynai"
+
+#~ msgid "Markers"
+#~ msgstr "Žymekliai"
+
+#~ msgid "Ring Shadows"
+#~ msgstr "Žiedų šešėliai"
+
+#~ msgid "Constellation Boundaries"
+#~ msgstr "Žvaigždynų kontūrai"
+
+#~ msgid "Orbits / Labels"
+#~ msgstr "Orbitos / Pavadinimai"
+
+#~ msgid "Labels"
+#~ msgstr "Pavadinimai"
+
+#~ msgid "Constellations in Latin"
+#~ msgstr "Žvaigždynai lotyniškai"
+
+#~ msgid "Spacecrafts"
+#~ msgstr "Kosminiai aparatai"
+
+#~ msgid "Locations"
+#~ msgstr "Vietovės"
+
+#~ msgid "Ambient Light"
+#~ msgstr "Aplinkos šviesa"
+
+#~ msgid "Limiting Magnitude"
+#~ msgstr "Ribinis ryškis"
+
+#~ msgid "Info Text"
+#~ msgstr "Inform. tekstas"
+
+#~ msgid "Level: "
+#~ msgstr "Lygiai:"
+
+#~ msgid "None"
+#~ msgstr "Nėra"
+
+#~ msgid "Terse"
+#~ msgstr "Glaustas"
+
+#~ msgid "Verbose"
+#~ msgstr "Pilnas"
+
+#~ msgid "Textures"
+#~ msgstr "Tekstūros"
+
+#~ msgid "Resolution: "
+#~ msgstr "Skyros:"
+
+#~ msgid "Low"
+#~ msgstr "Žema"
+
+#~ msgid "Medium"
+#~ msgstr "Vidutinė"
+
+#~ msgid "High"
+#~ msgstr "Aukšta"
+
+#~ msgid "Automatic FOV"
+#~ msgstr "Automatinis FOV"
+
+#~ msgid "Screen DPI: "
+#~ msgstr "Ekrano DPI:"
+
+#~ msgid "Viewing Distance (cm): "
+#~ msgstr "Apžvalgos atstumas (cm):"
+
+#~ msgid "Cities"
+#~ msgstr "Miestai"
+
+#~ msgid "Observatories"
+#~ msgstr "Observatorijos"
+
+#~ msgid "Landing Sites"
+#~ msgstr "Nusileidimo vietos"
+
+#~ msgid "Craters"
+#~ msgstr "Krateriai"
+
+#~ msgid "Mons"
+#~ msgstr "Monsas"
+
+#~ msgid "Terra"
+#~ msgstr "Žemynai"
+
+#~ msgid "Vallis"
+#~ msgstr "Slėniai"
+
+#~ msgid "Mare"
+#~ msgstr "Vandenynai"
+
+#~ msgid "Other"
+#~ msgstr "Kiti"
+
+#~ msgid "Minimum Feature Size"
+#~ msgstr "Mažiausias elemento matmuo"
+
+#~ msgid "Date/Time"
+#~ msgstr "Data/Laikas"
+
+#~ msgid "Display"
+#~ msgstr "Rodyti"
+
+#~ msgid "Timezone: "
+#~ msgstr "Laiko zona:"
+
+#~ msgid "Format: "
+#~ msgstr "Formatas:"
+
+#~ msgid "Local Format"
+#~ msgstr "Vietinis formatas"
+
+#~ msgid "Set"
+#~ msgstr "Nustatyti"
+
+#~ msgid "Local Time is only supported for dates between 1902 and 2037.\n"
+#~ msgstr "Vietinis laikas palaikomas tik intervale 1902 ir 2037 metų.\n"
+
+#~ msgid "Julian Date: "
+#~ msgstr "Julijaus data: "
+
+#~ msgid "Now"
+#~ msgstr "Dabar"
+
+#~ msgid ""
+#~ "\n"
+#~ "Selection: "
+#~ msgstr ""
+#~ "\n"
+#~ "Pasirinkimas: "
+
+#~ msgid "Include Light Travel Time"
+#~ msgstr "Įtraukti šviesos kelionės laiką"
+
+#~ msgid "Ignore Light Travel Time "
+#~ msgstr "Ignoruoti šviesos kelionės laiką"
+
+#~ msgid "OpenGL"
+#~ msgstr "OpenGL"
+
+#~ msgid "Key Bindings"
+#~ msgstr "Raktinės jungtys"
+
+#~ msgid "<b>Unextended OpenGL 1.1</b>"
+#~ msgstr "<b>Nenusitęsęs OpenGL 1.1</b>"
+
+#~ msgid "<b>Multiple textures and the ARB_texenv_combine extension</b>"
+#~ msgstr "<b>Daugialypė struktūra ir ARB_texenv_combine ištęsimas</b>"
+
+#~ msgid "<b>NVIDIA combiners, no vertex programs</b>"
+#~ msgstr "<b>NVIDIA combiners, jokios vertex programos</b>"
+
+#~ msgid "<b>ARB_texenv_DOT3 extension, ARB_vertex_program extension</b>"
+#~ msgstr "<b>ARB_texenv_DOT3 ištęsimas, ARB_vertex_program ištęsimas</b>"
+
+#~ msgid ""
+#~ "<b>NVIDIA Combiners, NV_vertex_program extension</b><br> provide bump "
+#~ "mapping, ring shadows, and specular highlights on any Geforce or ATI "
+#~ "Radeon graphics card, though NvCombiner ARBVP is a slightly better option "
+#~ "for Geforce users"
+#~ msgstr ""
+#~ "<b>NVIDIA Combiners, NV_vertex_program ištęsimas </b> <br> aprūpina bump "
+#~ "žemėlapių sudarymą, žiedo šešėlius, ir veidrodines įsimintiniausias "
+#~ "vietas ant bet kokio Geforce ar ATI Radeon grafinė kortelė, nors "
+#~ "NvCombiner ARBVP yra truputį geresnis pasirinkimas Geforce vartotojams"
+
+#~ msgid "<b>NVIDIA Combiners, ARB_vertex_program extension</b>"
+#~ msgstr "<b>NVIDIA Combiners, ARB_vertex_program ištęsimas</b>"
+
+#~ msgid ""
+#~ "<b>ARB_fragment_program and ARB_vertex_program extensions</b><br>provide "
+#~ "advanced effects on Geforce FX and Radeon 9700 cards"
+#~ msgstr ""
+#~ "<b>ARB_fragment_program ir ARB_vertex_program ištęsimas </b> <br> "
+#~ "aprūpina aukštintus padarinius Geforce FX ir Radeon 9700 grafinėms "
+#~ "plokštėms"
+
+#~ msgid "<b>NV_fragment_program and ARB_vertex_program extensions</b>"
+#~ msgstr "<b>NV_fragment_program ir ARB_vertex_program ištęsimas</b>"
+
+#~ msgid "<b>OpenGL 2.0 Shading Language</b>"
+#~ msgstr "<b>OpenGL 2.0 Shading kalba</b>"
+
+#~ msgid ""
+#~ "File %1 does not exist, using default configuration file %2/celestia.cfg"
+#~ msgstr "Rinkmena %1 neegzistuoja, naudojama rinkmena %2/celestia.cfg"
+
+#~ msgid "Directory %1 does not exist, using default %2"
+#~ msgstr "Aplankas %1 neegzistuoja, naudojamas pagal nutylėjimą %2"
+
+#~ msgid "Extras directory %1 does not exist"
+#~ msgstr "Aplankas Extras %1 neegzistuoja"
+
+#~ msgid "Abs (app) mag: "
+#~ msgstr "Abs (app) ryšk: "
+
+#~ msgid "Surface Temp: "
+#~ msgstr "Paviršiaus temp: "
+
+#~ msgid "Marked objects"
+#~ msgstr "Pažymėti objektai"
+
+#~ msgid "&Select"
+#~ msgstr "&Parinkti"
+
+#~ msgid "&Center"
+#~ msgstr "&Centre"
+
+#~ msgid "S&ynch Orbit"
+#~ msgstr "S&inch orbitą"
+
+#~ msgid "Unmark &All"
+#~ msgstr "Nuimti &žymenis"
+
+#~ msgid "Diamond"
+#~ msgstr "Deimantas"
+
+#~ msgid "Triangle"
+#~ msgstr "Trikampis"
+
+#~ msgid "Square"
+#~ msgstr "Aikštė"
+
+#~ msgid "Filled Square"
+#~ msgstr "Miesto aikštė"
+
+#~ msgid "Plus"
+#~ msgstr "Plius"
+
+#~ msgid "X"
+#~ msgstr "X"
+
+#~ msgid "Left Arrow"
+#~ msgstr "Rodyklę kairėn"
+
+#~ msgid "Right Arrow"
+#~ msgstr "Rodyklę dešinėn"
+
+#~ msgid "Up Arrow"
+#~ msgstr "Rodyklę aukštyn"
+
+#~ msgid "Down Arrow"
+#~ msgstr "Rodyklę žemyn"
+
+#~ msgid "Circle"
+#~ msgstr "Apskritimas"
+
+#~ msgid "Disk"
+#~ msgstr "Diskas"
+
+#~ msgid "Normal"
+#~ msgstr "Normalus"
+
+#~ msgid "Small Bodies"
+#~ msgstr "Maži kūnai"
+
+#~ msgid "Dwarf Planets"
+#~ msgstr "Nykštukinės planetos"
+
+#~ msgid "Duration: %1"
+#~ msgstr "Trukmė: %1"
+
+#~ msgid "Size: %1 MB"
+#~ msgstr "Didis:  %1 MB"
+
+#~ msgid "Current size: %1 x %2"
+#~ msgstr "Dabartinis dydis: %1 x %2"
+
+#~ msgid "Current width: %1 x %2"
+#~ msgstr "Dabartinis plotis: %1 x %2"
+
+#~ msgid "Current height: %1 x %2"
+#~ msgstr "Dabartinis aukštis: %1 x %2"
+
+#~ msgid "You must specify a file name."
+#~ msgstr "Turite parinkti rinkmenos pavadinimą"
+
+#~ msgid "Error initializing movie capture."
+#~ msgstr "Klaida inicijuojant įrašytą filmą"
+
+#~ msgid "&Navigation"
+#~ msgstr "&Navigacija"
+
+#~ msgid "Options"
+#~ msgstr "Funkcijos"
+
+#~ msgid "Objects"
+#~ msgstr "Objektai"
+
+#~ msgid "OpenGL Render Path"
+#~ msgstr "OpenGL vaizdavimo režimas"
+
+#~ msgid "Time"
+#~ msgstr "Laikas"
+
+#~ msgid "MultiView"
+#~ msgstr "Multivaizdas"
+
+#~ msgid "Main Toolbar"
+#~ msgstr "Pagrindinė įrankinė"
+
+#~ msgid "Dist."
+#~ msgstr "Dist."
+
+#~ msgid "App. Mag."
+#~ msgstr "App. Ryšk."
+
+#~ msgid "Abs. Mag."
+#~ msgstr "Abs. Ryšk."
+
+#~ msgid "With Planets"
+#~ msgstr "Su planetomis"
+
+#~ msgid "Brightest (Abs.)"
+#~ msgstr "Ryškiausios (Abs.)"
+
+#~ msgid "Brightest (App.)"
+#~ msgstr "Ryškiausios (App.)"
+
+#~ msgid "Nearest"
+#~ msgstr "Artimiausi"
+
+#~ msgid "&Close"
+#~ msgstr "&Uždaryti"
+
+#~ msgid "Alt+C"
+#~ msgstr "Alt+C"
+
+#~ msgid "Refresh"
+#~ msgstr "Atnaujinti"
+
+#~ msgid "End"
+#~ msgstr "Pabaiga"
+
+#~ msgid "Search parameters"
+#~ msgstr "Paieškos parametrai"
+
+#~ msgid "Solar Eclipses"
+#~ msgstr "Saulės užtemimai"
+
+#~ msgid "On:"
+#~ msgstr "Į:"
+
+#~ msgid "Moon Eclipses"
+#~ msgstr "Mėnulio užtemimai"
+
+#~ msgid "Search"
+#~ msgstr "Ieškoti"
+
+#~ msgid "To:"
+#~ msgstr "Iki:"
+
+#~ msgid "From:"
+#~ msgstr "Nuo:"
+
+#~ msgid "Close"
+#~ msgstr "Uždaryti"
+
+#~ msgid "Video Capture"
+#~ msgstr "Video įrašymas"
+
+#~ msgid "Save As:"
+#~ msgstr "Įrašyti kaip:"
+
+#~ msgid "*.ogg"
+#~ msgstr "*.ogg"
+
+#~ msgid "Aspect Ratio:"
+#~ msgstr "Proporcijos:"
+
+#~ msgid "Current"
+#~ msgstr "Dabartinis"
+
+#~ msgid "11:9"
+#~ msgstr "11:9"
+
+#~ msgid "4:3"
+#~ msgstr "4:3"
+
+#~ msgid "16:9"
+#~ msgstr "16:9"
+
+#~ msgid "Image Size:"
+#~ msgstr "Atvaizdo dydis:"
+
+#~ msgid "Frame Rate:"
+#~ msgstr "Rėmelio norma:"
+
+#~ msgid "Video Quality:"
+#~ msgstr "Vaizdo kokybė:"
+
+#~ msgid "Play Video when capture is done"
+#~ msgstr "Rodyti video kai baigtas įrašymas"
+
+#~ msgid "Usage"
+#~ msgstr "Naudojimas"
+
+#~ msgid ""
+#~ "<p>Press <b>F11</b> to start/pause recording<br>\n"
+#~ "Press <b>F12</b> to stop</p>\n"
+#~ "\n"
+#~ "<p>Note that resizing the main window will not be possible until the end "
+#~ "of the capture</p>"
+#~ msgstr ""
+#~ "<p>Spauskite <b>F11</b> kad pradėti/sustabdyti įrašymą<br>\n"
+#~ "Spauskite <b>F12</b> kad sustabdyti</p>\n"
+#~ "\n"
+#~ "<p>Atminkite, įrašinėjant negalėsite keisti ekrano dydžio</p>"
+
+#~ msgid "&OK"
+#~ msgstr "&Gerai"
+
+#~ msgid "&Cancel"
+#~ msgstr "&Atšaukti"
+
+#~ msgid "Mercury"
+#~ msgstr "Merkurijus"
+
+#~ msgid "Venus"
+#~ msgstr "Venera"
+
+#~ msgid "Mars"
+#~ msgstr "Marsas"
+
+#~ msgid "Phobos"
+#~ msgstr "Fobas"
+
+#~ msgid "Deimos"
+#~ msgstr "Deimas"
+
+#~ msgid "Amalthea"
+#~ msgstr "Amaltėja"
+
+#~ msgid "Io"
+#~ msgstr "Ijo"
+
+#~ msgid "Europa"
+#~ msgstr "Europa"
+
+#~ msgid "Ganymede"
+#~ msgstr "Ganimedas"
+
+#~ msgid "Callisto"
+#~ msgstr "Kalista"
+
+#~ msgid "Prometheus"
+#~ msgstr "Prometėjas"
+
+#~ msgid "Pandora"
+#~ msgstr "Pandora"
+
+#~ msgid "Epimetheus"
+#~ msgstr "Efimetėjus"
+
+#~ msgid "Janus"
+#~ msgstr "Janas"
+
+#~ msgid "Mimas"
+#~ msgstr "Mimas"
+
+#~ msgid "Enceladus"
+#~ msgstr "Encelada"
+
+#~ msgid "Tethys"
+#~ msgstr "Tetys"
+
+#~ msgid "Dione"
+#~ msgstr "Dionė"
+
+#~ msgid "Rhea"
+#~ msgstr "Rėja"
+
+#~ msgid "Titan"
+#~ msgstr "Titanas"
+
+#~ msgid "Hyperion"
+#~ msgstr "Hyperionas"
+
+#~ msgid "Iapetus"
+#~ msgstr "Japetas"
+
+#~ msgid "Phoebe"
+#~ msgstr "Febė"
+
+#~ msgid "Miranda"
+#~ msgstr "Miranda"
+
+#~ msgid "Ariel"
+#~ msgstr "Arielis"
+
+#~ msgid "Umbriel"
+#~ msgstr "Umbrielis"
+
+#~ msgid "Titania"
+#~ msgstr "Titanija"
+
+#~ msgid "Oberon"
+#~ msgstr "Oberonas"
+
+#~ msgid "Larissa"
+#~ msgstr "Larisa"
+
+#~ msgid "Proteus"
+#~ msgstr "Protėjus"
+
+#~ msgid "Triton"
+#~ msgstr "Tritonas"
+
+#~ msgid "Nereid"
+#~ msgstr "Nereidė"
+
+#~ msgid "Pluto-Charon"
+#~ msgstr "Plutonas-Charonas"
+
+#~ msgid "Charon"
+#~ msgstr "Charonas"
+
+#~ msgid "NORTH AMERICA"
+#~ msgstr "ŠIAURĖS AMERIKA"
+
+#~ msgid "SOUTH AMERICA"
+#~ msgstr "PIETŲ AMERIKA"
+
+#~ msgid "EURASIA"
+#~ msgstr "EURAZIJA"
+
+#~ msgid "AFRICA"
+#~ msgstr "AFRIKA"
+
+#~ msgid "AUSTRALIA"
+#~ msgstr "AUSTRALIJA"
+
+#~ msgid "ANTARCTICA"
+#~ msgstr "ANTARKTIDA"
+
+#~ msgid "NORTH ATLANTIC OCEAN"
+#~ msgstr "ŠIAURĖS ATLANTO VANDENYNAS"
+
+#~ msgid "SOUTH ATLANTIC OCEAN"
+#~ msgstr "PIETŲ ATLANTO VANDENYNAS"
+
+#~ msgid "NORTH PACIFIC OCEAN"
+#~ msgstr "ŠIAURĖS RAMUSIS VANDENYNAS"
+
+#~ msgid "SOUTH PACIFIC OCEAN"
+#~ msgstr "PIETŲ RAMUSIS VANDENYNAS"
+
+#~ msgid "INDIAN OCEAN"
+#~ msgstr "INDIJOS VANDENYNAS"
+
+#~ msgid "ARCTIC OCEAN"
+#~ msgstr "ARKTIES VANDENYNAS"
+
+#~ msgid "Milky Way"
+#~ msgstr "Paukščių takas"
+
+#~ msgid "SMC"
+#~ msgstr "Mažasis Magelano debesis"
+
+#~ msgid "LMC"
+#~ msgstr "Didysis Magelano debesisi"
+
+#~ msgid "Solar System Barycenter"
+#~ msgstr "Saulės sistemos baricentras"
+
+#~ msgid "&File"
+#~ msgstr "&Failas"
+
+#~ msgid "&Open Script..."
+#~ msgstr "&Atidaryti scenarijų..."
+
+#~ msgid "Scripts"
+#~ msgstr "Scenarijai"
+
+#~ msgid "Placeholder"
+#~ msgstr "Rezervuota vieta"
+
+#~ msgid "Capture &Image...\tF10"
+#~ msgstr "Padaryti ekr. &atvaizdą...\tF10"
+
+#~ msgid "Capture &Movie...\tShift+F10"
+#~ msgstr "Sukurti &filmą...\tShift+F10"
+
+#~ msgid "E&xit"
+#~ msgstr "I&šeiti"
+
+#~ msgid "Select &Sol\tH"
+#~ msgstr "Pasirinkti &Saulę\tH"
+
+#~ msgid "Tour G&uide..."
+#~ msgstr "Kelionių g&idas..."
+
+#~ msgid "Select &Object..."
+#~ msgstr "Pasirinkti &objektą..."
+
+#~ msgid "Goto Object..."
+#~ msgstr "Aplankyti objektą..."
+
+#~ msgid "&Center Selection\tC"
+#~ msgstr "&Pasirinkimą į centrą\tC"
+
+#~ msgid "&Go to Selection\tG"
+#~ msgstr "&Aplankyti pasirinkimą\tG"
+
+#~ msgid "&Follow Selection\tF"
+#~ msgstr "&Sekti pasirinkimą\tF"
+
+#~ msgid "S&ync Orbit Selection\tY"
+#~ msgstr "S&inchronizuoti objekto orbitą\tY"
+
+#~ msgid "&Track Selection\tT"
+#~ msgstr "&Tako pasirinkimas\tT"
+
+#~ msgid "Solar System &Browser..."
+#~ msgstr "Saulės sistemos &naršyklė..."
+
+#~ msgid "Star B&rowser..."
+#~ msgstr "Žvaigždžių n&aršyklė..."
+
+#~ msgid "&Eclipse Finder"
+#~ msgstr "&Užtemimų ieškiklis"
+
+#~ msgid "&Time"
+#~ msgstr "&Laikas"
+
+#~ msgid "10x &Faster\tL"
+#~ msgstr "10x &greičiau\tL"
+
+#~ msgid "10x &Slower\tK"
+#~ msgstr "10x &lėčiau\tK"
+
+#~ msgid "Free&ze\tSpace"
+#~ msgstr "Sustab&dyti\tSpase"
+
+#~ msgid "&Real Time\t\\"
+#~ msgstr "&Realus laikas\t\\"
+
+#~ msgid "Re&verse Time\tJ"
+#~ msgstr "La&iko reversas\tJ"
+
+#~ msgid "Set &Time..."
+#~ msgstr "Nustatyti &laiką..."
+
+#~ msgid "Show Local Time"
+#~ msgstr "Rodyti vietinį laiką"
+
+#~ msgid "&Render"
+#~ msgstr "&Nustatymai"
+
+#~ msgid "Select Display Mode..."
+#~ msgstr "Pasirinkite ekrano režimą..."
+
+#~ msgid "Toggle Full Screen\tAlt+Enter"
+#~ msgstr "Per visą ekraną\tAlt+Enter"
+
+#~ msgid "View Options..."
+#~ msgstr "Rodymo parinktys"
+
+#~ msgid "Locations..."
+#~ msgstr "Vieta..."
+
+#~ msgid "More Stars Visible\t]"
+#~ msgstr "Daugiau žvaigždžių\t]"
+
+#~ msgid "Fewer Stars Visible\t["
+#~ msgstr "Mažiau žvaigždžių\t["
+
+#~ msgid "Auto Magnitude\tCtrl+Y"
+#~ msgstr "Auto ryškumas\tCtrl+Y"
+
+#~ msgid "Star St&yle"
+#~ msgstr "Žvaigždžių st&iliai"
+
+#~ msgid "&Fuzzy Points"
+#~ msgstr "&Išplaukę taškai"
+
+#~ msgid "&Points"
+#~ msgstr "&Taškai"
+
+#~ msgid "Scaled &Discs"
+#~ msgstr "Scaled &diskai"
+
+#~ msgid "&Ambient Light"
+#~ msgstr "&Aplinkos šviesa"
+
+#~ msgid "&None"
+#~ msgstr "&Nėra"
+
+#~ msgid "&Low"
+#~ msgstr "&Žemas"
+
+#~ msgid "&Medium"
+#~ msgstr "&Vidutinis"
+
+#~ msgid "&Texture Resolution"
+#~ msgstr "&Tekstūrų rezoliucijos"
+
+#~ msgid "&High"
+#~ msgstr "&Aukštas"
+
+#~ msgid "Antialiasing\tCtrl+X"
+#~ msgstr "Išlyginimas\tCtrl+X"
+
+#~ msgid "&View"
+#~ msgstr "&Rodymas"
+
+#~ msgid "Split &Horizontally\tCtrl+R"
+#~ msgstr "Padalinti &horizontaliai\tCtrl+R"
+
+#~ msgid "Split &Vertically\tCtrl+U"
+#~ msgstr "Padalinti &vertikaliai\tCtrl+U"
+
+#~ msgid "&Delete Active View\tDEL"
+#~ msgstr "&Ištrinti aktyvų vaizdą\tDEL"
+
+#~ msgid "&Single View\tCtrl+D"
+#~ msgstr "&Vientisas vaizdas\tCtrl+D"
+
+#~ msgid "Show &Frames"
+#~ msgstr "Rodyti &rėmelius"
+
+#~ msgid "Synchronize &Time"
+#~ msgstr "Sinchronizuoti & laiką"
+
+#~ msgid "&Bookmarks"
+#~ msgstr "&Žymelės"
+
+#~ msgid "&Add Bookmarks..."
+#~ msgstr "&Įtraukti žymeles..."
+
+#~ msgid "&Organize Bookmarks..."
+#~ msgstr "&Rūšiuoti žymeles..."
+
+#~ msgid "&Help"
+#~ msgstr "&Pagalba"
+
+#~ msgid "Run &Demo"
+#~ msgstr "Leisti &Demo"
+
+#~ msgid "&Controls"
+#~ msgstr "&Valdymas"
+
+#~ msgid "&OpenGL Info"
+#~ msgstr "&OpenGL Info"
+
+#~ msgid "&License"
+#~ msgstr "&Licenzija"
+
+#~ msgid "&About Celestia"
+#~ msgstr "&Apie Celestia"
+
+#~ msgid "About Celestia"
+#~ msgstr "Apie Celestia"
+
+#~ msgid "OK"
+#~ msgstr "Gerai"
+
+#~ msgid "Copyright (C) 2001-2008, Celestia Development Team"
+#~ msgstr "Copyright (C) 2001-2008, Celestia programuotojų komanda"
+
+#~ msgid "http://www.shatters.net/celestia"
+#~ msgstr "http://www.shatters.net/celestia"
+
+#~ msgid "Celestia is free software and comes with absolutely no warranty."
+#~ msgstr "Celestia yra nemokama programa ir neturi jokios garantijos."
+
+#~ msgid "Authors"
+#~ msgstr "Autoriai"
+
+#~ msgid "Chris Laurel"
+#~ msgstr "Chris Laurel"
+
+#~ msgid "Clint Weisbrod"
+#~ msgstr "Clint Weisbrod"
+
+#~ msgid "Fridger Schrempp"
+#~ msgstr "Fridger Schrempp"
+
+#~ msgid "Christophe Teyssier"
+#~ msgstr "Christophe Teyssier"
+
+#~ msgid "Grant Hutchison"
+#~ msgstr "Grant Hutchison"
+
+#~ msgid "Pat Suwalski"
+#~ msgstr "Pat Suwalski"
+
+#~ msgid "Toti"
+#~ msgstr "Toti"
+
+#~ msgid "Da Woon Jung"
+#~ msgstr "Da Woon Jung"
+
+#~ msgid "Hank Ramsey"
+#~ msgstr "Hank Ramsey"
+
+#~ msgid "Bob Ippolito"
+#~ msgstr "Bob Ippolito"
+
+#~ msgid "Vincent Giangiulio"
+#~ msgstr "Vincent Giangiulio"
+
+#~ msgid "Select Object"
+#~ msgstr "Pasirinkite objektą"
+
+#~ msgid "Object Name"
+#~ msgstr "Objekto pavadinimas"
+
+#~ msgid "License"
+#~ msgstr "Licenzija"
+
+#~ msgid "Celestia Controls"
+#~ msgstr "Celestia valdymas"
+
+#~ msgid "OpenGL Driver Info"
+#~ msgstr "OpenGL tvarkyklių informacija"
+
+#~ msgid "Set Simulation Time"
+#~ msgstr "Nustatykite modeliavimo laiką"
+
+#~ msgid "Time Zone: "
+#~ msgstr "Laiko zona:"
+
+#~ msgid "Set To Current Time"
+#~ msgstr "Nustatyti dabartinį laiką"
+
+#~ msgid "Add Bookmark"
+#~ msgstr "Įtraukti žymelę"
+
+#~ msgid "Create in >>"
+#~ msgstr "Sukurti į >>"
+
+#~ msgid "New Folder..."
+#~ msgstr "Naujas aplankas..."
+
+#~ msgid "Solar System Browser"
+#~ msgstr "Saulės sistemos naršyklė"
+
+#~ msgid "Solar System"
+#~ msgstr "Saulės sistema"
+
+#~ msgid "&Go To"
+#~ msgstr "&Aplankyti"
+
+#~ msgid "Solar System Objects"
+#~ msgstr "Saulės sistemos objektai"
+
+#~ msgid "Star Browser"
+#~ msgstr "Žvaigždžių naršyklė"
+
+#~ msgid "Brightest"
+#~ msgstr "Ryškiausias"
+
+#~ msgid "With planets"
+#~ msgstr "Su planetomis"
+
+#~ msgid "&Refresh"
+#~ msgstr "&Atnaujinti"
+
+#~ msgid "Star Search Criteria"
+#~ msgstr "Žvaigždžių paieškos kriterijus"
+
+#~ msgid "Maximum Stars Displayed in List"
+#~ msgstr "Maksimalus žvaigždžių rodomas sąrašas"
+
+#~ msgid "Tour Guide"
+#~ msgstr "Kelionių gidas"
+
+#~ msgid "Go To"
+#~ msgstr "Aplankyti"
+
+#~ msgid "Select your destination:"
+#~ msgstr "Pasirinkite savo paskirties vietą:"
+
+#~ msgid "Go to Object"
+#~ msgstr "Aplankyti objektą"
+
+#~ msgid "radii"
+#~ msgstr "spindulys"
+
+#~ msgid "Object"
+#~ msgstr "Objektas"
+
+#~ msgid "Long."
+#~ msgstr "Ilg."
+
+#~ msgid "Lat."
+#~ msgstr "Plat."
+
+#~ msgid "Distance"
+#~ msgstr "Atstumas"
+
+#~ msgid "Size:"
+#~ msgstr "Dydis:"
+
+#~ msgid "Frame rate:"
+#~ msgstr "Rėmelio norma:"
+
+#~ msgid "Select Display Mode"
+#~ msgstr "Pasirinkti ekrano režimą"
+
+#~ msgid "Resolution"
+#~ msgstr "Rezoliucija"
+
+#~ msgid "View Options"
+#~ msgstr "Rodymo nustatymai"
+
+#~ msgid "Globulars"
+#~ msgstr "Kamuoliniai spiečiai"
+
+#~ msgid "Grids"
+#~ msgstr "Tinkleliai"
+
+#~ msgid "Celestial"
+#~ msgstr "Dangaus"
+
+#~ msgid "Horizontal"
+#~ msgstr "Horizontaliai"
+
+#~ msgid "Galactic"
+#~ msgstr "Galaktika"
+
+#~ msgid "Ecliptic"
+#~ msgstr "Ekliptika"
+
+#~ msgid "Minor Moons"
+#~ msgstr "Mažieji palydovai"
+
+#~ msgid "DSO Labels"
+#~ msgstr "GD pavadinimai"
+
+#~ msgid "Diagrams"
+#~ msgstr "Diagramos"
+
+#~ msgid "Boundaries"
+#~ msgstr "Ribos"
+
+#~ msgid "Latin Names"
+#~ msgstr "Lotyniški pavadinimai"
+
+#~ msgid "Information Text"
+#~ msgstr "Informacinis tekstas"
+
+#~ msgid "Filter Stars"
+#~ msgstr "Filtruoti žvaigždes"
+
+#~ msgid "Montes (Mountains)"
+#~ msgstr "Kalnai (Kalnynai)"
+
+#~ msgid "Maria (Seas)"
+#~ msgstr "Įlankos (Jūros)"
+
+#~ msgid "Valles (Valleys)"
+#~ msgstr "Slėniai"
+
+#~ msgid "Terrae (Land masses)"
+#~ msgstr "Žemynas (Žemės masės)"
+
+#~ msgid "Volcanoes"
+#~ msgstr "Vulkanas"
+
+#~ msgid "Other features"
+#~ msgstr "Kitos savybės"
+
+#~ msgid "Label Features"
+#~ msgstr "Pavadinimų ypatybės"
+
+#~ msgid "Show Features"
+#~ msgstr "Rodyti savybes"
+
+#~ msgid "Minimum Labeled Feature Size"
+#~ msgstr "Minimalus pavadinimo ypatybės dydis"
+
+#~ msgid "Add New Bookmark Folder"
+#~ msgstr "Įtraukti naują žymelių aplanką"
+
+#~ msgid "Folder Name"
+#~ msgstr "Aplanko pavadinimas"
+
+#~ msgid "Organize Bookmarks"
+#~ msgstr "Rūšiuoti žymeles"
+
+#~ msgid "Rename..."
+#~ msgstr "Pervadinti..."
+
+#~ msgid "Delete"
+#~ msgstr "Trinti"
+
+#~ msgid "Rename Bookmark or Folder"
+#~ msgstr "Pervadinti žymelę arba aplanką"
+
+#~ msgid "New Name"
+#~ msgstr "Naujas pavadinimas"
+
+#~ msgid "Compute"
+#~ msgstr "Skaičiuoti"
+
+#~ msgid "Set Date and Go to Planet"
+#~ msgstr "Nustatykite laiką ir aplankykite planetą"
+
+#~ msgid "Lunar Eclipses"
+#~ msgstr "Mėnulio užtemimas"
+
+#~ msgid "Jan"
+#~ msgstr "Saus"
+
+#~ msgid "Feb"
+#~ msgstr "Vas"
+
+#~ msgid "Mar"
+#~ msgstr "Kov"
+
+#~ msgid "Apr"
+#~ msgstr "Bal"
+
+#~ msgid "May"
+#~ msgstr "Geg"
+
+#~ msgid "Jun"
+#~ msgstr "Bir"
+
+#~ msgid "Jul"
+#~ msgstr "Lie"
+
+#~ msgid "Aug"
+#~ msgstr "Rug"
+
+#~ msgid "Sep"
+#~ msgstr "Rugs"
+
+#~ msgid "Oct"
+#~ msgstr "Spa"
+
+#~ msgid "Nov"
+#~ msgstr "Lap"
+
+#~ msgid "Dec"
+#~ msgstr "Gru"

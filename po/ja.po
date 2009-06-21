@@ -1,0 +1,2643 @@
+# Japanese translations for PACKAGE package.
+# Copyright (C) 2006 Chris Laurel
+# This file is distributed under the same license as the PACKAGE package.
+# Sui Ota <aqua@aqsp.net>, 2006.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Celestia-Japanese\n"
+"Report-Msgid-Bugs-To: chris@teyssier.org\n"
+"POT-Creation-Date: 2009-06-21 16:00+0000\n"
+"PO-Revision-Date: 2008-12-30 21:18+0900\n"
+"Last-Translator: Sui Ota <aqua@aqsp.net>\n"
+"Language-Team: Japanese\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Poedit-Country: JAPAN\n"
+"X-Poedit-SourceCharset: utf-8\n"
+
+#: src/celengine/astro.cpp:827
+msgid "DST"
+msgstr "夏時間"
+
+#: src/celengine/astro.cpp:827
+msgid "STD"
+msgstr "標準時間"
+
+#: src/celengine/dsodb.cpp:387
+msgid "Loaded "
+msgstr "合計 "
+
+#: src/celengine/dsodb.cpp:387
+msgid " deep space objects"
+msgstr " 個の深宇宙天体を読み込みました。"
+
+#: src/celengine/fragmentprog.cpp:93
+msgid "Loading NV fragment program: "
+msgstr "次のNV fragment programを読み込んでいます: "
+
+#: src/celengine/fragmentprog.cpp:98
+msgid "Error loading NV fragment program: "
+msgstr "次のNV fragment programの読み込みでエラーが発生しました: "
+
+#: src/celengine/fragmentprog.cpp:115
+msgid "Error in fragment program "
+msgstr "次のfragment programの読み込みにエラーがあります: "
+
+#: src/celengine/fragmentprog.cpp:126
+msgid "Initializing NV fragment programs . . .\n"
+msgstr "NV fragment programを初期化しています…\n"
+
+#: src/celengine/fragmentprog.cpp:142
+msgid "All NV fragment programs loaded successfully.\n"
+msgstr "すべてのNV fragment programを正常に読み込みました。\n"
+
+#: src/celengine/fragmentprog.cpp:150
+msgid "Initializing ARB fragment programs . . .\n"
+msgstr "ARB fragment programを初期化しています…\n"
+
+#: src/celengine/galaxy.cpp:197
+#, c-format
+msgid "Galaxy (Hubble type: %s)"
+msgstr "銀河 (ハッブル型: %s)"
+
+#: src/celengine/image.cpp:373
+msgid "Loading image from file "
+msgstr "次の画像ファイルを読み込んでいます: "
+
+#: src/celengine/image.cpp:391
+msgid ": unrecognized or unsupported image file type.\n"
+msgstr " は認識できないか，サポートされていない画像ファイルです。\n"
+
+#: src/celengine/image.cpp:654
+msgid "Error opening image file "
+msgstr "次の画像ファイルの読み込みでエラーが発生しました: "
+
+#: src/celengine/image.cpp:661
+msgid "Error: "
+msgstr "エラー: "
+
+#: src/celengine/image.cpp:661
+msgid " is not a PNG file.\n"
+msgstr " はPNGファイルではありません。\n"
+
+#: src/celengine/image.cpp:688
+msgid "Error reading PNG image file "
+msgstr "次のPNGファイルの読み込みでエラーが発生しました: "
+
+#: src/celengine/meshmanager.cpp:84
+msgid "Loading model: "
+msgstr "次の3Dモデルファイルを読み込んでいます: "
+
+#: src/celengine/meshmanager.cpp:162
+msgid "   Model statistics: "
+msgstr "   モデル特性: "
+
+#: src/celengine/meshmanager.cpp:163
+msgid " vertices, "
+msgstr " vertices, "
+
+#: src/celengine/meshmanager.cpp:164
+msgid " primitives, "
+msgstr " primitives, "
+
+#: src/celengine/meshmanager.cpp:165
+msgid " materials "
+msgstr " materials "
+
+#: src/celengine/meshmanager.cpp:166
+msgid " unique)\n"
+msgstr " unique)\n"
+
+#: src/celengine/meshmanager.cpp:170
+msgid "Error loading model '"
+msgstr "次の3Dモデルファイルの読み込みに失敗しました: '"
+
+#: src/celengine/nebula.cpp:47 src/celengine/opencluster.cpp:44
+#, c-format
+msgid "%s"
+msgstr "%s"
+
+#: src/celengine/solarsys.cpp:93
+msgid "Error in .ssc file (line "
+msgstr ".sscファイルにエラーがあります。(行 "
+
+#: src/celengine/solarsys.cpp:1200 src/celengine/solarsys.cpp:1267
+msgid "parent body '"
+msgstr "母天体 '"
+
+#: src/celengine/solarsys.cpp:1200 src/celengine/solarsys.cpp:1267
+msgid "' of '"
+msgstr "'('"
+
+#: src/celengine/solarsys.cpp:1200
+msgid "' not found."
+msgstr "' が参照) が見つかりません。"
+
+#: src/celengine/solarsys.cpp:1211
+msgid "warning duplicate definition of "
+msgstr "重複して定義されています: "
+
+#: src/celengine/solarsys.cpp:1247
+msgid "bad alternate surface"
+msgstr "正しくないAltSurfaceです。"
+
+#: src/celengine/solarsys.cpp:1261
+msgid "bad location"
+msgstr "正しくない地名です。"
+
+#: src/celengine/solarsys.cpp:1267
+msgid "' not found.\n"
+msgstr "' が参照)が見つかりません。\n"
+
+#: src/celengine/stardb.cpp:579
+msgid "Bad header for cross index\n"
+msgstr "クロスインデックスのヘッダが正しくありません。\n"
+
+#: src/celengine/stardb.cpp:592
+msgid "Bad version for cross index\n"
+msgstr "クロスインデックスのバージョンが正しくありません。\n"
+
+#: src/celengine/stardb.cpp:614
+msgid "Loading cross index failed at record "
+msgstr "次のレコードでクロスインデックスの読み込みに失敗しました: レコード "
+
+#: src/celengine/stardb.cpp:696
+msgid "Bad spectral type in star database, star #"
+msgstr "次の恒星のスペクトル型が正しくありません。 #"
+
+#: src/celengine/stardb.cpp:711
+msgid " stars in binary database\n"
+msgstr " 個の恒星がバイナリから読み込まれました。\n"
+
+#: src/celengine/stardb.cpp:735
+msgid "Total star count: "
+msgstr "恒星総数: "
+
+#: src/celengine/stardb.cpp:769
+msgid "Error in .stc file (line "
+msgstr ".stcファイルにエラーがあります。(行 "
+
+#: src/celengine/stardb.cpp:806
+msgid "Invalid star: bad spectral type.\n"
+msgstr "無効な恒星です: スペクトル型が正しくありません。\n"
+
+#: src/celengine/stardb.cpp:815
+msgid "Invalid star: missing spectral type.\n"
+msgstr "無効な恒星です: スペクトル型がありません。\n"
+
+#: src/celengine/stardb.cpp:962
+msgid "Barycenter "
+msgstr "重心"
+
+#: src/celengine/stardb.cpp:962
+msgid " does not exist.\n"
+msgstr " は存在しません。\n"
+
+#: src/celengine/stardb.cpp:1008
+msgid "Invalid star: missing right ascension\n"
+msgstr "無効な恒星です: 赤経がありません。\n"
+
+#: src/celengine/stardb.cpp:1021
+msgid "Invalid star: missing declination.\n"
+msgstr "無効な恒星です: 赤緯がありません。\n"
+
+#: src/celengine/stardb.cpp:1034
+msgid "Invalid star: missing distance.\n"
+msgstr "無効な恒星です: 距離がありません。\n"
+
+#: src/celengine/stardb.cpp:1070
+msgid "Invalid star: missing magnitude.\n"
+msgstr "無効な恒星です: 等級がありません。\n"
+
+#: src/celengine/stardb.cpp:1087
+msgid ""
+"Invalid star: absolute (not apparent) magnitude must be specified for star "
+"near origin\n"
+msgstr ""
+"無効な恒星です: 原点付近の恒星には、実視等級ではなく、絶対等級が設定されてい"
+"る必要があります。\n"
+
+#: src/celengine/texture.cpp:1019
+msgid "Creating tiled texture. Width="
+msgstr "タイルテクスチャを生成中。幅: "
+
+#: src/celengine/texture.cpp:1019
+msgid ", max="
+msgstr ", 最大: "
+
+#: src/celengine/texture.cpp:1024
+msgid "Creating ordinary texture: "
+msgstr "通常テクスチャを生成中: "
+
+#: src/celengine/vertexprog.cpp:114
+msgid "Loading NV vertex program: "
+msgstr "次のNV vertex programを読み込んでいます: "
+
+#: src/celengine/vertexprog.cpp:119
+msgid "Error loading NV vertex program: "
+msgstr "次のNV vertex programの読み込みでエラーが発生しました: "
+
+#: src/celengine/vertexprog.cpp:136 src/celengine/vertexprog.cpp:195
+msgid "Error in vertex program "
+msgstr "次のvertex programにエラーがあります: "
+
+#: src/celengine/vertexprog.cpp:163
+msgid "Loading ARB vertex program: "
+msgstr "次のARB vertex programを読み込んでいます: "
+
+#: src/celengine/vertexprog.cpp:168
+msgid "Error loading ARB vertex program: "
+msgstr "次のARB vertex programの読み込みでエラーが発生しました: "
+
+#: src/celengine/vertexprog.cpp:196
+msgid ", line "
+msgstr ", 行 "
+
+#: src/celengine/vertexprog.cpp:208
+msgid "Initializing NV vertex programs . . .\n"
+msgstr "NV vertex programを初期化しています…\n"
+
+#: src/celengine/vertexprog.cpp:240
+msgid "All NV vertex programs loaded successfully.\n"
+msgstr "すべてのNV vertex programsを読み込みました。\n"
+
+#: src/celengine/vertexprog.cpp:253
+msgid "Initializing ARB vertex programs . . .\n"
+msgstr "ARB vertex programを初期化しています…\n"
+
+#: src/celengine/vertexprog.cpp:314
+msgid "All ARB vertex programs loaded successfully.\n"
+msgstr "すべてのARB vertex programを読み込みました。\n"
+
+#: src/celestia/celestiacore.cpp:421
+msgid "Error reading favorites file."
+msgstr "お気に入りファイルの読み込みでエラーが発生しました。"
+
+#: src/celestia/celestiacore.cpp:511
+msgid "Orientation: "
+msgstr "方向: "
+
+#: src/celestia/celestiacore.cpp:558 src/celestia/celestiacore.cpp:560
+msgid "Error opening script file."
+msgstr "スクリプトファイルのオープンでエラーが発生しました。"
+
+#: src/celestia/celestiacore.cpp:591
+#, c-format
+msgid "Error opening script '%s'"
+msgstr "スクリプトファイル'%s'のオープンでエラーが発生しました。"
+
+#: src/celestia/celestiacore.cpp:609
+msgid "Unknown error opening script"
+msgstr "スクリプトのオープンで不明なエラーが発生しました。"
+
+#: src/celestia/celestiacore.cpp:621
+msgid "Script coroutine initialization failed"
+msgstr "スクリプトコルーチンの初期化に失敗しました。"
+
+#: src/celestia/celestiacore.cpp:637 src/celestia/celestiacore.cpp:639
+msgid "Invalid filetype"
+msgstr "無効なファイルタイプです。"
+
+#: src/celestia/celestiacore.cpp:982 src/celestia/celestiacore.cpp:1787
+#: src/celestia/celestiacore.cpp:1805 src/celestia/celestiacore.cpp:2046
+#: src/celestia/celestiacore.cpp:2077
+#, c-format
+msgid "Magnitude limit: %.2f"
+msgstr "限界等級: %.2f"
+
+#: src/celestia/celestiacore.cpp:1417
+msgid "Markers enabled"
+msgstr "マーカー: ON"
+
+#: src/celestia/celestiacore.cpp:1420
+msgid "Markers disabled"
+msgstr "マーカー: OFF"
+
+#: src/celestia/celestiacore.cpp:1430
+msgid "Goto surface"
+msgstr "天体表面へ移動"
+
+#: src/celestia/celestiacore.cpp:1443
+msgid "Alt-azimuth mode enabled"
+msgstr "高度角・方位角モード: ON"
+
+#: src/celestia/celestiacore.cpp:1446
+msgid "Alt-azimuth mode disabled"
+msgstr "高度角・方位角モード: OFF"
+
+#: src/celestia/celestiacore.cpp:1502
+msgid "Star style: fuzzy points"
+msgstr "恒星表示: ぼやけた点"
+
+#: src/celestia/celestiacore.cpp:1505
+msgid "Star style: points"
+msgstr "恒星表示: 点"
+
+#: src/celestia/celestiacore.cpp:1508
+msgid "Star style: scaled discs"
+msgstr "恒星表示: 等級に応じた円"
+
+#: src/celestia/celestiacore.cpp:1521
+msgid "Comet tails enabled"
+msgstr "彗星の尾: ON"
+
+#: src/celestia/celestiacore.cpp:1524
+msgid "Comet tails disabled"
+msgstr "彗星の尾: OFF"
+
+#: src/celestia/celestiacore.cpp:1539
+msgid "Render path: Basic"
+msgstr "レンダリングパス: Basic"
+
+#: src/celestia/celestiacore.cpp:1542
+msgid "Render path: Multitexture"
+msgstr "レンダリングパス: Multitexture"
+
+#: src/celestia/celestiacore.cpp:1545
+msgid "Render path: NVIDIA combiners"
+msgstr "レンダリングパス: NVIDIA combiners"
+
+#: src/celestia/celestiacore.cpp:1548
+msgid "Render path: OpenGL vertex program"
+msgstr "レンダリングパス: OpenGL vertex program"
+
+#: src/celestia/celestiacore.cpp:1551
+msgid "Render path: NVIDIA vertex program and combiners"
+msgstr "レンダリングパス: NVIDIA vertex program and combiners"
+
+#: src/celestia/celestiacore.cpp:1554
+msgid "Render path: OpenGL vertex program/NVIDIA combiners"
+msgstr "レンダリングパス: OpenGL vertex program/NVIDIA combiners"
+
+#: src/celestia/celestiacore.cpp:1557
+msgid "Render path: OpenGL 1.5 vertex/fragment program"
+msgstr "レンダリングパス: OpenGL 1.5 vertex/fragment program"
+
+#: src/celestia/celestiacore.cpp:1560
+msgid "Render path: NVIDIA GeForce FX"
+msgstr "レンダリングパス: NVIDIA GeForce FX"
+
+#: src/celestia/celestiacore.cpp:1563
+msgid "Render path: OpenGL 2.0"
+msgstr "レンダリングパス: OpenGL 2.0"
+
+#: src/celestia/celestiacore.cpp:1586
+msgid "Auto-magnitude enabled"
+msgstr "自動限界等級調整: ON"
+
+#: src/celestia/celestiacore.cpp:1591
+msgid "Auto-magnitude disabled"
+msgstr "自動限界等級調整: OFF"
+
+#: src/celestia/celestiacore.cpp:1613
+msgid "Cancel"
+msgstr "キャンセル"
+
+#: src/celestia/celestiacore.cpp:1649
+msgid "Time and script are paused"
+msgstr "時間・スクリプト: 停止"
+
+#: src/celestia/celestiacore.cpp:1651
+msgid "Time is paused"
+msgstr "時間: 停止"
+
+#: src/celestia/celestiacore.cpp:1655
+msgid "Resume"
+msgstr "再開"
+
+#: src/celestia/celestiacore.cpp:1730
+#, c-format
+msgid "Light travel time:  %.4f yr "
+msgstr "光速到達時間: %.4f 年"
+
+#: src/celestia/celestiacore.cpp:1739
+#, c-format
+msgid "Light travel time:  %d min  %.1f s"
+msgstr "光速到達時間: %d 分  %.1f 秒"
+
+#: src/celestia/celestiacore.cpp:1742
+#, c-format
+msgid "Light travel time:  %d h  %d min  %.1f s"
+msgstr "光速到達時間: %d 時間  %d 分  %.1f 秒"
+
+#: src/celestia/celestiacore.cpp:1761
+msgid "Light travel delay included"
+msgstr "光速考慮: ON"
+
+#: src/celestia/celestiacore.cpp:1766
+msgid "Light travel delay switched off"
+msgstr "光速考慮: OFF"
+
+#: src/celestia/celestiacore.cpp:1772
+msgid "Light travel delay ignored"
+msgstr "光速考慮は無視されます。"
+
+#: src/celestia/celestiacore.cpp:1817
+msgid "Using normal surface textures."
+msgstr "通常テクスチャを使用"
+
+#: src/celestia/celestiacore.cpp:1822
+msgid "Using limit of knowledge surface textures."
+msgstr "limit of knowledgeテクスチャを使用"
+
+#: src/celestia/celestiacore.cpp:1889
+msgid "Follow"
+msgstr "春分点同期"
+
+#: src/celestia/celestiacore.cpp:1914
+msgid "Time: Forward"
+msgstr "時間の流れ: 順方向"
+
+#: src/celestia/celestiacore.cpp:1916
+msgid "Time: Backward"
+msgstr "時間の流れ: 逆方向"
+
+#: src/celestia/celestiacore.cpp:1929 src/celestia/celestiacore.cpp:1945
+msgid "Time rate"
+msgstr "時間の速さ"
+
+#: src/celestia/celestiacore.cpp:2018
+msgid "Sync Orbit"
+msgstr "自転同期"
+
+#: src/celestia/celestiacore.cpp:2024
+msgid "Lock"
+msgstr "2天体参照同期"
+
+#: src/celestia/celestiacore.cpp:2030
+msgid "Chase"
+msgstr "公転同期"
+
+#: src/celestia/celestiacore.cpp:2057 src/celestia/celestiacore.cpp:2088
+#, c-format
+msgid "Auto magnitude limit at 45 degrees:  %.2f"
+msgstr "視野45°での限界等級: %.2f"
+
+#: src/celestia/celestiacore.cpp:2107 src/celestia/celestiacore.cpp:2122
+#, c-format
+msgid "Ambient light level:  %.2f"
+msgstr "周辺光の強さ: %.2f"
+
+#: src/celestia/celestiacore.cpp:2133 src/celestia/celestiacore.cpp:2145
+msgid "Light gain"
+msgstr "光度利得"
+
+#: src/celestia/celestiacore.cpp:2165
+msgid "Bloom enabled"
+msgstr "ブルーム効果: ON"
+
+#: src/celestia/celestiacore.cpp:2167
+msgid "Bloom disabled"
+msgstr "ブルーム効果: OFF"
+
+#: src/celestia/celestiacore.cpp:2173 src/celestia/celestiacore.cpp:2181
+msgid "Exposure"
+msgstr "露出"
+
+#: src/celestia/celestiacore.cpp:2532
+msgid "GL error: "
+msgstr "GLエラー: "
+
+#: src/celestia/celestiacore.cpp:2659
+msgid "View too small to be split"
+msgstr "画面が小さすぎます。"
+
+#: src/celestia/celestiacore.cpp:2662
+msgid "Added view"
+msgstr "画面を分割"
+
+#: src/celestia/celestiacore.cpp:2918
+msgid "ly"
+msgstr "光年"
+
+#: src/celestia/celestiacore.cpp:2922
+msgid "au"
+msgstr "天文単位"
+
+#: src/celestia/celestiacore.cpp:2943
+msgid " days"
+msgstr " 日"
+
+#: src/celestia/celestiacore.cpp:2945
+msgid " hours"
+msgstr " 時間"
+
+#: src/celestia/celestiacore.cpp:2947
+msgid " minutes"
+msgstr " 分"
+
+#: src/celestia/celestiacore.cpp:3014
+msgid "Apparent diameter: "
+msgstr "視直径: "
+
+#: src/celestia/celestiacore.cpp:3029
+msgid "Apparent magnitude: "
+msgstr "視等級: "
+
+#: src/celestia/celestiacore.cpp:3033
+msgid "Absolute magnitude: "
+msgstr "絶対等級: "
+
+#: src/celestia/celestiacore.cpp:3055
+msgid "RA: "
+msgstr "赤経: "
+
+#: src/celestia/celestiacore.cpp:3059
+msgid "Dec: "
+msgstr "赤緯: "
+
+#: src/celestia/celestiacore.cpp:3123
+msgid "km"
+msgstr "km"
+
+#: src/celestia/celestiacore.cpp:3152 src/celestia/celestiacore.cpp:3226
+#: src/celestia/celestiacore.cpp:3258 src/celestia/celestiacore.cpp:3359
+msgid "Distance: "
+msgstr "距離: "
+
+#: src/celestia/celestiacore.cpp:3158
+msgid "Star system barycenter\n"
+msgstr "重心\n"
+
+#: src/celestia/celestiacore.cpp:3162
+#, c-format
+msgid "Abs (app) mag: %.2f (%.2f)\n"
+msgstr "絶対等級: %.2f 視等級: %.2f\n"
+
+#: src/celestia/celestiacore.cpp:3168
+msgid "Luminosity: "
+msgstr "光度: 太陽の "
+
+#: src/celestia/celestiacore.cpp:3168
+msgid "x Sun"
+msgstr " 倍"
+
+#: src/celestia/celestiacore.cpp:3169
+msgid "Class: "
+msgstr "スペクトル型: "
+
+#: src/celestia/celestiacore.cpp:3171
+msgid "Neutron star"
+msgstr "中性子星"
+
+#: src/celestia/celestiacore.cpp:3173
+msgid "Black hole"
+msgstr "ブラックホール"
+
+#: src/celestia/celestiacore.cpp:3183
+msgid "Surface temp: "
+msgstr "表面温度: "
+
+#: src/celestia/celestiacore.cpp:3186 src/celestia/celestiacore.cpp:3235
+#: src/celestia/celestiacore.cpp:3268
+msgid "Radius: "
+msgstr "半径: 太陽の"
+
+#: src/celestia/celestiacore.cpp:3189
+msgid "Rsun"
+msgstr " 倍"
+
+#: src/celestia/celestiacore.cpp:3199 src/celestia/celestiacore.cpp:3320
+msgid "Rotation period: "
+msgstr "自転周期: "
+
+#: src/celestia/celestiacore.cpp:3213
+msgid "Planetary companions present\n"
+msgstr "惑星が存在\n"
+
+#: src/celestia/celestiacore.cpp:3231
+msgid "Distance from center: "
+msgstr "中心からの距離: "
+
+#: src/celestia/celestiacore.cpp:3336
+msgid "Temperature: "
+msgstr "温度: "
+
+#: src/celestia/celestiacore.cpp:3348
+#, c-format
+msgid "Apparent mag: %.2f\n"
+msgstr "視等級: %.2f\n"
+
+#: src/celestia/celestiacore.cpp:3516
+msgid "  LT"
+msgstr "光速"
+
+#: src/celestia/celestiacore.cpp:3525
+msgid "Real time"
+msgstr "等倍速"
+
+#: src/celestia/celestiacore.cpp:3527
+msgid "-Real time"
+msgstr "-等倍速"
+
+#: src/celestia/celestiacore.cpp:3531
+msgid "Time stopped"
+msgstr "停止中"
+
+#: src/celestia/celestiacore.cpp:3536
+msgid " faster"
+msgstr " 倍速"
+
+#: src/celestia/celestiacore.cpp:3541
+msgid " slower"
+msgstr " スロー"
+
+#: src/celestia/celestiacore.cpp:3547
+msgid " (Paused)"
+msgstr "(停止中)"
+
+#: src/celestia/celestiacore.cpp:3565
+msgid "FPS: "
+msgstr "FPS: "
+
+#: src/celestia/celestiacore.cpp:3567
+msgid ""
+"\n"
+"Speed: "
+msgstr ""
+"\n"
+"速度: "
+
+#: src/celestia/celestiacore.cpp:3571
+msgid " m/s"
+msgstr " m/s"
+
+#: src/celestia/celestiacore.cpp:3573
+msgid " km/s"
+msgstr " km/s"
+
+#: src/celestia/celestiacore.cpp:3577
+msgid " AU/s"
+msgstr " 天文単位/s"
+
+#: src/celestia/celestiacore.cpp:3579
+msgid " ly/s"
+msgstr " 光年/s"
+
+#: src/celestia/celestiacore.cpp:3596
+msgid "Travelling "
+msgstr "移動中"
+
+#: src/celestia/celestiacore.cpp:3609
+msgid "Track "
+msgstr "中央保持: "
+
+#: src/celestia/celestiacore.cpp:3623
+msgid "Follow "
+msgstr "春分点同期: "
+
+#: src/celestia/celestiacore.cpp:3628
+msgid "Sync Orbit "
+msgstr "自転同期: "
+
+#: src/celestia/celestiacore.cpp:3633
+msgid "Lock "
+msgstr "2天体同期: "
+
+#: src/celestia/celestiacore.cpp:3642
+msgid "Chase "
+msgstr "公転同期: "
+
+#: src/celestia/celestiacore.cpp:3658
+msgid "FOV: "
+msgstr "視野: "
+
+#: src/celestia/celestiacore.cpp:3688 src/celestia/celestiacore.cpp:3691
+msgid "Sun"
+msgstr "太陽"
+
+#: src/celestia/celestiacore.cpp:3865
+msgid "Target name: "
+msgstr "天体名を入力してください: "
+
+#: src/celestia/celestiacore.cpp:3947
+msgid " at "
+msgstr " "
+
+#: src/celestia/celestiacore.cpp:3948
+msgid " fps"
+msgstr " FPS"
+
+#: src/celestia/celestiacore.cpp:3950
+msgid "  Recording"
+msgstr " 録画中"
+
+#: src/celestia/celestiacore.cpp:3952
+msgid "  Paused"
+msgstr " 停止中"
+
+#: src/celestia/celestiacore.cpp:3971
+msgid "F11 Start/Pause    F12 Stop"
+msgstr "F11 録画開始/一時停止    F12 停止"
+
+#: src/celestia/celestiacore.cpp:3980 src/celestia/celestiacore.cpp:3983
+msgid "Edit Mode"
+msgstr "編集モード"
+
+#: src/celestia/celestiacore.cpp:4049
+msgid "Loading solar system catalog: "
+msgstr "次の恒星系カタログを読み込んでいます: "
+
+#: src/celestia/celestiacore.cpp:4090
+msgid "Loading "
+msgstr "次を読み込んでいます: "
+
+#: src/celestia/celestiacore.cpp:4125
+msgid "License file 'License.txt' is missing!"
+msgstr "ライセンスファイル'License.txt'がありません!"
+
+#: src/celestia/celestiacore.cpp:4146
+msgid "Error reading configuration file."
+msgstr "設定ファイルの読み込みでエラーが発生しました。"
+
+#: src/celestia/celestiacore.cpp:4157
+msgid "Initialization of SPICE library failed."
+msgstr "SPICEの初期化に失敗しました。"
+
+#: src/celestia/celestiacore.cpp:4204
+msgid "Cannot read star database."
+msgstr "恒星データベースが読み込めません。"
+
+#: src/celestia/celestiacore.cpp:4226
+msgid "Error opening deepsky catalog file."
+msgstr "深宇宙天体カタログのオープンでエラーが発生しました。"
+
+#: src/celestia/celestiacore.cpp:4278
+msgid "Error opening solar system catalog.\n"
+msgstr "恒星系カタログのオープンでエラーが発生しました。.\n"
+
+#: src/celestia/celestiacore.cpp:4311
+msgid "Error opening asterisms file."
+msgstr "星座線ファイルのオープンでエラーが発生しました。"
+
+#: src/celestia/celestiacore.cpp:4326
+msgid "Error opening constellation boundaries files."
+msgstr "星座境界線ファイルのオープンでエラーが発生しました。"
+
+#: src/celestia/celestiacore.cpp:4393
+msgid "render path: "
+msgstr "レンダリングパス: "
+
+#: src/celestia/celestiacore.cpp:4404
+msgid "Failed to initialize renderer"
+msgstr "レンダラーの初期化に失敗しました。"
+
+#: src/celestia/celestiacore.cpp:4420
+msgid "Error loading font; text will not be visible.\n"
+msgstr "フォントの読み込みでエラーが発生しました。テキストが表示されません。\n"
+
+#: src/celestia/celestiacore.cpp:4477
+msgid "Error reading cross index "
+msgstr "次のクロスインデックスファイルの読み込みでエラーが発生しました: "
+
+#: src/celestia/celestiacore.cpp:4479
+msgid "Loaded cross index "
+msgstr "次のクロスインデックスファイルを読み込みました: "
+
+#: src/celestia/celestiacore.cpp:4493 src/celestia/celestiacore.cpp:4515
+msgid "Error opening "
+msgstr "次のオープンでエラーが発生しました: "
+
+#: src/celestia/celestiacore.cpp:4500
+msgid "Error reading star names file\n"
+msgstr "恒星名ファイルの読み込みでエラーが発生しました。\n"
+
+#: src/celestia/celestiacore.cpp:4523
+msgid "Error reading stars file\n"
+msgstr "恒星ファイルの読み込みでエラーが発生しました。\n"
+
+#: src/celestia/celestiacore.cpp:4550
+msgid "Error opening star catalog "
+msgstr "次の恒星カタログのオープンでエラーが発生しました: "
+
+#: src/celestia/oggtheoracapture.cpp:159
+#, c-format
+msgid "Error in creating ogg file %s for capture.\n"
+msgstr "Oggファイル %sの作成でエラーがありました。\n"
+
+#: src/celestia/oggtheoracapture.cpp:253 src/celestia/oggtheoracapture.cpp:273
+msgid "Internal Ogg library error."
+msgstr "内部Oggライブラリエラーです。"
+
+#: src/celestia/oggtheoracapture.cpp:308
+#, c-format
+msgid ""
+"OggTheoraCapture::start() - Theora video: %s %.2f(%d/%d) fps quality %d %dx%"
+"d offset (%dx%d)\n"
+msgstr ""
+"OggTheoraCapture::start() - Theora video: %s %.2f(%d/%d) FPS 品質 %d %dx%d オ"
+"フセット (%dx%d)\n"
+
+#: src/celestia/oggtheoracapture.cpp:423
+#, c-format
+msgid "OggTheoraCapture::cleanup() - wrote %d frames\n"
+msgstr "OggTheoraCapture::cleanup() - %d フレームで書き込みました。\n"
+
+#: src/celestia/url.cpp:653
+msgid "Settings"
+msgstr "Settings"
+
+#: src/celestia/winmain.cpp:625
+msgid "Vendor: "
+msgstr "ベンダー: "
+
+#: src/celestia/winmain.cpp:630
+msgid "Renderer: "
+msgstr "レンダラー: "
+
+#: src/celestia/winmain.cpp:635
+msgid "Version: "
+msgstr "バージョン: "
+
+#: src/celestia/winmain.cpp:645
+msgid "GLSL version: "
+msgstr "GLSLバージョン: "
+
+#: src/celestia/winmain.cpp:656
+msgid "Max simultaneous textures: "
+msgstr "最大同時テクスチャ数: "
+
+#: src/celestia/winmain.cpp:663
+msgid "Max texture size: "
+msgstr "最大テクスチャサイズ: "
+
+#: src/celestia/winmain.cpp:672
+msgid "Max cube map size: "
+msgstr "最大キューブマップサイズ: "
+
+#: src/celestia/winmain.cpp:680
+msgid "Point size range: "
+msgstr "ポイントサイズレンジ: "
+
+#: src/celestia/winmain.cpp:685
+msgid "Supported Extensions:"
+msgstr "サポートされた拡張: "
+
+#: src/celestia/winmain.cpp:1386
+msgid "Windowed Mode"
+msgstr "ウィンドウ表示"
+
+#: src/celestia/winmain.cpp:1508
+msgid "Asteroids"
+msgstr "小惑星"
+
+#: src/celestia/winmain.cpp:1510
+msgid "Comets"
+msgstr "彗星"
+
+#: src/celestia/winmain.cpp:1512
+msgid "Invisibles"
+msgstr "不可視天体"
+
+#: src/celestia/winmain.cpp:1514
+msgid "Moons"
+msgstr "衛星"
+
+#: src/celestia/winmain.cpp:1516 src/celestia/winmain.cpp:1551
+#: src/celestia/winmain.cpp:1668
+msgid "Planets"
+msgstr "惑星"
+
+#: src/celestia/winmain.cpp:1518
+msgid "Spacecraft"
+msgstr "人工天体"
+
+#: src/celestia/winmain.cpp:1608 src/celestia/winmain.cpp:1656
+#: src/celestia/winmain.cpp:1679
+msgid "&Goto"
+msgstr "移動(&G)"
+
+#: src/celestia/winmain.cpp:1609 src/celestia/winmain.cpp:1680
+msgid "&Follow"
+msgstr "春分点同期(&F)"
+
+#: src/celestia/winmain.cpp:1610
+msgid "S&ync Orbit"
+msgstr "自転同期(&Y)"
+
+#: src/celestia/winmain.cpp:1611 src/celestia/winmain.cpp:1657
+#: src/celestia/winmain.cpp:1681
+msgid "&Info"
+msgstr "天体情報(&I)"
+
+#: src/celestia/winmain.cpp:1613
+msgid "&Reference Vectors"
+msgstr "ベクトル表示(&R)"
+
+#: src/celestia/winmain.cpp:1614
+msgid "Show Body Axes"
+msgstr "赤道座標軸を表示"
+
+#: src/celestia/winmain.cpp:1615
+msgid "Show Frame Axes"
+msgstr "黄道座標軸を表示"
+
+#: src/celestia/winmain.cpp:1616
+msgid "Show Sun Direction"
+msgstr "太陽の方向を表示"
+
+#: src/celestia/winmain.cpp:1617
+msgid "Show Velocity Vector"
+msgstr "速度ベクトルを表示"
+
+#: src/celestia/winmain.cpp:1618
+msgid "Show Planetographic Grid"
+msgstr "経緯線を表示"
+
+#: src/celestia/winmain.cpp:1619
+msgid "Show Terminator"
+msgstr "明暗境界線を表示"
+
+#: src/celestia/winmain.cpp:1633
+msgid "&Satellites"
+msgstr "衛星(&S)"
+
+#: src/celestia/winmain.cpp:1643
+msgid "&Alternate Surfaces"
+msgstr "AltSurface(&A)"
+
+#: src/celestia/winmain.cpp:1666
+msgid "Orbiting Bodies"
+msgstr "周回天体"
+
+#: src/celestia/winmain.cpp:1693
+msgid "&Unmark"
+msgstr "マーカーを解除(&U)"
+
+#: src/celestia/winmain.cpp:1695
+msgid "&Mark"
+msgstr "マーカー(&M)"
+
+#: src/celestia/winmain.cpp:3137
+msgid "Loading: "
+msgstr "読み込み中: "
+
+#: src/celestia/winmain.cpp:3305 src/celutil/util.cpp:72
+#: src/celutil/util.cpp:76
+msgid "LANGUAGE"
+msgstr "ja"
+
+#: src/celestia/winmain.cpp:3307
+msgid "WinLangID"
+msgstr "411"
+
+#: src/celestia/winmain.cpp:3809
+msgid "Copied URL"
+msgstr "URLをコピー"
+
+#: src/celestia/winmain.cpp:3903
+msgid "Loading URL"
+msgstr "URLを読み込んでいます…"
+
+#: src/celestia/winmain.cpp:3915
+msgid "Error opening script"
+msgstr "スクリプトフのオープンでエラーが発生しました。"
+
+#: src/celestia/winmain.cpp:3934
+msgid "Error loading script"
+msgstr "スクリプトの読み込みでエラーが発生しました。"
+
+#: src/celestia/winmain.cpp:3939
+msgid "Running script"
+msgstr "スクリプトを実行しています…"
+
+#: src/celestia/wineclipses.cpp:58
+msgid "Planet"
+msgstr "惑星"
+
+#: src/celestia/wineclipses.cpp:60
+msgid "Satellite"
+msgstr "衛星"
+
+#: src/celestia/wineclipses.cpp:62
+msgid "Date"
+msgstr "日付"
+
+#: src/celestia/wineclipses.cpp:64
+msgid "Start"
+msgstr "開始"
+
+#: src/celestia/wineclipses.cpp:66
+msgid "Duration"
+msgstr "継続時間"
+
+#: src/celestia/wineclipses.cpp:316
+msgid "Earth"
+msgstr "地球"
+
+#: src/celestia/wineclipses.cpp:317
+msgid "Jupiter"
+msgstr "木星"
+
+#: src/celestia/wineclipses.cpp:318
+msgid "Saturn"
+msgstr "土星"
+
+#: src/celestia/wineclipses.cpp:319
+msgid "Uranus"
+msgstr "天王星"
+
+#: src/celestia/wineclipses.cpp:320
+msgid "Neptune"
+msgstr "海王星"
+
+#: src/celestia/wineclipses.cpp:321
+msgid "Pluto"
+msgstr "冥王星"
+
+#: src/celestia/winstarbrowser.cpp:70
+msgid "Name"
+msgstr "天体名"
+
+#: src/celestia/winstarbrowser.cpp:72
+msgid "Distance (ly)"
+msgstr "距離（光年）"
+
+#: src/celestia/winstarbrowser.cpp:75
+msgid "App. mag"
+msgstr "視等級"
+
+#: src/celestia/winstarbrowser.cpp:77
+msgid "Abs. mag"
+msgstr "絶対等級"
+
+#: src/celestia/winstarbrowser.cpp:79
+msgid "Type"
+msgstr "スペクトル型"
+
+#: src/celestia/wintime.cpp:95
+msgid "Universal Time"
+msgstr "世界時"
+
+#: src/celestia/wintime.cpp:96
+msgid "Local Time"
+msgstr "ローカル時"
+
+#: src/celestia/wintime.cpp:97
+msgid "Time Zone Name"
+msgstr "タイムゾーン名"
+
+#: src/celestia/wintime.cpp:98
+msgid "UTC Offset"
+msgstr "UTCとの差"
+
+#~ msgid "Celestial Browser"
+#~ msgstr "天体ブラウザ"
+
+#~ msgid "Moon"
+#~ msgstr "月"
+
+#~ msgid "Asteroid"
+#~ msgstr "小惑星"
+
+#~ msgid "Comet"
+#~ msgstr "彗星"
+
+#~ msgid "Invisible"
+#~ msgstr "不可視天体"
+
+#~ msgid "Barycenter"
+#~ msgstr "重心"
+
+#~ msgid "Small Body"
+#~ msgstr "太陽系小天体"
+
+#~ msgid "Dwarf Planet"
+#~ msgstr "準惑星"
+
+#~ msgid "-"
+#~ msgstr "-"
+
+#~ msgid "Eclipse Finder"
+#~ msgstr "食を検索"
+
+#~ msgid "&Add Bookmark"
+#~ msgstr "ブックマークを追加(&A)"
+
+#~ msgid "Add a bookmark for the current document"
+#~ msgstr "現在のドキュメントへブックマークを追加"
+
+#~ msgid "Add &Relative Bookmark"
+#~ msgstr "相対ブックマークを追加(&R)"
+
+#~ msgid "Add a relative bookmark for the current document"
+#~ msgstr "現在のドキュメントへ相対ブックマークを追加"
+
+#~ msgid "Add &Settings Bookmark"
+#~ msgstr "設定をブックマークを追加(&S)"
+
+#~ msgid "Add a settings bookmark for the current document"
+#~ msgstr "現在のドキュメントへ設定ブックマークを追加"
+
+#~ msgid "Edit your bookmark collection in a separate window"
+#~ msgstr "別ウィンドウでブックマークを編集"
+
+#~ msgid "&New Folder..."
+#~ msgstr "新規フォルダ(&N)..."
+
+#~ msgid "Create a new bookmark folder in this menu"
+#~ msgstr "このメニューに新規フォルダを追加"
+
+#~ msgid "Can't add bookmark with empty URL"
+#~ msgstr "空のURLはブックマークに追加できません。"
+
+#~ msgid ""
+#~ "Something seems to be wrong with your installation of Celestia. The "
+#~ "splash screen directory couldn't be found. \n"
+#~ "Start-up will continue, but Celestia will probably be missing some data "
+#~ "files and may not work correctly, please check your installation."
+#~ msgstr ""
+#~ "正しくインストールされていない可能性があります。スプラッシュスクリーンディ"
+#~ "レクトリが見つかりません。\n"
+#~ "正しくないデータ，あるいは存在しないデータが参照されています。インストール"
+#~ "が正しいか確認してください。スタートアップを続けます。"
+
+#~ msgid "Go to &URL..."
+#~ msgstr "URLに移動(&U)..."
+
+#~ msgid "Go to &Long/Lat..."
+#~ msgstr "指定した経緯度に移動(&L)..."
+
+#~ msgid "&Back"
+#~ msgstr "後退(&B)"
+
+#~ msgid "&Forward"
+#~ msgstr "前進(&F)"
+
+#~ msgid "Home"
+#~ msgstr "太陽へ移動"
+
+#~ msgid "Bookmarks"
+#~ msgstr "ブックマーク"
+
+#~ msgid "Full Screen"
+#~ msgstr "全画面表示"
+
+#~ msgid "Copy URL"
+#~ msgstr "URLをコピー"
+
+#~ msgid "Set Time..."
+#~ msgstr "時刻を設定..."
+
+#~ msgid "Set Time to Now"
+#~ msgstr "現在時刻に設定"
+
+#~ msgid "Accelerate Time"
+#~ msgstr "時間を速く"
+
+#~ msgid "Decelerate Time"
+#~ msgstr "時間を遅く"
+
+#~ msgid "Accelerate Time (x2)"
+#~ msgstr "時間を速く (2倍)"
+
+#~ msgid "Decelerate Time (/2)"
+#~ msgstr "時間を遅く (1/2)"
+
+#~ msgid "Pause Time"
+#~ msgstr "時間を停止"
+
+#~ msgid "Reverse Time"
+#~ msgstr "時間を逆転"
+
+#~ msgid "Split View Vertically"
+#~ msgstr "画面を左右に分割"
+
+#~ msgid "Split View Horizontally"
+#~ msgstr "画面を上下に分割"
+
+#~ msgid "Cycle View"
+#~ msgstr "画面を切替"
+
+#~ msgid "Single View"
+#~ msgstr "アクティブな画面以外を削除"
+
+#~ msgid "Delete View"
+#~ msgstr "アクティブな画面を削除"
+
+#~ msgid "Frames Visible"
+#~ msgstr "フレームを表示"
+
+#~ msgid "Active Frame Visible"
+#~ msgstr "アクティブなフレームを表示"
+
+#~ msgid "Synchronize Time"
+#~ msgstr "各画面で時刻を同期"
+
+#~ msgid "Alt-Azimuth Mode"
+#~ msgstr "高度角・方位角モード"
+
+#~ msgid "Go To Surface"
+#~ msgstr "天体表面へ移動"
+
+#~ msgid "Show Stars"
+#~ msgstr "恒星を表示"
+
+#~ msgid "Show Planets"
+#~ msgstr "惑星を表示"
+
+#~ msgid "Show Galaxies"
+#~ msgstr "銀河を表示"
+
+#~ msgid "Show Globulars"
+#~ msgstr "球状星団を表示"
+
+#~ msgid "Show Partial Trajectories"
+#~ msgstr "特殊軌道を表示"
+
+#~ msgid "Show Nebulae"
+#~ msgstr "星雲を表示"
+
+#~ msgid "Show Open Clusters"
+#~ msgstr "散開星団を表示"
+
+#~ msgid "Show Constellations"
+#~ msgstr "星座線を表示"
+
+#~ msgid "Show CloudMaps"
+#~ msgstr "雲テクスチャを表示"
+
+#~ msgid "Show Cloud Shadows"
+#~ msgstr "雲の影を表示"
+
+#~ msgid "Show Orbits"
+#~ msgstr "軌道を表示"
+
+#~ msgid "Show Asteroid Orbits"
+#~ msgstr "小惑星の軌道を表示"
+
+#~ msgid "Show Comet Orbits"
+#~ msgstr "彗星の軌道を表示"
+
+#~ msgid "Show Moon Orbits"
+#~ msgstr "衛星の軌道を表示"
+
+#~ msgid "Show Star Orbits"
+#~ msgstr "恒星軌道を表示"
+
+#~ msgid "Show Planet Orbits"
+#~ msgstr "惑星の軌道を表示"
+
+#~ msgid "Show Spacecraft Orbits"
+#~ msgstr "人工天体の軌道を表示"
+
+#~ msgid "Show Celestial Grid"
+#~ msgstr "天球座標を表示"
+
+#~ msgid "Show Night Side Lights"
+#~ msgstr "夜側テクスチャを表示"
+
+#~ msgid "Show Markers"
+#~ msgstr "マーカーを表示"
+
+#~ msgid "Show Atmospheres"
+#~ msgstr "大気を表示"
+
+#~ msgid "Show Smooth Orbit Lines"
+#~ msgstr "線を滑らかに"
+
+#~ msgid "Show Eclipse Shadows"
+#~ msgstr "食の影を表示"
+
+#~ msgid "Cycle Star Mode"
+#~ msgstr "恒星表示方法を切替"
+
+#~ msgid "Show Ring Shadows"
+#~ msgstr "輪の影を表示"
+
+#~ msgid "Show Boundaries"
+#~ msgstr "星座境界線を表示"
+
+#~ msgid "Auto Magnitudes"
+#~ msgstr "自動限界等級調整"
+
+#~ msgid "Show Comet Tails"
+#~ msgstr "彗星の尾を表示"
+
+#~ msgid "Show Star Labels"
+#~ msgstr "恒星名を表示"
+
+#~ msgid "Show Planet Labels"
+#~ msgstr "惑星名を表示"
+
+#~ msgid "Show Moon Labels"
+#~ msgstr "衛星名を表示"
+
+#~ msgid "Show Comet Labels"
+#~ msgstr "彗星名を表示"
+
+#~ msgid "Show Constellation Labels"
+#~ msgstr "星座名を表示"
+
+#~ msgid "Constellation Labels in Latin"
+#~ msgstr "星座名をラテン語で表示"
+
+#~ msgid "Show Galaxy Labels"
+#~ msgstr "銀河名を表示"
+
+#~ msgid "Show Globular Labels"
+#~ msgstr "球状星団名を表示"
+
+#~ msgid "Show Nebula Labels"
+#~ msgstr "星雲名を表示"
+
+#~ msgid "Show Open Cluster Labels"
+#~ msgstr "散開星団名を表示"
+
+#~ msgid "Show Asteroid Labels"
+#~ msgstr "小惑星名を表示"
+
+#~ msgid "Show Spacecraft Labels"
+#~ msgstr "人工天体名を表示"
+
+#~ msgid "Show Location Labels"
+#~ msgstr "地名を表示"
+
+#~ msgid "Display Local Time"
+#~ msgstr "ローカル時を表示"
+
+#~ msgid "Show City Locations"
+#~ msgstr "都市名を表示"
+
+#~ msgid "Show Observatory Locations"
+#~ msgstr "観測所名を表示"
+
+#~ msgid "Show Landing Sites Locations"
+#~ msgstr "着陸地点名を表示"
+
+#~ msgid "Show Crater Locations"
+#~ msgstr "クレーター名を表示"
+
+#~ msgid "Show Mons Locations"
+#~ msgstr "山地名を表示"
+
+#~ msgid "Show Terra Locations"
+#~ msgstr "陸地名を表示"
+
+#~ msgid "Show Vallis Locations"
+#~ msgstr "峡谷名を表示"
+
+#~ msgid "Show Mare Locations"
+#~ msgstr "海洋名を表示"
+
+#~ msgid "Show Other Locations"
+#~ msgstr "その他の地名を表示"
+
+#~ msgid "Wireframe Mode"
+#~ msgstr "ワイヤフレームモード"
+
+#~ msgid "Center on Orbit"
+#~ msgstr "軌道の中心へ"
+
+#~ msgid "Basic"
+#~ msgstr "Basic"
+
+#~ msgid "Multitexture"
+#~ msgstr "Multitexture"
+
+#~ msgid "NvCombiners"
+#~ msgstr "NvCombiners"
+
+#~ msgid "DOT3 ARBVP"
+#~ msgstr "DOT3 ARBVP"
+
+#~ msgid "NvCombiner NvVP"
+#~ msgstr "NvCombiner NvVP"
+
+#~ msgid "NvCombiner ARBVP"
+#~ msgstr "NvCombiner ARBVP"
+
+#~ msgid "ARBFP ARBVP"
+#~ msgstr "ARBFP ARBVP"
+
+#~ msgid "NV30"
+#~ msgstr "NV30"
+
+#~ msgid "OpenGL 2.0"
+#~ msgstr "OpenGL 2.0"
+
+#~ msgid "Cycle OpenGL Render Path"
+#~ msgstr "レンダリングパスを切替"
+
+#~ msgid "Sync framerate to video refresh rate"
+#~ msgstr "フレームレートを垂直同期周波数に合わせる"
+
+#~ msgid "Grab Image"
+#~ msgstr "画面を保存"
+
+#~ msgid "Capture Video"
+#~ msgstr "ムービーをキャプチャ"
+
+#~ msgid "OpenGL info"
+#~ msgstr "OpenGL情報"
+
+#~ msgid "Show Bookmark Toolbar"
+#~ msgstr "ブックマークツールバーを表示"
+
+#~ msgid "OpenGL Info"
+#~ msgstr "OpenGL情報"
+
+#~ msgid "UTC"
+#~ msgstr "世界時"
+
+#~ msgid ""
+#~ "This version of Celestia was not built with support for movie recording."
+#~ msgstr "このバージョンのCelestiaではムービーの保存をサポートしていません。"
+
+#~ msgid "Go to URL"
+#~ msgstr "URLに移動"
+
+#~ msgid "Enter URL"
+#~ msgstr "URLを入力してください"
+
+#~ msgid "Object: "
+#~ msgstr "天体名: "
+
+#~ msgid "Longitude: "
+#~ msgstr "経度: "
+
+#~ msgid "East"
+#~ msgstr "東経"
+
+#~ msgid "West"
+#~ msgstr "西経"
+
+#~ msgid "Latitude: "
+#~ msgstr "緯度: "
+
+#~ msgid "North"
+#~ msgstr "北緯"
+
+#~ msgid "South"
+#~ msgstr "南緯"
+
+#~ msgid "Altitude: "
+#~ msgstr "高度: "
+
+#~ msgid "Celestia encountered an error while processing your script"
+#~ msgstr "スクリプト実行中にエラーが発生しました。"
+
+#~ msgid "Celestia"
+#~ msgstr "Celestia"
+
+#~ msgid "Use alternate configuration file"
+#~ msgstr "代替設定ファイルを使用します。"
+
+#~ msgid "Use alternate installation directory"
+#~ msgstr "代替インストールディレクトリを使用します。"
+
+#~ msgid "Use as additional \"extras\" directory"
+#~ msgstr "追加\"extras\"ディレクトリを使用します。"
+
+#~ msgid "Start fullscreen"
+#~ msgstr "全画面表示"
+
+#~ msgid "Disable splash screen"
+#~ msgstr "スプラッシュスクリーンを非表示"
+
+#~ msgid "Start and go to url"
+#~ msgstr "指定したURLへ移動"
+
+#~ msgid "_: NAME OF TRANSLATORS\\nYour names"
+#~ msgstr "Sui"
+
+#~ msgid "_: EMAIL OF TRANSLATORS\\nYour emails"
+#~ msgstr "aqua@aqsp.net"
+
+#~ msgid "Celestia Preferences"
+#~ msgstr "Celestia環境設定"
+
+#~ msgid "Rendering"
+#~ msgstr "レンダリング"
+
+#~ msgid "Show"
+#~ msgstr "表示"
+
+#~ msgid "Stars"
+#~ msgstr "恒星"
+
+#~ msgid "Galaxies"
+#~ msgstr "銀河"
+
+#~ msgid "Nebulae"
+#~ msgstr "星雲"
+
+#~ msgid "Open Clusters"
+#~ msgstr "散開星団"
+
+#~ msgid "Atmospheres"
+#~ msgstr "大気"
+
+#~ msgid "Clouds"
+#~ msgstr "雲"
+
+#~ msgid "Cloud Shadows"
+#~ msgstr "雲の影"
+
+#~ msgid "Night Side Lights"
+#~ msgstr "夜側の光"
+
+#~ msgid "Eclipse Shadows"
+#~ msgstr "食の影"
+
+#~ msgid "Comet Tails"
+#~ msgstr "彗星の尾"
+
+#~ msgid "Orbits"
+#~ msgstr "軌道"
+
+#~ msgid "Partial Trajectories"
+#~ msgstr "特殊軌道"
+
+#~ msgid "Smooth Orbit Lines"
+#~ msgstr "線を滑らかに"
+
+#~ msgid "Celestial Grid"
+#~ msgstr "天球座標"
+
+#~ msgid "Constellations"
+#~ msgstr "星座"
+
+#~ msgid "Markers"
+#~ msgstr "マーカー"
+
+#~ msgid "Ring Shadows"
+#~ msgstr "輪の影"
+
+#~ msgid "Constellation Boundaries"
+#~ msgstr "星座境界線"
+
+#~ msgid "Orbits / Labels"
+#~ msgstr "軌道 / 名称"
+
+#~ msgid "Labels"
+#~ msgstr "名称"
+
+#~ msgid "Constellations in Latin"
+#~ msgstr "星座名ラテン語表示"
+
+#~ msgid "Spacecrafts"
+#~ msgstr "人工天体"
+
+#~ msgid "Locations"
+#~ msgstr "地名"
+
+#~ msgid "Ambient Light"
+#~ msgstr "周辺光"
+
+#~ msgid "Limiting Magnitude"
+#~ msgstr "限界等級"
+
+#~ msgid "Info Text"
+#~ msgstr "天体情報"
+
+#~ msgid "Level: "
+#~ msgstr "詳細度: "
+
+#~ msgid "None"
+#~ msgstr "無し"
+
+#~ msgid "Terse"
+#~ msgstr "普通"
+
+#~ msgid "Verbose"
+#~ msgstr "多い"
+
+#~ msgid "Textures"
+#~ msgstr "テクスチャ"
+
+#~ msgid "Resolution: "
+#~ msgstr "解像度: "
+
+#~ msgid "Low"
+#~ msgstr "低"
+
+#~ msgid "Medium"
+#~ msgstr "中"
+
+#~ msgid "High"
+#~ msgstr "高"
+
+#~ msgid "Automatic FOV"
+#~ msgstr "自動視野調整"
+
+#~ msgid "Screen DPI: "
+#~ msgstr "スクリーン解像度: "
+
+#~ msgid "Viewing Distance (cm): "
+#~ msgstr "視点距離(cm): "
+
+#~ msgid "Cities"
+#~ msgstr "都市"
+
+#~ msgid "Observatories"
+#~ msgstr "観測所・天文台"
+
+#~ msgid "Landing Sites"
+#~ msgstr "着陸地点"
+
+#~ msgid "Craters"
+#~ msgstr "クレーター"
+
+#~ msgid "Mons"
+#~ msgstr "山地"
+
+#~ msgid "Terra"
+#~ msgstr "陸地"
+
+#~ msgid "Vallis"
+#~ msgstr "峡谷"
+
+#~ msgid "Mare"
+#~ msgstr "海洋"
+
+#~ msgid "Other"
+#~ msgstr "その他"
+
+#~ msgid "Minimum Feature Size"
+#~ msgstr "最小ラベル表示"
+
+#~ msgid "Date/Time"
+#~ msgstr "日付/時刻"
+
+#~ msgid "Display"
+#~ msgstr "表示"
+
+#~ msgid "Timezone: "
+#~ msgstr "タイムゾーン: "
+
+#~ msgid "Format: "
+#~ msgstr "形式: "
+
+#~ msgid "Local Format"
+#~ msgstr "地方形式"
+
+#~ msgid "Set"
+#~ msgstr "設定"
+
+#~ msgid "Local Time is only supported for dates between 1902 and 2037.\n"
+#~ msgstr "ローカル時は1902年から2037年の間でのみサポートされています。\n"
+
+#~ msgid "Julian Date: "
+#~ msgstr "ユリウス日: "
+
+#~ msgid "Now"
+#~ msgstr "現在"
+
+#~ msgid ""
+#~ "\n"
+#~ "Selection: "
+#~ msgstr ""
+#~ "\n"
+#~ "選択: "
+
+#~ msgid "Include Light Travel Time"
+#~ msgstr "光速による遅れを考慮"
+
+#~ msgid "Ignore Light Travel Time "
+#~ msgstr "光速による遅れを無視"
+
+#~ msgid "OpenGL"
+#~ msgstr "OpenGL"
+
+#~ msgid "Key Bindings"
+#~ msgstr "キーバインディング"
+
+#~ msgid "<b>Unextended OpenGL 1.1</b>"
+#~ msgstr "<b>未拡張のOpenGL 1.1</b>"
+
+#~ msgid "<b>Multiple textures and the ARB_texenv_combine extension</b>"
+#~ msgstr "<b>Multiple texturesとthe ARB_texenv_combine extension</b>"
+
+#~ msgid "<b>NVIDIA combiners, no vertex programs</b>"
+#~ msgstr "<b>NVIDIA combiners, no vertex programs</b>"
+
+#~ msgid "<b>ARB_texenv_DOT3 extension, ARB_vertex_program extension</b>"
+#~ msgstr "<b>ARB_texenv_DOT3 extension, ARB_vertex_program extension</b>"
+
+#~ msgid ""
+#~ "<b>NVIDIA Combiners, NV_vertex_program extension</b><br> provide bump "
+#~ "mapping, ring shadows, and specular highlights on any Geforce or ATI "
+#~ "Radeon graphics card, though NvCombiner ARBVP is a slightly better option "
+#~ "for Geforce users"
+#~ msgstr ""
+#~ "<b>NVIDIA Combiners</b>と<b>NV_vertex_program extension</b><br>はGeforce，"
+#~ "Radeon両プラットフォームにおいてバンプマッピング，輪の影，スピキュラーハイ"
+#~ "ライトを可能にしますが， NvCombiner ARBVPはGeforceユーザ向けのオプションで"
+#~ "す。 "
+
+#~ msgid "<b>NVIDIA Combiners, ARB_vertex_program extension</b>"
+#~ msgstr "<b>NVIDIA Combiners, ARB_vertex_program extension</b>"
+
+#~ msgid ""
+#~ "<b>ARB_fragment_program and ARB_vertex_program extensions</b><br>provide "
+#~ "advanced effects on Geforce FX and Radeon 9700 cards"
+#~ msgstr ""
+#~ "<b>ARB_fragment_program</b>と<b>ARB_vertex_program extensions</b><br>は"
+#~ "Geforce FXとRadeon 9700においてより高性能なエフェクトを出します。"
+
+#~ msgid "<b>NV_fragment_program and ARB_vertex_program extensions</b>"
+#~ msgstr "<b>NV_fragment_program</b>と<b>ARB_vertex_program extensions</b>"
+
+#~ msgid "<b>OpenGL 2.0 Shading Language</b>"
+#~ msgstr "<b>OpenGL 2.0 Shading Language</b>"
+
+#~ msgid ""
+#~ "File %1 does not exist, using default configuration file %2/celestia.cfg"
+#~ msgstr ""
+#~ "ファイル%1 が存在しません。デフォルトの設定%2/celestia.cfg を使用します。"
+
+#~ msgid "Directory %1 does not exist, using default %2"
+#~ msgstr "ディレクトリ%1 が存在しません。デフォルトの%2 を使用します。"
+
+#~ msgid "Extras directory %1 does not exist"
+#~ msgstr "拡張ディレクトリ%1 は存在しません。"
+
+#~ msgid "Abs (app) mag: "
+#~ msgstr "絶対(視)等級: "
+
+#~ msgid "Surface Temp: "
+#~ msgstr "表面温度: "
+
+#~ msgid "Marked objects"
+#~ msgstr "マーカー付"
+
+#~ msgid "&Select"
+#~ msgstr "天体を選択(&S)"
+
+#~ msgid "&Center"
+#~ msgstr "画面中央(&C)"
+
+#~ msgid "S&ynch Orbit"
+#~ msgstr "自転同期(&Y)"
+
+#~ msgid "Unmark &All"
+#~ msgstr "マーカーをすべて解除(&A)"
+
+#~ msgid "Diamond"
+#~ msgstr "菱形(◇)"
+
+#~ msgid "Triangle"
+#~ msgstr "三角形(△)"
+
+#~ msgid "Square"
+#~ msgstr "正方形(□)"
+
+#~ msgid "Filled Square"
+#~ msgstr "正方形(■)"
+
+#~ msgid "Plus"
+#~ msgstr "十字"
+
+#~ msgid "X"
+#~ msgstr "×字"
+
+#~ msgid "Left Arrow"
+#~ msgstr "左矢印(←)"
+
+#~ msgid "Right Arrow"
+#~ msgstr "右矢印(→)"
+
+#~ msgid "Up Arrow"
+#~ msgstr "上矢印(↑)"
+
+#~ msgid "Down Arrow"
+#~ msgstr "下矢印(↓)"
+
+#~ msgid "Circle"
+#~ msgstr "円(○)"
+
+#~ msgid "Disk"
+#~ msgstr "円(●)"
+
+#~ msgid "Normal"
+#~ msgstr "通常"
+
+#~ msgid "Small Bodies"
+#~ msgstr "太陽系小天体"
+
+#~ msgid "Dwarf Planets"
+#~ msgstr "準惑星"
+
+#~ msgid "Duration: %1"
+#~ msgstr "継続時間: %1"
+
+#~ msgid "Size: %1 MB"
+#~ msgstr "サイズ: %1 MB"
+
+#~ msgid "Current size: %1 x %2"
+#~ msgstr "現在のサイズ: %1 x %2"
+
+#~ msgid "Current width: %1 x %2"
+#~ msgstr "現在の幅: %1 x %2"
+
+#~ msgid "Current height: %1 x %2"
+#~ msgstr "現在の高さ: %1 x %2"
+
+#~ msgid "You must specify a file name."
+#~ msgstr "ファイル名を指定してください。"
+
+#~ msgid "Error initializing movie capture."
+#~ msgstr "ムービーキャプチャの初期化でエラーがありました。"
+
+#~ msgid "&Navigation"
+#~ msgstr "ナビゲーション(&N)"
+
+#~ msgid "Options"
+#~ msgstr "オプション"
+
+#~ msgid "Objects"
+#~ msgstr "天体"
+
+#~ msgid "OpenGL Render Path"
+#~ msgstr "OpenGLレンダリングパス"
+
+#~ msgid "Time"
+#~ msgstr "時刻"
+
+#~ msgid "MultiView"
+#~ msgstr "マルチビュー"
+
+#~ msgid "Main Toolbar"
+#~ msgstr "メインツールバー"
+
+#~ msgid "Dist."
+#~ msgstr "距離"
+
+#~ msgid "App. Mag."
+#~ msgstr "視等級"
+
+#~ msgid "Abs. Mag."
+#~ msgstr "絶対等級"
+
+#~ msgid "With Planets"
+#~ msgstr "惑星が存在"
+
+#~ msgid "Brightest (Abs.)"
+#~ msgstr "明るさ順(絶対等級)"
+
+#~ msgid "Brightest (App.)"
+#~ msgstr "明るさ順(視等級)"
+
+#~ msgid "Nearest"
+#~ msgstr "近い順"
+
+#~ msgid "&Close"
+#~ msgstr "閉じる(&C)"
+
+#~ msgid "Alt+C"
+#~ msgstr "Alt+C"
+
+#~ msgid "Refresh"
+#~ msgstr "更新"
+
+#~ msgid "End"
+#~ msgstr "終了"
+
+#~ msgid "Search parameters"
+#~ msgstr "検索パラメータ"
+
+#~ msgid "Solar Eclipses"
+#~ msgstr "日食"
+
+#~ msgid "On:"
+#~ msgstr "天体:"
+
+#~ msgid "Moon Eclipses"
+#~ msgstr "月食"
+
+#~ msgid "Search"
+#~ msgstr "探索"
+
+#~ msgid "To:"
+#~ msgstr "～"
+
+#~ msgid "From:"
+#~ msgstr "期間:"
+
+#~ msgid "Close"
+#~ msgstr "閉じる"
+
+#~ msgid "Video Capture"
+#~ msgstr "ムービーキャプチャ"
+
+#~ msgid "Save As:"
+#~ msgstr "名前をつけて保存: "
+
+#~ msgid "*.ogg"
+#~ msgstr "*.ogg"
+
+#~ msgid "Aspect Ratio:"
+#~ msgstr "アスペクト比: "
+
+#~ msgid "Current"
+#~ msgstr "現在"
+
+#~ msgid "11:9"
+#~ msgstr "11:9"
+
+#~ msgid "4:3"
+#~ msgstr "4:3"
+
+#~ msgid "16:9"
+#~ msgstr "16:9"
+
+#~ msgid "Image Size:"
+#~ msgstr "サイズ:"
+
+#~ msgid "Frame Rate:"
+#~ msgstr "FPS:"
+
+#~ msgid "Video Quality:"
+#~ msgstr "ムービー品質: "
+
+#~ msgid "Play Video when capture is done"
+#~ msgstr "キャプチャ終了と同時に再生"
+
+#~ msgid "Usage"
+#~ msgstr "Usage"
+
+#~ msgid ""
+#~ "<p>Press <b>F11</b> to start/pause recording<br>\n"
+#~ "Press <b>F12</b> to stop</p>\n"
+#~ "\n"
+#~ "<p>Note that resizing the main window will not be possible until the end "
+#~ "of the capture</p>"
+#~ msgstr ""
+#~ "<p><b>F11</b> キャプチャ開始/一時停止<br>\n"
+#~ "<b>F12</b> 停止</p>\n"
+#~ "\n"
+#~ "<p>キャプチャ実行中はウィンドウのサイズを変更できません。</p>"
+
+#~ msgid "&OK"
+#~ msgstr "OK(&O)"
+
+#~ msgid "&Cancel"
+#~ msgstr "キャンセル(&C)"
+
+#~ msgid "Mercury"
+#~ msgstr "水星"
+
+#~ msgid "Venus"
+#~ msgstr "金星"
+
+#~ msgid "Mars"
+#~ msgstr "火星"
+
+#~ msgid "Phobos"
+#~ msgstr "フォボス"
+
+#~ msgid "Deimos"
+#~ msgstr "デイモス"
+
+#~ msgid "Amalthea"
+#~ msgstr "アマルテア"
+
+#~ msgid "Io"
+#~ msgstr "イオ"
+
+#~ msgid "Europa"
+#~ msgstr "エウロパ"
+
+#~ msgid "Ganymede"
+#~ msgstr "ガニメデ"
+
+#~ msgid "Callisto"
+#~ msgstr "カリスト"
+
+#~ msgid "Prometheus"
+#~ msgstr "プロメテウス"
+
+#~ msgid "Pandora"
+#~ msgstr "パンドラ"
+
+#~ msgid "Epimetheus"
+#~ msgstr "エピメテウス"
+
+#~ msgid "Janus"
+#~ msgstr "ヤヌス"
+
+#~ msgid "Mimas"
+#~ msgstr "ミマス"
+
+#~ msgid "Enceladus"
+#~ msgstr "エンケラドゥス"
+
+#~ msgid "Tethys"
+#~ msgstr "テティス"
+
+#~ msgid "Dione"
+#~ msgstr "ディオーネ"
+
+#~ msgid "Rhea"
+#~ msgstr "レア"
+
+#~ msgid "Titan"
+#~ msgstr "タイタン"
+
+#~ msgid "Hyperion"
+#~ msgstr "ヒペリオン"
+
+#~ msgid "Iapetus"
+#~ msgstr "イアペトス"
+
+#~ msgid "Phoebe"
+#~ msgstr "フェーベ"
+
+#~ msgid "Miranda"
+#~ msgstr "ミランダ"
+
+#~ msgid "Ariel"
+#~ msgstr "エアリエル"
+
+#~ msgid "Umbriel"
+#~ msgstr "ウンブリエル"
+
+#~ msgid "Titania"
+#~ msgstr "ティタニア"
+
+#~ msgid "Oberon"
+#~ msgstr "オベロン"
+
+#~ msgid "Larissa"
+#~ msgstr "ラリッサ"
+
+#~ msgid "Proteus"
+#~ msgstr "プロテウス"
+
+#~ msgid "Triton"
+#~ msgstr "トリトン"
+
+#~ msgid "Nereid"
+#~ msgstr "ネレイド"
+
+# solarsys.ssc
+#~ msgid "Pluto-Charon"
+#~ msgstr "冥王星-カロン"
+
+#~ msgid "Charon"
+#~ msgstr "カロン"
+
+#~ msgid "NORTH AMERICA"
+#~ msgstr "北アメリカ"
+
+#~ msgid "SOUTH AMERICA"
+#~ msgstr "南アメリカ"
+
+#~ msgid "EURASIA"
+#~ msgstr "ユーラシア"
+
+#~ msgid "AFRICA"
+#~ msgstr "アフリカ"
+
+#~ msgid "AUSTRALIA"
+#~ msgstr "オーストラリア"
+
+#~ msgid "ANTARCTICA"
+#~ msgstr "南極"
+
+#~ msgid "NORTH ATLANTIC OCEAN"
+#~ msgstr "北大西洋"
+
+#~ msgid "SOUTH ATLANTIC OCEAN"
+#~ msgstr "南大西洋"
+
+#~ msgid "NORTH PACIFIC OCEAN"
+#~ msgstr "北太平洋"
+
+#~ msgid "SOUTH PACIFIC OCEAN"
+#~ msgstr "南太平洋"
+
+#~ msgid "INDIAN OCEAN"
+#~ msgstr "インド洋"
+
+#~ msgid "ARCTIC OCEAN"
+#~ msgstr "北極海"
+
+#~ msgid "Milky Way"
+#~ msgstr "銀河系"
+
+#~ msgid "SMC"
+#~ msgstr "小マゼラン銀河"
+
+#~ msgid "LMC"
+#~ msgstr "大マゼラン銀河"
+
+#~ msgid "Solar System Barycenter"
+#~ msgstr "重心"
+
+#~ msgid "&File"
+#~ msgstr "ファイル(&F)"
+
+#~ msgid "&Open Script..."
+#~ msgstr "スクリプトを開く(&O)..."
+
+#~ msgid "Scripts"
+#~ msgstr "スクリプト一覧"
+
+#~ msgid "Placeholder"
+#~ msgstr "プレースフォルダ"
+
+#~ msgid "Capture &Image...\tF10"
+#~ msgstr "画像を保存(&I)...\tF10"
+
+#~ msgid "Capture &Movie...\tShift+F10"
+#~ msgstr "ムービーを保存(&M)...\tShift+F10"
+
+#~ msgid "E&xit"
+#~ msgstr "終了(&X)"
+
+#~ msgid "Select &Sol\tH"
+#~ msgstr "太陽を選択(&S)\tH"
+
+#~ msgid "Tour G&uide..."
+#~ msgstr "ツアーガイド(&G)..."
+
+#~ msgid "Select &Object..."
+#~ msgstr "天体を選択(&O)..."
+
+#~ msgid "Goto Object..."
+#~ msgstr "天体へ移動..."
+
+#~ msgid "&Center Selection\tC"
+#~ msgstr "選択した天体を画面中央へ(&C)\tC"
+
+#~ msgid "&Go to Selection\tG"
+#~ msgstr "選択した天体へ移動(&G)\tG"
+
+#~ msgid "&Follow Selection\tF"
+#~ msgstr "選択した天体に春分点同期で追尾(&F)\tF"
+
+#~ msgid "S&ync Orbit Selection\tY"
+#~ msgstr "選択した天体に自転同期で追尾(&Y)\tY"
+
+#~ msgid "&Track Selection\tT"
+#~ msgstr "選択した天体を画面中央に保持(&T)\tT"
+
+#~ msgid "Solar System &Browser..."
+#~ msgstr "太陽系ブラウザ(&B)..."
+
+#~ msgid "Star B&rowser..."
+#~ msgstr "恒星ブラウザ(&R)..."
+
+#~ msgid "&Eclipse Finder"
+#~ msgstr "食を検索(&E)"
+
+#~ msgid "&Time"
+#~ msgstr "時間(&T)"
+
+#~ msgid "10x &Faster\tL"
+#~ msgstr "時間の速度を10倍速く(&F)\tL"
+
+#~ msgid "10x &Slower\tK"
+#~ msgstr "時間の速度を10倍遅く(&S)\tK"
+
+#~ msgid "Free&ze\tSpace"
+#~ msgstr "時間を停止(&Z)\tSpace"
+
+#~ msgid "&Real Time\t\\"
+#~ msgstr "実時間の速さに(&R)\t\\"
+
+#~ msgid "Re&verse Time\tJ"
+#~ msgstr "時間を逆回転(&V)\tJ"
+
+#~ msgid "Set &Time..."
+#~ msgstr "時刻を設定(&T)..."
+
+#~ msgid "Show Local Time"
+#~ msgstr "ローカル時を表示"
+
+#~ msgid "&Render"
+#~ msgstr "表示(&R)"
+
+#~ msgid "Select Display Mode..."
+#~ msgstr "画面解像度を選択..."
+
+#~ msgid "Toggle Full Screen\tAlt+Enter"
+#~ msgstr "全画面表示\tAlt+Enter"
+
+#~ msgid "View Options..."
+#~ msgstr "表示オプション..."
+
+#~ msgid "Locations..."
+#~ msgstr "地名..."
+
+#~ msgid "More Stars Visible\t]"
+#~ msgstr "見える恒星を多く\t]"
+
+#~ msgid "Fewer Stars Visible\t["
+#~ msgstr "見える恒星を少なく\t["
+
+#~ msgid "Auto Magnitude\tCtrl+Y"
+#~ msgstr "自動限界等級調整\tCtrl+Y"
+
+#~ msgid "Star St&yle"
+#~ msgstr "恒星表示方法(&Y)"
+
+#~ msgid "&Fuzzy Points"
+#~ msgstr "ぼやけた点(&F)"
+
+#~ msgid "&Points"
+#~ msgstr "点(&P)"
+
+#~ msgid "Scaled &Discs"
+#~ msgstr "等級に応じた円(&D)"
+
+#~ msgid "&Ambient Light"
+#~ msgstr "周辺光(&A)"
+
+#~ msgid "&None"
+#~ msgstr "無し(&N)"
+
+#~ msgid "&Low"
+#~ msgstr "低(&L)"
+
+#~ msgid "&Medium"
+#~ msgstr "中(&M)"
+
+#~ msgid "&Texture Resolution"
+#~ msgstr "テクスチャ解像度度(&T)"
+
+#~ msgid "&High"
+#~ msgstr "高(&H)"
+
+#~ msgid "Antialiasing\tCtrl+X"
+#~ msgstr "アンチエイリアシング\tCtrl+X"
+
+#~ msgid "&View"
+#~ msgstr "画面(&V)"
+
+#~ msgid "Split &Horizontally\tCtrl+R"
+#~ msgstr "画面を上下に分割(&H)\tCtrl+R"
+
+#~ msgid "Split &Vertically\tCtrl+U"
+#~ msgstr "画面を左右に分割(&V)\tCtrl+U"
+
+#~ msgid "&Delete Active View\tDEL"
+#~ msgstr "アクティブな画面を削除(&D)\tDEL"
+
+#~ msgid "&Single View\tCtrl+D"
+#~ msgstr "アクティブな画面以外を削除(&S)\tCtrl+D"
+
+#~ msgid "Show &Frames"
+#~ msgstr "画面の枠を表示(&F)"
+
+#~ msgid "Synchronize &Time"
+#~ msgstr "各画面で時刻を同期(&T)"
+
+#~ msgid "&Bookmarks"
+#~ msgstr "ブックマーク(&B)"
+
+#~ msgid "&Add Bookmarks..."
+#~ msgstr "ブックマークに追加(&A)..."
+
+#~ msgid "&Organize Bookmarks..."
+#~ msgstr "ブックマークを編集(&O)..."
+
+#~ msgid "&Help"
+#~ msgstr "ヘルプ(&H)"
+
+#~ msgid "Run &Demo"
+#~ msgstr "デモを実行(&D)"
+
+#~ msgid "&Controls"
+#~ msgstr "操作方法一覧(&C)"
+
+#~ msgid "&OpenGL Info"
+#~ msgstr "OpenGL情報(&O)"
+
+#~ msgid "&License"
+#~ msgstr "ライセンス情報(&L)"
+
+#~ msgid "&About Celestia"
+#~ msgstr "Celestiaについて(&A)"
+
+#~ msgid "About Celestia"
+#~ msgstr "Celestiaについて"
+
+#~ msgid "OK"
+#~ msgstr "OK"
+
+#~ msgid "Copyright (C) 2001-2008, Celestia Development Team"
+#~ msgstr "Copyright (C) 2001-2008, Celestia Development Team"
+
+#~ msgid "http://www.shatters.net/celestia"
+#~ msgstr "http://www.shatters.net/celestia"
+
+#~ msgid "Celestia is free software and comes with absolutely no warranty."
+#~ msgstr "Celestiaはフリーソフトウェアであり，一切の保証はございません。"
+
+#~ msgid "Authors"
+#~ msgstr "著者"
+
+#~ msgid "Chris Laurel"
+#~ msgstr "Chris Laurel"
+
+#~ msgid "Clint Weisbrod"
+#~ msgstr "Clint Weisbrod"
+
+#~ msgid "Fridger Schrempp"
+#~ msgstr "Fridger Schrempp"
+
+#~ msgid "Christophe Teyssier"
+#~ msgstr "Christophe Teyssier"
+
+#~ msgid "Grant Hutchison"
+#~ msgstr "Grant Hutchison"
+
+#~ msgid "Pat Suwalski"
+#~ msgstr "Pat Suwalski"
+
+#~ msgid "Toti"
+#~ msgstr "Toti"
+
+#~ msgid "Da Woon Jung"
+#~ msgstr "Da Woon Jung"
+
+#~ msgid "Hank Ramsey"
+#~ msgstr "Hank Ramsey"
+
+#~ msgid "Bob Ippolito"
+#~ msgstr "Bob Ippolito"
+
+#~ msgid "Vincent Giangiulio"
+#~ msgstr "Vincent Giangiulio"
+
+#~ msgid "Select Object"
+#~ msgstr "天体を選択"
+
+#~ msgid "Object Name"
+#~ msgstr "天体名"
+
+#~ msgid "License"
+#~ msgstr "ライセンス情報"
+
+#~ msgid "Celestia Controls"
+#~ msgstr "Celestia操作方法"
+
+#~ msgid "OpenGL Driver Info"
+#~ msgstr "OpenGLドライバ情報"
+
+#~ msgid "Set Simulation Time"
+#~ msgstr "時刻の設定"
+
+#~ msgid "Time Zone: "
+#~ msgstr "タイムゾーン: "
+
+#~ msgid "Set To Current Time"
+#~ msgstr "現在の時刻に設定"
+
+#~ msgid "Add Bookmark"
+#~ msgstr "ブックマークに追加"
+
+#~ msgid "Create in >>"
+#~ msgstr "フォルダ選択 >>"
+
+#~ msgid "New Folder..."
+#~ msgstr "新規フォルダ..."
+
+#~ msgid "Solar System Browser"
+#~ msgstr "太陽系ブラウザ"
+
+#~ msgid "Solar System"
+#~ msgstr "太陽系"
+
+#~ msgid "&Go To"
+#~ msgstr "移動(&G)"
+
+#~ msgid "Solar System Objects"
+#~ msgstr "天体名"
+
+#~ msgid "Star Browser"
+#~ msgstr "恒星ブラウザ"
+
+#~ msgid "Brightest"
+#~ msgstr "明るい順"
+
+#~ msgid "With planets"
+#~ msgstr "惑星が存在"
+
+#~ msgid "&Refresh"
+#~ msgstr "更新(&R)"
+
+#~ msgid "Star Search Criteria"
+#~ msgstr "リスト表示オプション"
+
+#~ msgid "Maximum Stars Displayed in List"
+#~ msgstr "リストに表示する恒星の数"
+
+#~ msgid "Tour Guide"
+#~ msgstr "ツアーガイド"
+
+#~ msgid "Go To"
+#~ msgstr "移動"
+
+#~ msgid "Select your destination:"
+#~ msgstr "目的地を選択してください:"
+
+#~ msgid "Go to Object"
+#~ msgstr "天体へ移動"
+
+#~ msgid "radii"
+#~ msgstr "半径"
+
+#~ msgid "Object"
+#~ msgstr "天体名"
+
+#~ msgid "Long."
+#~ msgstr "経度"
+
+#~ msgid "Lat."
+#~ msgstr "緯度"
+
+#~ msgid "Distance"
+#~ msgstr "距離"
+
+#~ msgid "Size:"
+#~ msgstr "サイズ:"
+
+#~ msgid "Frame rate:"
+#~ msgstr "FPS:"
+
+#~ msgid "Select Display Mode"
+#~ msgstr "画面解像度を選択"
+
+#~ msgid "Resolution"
+#~ msgstr "解像度"
+
+#~ msgid "View Options"
+#~ msgstr "表示オプション"
+
+#~ msgid "Globulars"
+#~ msgstr "球状星団"
+
+#~ msgid "Grids"
+#~ msgstr "経緯線"
+
+#~ msgid "Celestial"
+#~ msgstr "天球座標"
+
+#~ msgid "Horizontal"
+#~ msgstr "地平座標"
+
+#~ msgid "Galactic"
+#~ msgstr "銀河座標"
+
+#~ msgid "Ecliptic"
+#~ msgstr "赤道座標"
+
+#~ msgid "Minor Moons"
+#~ msgstr "小衛星"
+
+#~ msgid "DSO Labels"
+#~ msgstr "深宇宙天体名"
+
+#~ msgid "Diagrams"
+#~ msgstr "星座線"
+
+#~ msgid "Boundaries"
+#~ msgstr "星座境界線"
+
+#~ msgid "Latin Names"
+#~ msgstr "ラテン名"
+
+#~ msgid "Information Text"
+#~ msgstr "天体情報表示"
+
+#~ msgid "Filter Stars"
+#~ msgstr "見える恒星の調整"
+
+#~ msgid "Montes (Mountains)"
+#~ msgstr "Montes (山地)"
+
+#~ msgid "Maria (Seas)"
+#~ msgstr "Maria (海洋)"
+
+#~ msgid "Valles (Valleys)"
+#~ msgstr "Valles (峡谷)"
+
+#~ msgid "Terrae (Land masses)"
+#~ msgstr "Terrae (陸地)"
+
+#~ msgid "Volcanoes"
+#~ msgstr "Volcanoes(火山)"
+
+#~ msgid "Other features"
+#~ msgstr "その他"
+
+#~ msgid "Label Features"
+#~ msgstr "地名を表示"
+
+#~ msgid "Show Features"
+#~ msgstr "表示する地名"
+
+#~ msgid "Minimum Labeled Feature Size"
+#~ msgstr "最小表示"
+
+#~ msgid "Add New Bookmark Folder"
+#~ msgstr "新規フォルダを追加"
+
+#~ msgid "Folder Name"
+#~ msgstr "フォルダ名"
+
+#~ msgid "Organize Bookmarks"
+#~ msgstr "ブックマーク一覧"
+
+#~ msgid "Rename..."
+#~ msgstr "名前を変更..."
+
+#~ msgid "Delete"
+#~ msgstr "削除"
+
+#~ msgid "Rename Bookmark or Folder"
+#~ msgstr "名前を変更"
+
+#~ msgid "New Name"
+#~ msgstr "変更後の名前"
+
+#~ msgid "Compute"
+#~ msgstr "計算"
+
+#~ msgid "Set Date and Go to Planet"
+#~ msgstr "日時を設定して移動"
+
+#~ msgid "Lunar Eclipses"
+#~ msgstr "月食"
+
+#~ msgid "Jan"
+#~ msgstr "1"
+
+#~ msgid "Feb"
+#~ msgstr "2"
+
+#~ msgid "Mar"
+#~ msgstr "3"
+
+#~ msgid "Apr"
+#~ msgstr "4"
+
+#~ msgid "May"
+#~ msgstr "5"
+
+#~ msgid "Jun"
+#~ msgstr "6"
+
+#~ msgid "Jul"
+#~ msgstr "7"
+
+#~ msgid "Aug"
+#~ msgstr "8"
+
+#~ msgid "Sep"
+#~ msgstr "9"
+
+#~ msgid "Oct"
+#~ msgstr "10"
+
+#~ msgid "Nov"
+#~ msgstr "11"
+
+#~ msgid "Dec"
+#~ msgstr "12"
+
+#~ msgid "limit of knowledge"
+#~ msgstr "limit of knowledge"
+
+#~ msgid " of "
+#~ msgstr " ("
+
+#~ msgid " must be in same star system\n"
+#~ msgstr " が参照) は同じ恒星系にある必要があります。\n"
+
+#~ msgid "Bad spectral type in star database, star #\n"
+#~ msgstr "次の恒星のスペクトル型が正しくありません。 #\n"
+
+#~ msgid " star(s) with duplicate catalog numbers deleted.)\n"
+#~ msgstr "個の恒星が重複として削除されました。)\n"
+
+#~ msgid "Low res textures"
+#~ msgstr "テクスチャ解像度: 低"
+
+#~ msgid "Medium res textures"
+#~ msgstr "テクスチャ解像度: 中"
+
+#~ msgid "High res textures"
+#~ msgstr "テクスチャ解像度: 高"
+
+#~ msgid "Day length: "
+#~ msgstr "一日の長さ: "
+
+#~ msgid "Error reading deep sky file\n"
+#~ msgstr "深宇宙天体ファイルの読み込みでエラーが発生しました。\n"
+
+#~ msgid "Constellation Borders"
+#~ msgstr "星座境界線"
+
+#~ msgid "Orbit / Label"
+#~ msgstr "軌道 / 名称"
+
+#~ msgid "Mark Features"
+#~ msgstr "マーカーを表示"

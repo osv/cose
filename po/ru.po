@@ -1,0 +1,2675 @@
+# Russian translations for celestia package
+# Copyright (C) 2006 The SIMOfOR, Inc.
+# This file is distributed under the same license as the celestia package.
+# Sergey Leonov <leserg@ua.fm>, 2006.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Celestia 1.4.1 (ru)\n"
+"Report-Msgid-Bugs-To: chris@teyssier.org\n"
+"POT-Creation-Date: 2009-06-21 16:00+0000\n"
+"PO-Revision-Date: 2008-12-08 21:32+0200\n"
+"Last-Translator: Sergey <leserg@ua.fm>\n"
+"Language-Team: Russian <leserg@ua.fm>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%"
+"10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+"X-Poedit-Language: Russian\n"
+"X-Poedit-Country: UKRAINE\n"
+
+#: src/celengine/astro.cpp:827
+msgid "DST"
+msgstr "DST"
+
+#: src/celengine/astro.cpp:827
+msgid "STD"
+msgstr "STD"
+
+#: src/celengine/dsodb.cpp:387
+msgid "Loaded "
+msgstr "Загрузка "
+
+#: src/celengine/dsodb.cpp:387
+msgid " deep space objects"
+msgstr " объекты глубокого космоса"
+
+#: src/celengine/fragmentprog.cpp:93
+msgid "Loading NV fragment program: "
+msgstr "Загрузка NV фрагмента программы: "
+
+#: src/celengine/fragmentprog.cpp:98
+msgid "Error loading NV fragment program: "
+msgstr "Ошибка загрузки NV фрагмента программы: "
+
+#: src/celengine/fragmentprog.cpp:115
+msgid "Error in fragment program "
+msgstr "Ошибка в фрагменте программы "
+
+#: src/celengine/fragmentprog.cpp:126
+msgid "Initializing NV fragment programs . . .\n"
+msgstr "Инициализация NV фрагмента программы . . .\n"
+
+#: src/celengine/fragmentprog.cpp:142
+msgid "All NV fragment programs loaded successfully.\n"
+msgstr "Все NV фрагменты программы успешно загружены.\n"
+
+#: src/celengine/fragmentprog.cpp:150
+msgid "Initializing ARB fragment programs . . .\n"
+msgstr "Инициализация ABR фрагмента программы . . .\n"
+
+#: src/celengine/galaxy.cpp:197
+#, c-format
+msgid "Galaxy (Hubble type: %s)"
+msgstr "Галактика (тип: %s)"
+
+#: src/celengine/image.cpp:373
+msgid "Loading image from file "
+msgstr "Загрузка изображения из файла "
+
+#: src/celengine/image.cpp:391
+msgid ": unrecognized or unsupported image file type.\n"
+msgstr ": неподдерживаемый тип файла.\n"
+
+#: src/celengine/image.cpp:654
+msgid "Error opening image file "
+msgstr "Ошибка открытия файла изображения "
+
+#: src/celengine/image.cpp:661
+msgid "Error: "
+msgstr "Ошибка: "
+
+#: src/celengine/image.cpp:661
+msgid " is not a PNG file.\n"
+msgstr " это не PNG файл.\n"
+
+#: src/celengine/image.cpp:688
+msgid "Error reading PNG image file "
+msgstr "Ошибка чтения PNG файла "
+
+#: src/celengine/meshmanager.cpp:84
+msgid "Loading model: "
+msgstr "Загрузка модели: "
+
+#: src/celengine/meshmanager.cpp:162
+msgid "   Model statistics: "
+msgstr "   О модели: "
+
+#: src/celengine/meshmanager.cpp:163
+msgid " vertices, "
+msgstr " вершин, "
+
+#: src/celengine/meshmanager.cpp:164
+msgid " primitives, "
+msgstr " примитивов, "
+
+#: src/celengine/meshmanager.cpp:165
+msgid " materials "
+msgstr " материалов "
+
+#: src/celengine/meshmanager.cpp:166
+msgid " unique)\n"
+msgstr " уникальных)\n"
+
+#: src/celengine/meshmanager.cpp:170
+msgid "Error loading model '"
+msgstr "Ошибка загрузки модели '"
+
+#: src/celengine/nebula.cpp:47 src/celengine/opencluster.cpp:44
+#, c-format
+msgid "%s"
+msgstr "%s"
+
+#: src/celengine/solarsys.cpp:93
+msgid "Error in .ssc file (line "
+msgstr "Ошибка в .ssc файле (строка "
+
+#: src/celengine/solarsys.cpp:1200 src/celengine/solarsys.cpp:1267
+msgid "parent body '"
+msgstr "главный объект '"
+
+#: src/celengine/solarsys.cpp:1200 src/celengine/solarsys.cpp:1267
+msgid "' of '"
+msgstr "' из '"
+
+#: src/celengine/solarsys.cpp:1200
+msgid "' not found."
+msgstr "' не найдена."
+
+#: src/celengine/solarsys.cpp:1211
+msgid "warning duplicate definition of "
+msgstr "Предупреждение: дублирование для "
+
+#: src/celengine/solarsys.cpp:1247
+msgid "bad alternate surface"
+msgstr "неверная дополнительная поверхность"
+
+#: src/celengine/solarsys.cpp:1261
+msgid "bad location"
+msgstr "неверное местоположение"
+
+#: src/celengine/solarsys.cpp:1267
+msgid "' not found.\n"
+msgstr "' не найдена.\n"
+
+#: src/celengine/stardb.cpp:579
+msgid "Bad header for cross index\n"
+msgstr "Неверный заголовок для взаимных индексов\n"
+
+#: src/celengine/stardb.cpp:592
+msgid "Bad version for cross index\n"
+msgstr "Неверная версия для взаимных индексов\n"
+
+#: src/celengine/stardb.cpp:614
+msgid "Loading cross index failed at record "
+msgstr "Ошибка загрузки взаимных индексов в отчёте "
+
+#: src/celengine/stardb.cpp:696
+msgid "Bad spectral type in star database, star #"
+msgstr "Неверный спектральный тип в базе данных звёзд, звезда #"
+
+#: src/celengine/stardb.cpp:711
+msgid " stars in binary database\n"
+msgstr " двойных звезд в каталоге\n"
+
+#: src/celengine/stardb.cpp:735
+msgid "Total star count: "
+msgstr "Всего звёзд: "
+
+#: src/celengine/stardb.cpp:769
+msgid "Error in .stc file (line "
+msgstr "Ошибка в .stc файле (строка "
+
+#: src/celengine/stardb.cpp:806
+msgid "Invalid star: bad spectral type.\n"
+msgstr "Неверный объект: неверный спектральный тип.\n"
+
+#: src/celengine/stardb.cpp:815
+msgid "Invalid star: missing spectral type.\n"
+msgstr "Неверный объект: отсутствие спектрального типа.\n"
+
+#: src/celengine/stardb.cpp:962
+msgid "Barycenter "
+msgstr "Барицентр "
+
+#: src/celengine/stardb.cpp:962
+msgid " does not exist.\n"
+msgstr " не существует.\n"
+
+#: src/celengine/stardb.cpp:1008
+msgid "Invalid star: missing right ascension\n"
+msgstr "Неверный объект: отсутствие прямого восхождения.\n"
+
+#: src/celengine/stardb.cpp:1021
+msgid "Invalid star: missing declination.\n"
+msgstr "Неверный объект: отсутствие склонения.\n"
+
+#: src/celengine/stardb.cpp:1034
+msgid "Invalid star: missing distance.\n"
+msgstr "Неверный объект: отсутствие расстояния.\n"
+
+#: src/celengine/stardb.cpp:1070
+msgid "Invalid star: missing magnitude.\n"
+msgstr "Неверный объект: отсутствие величины.\n"
+
+#: src/celengine/stardb.cpp:1087
+msgid ""
+"Invalid star: absolute (not apparent) magnitude must be specified for star "
+"near origin\n"
+msgstr ""
+"Неверная звезда: значение абсолютной величины должно находиться в пределах\n"
+
+#: src/celengine/texture.cpp:1019
+msgid "Creating tiled texture. Width="
+msgstr "Создание плиточных текстур. Ширина="
+
+#: src/celengine/texture.cpp:1019
+msgid ", max="
+msgstr ", макс="
+
+#: src/celengine/texture.cpp:1024
+msgid "Creating ordinary texture: "
+msgstr "Создание обычных текстур: "
+
+#: src/celengine/vertexprog.cpp:114
+msgid "Loading NV vertex program: "
+msgstr "Загрузка NV шейдера: "
+
+#: src/celengine/vertexprog.cpp:119
+msgid "Error loading NV vertex program: "
+msgstr "Ошибка загрузки NV шейдера: "
+
+#: src/celengine/vertexprog.cpp:136 src/celengine/vertexprog.cpp:195
+msgid "Error in vertex program "
+msgstr "Ошибка в шейдере "
+
+#: src/celengine/vertexprog.cpp:163
+msgid "Loading ARB vertex program: "
+msgstr "Загрузка ABR шейдера: "
+
+#: src/celengine/vertexprog.cpp:168
+msgid "Error loading ARB vertex program: "
+msgstr "Ошибка загрузки ABR шейдера: "
+
+#: src/celengine/vertexprog.cpp:196
+msgid ", line "
+msgstr ", строка "
+
+#: src/celengine/vertexprog.cpp:208
+msgid "Initializing NV vertex programs . . .\n"
+msgstr "Инициализация NV шейдеров . . .\n"
+
+#: src/celengine/vertexprog.cpp:240
+msgid "All NV vertex programs loaded successfully.\n"
+msgstr "Все NV шейдеры загружены успешно.\n"
+
+#: src/celengine/vertexprog.cpp:253
+msgid "Initializing ARB vertex programs . . .\n"
+msgstr "Инициализация ARB шейдеров . . .\n"
+
+#: src/celengine/vertexprog.cpp:314
+msgid "All ARB vertex programs loaded successfully.\n"
+msgstr "Все ARB шейдеры загружены успешно.\n"
+
+#: src/celestia/celestiacore.cpp:421
+msgid "Error reading favorites file."
+msgstr "Ошибка чтения файла избранного."
+
+#: src/celestia/celestiacore.cpp:511
+msgid "Orientation: "
+msgstr "Ориентация: "
+
+#: src/celestia/celestiacore.cpp:558 src/celestia/celestiacore.cpp:560
+msgid "Error opening script file."
+msgstr "Ошибка открытия файла сценария."
+
+#: src/celestia/celestiacore.cpp:591
+#, c-format
+msgid "Error opening script '%s'"
+msgstr "Ошибка открытия сценария '%s'"
+
+#: src/celestia/celestiacore.cpp:609
+msgid "Unknown error opening script"
+msgstr "Неизвестная ошибка при открытии сценария"
+
+#: src/celestia/celestiacore.cpp:621
+msgid "Script coroutine initialization failed"
+msgstr "Ошибка инициализации сценария"
+
+#: src/celestia/celestiacore.cpp:637 src/celestia/celestiacore.cpp:639
+msgid "Invalid filetype"
+msgstr "Неверный тип файла"
+
+#: src/celestia/celestiacore.cpp:982 src/celestia/celestiacore.cpp:1787
+#: src/celestia/celestiacore.cpp:1805 src/celestia/celestiacore.cpp:2046
+#: src/celestia/celestiacore.cpp:2077
+#, c-format
+msgid "Magnitude limit: %.2f"
+msgstr "Предельная величина: %.2f"
+
+#: src/celestia/celestiacore.cpp:1417
+msgid "Markers enabled"
+msgstr "Метки включены"
+
+#: src/celestia/celestiacore.cpp:1420
+msgid "Markers disabled"
+msgstr "Метки отключены"
+
+#: src/celestia/celestiacore.cpp:1430
+msgid "Goto surface"
+msgstr "Перейти к поверхности"
+
+#: src/celestia/celestiacore.cpp:1443
+msgid "Alt-azimuth mode enabled"
+msgstr "Режим 'Высота-Азимут' включен"
+
+#: src/celestia/celestiacore.cpp:1446
+msgid "Alt-azimuth mode disabled"
+msgstr "Режим 'Высота-Азимут' отключен"
+
+#: src/celestia/celestiacore.cpp:1502
+msgid "Star style: fuzzy points"
+msgstr "Стиль звезд: расплывчатые точки"
+
+#: src/celestia/celestiacore.cpp:1505
+msgid "Star style: points"
+msgstr "Стиль звезд: точки"
+
+#: src/celestia/celestiacore.cpp:1508
+msgid "Star style: scaled discs"
+msgstr "Стиль звезд: диски"
+
+#: src/celestia/celestiacore.cpp:1521
+msgid "Comet tails enabled"
+msgstr "Хвосты комет включены"
+
+#: src/celestia/celestiacore.cpp:1524
+msgid "Comet tails disabled"
+msgstr "Хвосты комет отключены"
+
+#: src/celestia/celestiacore.cpp:1539
+msgid "Render path: Basic"
+msgstr "Рендеринг: основной"
+
+#: src/celestia/celestiacore.cpp:1542
+msgid "Render path: Multitexture"
+msgstr "Рендеринг: мультитекстура"
+
+#: src/celestia/celestiacore.cpp:1545
+msgid "Render path: NVIDIA combiners"
+msgstr "Рендеринг: NVIDIA общий"
+
+#: src/celestia/celestiacore.cpp:1548
+msgid "Render path: OpenGL vertex program"
+msgstr "Рендеринг: программный OpenGL"
+
+#: src/celestia/celestiacore.cpp:1551
+msgid "Render path: NVIDIA vertex program and combiners"
+msgstr "Рендеринг: NVIDIA общий и программная обработка шейдеров"
+
+#: src/celestia/celestiacore.cpp:1554
+msgid "Render path: OpenGL vertex program/NVIDIA combiners"
+msgstr "Рендеринг: программный OpenGL/NVIDIA общий"
+
+#: src/celestia/celestiacore.cpp:1557
+msgid "Render path: OpenGL 1.5 vertex/fragment program"
+msgstr "Рендеринг: программный OpenGL 1.5"
+
+#: src/celestia/celestiacore.cpp:1560
+msgid "Render path: NVIDIA GeForce FX"
+msgstr "Рендеринг: NVIDIA GeForce FX"
+
+#: src/celestia/celestiacore.cpp:1563
+msgid "Render path: OpenGL 2.0"
+msgstr "Рендеринг: OpenGL 2.0"
+
+#: src/celestia/celestiacore.cpp:1586
+msgid "Auto-magnitude enabled"
+msgstr "Автонастройка количества видимых звёзд включена"
+
+#: src/celestia/celestiacore.cpp:1591
+msgid "Auto-magnitude disabled"
+msgstr "Автонастройка количества видимых звёзд отключена"
+
+#: src/celestia/celestiacore.cpp:1613
+msgid "Cancel"
+msgstr "Отмена"
+
+#: src/celestia/celestiacore.cpp:1649
+msgid "Time and script are paused"
+msgstr "Время и сценарий приостановлены"
+
+#: src/celestia/celestiacore.cpp:1651
+msgid "Time is paused"
+msgstr "Время приостановлено"
+
+#: src/celestia/celestiacore.cpp:1655
+msgid "Resume"
+msgstr "Продолжаю"
+
+#: src/celestia/celestiacore.cpp:1730
+#, c-format
+msgid "Light travel time:  %.4f yr "
+msgstr "Световое запаздывание:  %.4f г "
+
+#: src/celestia/celestiacore.cpp:1739
+#, c-format
+msgid "Light travel time:  %d min  %.1f s"
+msgstr "Световое запаздывание:  %d мин  %.1f с"
+
+#: src/celestia/celestiacore.cpp:1742
+#, c-format
+msgid "Light travel time:  %d h  %d min  %.1f s"
+msgstr "Световое запаздывание:  %d ч  %d мин  %.1f с"
+
+#: src/celestia/celestiacore.cpp:1761
+msgid "Light travel delay included"
+msgstr "Световое запаздывание включено"
+
+#: src/celestia/celestiacore.cpp:1766
+msgid "Light travel delay switched off"
+msgstr "Световое запаздывание отключено"
+
+#: src/celestia/celestiacore.cpp:1772
+msgid "Light travel delay ignored"
+msgstr "Световое запаздывание не учитывается"
+
+#: src/celestia/celestiacore.cpp:1817
+msgid "Using normal surface textures."
+msgstr "Использование нормальных текстур поверхности."
+
+#: src/celestia/celestiacore.cpp:1822
+msgid "Using limit of knowledge surface textures."
+msgstr "Использование ограниченных текстур."
+
+#: src/celestia/celestiacore.cpp:1889
+msgid "Follow"
+msgstr "Наблюдение"
+
+#: src/celestia/celestiacore.cpp:1914
+msgid "Time: Forward"
+msgstr "Время: вперед"
+
+#: src/celestia/celestiacore.cpp:1916
+msgid "Time: Backward"
+msgstr "Время: назад"
+
+#: src/celestia/celestiacore.cpp:1929 src/celestia/celestiacore.cpp:1945
+msgid "Time rate"
+msgstr "Множитель времени"
+
+#: src/celestia/celestiacore.cpp:2018
+msgid "Sync Orbit"
+msgstr "Синхронное вращение"
+
+#: src/celestia/celestiacore.cpp:2024
+msgid "Lock"
+msgstr "Захват"
+
+#: src/celestia/celestiacore.cpp:2030
+msgid "Chase"
+msgstr "Сопровождение"
+
+#: src/celestia/celestiacore.cpp:2057 src/celestia/celestiacore.cpp:2088
+#, c-format
+msgid "Auto magnitude limit at 45 degrees:  %.2f"
+msgstr "Предел автовеличины при 45 FOV:  %.2f"
+
+#: src/celestia/celestiacore.cpp:2107 src/celestia/celestiacore.cpp:2122
+#, c-format
+msgid "Ambient light level:  %.2f"
+msgstr "Рассеянный свет:  %.2f"
+
+#: src/celestia/celestiacore.cpp:2133 src/celestia/celestiacore.cpp:2145
+msgid "Light gain"
+msgstr "Светимость галактик"
+
+#: src/celestia/celestiacore.cpp:2165
+msgid "Bloom enabled"
+msgstr "Расцветка включена"
+
+#: src/celestia/celestiacore.cpp:2167
+msgid "Bloom disabled"
+msgstr "Расцветка отключена"
+
+#: src/celestia/celestiacore.cpp:2173 src/celestia/celestiacore.cpp:2181
+msgid "Exposure"
+msgstr "Вид"
+
+#: src/celestia/celestiacore.cpp:2532
+msgid "GL error: "
+msgstr "GL ошибка: "
+
+#: src/celestia/celestiacore.cpp:2659
+msgid "View too small to be split"
+msgstr "Изображение слишком мало для разделения"
+
+#: src/celestia/celestiacore.cpp:2662
+msgid "Added view"
+msgstr "Добавленный вид"
+
+#: src/celestia/celestiacore.cpp:2918
+msgid "ly"
+msgstr "св. л."
+
+#: src/celestia/celestiacore.cpp:2922
+msgid "au"
+msgstr "а. е."
+
+#: src/celestia/celestiacore.cpp:2943
+msgid " days"
+msgstr " дней"
+
+#: src/celestia/celestiacore.cpp:2945
+msgid " hours"
+msgstr " часов"
+
+#: src/celestia/celestiacore.cpp:2947
+msgid " minutes"
+msgstr " минут"
+
+#: src/celestia/celestiacore.cpp:3014
+msgid "Apparent diameter: "
+msgstr "Видимый диаметр: "
+
+#: src/celestia/celestiacore.cpp:3029
+msgid "Apparent magnitude: "
+msgstr "Видимая величина: "
+
+#: src/celestia/celestiacore.cpp:3033
+msgid "Absolute magnitude: "
+msgstr "Абсолютная величина: "
+
+#: src/celestia/celestiacore.cpp:3055
+msgid "RA: "
+msgstr "Прямое восхождение: "
+
+#: src/celestia/celestiacore.cpp:3059
+msgid "Dec: "
+msgstr "Склонение: "
+
+#: src/celestia/celestiacore.cpp:3123
+msgid "km"
+msgstr "км"
+
+#: src/celestia/celestiacore.cpp:3152 src/celestia/celestiacore.cpp:3226
+#: src/celestia/celestiacore.cpp:3258 src/celestia/celestiacore.cpp:3359
+msgid "Distance: "
+msgstr "Расстояние: "
+
+#: src/celestia/celestiacore.cpp:3158
+msgid "Star system barycenter\n"
+msgstr "Барицентр звездной системы\n"
+
+#: src/celestia/celestiacore.cpp:3162
+#, c-format
+msgid "Abs (app) mag: %.2f (%.2f)\n"
+msgstr "Абс. (вид.) величина: %.2f (%.2f)\n"
+
+#: src/celestia/celestiacore.cpp:3168
+msgid "Luminosity: "
+msgstr "Светимость: "
+
+#: src/celestia/celestiacore.cpp:3168
+msgid "x Sun"
+msgstr "x Солн."
+
+#: src/celestia/celestiacore.cpp:3169
+msgid "Class: "
+msgstr "Класс: "
+
+#: src/celestia/celestiacore.cpp:3171
+msgid "Neutron star"
+msgstr "Нейтронная звезда"
+
+#: src/celestia/celestiacore.cpp:3173
+msgid "Black hole"
+msgstr "Черная дыра"
+
+#: src/celestia/celestiacore.cpp:3183
+msgid "Surface temp: "
+msgstr "Темп. поверхности: "
+
+#: src/celestia/celestiacore.cpp:3186 src/celestia/celestiacore.cpp:3235
+#: src/celestia/celestiacore.cpp:3268
+msgid "Radius: "
+msgstr "Радиус: "
+
+#: src/celestia/celestiacore.cpp:3189
+msgid "Rsun"
+msgstr "Rсолн."
+
+#: src/celestia/celestiacore.cpp:3199 src/celestia/celestiacore.cpp:3320
+msgid "Rotation period: "
+msgstr "Период вращения: "
+
+#: src/celestia/celestiacore.cpp:3213
+msgid "Planetary companions present\n"
+msgstr "Присутствует планетарная система\n"
+
+#: src/celestia/celestiacore.cpp:3231
+msgid "Distance from center: "
+msgstr "Расстояние от центра: "
+
+#: src/celestia/celestiacore.cpp:3336
+msgid "Temperature: "
+msgstr "Температура: "
+
+#: src/celestia/celestiacore.cpp:3348
+#, c-format
+msgid "Apparent mag: %.2f\n"
+msgstr "Видимая величина: %.2f\n"
+
+#: src/celestia/celestiacore.cpp:3516
+msgid "  LT"
+msgstr "  LT"
+
+#: src/celestia/celestiacore.cpp:3525
+msgid "Real time"
+msgstr "Текущее время"
+
+#: src/celestia/celestiacore.cpp:3527
+msgid "-Real time"
+msgstr "Обратный отсчёт"
+
+#: src/celestia/celestiacore.cpp:3531
+msgid "Time stopped"
+msgstr "Время остановлено"
+
+#: src/celestia/celestiacore.cpp:3536
+msgid " faster"
+msgstr " раз быстрее"
+
+#: src/celestia/celestiacore.cpp:3541
+msgid " slower"
+msgstr " раз медленее"
+
+#: src/celestia/celestiacore.cpp:3547
+msgid " (Paused)"
+msgstr " (Приостановлено)"
+
+#: src/celestia/celestiacore.cpp:3565
+msgid "FPS: "
+msgstr "FPS: "
+
+#: src/celestia/celestiacore.cpp:3567
+msgid ""
+"\n"
+"Speed: "
+msgstr ""
+"\n"
+"Скорость: "
+
+#: src/celestia/celestiacore.cpp:3571
+msgid " m/s"
+msgstr " м/с"
+
+#: src/celestia/celestiacore.cpp:3573
+msgid " km/s"
+msgstr " км/с"
+
+#: src/celestia/celestiacore.cpp:3577
+msgid " AU/s"
+msgstr " а. e./с"
+
+#: src/celestia/celestiacore.cpp:3579
+msgid " ly/s"
+msgstr " св. л./с"
+
+#: src/celestia/celestiacore.cpp:3596
+msgid "Travelling "
+msgstr "Путешествие "
+
+#: src/celestia/celestiacore.cpp:3609
+msgid "Track "
+msgstr "Слежение "
+
+#: src/celestia/celestiacore.cpp:3623
+msgid "Follow "
+msgstr "Наблюдение "
+
+#: src/celestia/celestiacore.cpp:3628
+msgid "Sync Orbit "
+msgstr "Синх. вращение "
+
+#: src/celestia/celestiacore.cpp:3633
+msgid "Lock "
+msgstr "Захват "
+
+#: src/celestia/celestiacore.cpp:3642
+msgid "Chase "
+msgstr "Сопровождение "
+
+#: src/celestia/celestiacore.cpp:3658
+msgid "FOV: "
+msgstr "FOV: "
+
+#: src/celestia/celestiacore.cpp:3688 src/celestia/celestiacore.cpp:3691
+msgid "Sun"
+msgstr "Солнце"
+
+#: src/celestia/celestiacore.cpp:3865
+msgid "Target name: "
+msgstr "Имя цели: "
+
+#: src/celestia/celestiacore.cpp:3947
+msgid " at "
+msgstr " при "
+
+#: src/celestia/celestiacore.cpp:3948
+msgid " fps"
+msgstr " fps"
+
+#: src/celestia/celestiacore.cpp:3950
+msgid "  Recording"
+msgstr "  Запись"
+
+#: src/celestia/celestiacore.cpp:3952
+msgid "  Paused"
+msgstr "  Приостановлено"
+
+#: src/celestia/celestiacore.cpp:3971
+msgid "F11 Start/Pause    F12 Stop"
+msgstr "F11 Пуск/Пауза    F12 Стоп"
+
+#: src/celestia/celestiacore.cpp:3980 src/celestia/celestiacore.cpp:3983
+msgid "Edit Mode"
+msgstr "Режим правки"
+
+#: src/celestia/celestiacore.cpp:4049
+msgid "Loading solar system catalog: "
+msgstr "Загрузка каталога системы: "
+
+#: src/celestia/celestiacore.cpp:4090
+msgid "Loading "
+msgstr "Загрузка "
+
+#: src/celestia/celestiacore.cpp:4125
+msgid "License file 'License.txt' is missing!"
+msgstr "Файл лицензии 'License.txt' отсутствует!"
+
+#: src/celestia/celestiacore.cpp:4146
+msgid "Error reading configuration file."
+msgstr "Ошибка чтения файла настройки."
+
+#: src/celestia/celestiacore.cpp:4157
+msgid "Initialization of SPICE library failed."
+msgstr "Ошибка инициализации SPICE библиотеки."
+
+#: src/celestia/celestiacore.cpp:4204
+msgid "Cannot read star database."
+msgstr "Ошибка чтения базы данных звезд."
+
+#: src/celestia/celestiacore.cpp:4226
+msgid "Error opening deepsky catalog file."
+msgstr "Ошибка открытия файла объектов глубокого космоса."
+
+#: src/celestia/celestiacore.cpp:4278
+msgid "Error opening solar system catalog.\n"
+msgstr "Ошибка открытия каталога системы.\n"
+
+#: src/celestia/celestiacore.cpp:4311
+msgid "Error opening asterisms file."
+msgstr "Ошибка открытия файла asterisms."
+
+#: src/celestia/celestiacore.cpp:4326
+msgid "Error opening constellation boundaries files."
+msgstr "Ошибка открытия файла границ созвездий."
+
+#: src/celestia/celestiacore.cpp:4393
+msgid "render path: "
+msgstr "рендеринг: "
+
+#: src/celestia/celestiacore.cpp:4404
+msgid "Failed to initialize renderer"
+msgstr "Ошибка инициализации рендеринга"
+
+#: src/celestia/celestiacore.cpp:4420
+msgid "Error loading font; text will not be visible.\n"
+msgstr "Ошибка загрузки шрифта; текст не будет отображаться.\n"
+
+#: src/celestia/celestiacore.cpp:4477
+msgid "Error reading cross index "
+msgstr "Ошибка чтения индексов "
+
+#: src/celestia/celestiacore.cpp:4479
+msgid "Loaded cross index "
+msgstr "Загружены индексы "
+
+#: src/celestia/celestiacore.cpp:4493 src/celestia/celestiacore.cpp:4515
+msgid "Error opening "
+msgstr "Ошибка открытия "
+
+#: src/celestia/celestiacore.cpp:4500
+msgid "Error reading star names file\n"
+msgstr "Ошибка чтения названия в файле звезд\n"
+
+#: src/celestia/celestiacore.cpp:4523
+msgid "Error reading stars file\n"
+msgstr "Ошибка чтения файла звезд\n"
+
+#: src/celestia/celestiacore.cpp:4550
+msgid "Error opening star catalog "
+msgstr "Ошибка открытия каталога звезд "
+
+#: src/celestia/oggtheoracapture.cpp:159
+#, c-format
+msgid "Error in creating ogg file %s for capture.\n"
+msgstr "Ошибка создания ogg-файла %s при захвате.\n"
+
+#: src/celestia/oggtheoracapture.cpp:253 src/celestia/oggtheoracapture.cpp:273
+msgid "Internal Ogg library error."
+msgstr "Ошибка в библиотеке OGG."
+
+#: src/celestia/oggtheoracapture.cpp:308
+#, c-format
+msgid ""
+"OggTheoraCapture::start() - Theora video: %s %.2f(%d/%d) fps quality %d %dx%"
+"d offset (%dx%d)\n"
+msgstr ""
+"OggTheoraCapture::start() - Theora video: %s %.2f(%d/%d) fps quality %d %dx%"
+"d offset (%dx%d)\n"
+
+#: src/celestia/oggtheoracapture.cpp:423
+#, c-format
+msgid "OggTheoraCapture::cleanup() - wrote %d frames\n"
+msgstr "OggTheoraCapture::cleanup() - wrote %d frames\n"
+
+#: src/celestia/url.cpp:653
+msgid "Settings"
+msgstr "Настройки"
+
+#: src/celestia/winmain.cpp:625
+msgid "Vendor: "
+msgstr "Производитель:"
+
+#: src/celestia/winmain.cpp:630
+msgid "Renderer: "
+msgstr "Видеокарта: "
+
+#: src/celestia/winmain.cpp:635
+msgid "Version: "
+msgstr "Версия: "
+
+#: src/celestia/winmain.cpp:645
+msgid "GLSL version: "
+msgstr "GLSL версия: "
+
+#: src/celestia/winmain.cpp:656
+msgid "Max simultaneous textures: "
+msgstr "Макс. кол-во текстур: "
+
+#: src/celestia/winmain.cpp:663
+msgid "Max texture size: "
+msgstr "Макс. размер текстур: "
+
+#: src/celestia/winmain.cpp:672
+msgid "Max cube map size: "
+msgstr "Макс. размер кубической карты: "
+
+#: src/celestia/winmain.cpp:680
+msgid "Point size range: "
+msgstr "Диапазон размеров точки: "
+
+#: src/celestia/winmain.cpp:685
+msgid "Supported Extensions:"
+msgstr "Поддерживаемые расширения:"
+
+#: src/celestia/winmain.cpp:1386
+msgid "Windowed Mode"
+msgstr "Оконный режим"
+
+#: src/celestia/winmain.cpp:1508
+msgid "Asteroids"
+msgstr "Астероиды"
+
+#: src/celestia/winmain.cpp:1510
+msgid "Comets"
+msgstr "Кометы"
+
+#: src/celestia/winmain.cpp:1512
+msgid "Invisibles"
+msgstr "Невидимые"
+
+#: src/celestia/winmain.cpp:1514
+msgid "Moons"
+msgstr "Спутники"
+
+#: src/celestia/winmain.cpp:1516 src/celestia/winmain.cpp:1551
+#: src/celestia/winmain.cpp:1668
+msgid "Planets"
+msgstr "Планеты"
+
+#: src/celestia/winmain.cpp:1518
+msgid "Spacecraft"
+msgstr "Косм. корабл."
+
+#: src/celestia/winmain.cpp:1608 src/celestia/winmain.cpp:1656
+#: src/celestia/winmain.cpp:1679
+msgid "&Goto"
+msgstr "&Перейти"
+
+#: src/celestia/winmain.cpp:1609 src/celestia/winmain.cpp:1680
+msgid "&Follow"
+msgstr "&Наблюдение"
+
+#: src/celestia/winmain.cpp:1610
+msgid "S&ync Orbit"
+msgstr "Син&х. вращение"
+
+#: src/celestia/winmain.cpp:1611 src/celestia/winmain.cpp:1657
+#: src/celestia/winmain.cpp:1681
+msgid "&Info"
+msgstr "&Информация"
+
+#: src/celestia/winmain.cpp:1613
+msgid "&Reference Vectors"
+msgstr "&Базисный вектор"
+
+#: src/celestia/winmain.cpp:1614
+msgid "Show Body Axes"
+msgstr "Показывать оси объекта"
+
+#: src/celestia/winmain.cpp:1615
+msgid "Show Frame Axes"
+msgstr "Показывать оси каркаса"
+
+#: src/celestia/winmain.cpp:1616
+msgid "Show Sun Direction"
+msgstr "Показывать направление к Солнцу"
+
+#: src/celestia/winmain.cpp:1617
+msgid "Show Velocity Vector"
+msgstr "Показывать вектор движения"
+
+#: src/celestia/winmain.cpp:1618
+msgid "Show Planetographic Grid"
+msgstr "Показывать планетографическую сетку"
+
+#: src/celestia/winmain.cpp:1619
+msgid "Show Terminator"
+msgstr "Показывать линию терминатора"
+
+#: src/celestia/winmain.cpp:1633
+msgid "&Satellites"
+msgstr "С&путники"
+
+#: src/celestia/winmain.cpp:1643
+msgid "&Alternate Surfaces"
+msgstr "&Альтернативная поверхность"
+
+#: src/celestia/winmain.cpp:1666
+msgid "Orbiting Bodies"
+msgstr "Объекты системы"
+
+#: src/celestia/winmain.cpp:1693
+msgid "&Unmark"
+msgstr "Убрать &метку"
+
+#: src/celestia/winmain.cpp:1695
+msgid "&Mark"
+msgstr "М&аркировка"
+
+#: src/celestia/winmain.cpp:3137
+msgid "Loading: "
+msgstr "Загрузка: "
+
+#: src/celestia/winmain.cpp:3305 src/celutil/util.cpp:72
+#: src/celutil/util.cpp:76
+msgid "LANGUAGE"
+msgstr "ru"
+
+#: src/celestia/winmain.cpp:3307
+msgid "WinLangID"
+msgstr "419"
+
+#: src/celestia/winmain.cpp:3809
+msgid "Copied URL"
+msgstr "URL скопирован"
+
+#: src/celestia/winmain.cpp:3903
+msgid "Loading URL"
+msgstr "Загрузка URL"
+
+#: src/celestia/winmain.cpp:3915
+msgid "Error opening script"
+msgstr "Ошибка открытия сценария"
+
+#: src/celestia/winmain.cpp:3934
+msgid "Error loading script"
+msgstr "Ошибка загрузки сценария"
+
+#: src/celestia/winmain.cpp:3939
+msgid "Running script"
+msgstr "Запуск сценария"
+
+#: src/celestia/wineclipses.cpp:58
+msgid "Planet"
+msgstr "Планета"
+
+#: src/celestia/wineclipses.cpp:60
+msgid "Satellite"
+msgstr "Спутник"
+
+#: src/celestia/wineclipses.cpp:62
+msgid "Date"
+msgstr "Дата"
+
+#: src/celestia/wineclipses.cpp:64
+msgid "Start"
+msgstr "Начало"
+
+#: src/celestia/wineclipses.cpp:66
+msgid "Duration"
+msgstr "Продолжительность"
+
+#: src/celestia/wineclipses.cpp:316
+msgid "Earth"
+msgstr "Земля"
+
+#: src/celestia/wineclipses.cpp:317
+msgid "Jupiter"
+msgstr "Юпитер"
+
+#: src/celestia/wineclipses.cpp:318
+msgid "Saturn"
+msgstr "Сатурн"
+
+#: src/celestia/wineclipses.cpp:319
+msgid "Uranus"
+msgstr "Уран"
+
+#: src/celestia/wineclipses.cpp:320
+msgid "Neptune"
+msgstr "Нептун"
+
+#: src/celestia/wineclipses.cpp:321
+msgid "Pluto"
+msgstr "Плутон"
+
+#: src/celestia/winstarbrowser.cpp:70
+msgid "Name"
+msgstr "Имя"
+
+#: src/celestia/winstarbrowser.cpp:72
+msgid "Distance (ly)"
+msgstr "Расстояние (св. л.)"
+
+#: src/celestia/winstarbrowser.cpp:75
+msgid "App. mag"
+msgstr "Вид. вел."
+
+#: src/celestia/winstarbrowser.cpp:77
+msgid "Abs. mag"
+msgstr "Абс. вел."
+
+#: src/celestia/winstarbrowser.cpp:79
+msgid "Type"
+msgstr "Тип"
+
+#: src/celestia/wintime.cpp:95
+msgid "Universal Time"
+msgstr "Всемирное время"
+
+#: src/celestia/wintime.cpp:96
+msgid "Local Time"
+msgstr "Местное время"
+
+#: src/celestia/wintime.cpp:97
+msgid "Time Zone Name"
+msgstr "Часовой пояс"
+
+#: src/celestia/wintime.cpp:98
+msgid "UTC Offset"
+msgstr "Смещение UTC"
+
+#~ msgid "Celestial Browser"
+#~ msgstr "Небесный каталог"
+
+#~ msgid "Moon"
+#~ msgstr "Луна"
+
+#~ msgid "Asteroid"
+#~ msgstr "Астероид"
+
+#~ msgid "Comet"
+#~ msgstr "Комета"
+
+#~ msgid "Invisible"
+#~ msgstr "Невидимый"
+
+#~ msgid "Barycenter"
+#~ msgstr "Барицентр"
+
+#~ msgid "Small Body"
+#~ msgstr "Малое тело"
+
+#~ msgid "Dwarf Planet"
+#~ msgstr "Карликовая планета"
+
+#~ msgid "-"
+#~ msgstr "-"
+
+#~ msgid "Eclipse Finder"
+#~ msgstr "Поиск затмений"
+
+#~ msgid "&Add Bookmark"
+#~ msgstr "Добавить &закладку"
+
+#~ msgid "Add a bookmark for the current document"
+#~ msgstr "Добавить закладку в текущий документ"
+
+#~ msgid "Add &Relative Bookmark"
+#~ msgstr "Добавить &относит. закладку"
+
+#~ msgid "Add a relative bookmark for the current document"
+#~ msgstr "Добавить относит. закладку в текущий документ"
+
+#~ msgid "Add &Settings Bookmark"
+#~ msgstr "Добавить закладку &настроек"
+
+#~ msgid "Add a settings bookmark for the current document"
+#~ msgstr "Добавить закладку настроек в текущий документ"
+
+#~ msgid "Edit your bookmark collection in a separate window"
+#~ msgstr "Упорядочите Ваши закладки в отдельном окне"
+
+#~ msgid "&New Folder..."
+#~ msgstr "&Новая папка..."
+
+#~ msgid "Create a new bookmark folder in this menu"
+#~ msgstr "Создайте новую папку закладок в этом меню"
+
+#~ msgid "Can't add bookmark with empty URL"
+#~ msgstr "Пустой адрес не может быть добавлен в закладку"
+
+#~ msgid ""
+#~ "Something seems to be wrong with your installation of Celestia. The "
+#~ "splash screen directory couldn't be found. \n"
+#~ "Start-up will continue, but Celestia will probably be missing some data "
+#~ "files and may not work correctly, please check your installation."
+#~ msgstr ""
+#~ "Программа Celestia была некорректно установлена. Сплэшскрин не найден в "
+#~ "папке установки программы. \n"
+#~ "Запуск Celestia продолжится но некоторые файлы могут быть не найдены. "
+#~ "Пожалуйста, переустановите программу Celestia."
+
+#~ msgid "Go to &URL..."
+#~ msgstr "Перейти по &адресу..."
+
+#~ msgid "Go to &Long/Lat..."
+#~ msgstr "Перейти на &долг./широт."
+
+#~ msgid "&Back"
+#~ msgstr "&Назад"
+
+#~ msgid "&Forward"
+#~ msgstr "&Вперед"
+
+#~ msgid "Home"
+#~ msgstr "Домой"
+
+#~ msgid "Bookmarks"
+#~ msgstr "Закладки"
+
+#~ msgid "Full Screen"
+#~ msgstr "На весь экран"
+
+#~ msgid "Copy URL"
+#~ msgstr "Копировать URL"
+
+#~ msgid "Set Time..."
+#~ msgstr "Установить время..."
+
+#~ msgid "Set Time to Now"
+#~ msgstr "Установить настоящее время"
+
+#~ msgid "Accelerate Time"
+#~ msgstr "Ускорить время"
+
+#~ msgid "Decelerate Time"
+#~ msgstr "Замедлить время"
+
+#~ msgid "Accelerate Time (x2)"
+#~ msgstr "Ускорить время (x2)"
+
+#~ msgid "Decelerate Time (/2)"
+#~ msgstr "Замедлить время (/2)"
+
+#~ msgid "Pause Time"
+#~ msgstr "Пауза"
+
+#~ msgid "Reverse Time"
+#~ msgstr "Обратить время"
+
+#~ msgid "Split View Vertically"
+#~ msgstr "Разделить по вертикали"
+
+#~ msgid "Split View Horizontally"
+#~ msgstr "Разделить по горизонтали"
+
+#~ msgid "Cycle View"
+#~ msgstr "Циклический просмотр"
+
+#~ msgid "Single View"
+#~ msgstr "Единственный вид"
+
+#~ msgid "Delete View"
+#~ msgstr "Удалить видимое"
+
+#~ msgid "Frames Visible"
+#~ msgstr "Разделители видны"
+
+#~ msgid "Active Frame Visible"
+#~ msgstr "Активизировать видимое окно"
+
+#~ msgid "Synchronize Time"
+#~ msgstr "Синхронизация времени"
+
+#~ msgid "Alt-Azimuth Mode"
+#~ msgstr "Режим 'высота-азимут'"
+
+#~ msgid "Go To Surface"
+#~ msgstr "Перейти к поверхности"
+
+#~ msgid "Show Stars"
+#~ msgstr "Показывать звезды"
+
+#~ msgid "Show Planets"
+#~ msgstr "Показывать планеты"
+
+#~ msgid "Show Galaxies"
+#~ msgstr "Показывать галактики"
+
+#~ msgid "Show Globulars"
+#~ msgstr "Показывать шаровые скопления"
+
+#~ msgid "Show Partial Trajectories"
+#~ msgstr "Показывать детали траектории"
+
+#~ msgid "Show Nebulae"
+#~ msgstr "Показывать туманности"
+
+#~ msgid "Show Open Clusters"
+#~ msgstr "Показывать рассеянные скопления"
+
+#~ msgid "Show Constellations"
+#~ msgstr "Показывать созвездия"
+
+#~ msgid "Show CloudMaps"
+#~ msgstr "Показывать облака"
+
+#~ msgid "Show Cloud Shadows"
+#~ msgstr "Показывать тени облаков"
+
+#~ msgid "Show Orbits"
+#~ msgstr "Показывать орбиты"
+
+#~ msgid "Show Asteroid Orbits"
+#~ msgstr "Показывать орбиты астероидов"
+
+#~ msgid "Show Comet Orbits"
+#~ msgstr "Показывать орбиты комет"
+
+#~ msgid "Show Moon Orbits"
+#~ msgstr "Показывать орбиты спутников"
+
+#~ msgid "Show Star Orbits"
+#~ msgstr "Показывать орбиты звезд"
+
+#~ msgid "Show Planet Orbits"
+#~ msgstr "Показывать орбиты планет"
+
+#~ msgid "Show Spacecraft Orbits"
+#~ msgstr "Показывать орбиты косм. кораблей"
+
+#~ msgid "Show Celestial Grid"
+#~ msgstr "Показывать координатную сетку"
+
+#~ msgid "Show Night Side Lights"
+#~ msgstr "Показывать свет ночной стороны"
+
+#~ msgid "Show Markers"
+#~ msgstr "Показывать метки"
+
+#~ msgid "Show Atmospheres"
+#~ msgstr "Показывать атмосферу"
+
+#~ msgid "Show Smooth Orbit Lines"
+#~ msgstr "Показывать сглаженные линии орбит"
+
+#~ msgid "Show Eclipse Shadows"
+#~ msgstr "Показывать тени затмений"
+
+#~ msgid "Cycle Star Mode"
+#~ msgstr "Изменение вида звезд"
+
+#~ msgid "Show Ring Shadows"
+#~ msgstr "Показывать тени на кольцах"
+
+#~ msgid "Show Boundaries"
+#~ msgstr "Показывать границы"
+
+#~ msgid "Auto Magnitudes"
+#~ msgstr "Автонастройка звездной величины"
+
+#~ msgid "Show Comet Tails"
+#~ msgstr "Показывать хвосты комет"
+
+#~ msgid "Show Star Labels"
+#~ msgstr "Показывать названия звезд"
+
+#~ msgid "Show Planet Labels"
+#~ msgstr "Показывать названия планет"
+
+#~ msgid "Show Moon Labels"
+#~ msgstr "Показывать названия лун"
+
+#~ msgid "Show Comet Labels"
+#~ msgstr "Показывать названия комет"
+
+#~ msgid "Show Constellation Labels"
+#~ msgstr "Показывать названия созвездий"
+
+#~ msgid "Constellation Labels in Latin"
+#~ msgstr "Названия созвездий на латыни"
+
+#~ msgid "Show Galaxy Labels"
+#~ msgstr "Показывать названия галактик"
+
+#~ msgid "Show Globular Labels"
+#~ msgstr "Показывать названия шаровых скоплений"
+
+#~ msgid "Show Nebula Labels"
+#~ msgstr "Показывать названия туманностей"
+
+#~ msgid "Show Open Cluster Labels"
+#~ msgstr "Показывать названия рассеянных скоплений"
+
+#~ msgid "Show Asteroid Labels"
+#~ msgstr "Показывать названия астероидов"
+
+#~ msgid "Show Spacecraft Labels"
+#~ msgstr "Показывать названия косм. корабл."
+
+#~ msgid "Show Location Labels"
+#~ msgstr "Показывать названия местоположений"
+
+#~ msgid "Display Local Time"
+#~ msgstr "Показывать местное время"
+
+#~ msgid "Show City Locations"
+#~ msgstr "Показывать местоположение городов"
+
+#~ msgid "Show Observatory Locations"
+#~ msgstr "Показывать местоположение обсерваторий"
+
+#~ msgid "Show Landing Sites Locations"
+#~ msgstr "Показывать местоположение посадоч. площад."
+
+#~ msgid "Show Crater Locations"
+#~ msgstr "Показывать местоположение кратеров"
+
+#~ msgid "Show Mons Locations"
+#~ msgstr "Показывать местоположение гор"
+
+#~ msgid "Show Terra Locations"
+#~ msgstr "Показывать местоположение материков"
+
+#~ msgid "Show Vallis Locations"
+#~ msgstr "Показывать местоположение долин"
+
+#~ msgid "Show Mare Locations"
+#~ msgstr "Показывать местоположение морей"
+
+#~ msgid "Show Other Locations"
+#~ msgstr "Показывать местоположение прочих особенностей"
+
+#~ msgid "Wireframe Mode"
+#~ msgstr "Каркасный режим"
+
+#~ msgid "Center on Orbit"
+#~ msgstr "Центровка орбиты"
+
+#~ msgid "Basic"
+#~ msgstr "Основной"
+
+#~ msgid "Multitexture"
+#~ msgstr "Мультитекстуры"
+
+#~ msgid "NvCombiners"
+#~ msgstr "NvCombiners"
+
+#~ msgid "DOT3 ARBVP"
+#~ msgstr "DOT3 ARBVP"
+
+#~ msgid "NvCombiner NvVP"
+#~ msgstr "NvCombiner NvVP"
+
+#~ msgid "NvCombiner ARBVP"
+#~ msgstr "NvCombiner ARBVP"
+
+#~ msgid "ARBFP ARBVP"
+#~ msgstr "ARBFP ARBVP"
+
+#~ msgid "NV30"
+#~ msgstr "NV30"
+
+#~ msgid "OpenGL 2.0"
+#~ msgstr "OpenGL 2.0"
+
+#~ msgid "Cycle OpenGL Render Path"
+#~ msgstr "Циклический рендеринг OpenGL"
+
+#~ msgid "Sync framerate to video refresh rate"
+#~ msgstr "Синхронизировать частоту видео кадров"
+
+#~ msgid "Grab Image"
+#~ msgstr "Захват изображения"
+
+#~ msgid "Capture Video"
+#~ msgstr "Захват видео"
+
+#~ msgid "OpenGL info"
+#~ msgstr "Информация OpenGL"
+
+#~ msgid "Show Bookmark Toolbar"
+#~ msgstr "Показать панель закладок"
+
+#~ msgid "OpenGL Info"
+#~ msgstr "Информация OpenGL"
+
+#~ msgid "UTC"
+#~ msgstr "UTC"
+
+#~ msgid ""
+#~ "This version of Celestia was not built with support for movie recording."
+#~ msgstr "Эта версия Celestia не поддерживает захват видео."
+
+#~ msgid "Go to URL"
+#~ msgstr "Перейти по адресу"
+
+#~ msgid "Enter URL"
+#~ msgstr "Ввести URL"
+
+#~ msgid "Object: "
+#~ msgstr "Объект: "
+
+#~ msgid "Longitude: "
+#~ msgstr "Долгота: "
+
+#~ msgid "East"
+#~ msgstr "Восток"
+
+#~ msgid "West"
+#~ msgstr "Запад"
+
+#~ msgid "Latitude: "
+#~ msgstr "Широта: "
+
+#~ msgid "North"
+#~ msgstr "Север"
+
+#~ msgid "South"
+#~ msgstr "Юг"
+
+#~ msgid "Altitude: "
+#~ msgstr "Высота: "
+
+#~ msgid "Celestia encountered an error while processing your script"
+#~ msgstr "Ошибка при обработке Вашего сценария"
+
+#~ msgid "Celestia"
+#~ msgstr "Celestia"
+
+#~ msgid "Use alternate configuration file"
+#~ msgstr "Пользовательский файл настроек"
+
+#~ msgid "Use alternate installation directory"
+#~ msgstr "Пользовательская папка установки"
+
+#~ msgid "Use as additional \"extras\" directory"
+#~ msgstr "Пользовательская папка дополнений \"extras\""
+
+#~ msgid "Start fullscreen"
+#~ msgstr "Полноэкранный режим"
+
+#~ msgid "Disable splash screen"
+#~ msgstr "Отключить сплэшскрин"
+
+#~ msgid "Start and go to url"
+#~ msgstr "Начать и перейти по адресу"
+
+#~ msgid "_: NAME OF TRANSLATORS\\nYour names"
+#~ msgstr "Sergey Leonov"
+
+#~ msgid "_: EMAIL OF TRANSLATORS\\nYour emails"
+#~ msgstr "leserg@ua.fm"
+
+#~ msgid "Celestia Preferences"
+#~ msgstr "Настройки Celestia"
+
+#~ msgid "Rendering"
+#~ msgstr "Рендеринг"
+
+#~ msgid "Show"
+#~ msgstr "Показывать"
+
+#~ msgid "Stars"
+#~ msgstr "Звёзд"
+
+#~ msgid "Galaxies"
+#~ msgstr "Галактик"
+
+#~ msgid "Nebulae"
+#~ msgstr "Туманностей"
+
+#~ msgid "Open Clusters"
+#~ msgstr "Рассеян. скопл."
+
+#~ msgid "Atmospheres"
+#~ msgstr "Атмосферу"
+
+#~ msgid "Clouds"
+#~ msgstr "Облака"
+
+#~ msgid "Cloud Shadows"
+#~ msgstr "Тени облаков"
+
+#~ msgid "Night Side Lights"
+#~ msgstr "Свет ноч. стороны"
+
+#~ msgid "Eclipse Shadows"
+#~ msgstr "Тени затмений"
+
+#~ msgid "Comet Tails"
+#~ msgstr "Хвосты комет"
+
+#~ msgid "Orbits"
+#~ msgstr "Орбиты"
+
+#~ msgid "Partial Trajectories"
+#~ msgstr "Детали траекторий"
+
+#~ msgid "Smooth Orbit Lines"
+#~ msgstr "Сглаживать линии орбит"
+
+#~ msgid "Celestial Grid"
+#~ msgstr "Коорд. сетку"
+
+#~ msgid "Constellations"
+#~ msgstr "Созвездия"
+
+#~ msgid "Markers"
+#~ msgstr "Метки"
+
+#~ msgid "Ring Shadows"
+#~ msgstr "Тени на кольцах"
+
+#~ msgid "Constellation Boundaries"
+#~ msgstr "Границы созвездий"
+
+#~ msgid "Orbits / Labels"
+#~ msgstr "Орбиты / Названия"
+
+#~ msgid "Labels"
+#~ msgstr "Названия"
+
+#~ msgid "Constellations in Latin"
+#~ msgstr "Созвездия на латыни"
+
+#~ msgid "Spacecrafts"
+#~ msgstr "Косм. корабл."
+
+#~ msgid "Locations"
+#~ msgstr "Планетография"
+
+#~ msgid "Ambient Light"
+#~ msgstr "Рассеянный свет"
+
+#~ msgid "Limiting Magnitude"
+#~ msgstr "Ограничение зв. величины"
+
+#~ msgid "Info Text"
+#~ msgstr "Информация"
+
+#~ msgid "Level: "
+#~ msgstr "Уровень: "
+
+#~ msgid "None"
+#~ msgstr "Ничего"
+
+#~ msgid "Terse"
+#~ msgstr "Кратко"
+
+#~ msgid "Verbose"
+#~ msgstr "Подробно"
+
+#~ msgid "Textures"
+#~ msgstr "Текстуры"
+
+#~ msgid "Resolution: "
+#~ msgstr "Разрешение: "
+
+#~ msgid "Low"
+#~ msgstr "Слабо"
+
+#~ msgid "Medium"
+#~ msgstr "Умеренно"
+
+#~ msgid "High"
+#~ msgstr "Сильно"
+
+#~ msgid "Automatic FOV"
+#~ msgstr "Автоматический FOV"
+
+#~ msgid "Screen DPI: "
+#~ msgstr "Разрешение экрана: "
+
+#~ msgid "Viewing Distance (cm): "
+#~ msgstr "Расстояние просмотра (cм): "
+
+#~ msgid "Cities"
+#~ msgstr "Города"
+
+#~ msgid "Observatories"
+#~ msgstr "Обсерватории"
+
+#~ msgid "Landing Sites"
+#~ msgstr "Посадочные площадки"
+
+#~ msgid "Craters"
+#~ msgstr "Кратеры"
+
+#~ msgid "Mons"
+#~ msgstr "Горы"
+
+#~ msgid "Terra"
+#~ msgstr "Материки"
+
+#~ msgid "Vallis"
+#~ msgstr "Долины"
+
+#~ msgid "Mare"
+#~ msgstr "Моря"
+
+#~ msgid "Other"
+#~ msgstr "Прочее"
+
+#~ msgid "Minimum Feature Size"
+#~ msgstr "Мин. размер особенностей"
+
+#~ msgid "Date/Time"
+#~ msgstr "Дата/время"
+
+#~ msgid "Display"
+#~ msgstr "Экран"
+
+#~ msgid "Timezone: "
+#~ msgstr "Часовой пояс: "
+
+#~ msgid "Format: "
+#~ msgstr "Формат: "
+
+#~ msgid "Local Format"
+#~ msgstr "Местный формат"
+
+#~ msgid "Set"
+#~ msgstr "Установить"
+
+#~ msgid "Local Time is only supported for dates between 1902 and 2037.\n"
+#~ msgstr "Местное время поддерживается только между 1902 и 2037 годами.\n"
+
+#~ msgid "Julian Date: "
+#~ msgstr "Юлианская дата: "
+
+#~ msgid "Now"
+#~ msgstr "Сейчас"
+
+#~ msgid ""
+#~ "\n"
+#~ "Selection: "
+#~ msgstr ""
+#~ "\n"
+#~ "Выбор: "
+
+#~ msgid "Include Light Travel Time"
+#~ msgstr "Учитывать световое запаздывание"
+
+#~ msgid "Ignore Light Travel Time "
+#~ msgstr "Не учитывать световое запаздывание "
+
+#~ msgid "OpenGL"
+#~ msgstr "OpenGL"
+
+#~ msgid "Key Bindings"
+#~ msgstr "Привязка клавиш"
+
+#~ msgid "<b>Unextended OpenGL 1.1</b>"
+#~ msgstr "<b>Unextended OpenGL 1.1</b>"
+
+#~ msgid "<b>Multiple textures and the ARB_texenv_combine extension</b>"
+#~ msgstr "<b>Multiple textures and the ARB_texenv_combine extension</b>"
+
+#~ msgid "<b>NVIDIA combiners, no vertex programs</b>"
+#~ msgstr "<b>NVIDIA combiners, no vertex programs</b>"
+
+#~ msgid "<b>ARB_texenv_DOT3 extension, ARB_vertex_program extension</b>"
+#~ msgstr "<b>ARB_texenv_DOT3 extension, ARB_vertex_program extension</b>"
+
+#~ msgid ""
+#~ "<b>NVIDIA Combiners, NV_vertex_program extension</b><br> provide bump "
+#~ "mapping, ring shadows, and specular highlights on any Geforce or ATI "
+#~ "Radeon graphics card, though NvCombiner ARBVP is a slightly better option "
+#~ "for Geforce users"
+#~ msgstr ""
+#~ "<b>NVIDIA Combiners, NV_vertex_program extension</b><br> provide bump "
+#~ "mapping, ring shadows, and specular highlights on any Geforce or ATI "
+#~ "Radeon graphics card, though NvCombiner ARBVP is a slightly better option "
+#~ "for Geforce users"
+
+#~ msgid "<b>NVIDIA Combiners, ARB_vertex_program extension</b>"
+#~ msgstr "<b>NVIDIA Combiners, ARB_vertex_program extension</b>"
+
+#~ msgid ""
+#~ "<b>ARB_fragment_program and ARB_vertex_program extensions</b><br>provide "
+#~ "advanced effects on Geforce FX and Radeon 9700 cards"
+#~ msgstr ""
+#~ "<b>ARB_fragment_program and ARB_vertex_program extensions</b><br>provide "
+#~ "advanced effects on Geforce FX and Radeon 9700 cards"
+
+#~ msgid "<b>NV_fragment_program and ARB_vertex_program extensions</b>"
+#~ msgstr "<b>NV_fragment_program and ARB_vertex_program extensions</b>"
+
+#~ msgid "<b>OpenGL 2.0 Shading Language</b>"
+#~ msgstr "<b>OpenGL 2.0 Shading Language</b>"
+
+#~ msgid ""
+#~ "File %1 does not exist, using default configuration file %2/celestia.cfg"
+#~ msgstr ""
+#~ "Файл %1 не существует, используется по-умолчанию файл %2/celestia.cfg"
+
+#~ msgid "Directory %1 does not exist, using default %2"
+#~ msgstr "Папка %1 не существует, используется по-умолчанию %2"
+
+#~ msgid "Extras directory %1 does not exist"
+#~ msgstr "Папка дополнений %1 не существует"
+
+#~ msgid "Abs (app) mag: "
+#~ msgstr "Абс. (вид.) величина: "
+
+#~ msgid "Surface Temp: "
+#~ msgstr "Темп. поверхности: "
+
+#~ msgid "Marked objects"
+#~ msgstr "Отмеченные объекты"
+
+#~ msgid "&Select"
+#~ msgstr "В&ыбрать"
+
+#~ msgid "&Center"
+#~ msgstr "По &центру"
+
+#~ msgid "S&ynch Orbit"
+#~ msgstr "Син&х. вращение"
+
+#~ msgid "Unmark &All"
+#~ msgstr "Убрать &все метки"
+
+#~ msgid "Diamond"
+#~ msgstr "Diamond"
+
+#~ msgid "Triangle"
+#~ msgstr "Triangle"
+
+#~ msgid "Square"
+#~ msgstr "Square"
+
+#~ msgid "Filled Square"
+#~ msgstr "Filled Square"
+
+#~ msgid "Plus"
+#~ msgstr "Plus"
+
+#~ msgid "X"
+#~ msgstr "X"
+
+#~ msgid "Left Arrow"
+#~ msgstr "Стрелка влево"
+
+#~ msgid "Right Arrow"
+#~ msgstr "Стрелка вправо"
+
+#~ msgid "Up Arrow"
+#~ msgstr "Стрелка вверх"
+
+#~ msgid "Down Arrow"
+#~ msgstr "Стрелка вниз"
+
+#~ msgid "Circle"
+#~ msgstr "Круг"
+
+#~ msgid "Disk"
+#~ msgstr "Диск"
+
+#~ msgid "Normal"
+#~ msgstr "Нормально"
+
+#~ msgid "Small Bodies"
+#~ msgstr "Малые тела"
+
+#~ msgid "Dwarf Planets"
+#~ msgstr "Карликовые планеты"
+
+#~ msgid "Duration: %1"
+#~ msgstr "Продолжительность: %1"
+
+#~ msgid "Size: %1 MB"
+#~ msgstr "Размер: %1 MB"
+
+#~ msgid "Current size: %1 x %2"
+#~ msgstr "Текущий размер: %1 x %2"
+
+#~ msgid "Current width: %1 x %2"
+#~ msgstr "Текущая ширина: %1 x %2"
+
+#~ msgid "Current height: %1 x %2"
+#~ msgstr "Текущая высота: %1 x %2"
+
+#~ msgid "You must specify a file name."
+#~ msgstr "Вы должны указать имя файла."
+
+#~ msgid "Error initializing movie capture."
+#~ msgstr "Ошибка при инициализации захвата видео."
+
+#~ msgid "&Navigation"
+#~ msgstr "&Навигация"
+
+#~ msgid "Options"
+#~ msgstr "Настройки"
+
+#~ msgid "Objects"
+#~ msgstr "Объекты"
+
+#~ msgid "OpenGL Render Path"
+#~ msgstr "Рендеринг OpenGL"
+
+#~ msgid "Time"
+#~ msgstr "Время"
+
+#~ msgid "MultiView"
+#~ msgstr "Мультипросмотр"
+
+#~ msgid "Main Toolbar"
+#~ msgstr "Панель инструментов"
+
+#~ msgid "Dist."
+#~ msgstr "Раст."
+
+#~ msgid "App. Mag."
+#~ msgstr "Вид. вел."
+
+#~ msgid "Abs. Mag."
+#~ msgstr "Абс. вел."
+
+#~ msgid "With Planets"
+#~ msgstr "С планетами"
+
+#~ msgid "Brightest (Abs.)"
+#~ msgstr "Яркость (абс.)"
+
+#~ msgid "Brightest (App.)"
+#~ msgstr "Яркость (вид.)"
+
+#~ msgid "Nearest"
+#~ msgstr "Ближайшие"
+
+#~ msgid "&Close"
+#~ msgstr "&Закрыть"
+
+#~ msgid "Alt+C"
+#~ msgstr "Alt+C"
+
+#~ msgid "Refresh"
+#~ msgstr "Обновить"
+
+#~ msgid "End"
+#~ msgstr "Конец"
+
+#~ msgid "Search parameters"
+#~ msgstr "Параметры поиска"
+
+#~ msgid "Solar Eclipses"
+#~ msgstr "Солнечные затмения"
+
+#~ msgid "On:"
+#~ msgstr "На:"
+
+#~ msgid "Moon Eclipses"
+#~ msgstr "Лунные затмения"
+
+#~ msgid "Search"
+#~ msgstr "Найти"
+
+#~ msgid "To:"
+#~ msgstr "по:"
+
+#~ msgid "From:"
+#~ msgstr "С: "
+
+#~ msgid "Close"
+#~ msgstr "Закрыть"
+
+#~ msgid "Video Capture"
+#~ msgstr "Захват видео"
+
+#~ msgid "Save As:"
+#~ msgstr "Сохранить как:"
+
+#~ msgid "*.ogg"
+#~ msgstr "*.ogg"
+
+#~ msgid "Aspect Ratio:"
+#~ msgstr "Отношение сторон:"
+
+#~ msgid "Current"
+#~ msgstr "Текущее"
+
+#~ msgid "11:9"
+#~ msgstr "11:9"
+
+#~ msgid "4:3"
+#~ msgstr "4:3"
+
+#~ msgid "16:9"
+#~ msgstr "16:9"
+
+#~ msgid "Image Size:"
+#~ msgstr "Размер изображения:"
+
+#~ msgid "Frame Rate:"
+#~ msgstr "Частота обновления:"
+
+#~ msgid "Video Quality:"
+#~ msgstr "Качество видео:"
+
+#~ msgid "Play Video when capture is done"
+#~ msgstr "Показать видео по окончании захвата"
+
+#~ msgid "Usage"
+#~ msgstr "Использование"
+
+#~ msgid ""
+#~ "<p>Press <b>F11</b> to start/pause recording<br>\n"
+#~ "Press <b>F12</b> to stop</p>\n"
+#~ "\n"
+#~ "<p>Note that resizing the main window will not be possible until the end "
+#~ "of the capture</p>"
+#~ msgstr ""
+#~ "<p>Нажмите <b>F11</b>, чтобы начать/приостановить запись<br>\n"
+#~ "Нажмите <b>F12</b>, чтобы прекратить запись</p>\n"
+#~ "\n"
+#~ "<p>Обратите внимание, что изменить размеры главного окна во время записи "
+#~ "невозможно</p>"
+
+#~ msgid "&OK"
+#~ msgstr "&OK"
+
+#~ msgid "&Cancel"
+#~ msgstr "О&тмена"
+
+#~ msgid "Mercury"
+#~ msgstr "Меркурий"
+
+#~ msgid "Venus"
+#~ msgstr "Венера"
+
+#~ msgid "Mars"
+#~ msgstr "Марс"
+
+#~ msgid "Phobos"
+#~ msgstr "Фобос"
+
+#~ msgid "Deimos"
+#~ msgstr "Деймос"
+
+#~ msgid "Amalthea"
+#~ msgstr "Амальтея"
+
+#~ msgid "Io"
+#~ msgstr "Ио"
+
+#~ msgid "Europa"
+#~ msgstr "Европа"
+
+#~ msgid "Ganymede"
+#~ msgstr "Ганимед"
+
+#~ msgid "Callisto"
+#~ msgstr "Каллисто"
+
+#~ msgid "Prometheus"
+#~ msgstr "Прометей"
+
+#~ msgid "Pandora"
+#~ msgstr "Пандора"
+
+#~ msgid "Epimetheus"
+#~ msgstr "Эпиметей"
+
+#~ msgid "Janus"
+#~ msgstr "Янус"
+
+#~ msgid "Mimas"
+#~ msgstr "Мимас"
+
+#~ msgid "Enceladus"
+#~ msgstr "Энкелад"
+
+#~ msgid "Tethys"
+#~ msgstr "Тетис"
+
+#~ msgid "Dione"
+#~ msgstr "Диона"
+
+#~ msgid "Rhea"
+#~ msgstr "Рея"
+
+#~ msgid "Titan"
+#~ msgstr "Титан"
+
+#~ msgid "Hyperion"
+#~ msgstr "Гиперион"
+
+#~ msgid "Iapetus"
+#~ msgstr "Япет"
+
+#~ msgid "Phoebe"
+#~ msgstr "Феба"
+
+#~ msgid "Miranda"
+#~ msgstr "Миранда"
+
+#~ msgid "Ariel"
+#~ msgstr "Ариэль"
+
+#~ msgid "Umbriel"
+#~ msgstr "Умбриэль"
+
+#~ msgid "Titania"
+#~ msgstr "Титания"
+
+#~ msgid "Oberon"
+#~ msgstr "Оберон"
+
+#~ msgid "Larissa"
+#~ msgstr "Ларисса"
+
+#~ msgid "Proteus"
+#~ msgstr "Протей"
+
+#~ msgid "Triton"
+#~ msgstr "Тритон"
+
+#~ msgid "Nereid"
+#~ msgstr "Нереида"
+
+#~ msgid "Pluto-Charon"
+#~ msgstr "Плутон-Харон"
+
+#~ msgid "Charon"
+#~ msgstr "Харон"
+
+#~ msgid "NORTH AMERICA"
+#~ msgstr "СЕВЕРНАЯ АМЕРИКА"
+
+#~ msgid "SOUTH AMERICA"
+#~ msgstr "ЮЖНАЯ АМЕРИКА"
+
+#~ msgid "EURASIA"
+#~ msgstr "ЕВРАЗИЯ"
+
+#~ msgid "AFRICA"
+#~ msgstr "АФРИКА"
+
+#~ msgid "AUSTRALIA"
+#~ msgstr "АВСТРАЛИЯ"
+
+#~ msgid "ANTARCTICA"
+#~ msgstr "АНТАРКТИДА"
+
+#~ msgid "NORTH ATLANTIC OCEAN"
+#~ msgstr "СЕВЕРОАТЛАНТИЧЕСКИЙ ОКЕАН"
+
+#~ msgid "SOUTH ATLANTIC OCEAN"
+#~ msgstr "ЮЖНОАТЛАНТИЧЕСКИЙ ОКЕАН"
+
+#~ msgid "NORTH PACIFIC OCEAN"
+#~ msgstr "СЕВЕРНЫЙ ТИХИЙ ОКЕАН"
+
+#~ msgid "SOUTH PACIFIC OCEAN"
+#~ msgstr "ЮЖНЫЙ ТИХИЙ ОКЕАН"
+
+#~ msgid "INDIAN OCEAN"
+#~ msgstr "ИНДИЙСКИЙ ОКЕАН"
+
+#~ msgid "ARCTIC OCEAN"
+#~ msgstr "СЕВЕРНЫЙ ЛЕДОВИТЫЙ ОКЕАН"
+
+#~ msgid "Milky Way"
+#~ msgstr "Млечный путь"
+
+#~ msgid "SMC"
+#~ msgstr "SMC"
+
+#~ msgid "LMC"
+#~ msgstr "LMC"
+
+#~ msgid "Solar System Barycenter"
+#~ msgstr "Барицентр Солнечной системы"
+
+#~ msgid "&File"
+#~ msgstr "&Файл"
+
+#~ msgid "&Open Script..."
+#~ msgstr "&Открыть сценарий..."
+
+#~ msgid "Scripts"
+#~ msgstr "Сценарии"
+
+#~ msgid "Placeholder"
+#~ msgstr "Placeholder"
+
+#~ msgid "Capture &Image...\tF10"
+#~ msgstr "Сохранить &изображение...\tF10"
+
+#~ msgid "Capture &Movie...\tShift+F10"
+#~ msgstr "Сохранить &видео...\tShift+F10"
+
+#~ msgid "E&xit"
+#~ msgstr "В&ыход"
+
+#~ msgid "Select &Sol\tH"
+#~ msgstr "&Выбрать Солнце\tH"
+
+#~ msgid "Tour G&uide..."
+#~ msgstr "П&утеводитель..."
+
+#~ msgid "Select &Object..."
+#~ msgstr "Выбрать &объект..."
+
+#~ msgid "Goto Object..."
+#~ msgstr "Перейти к объекту..."
+
+#~ msgid "&Center Selection\tC"
+#~ msgstr "&Разместить по центру\tC"
+
+#~ msgid "&Go to Selection\tG"
+#~ msgstr "&Идти к выбранному объекту\tG"
+
+#~ msgid "&Follow Selection\tF"
+#~ msgstr "&Наблюдение\tF"
+
+#~ msgid "S&ync Orbit Selection\tY"
+#~ msgstr "Син&хронное вращение\tY"
+
+#~ msgid "&Track Selection\tT"
+#~ msgstr "&Слежение\tT"
+
+#~ msgid "Solar System &Browser..."
+#~ msgstr "&Каталог Солнечной системы..."
+
+#~ msgid "Star B&rowser..."
+#~ msgstr "&Звездный каталог..."
+
+#~ msgid "&Eclipse Finder"
+#~ msgstr "&Поиск затмений..."
+
+#~ msgid "&Time"
+#~ msgstr "В&ремя"
+
+#~ msgid "10x &Faster\tL"
+#~ msgstr "&Быстрее в 10 раз\tL"
+
+#~ msgid "10x &Slower\tK"
+#~ msgstr "&Медленнее в 10 раз\tK"
+
+#~ msgid "Free&ze\tSpace"
+#~ msgstr "&Пауза\tSpace"
+
+#~ msgid "&Real Time\t\\"
+#~ msgstr "&Текущее время\t\\"
+
+#~ msgid "Re&verse Time\tJ"
+#~ msgstr "&Обратить время\tJ"
+
+#~ msgid "Set &Time..."
+#~ msgstr "&Установить время..."
+
+#~ msgid "Show Local Time"
+#~ msgstr "Показать местное время"
+
+#~ msgid "&Render"
+#~ msgstr "&Вид"
+
+#~ msgid "Select Display Mode..."
+#~ msgstr "Режим экрана..."
+
+#~ msgid "Toggle Full Screen\tAlt+Enter"
+#~ msgstr "Во весь экран\tAlt+Enter"
+
+#~ msgid "View Options..."
+#~ msgstr "Настройки просмотра..."
+
+#~ msgid "Locations..."
+#~ msgstr "Планетография..."
+
+#~ msgid "More Stars Visible\t]"
+#~ msgstr "Больше звезд\t]"
+
+#~ msgid "Fewer Stars Visible\t["
+#~ msgstr "Меньше звезд\t["
+
+#~ msgid "Auto Magnitude\tCtrl+Y"
+#~ msgstr "Автонастройка\tCtrl+Y"
+
+#~ msgid "Star St&yle"
+#~ msgstr "&Звёзды как..."
+
+#~ msgid "&Fuzzy Points"
+#~ msgstr "&Размытые точки"
+
+#~ msgid "&Points"
+#~ msgstr "&Точки"
+
+#~ msgid "Scaled &Discs"
+#~ msgstr "&Диски"
+
+#~ msgid "&Ambient Light"
+#~ msgstr "&Рассеянный свет"
+
+#~ msgid "&None"
+#~ msgstr "&Нет"
+
+#~ msgid "&Low"
+#~ msgstr "&Слабо"
+
+#~ msgid "&Medium"
+#~ msgstr "&Умеренно"
+
+#~ msgid "&Texture Resolution"
+#~ msgstr "Р&азрешение текстур"
+
+#~ msgid "&High"
+#~ msgstr "С&ильно"
+
+#~ msgid "Antialiasing\tCtrl+X"
+#~ msgstr "Сглаживание\tCtrl+X"
+
+#~ msgid "&View"
+#~ msgstr "&Окно"
+
+#~ msgid "Split &Horizontally\tCtrl+R"
+#~ msgstr "Разделить &горизонтально\tCtrl+R"
+
+#~ msgid "Split &Vertically\tCtrl+U"
+#~ msgstr "Разделить &вертикально\tCtrl+U"
+
+#~ msgid "&Delete Active View\tDEL"
+#~ msgstr "Удалить &активное окно\tDEL"
+
+#~ msgid "&Single View\tCtrl+D"
+#~ msgstr "&Удалить все\tCtrl+D"
+
+#~ msgid "Show &Frames"
+#~ msgstr "&Показывать разделители"
+
+#~ msgid "Synchronize &Time"
+#~ msgstr "&Синхронное время"
+
+#~ msgid "&Bookmarks"
+#~ msgstr "&Закладки"
+
+#~ msgid "&Add Bookmarks..."
+#~ msgstr "&Добавить..."
+
+#~ msgid "&Organize Bookmarks..."
+#~ msgstr "&Упорядочить..."
+
+#~ msgid "&Help"
+#~ msgstr "&Справка"
+
+#~ msgid "Run &Demo"
+#~ msgstr "&Демо"
+
+#~ msgid "&Controls"
+#~ msgstr "&Управление программой"
+
+#~ msgid "&OpenGL Info"
+#~ msgstr "&Информация OpenGL"
+
+#~ msgid "&License"
+#~ msgstr "&Лицензионное соглашение"
+
+#~ msgid "&About Celestia"
+#~ msgstr "&О программе..."
+
+#~ msgid "About Celestia"
+#~ msgstr "О программе"
+
+#~ msgid "OK"
+#~ msgstr "OK"
+
+#~ msgid "Copyright (C) 2001-2008, Celestia Development Team"
+#~ msgstr "Авторские права (C) 2001-2008, команда разработчиков Celestia"
+
+#~ msgid "http://www.shatters.net/celestia"
+#~ msgstr "http://www.shatters.net/celestia"
+
+#~ msgid "Celestia is free software and comes with absolutely no warranty."
+#~ msgstr ""
+#~ "Celestia - бесплатная программа и распространяется без всяких гарантий."
+
+#~ msgid "Authors"
+#~ msgstr "Авторы"
+
+#~ msgid "Chris Laurel"
+#~ msgstr "Chris Laurel"
+
+#~ msgid "Clint Weisbrod"
+#~ msgstr "Clint Weisbrod"
+
+#~ msgid "Fridger Schrempp"
+#~ msgstr "Fridger Schrempp"
+
+#~ msgid "Christophe Teyssier"
+#~ msgstr "Christophe Teyssier"
+
+#~ msgid "Grant Hutchison"
+#~ msgstr "Grant Hutchison"
+
+#~ msgid "Pat Suwalski"
+#~ msgstr "Pat Suwalski"
+
+#~ msgid "Toti"
+#~ msgstr "Toti"
+
+#~ msgid "Da Woon Jung"
+#~ msgstr "Da Woon Jung"
+
+#~ msgid "Hank Ramsey"
+#~ msgstr "Hank Ramsey"
+
+#~ msgid "Bob Ippolito"
+#~ msgstr "Bob Ippolito"
+
+#~ msgid "Vincent Giangiulio"
+#~ msgstr "Vincent Giangiulio"
+
+#~ msgid "Select Object"
+#~ msgstr "Выбрать объект"
+
+#~ msgid "Object Name"
+#~ msgstr "Имя объекта"
+
+#~ msgid "License"
+#~ msgstr "Лицензия"
+
+#~ msgid "Celestia Controls"
+#~ msgstr "Управление программой"
+
+#~ msgid "OpenGL Driver Info"
+#~ msgstr "Информация OpenGL"
+
+#~ msgid "Set Simulation Time"
+#~ msgstr "Установка времени"
+
+#~ msgid "Time Zone: "
+#~ msgstr "Часовой пояс: "
+
+#~ msgid "Set To Current Time"
+#~ msgstr "Установить текущее время"
+
+#~ msgid "Add Bookmark"
+#~ msgstr "Добавить закладку"
+
+#~ msgid "Create in >>"
+#~ msgstr "Создать в >>"
+
+#~ msgid "New Folder..."
+#~ msgstr "Новая папка..."
+
+#~ msgid "Solar System Browser"
+#~ msgstr "Каталог Солнечной системы"
+
+#~ msgid "Solar System"
+#~ msgstr "Солнечная система"
+
+#~ msgid "&Go To"
+#~ msgstr "&Перейти"
+
+#~ msgid "Solar System Objects"
+#~ msgstr "Объекты системы:"
+
+#~ msgid "Star Browser"
+#~ msgstr "Каталог звёзд"
+
+#~ msgid "Brightest"
+#~ msgstr "Ярчайшие"
+
+#~ msgid "With planets"
+#~ msgstr "С планетами"
+
+#~ msgid "&Refresh"
+#~ msgstr "&Обновить"
+
+#~ msgid "Star Search Criteria"
+#~ msgstr "Критерии поиска"
+
+#~ msgid "Maximum Stars Displayed in List"
+#~ msgstr "Количество звёзд в списке"
+
+#~ msgid "Tour Guide"
+#~ msgstr "Путеводитель"
+
+#~ msgid "Go To"
+#~ msgstr "Перейти"
+
+#~ msgid "Select your destination:"
+#~ msgstr "Выберите объект:"
+
+#~ msgid "Go to Object"
+#~ msgstr "Перейти к объекту"
+
+#~ msgid "radii"
+#~ msgstr "рад."
+
+#~ msgid "Object"
+#~ msgstr "Объект"
+
+#~ msgid "Long."
+#~ msgstr "Долгота"
+
+#~ msgid "Lat."
+#~ msgstr "Широта"
+
+#~ msgid "Distance"
+#~ msgstr "Расстояние"
+
+#~ msgid "Size:"
+#~ msgstr "Размер:"
+
+#~ msgid "Frame rate:"
+#~ msgstr "Частота обновления: "
+
+#~ msgid "Select Display Mode"
+#~ msgstr "Режим экрана"
+
+#~ msgid "Resolution"
+#~ msgstr "Разрешение"
+
+#~ msgid "View Options"
+#~ msgstr "Настройки"
+
+#~ msgid "Globulars"
+#~ msgstr "Шаровые скопления"
+
+#~ msgid "Grids"
+#~ msgstr "Сетка"
+
+#~ msgid "Celestial"
+#~ msgstr "Небесная"
+
+#~ msgid "Horizontal"
+#~ msgstr "Горизонталная"
+
+#~ msgid "Galactic"
+#~ msgstr "Галактическая"
+
+#~ msgid "Ecliptic"
+#~ msgstr "Эклиптическая"
+
+#~ msgid "Minor Moons"
+#~ msgstr "Малые луны"
+
+#~ msgid "DSO Labels"
+#~ msgstr "Названия DSO"
+
+#~ msgid "Diagrams"
+#~ msgstr "Диаграммы"
+
+#~ msgid "Boundaries"
+#~ msgstr "Границы"
+
+#~ msgid "Latin Names"
+#~ msgstr "Имена латиницей"
+
+#~ msgid "Information Text"
+#~ msgstr "Информация"
+
+#~ msgid "Filter Stars"
+#~ msgstr "Фильтр звёзд"
+
+#~ msgid "Montes (Mountains)"
+#~ msgstr "Горы"
+
+#~ msgid "Maria (Seas)"
+#~ msgstr "Моря (океаны)"
+
+#~ msgid "Valles (Valleys)"
+#~ msgstr "Долины"
+
+#~ msgid "Terrae (Land masses)"
+#~ msgstr "Материки"
+
+#~ msgid "Volcanoes"
+#~ msgstr "Вулканы"
+
+#~ msgid "Other features"
+#~ msgstr "Прочее"
+
+#~ msgid "Label Features"
+#~ msgstr "Названия"
+
+#~ msgid "Show Features"
+#~ msgstr "Показывать"
+
+#~ msgid "Minimum Labeled Feature Size"
+#~ msgstr "Мин. размер местоположений"
+
+#~ msgid "Add New Bookmark Folder"
+#~ msgstr "Добавить закладку"
+
+#~ msgid "Folder Name"
+#~ msgstr "Название папки"
+
+#~ msgid "Organize Bookmarks"
+#~ msgstr "Упорядочить..."
+
+#~ msgid "Rename..."
+#~ msgstr "Переименовать..."
+
+#~ msgid "Delete"
+#~ msgstr "Удалить"
+
+#~ msgid "Rename Bookmark or Folder"
+#~ msgstr "Переименование"
+
+#~ msgid "New Name"
+#~ msgstr "Новое имя"
+
+#~ msgid "Compute"
+#~ msgstr "Вычислить"
+
+#~ msgid "Set Date and Go to Planet"
+#~ msgstr "Установить дату и перейти к планете"
+
+#~ msgid "Lunar Eclipses"
+#~ msgstr "Лунные затмения"
+
+#~ msgid "Jan"
+#~ msgstr "янв"
+
+#~ msgid "Feb"
+#~ msgstr "фев"
+
+#~ msgid "Mar"
+#~ msgstr "мар"
+
+#~ msgid "Apr"
+#~ msgstr "апр"
+
+#~ msgid "May"
+#~ msgstr "мая"
+
+#~ msgid "Jun"
+#~ msgstr "июн"
+
+#~ msgid "Jul"
+#~ msgstr "июл"
+
+#~ msgid "Aug"
+#~ msgstr "авг"
+
+#~ msgid "Sep"
+#~ msgstr "сен"
+
+#~ msgid "Oct"
+#~ msgstr "окт"
+
+#~ msgid "Nov"
+#~ msgstr "ноя"
+
+#~ msgid "Dec"
+#~ msgstr "дек"
+
+#~ msgid "limit of knowledge"
+#~ msgstr "ограниченные текстуры"
+
+#, fuzzy
+#~ msgid "Phobos:Mars I"
+#~ msgstr "Фобос"
+
+#, fuzzy
+#~ msgid "Deimos:Mars II"
+#~ msgstr "Деймос"
+
+#, fuzzy
+#~ msgid "Io:Jupiter I"
+#~ msgstr "Юпитер"
+
+#, fuzzy
+#~ msgid "Mimas:Saturn I"
+#~ msgstr "Сатурн"
+
+#, fuzzy
+#~ msgid "Rhea:Saturn V"
+#~ msgstr "Сатурн"
+
+#, fuzzy
+#~ msgid "Ariel:Uranus I"
+#~ msgstr "Уран"
+
+#, fuzzy
+#~ msgid "Triton:Neptune I"
+#~ msgstr "Нептун"
+
+#~ msgid "Day length: "
+#~ msgstr "Продолжительность дня: "
+
+#~ msgid " of "
+#~ msgstr " из "
+
+#~ msgid " must be in same star system\n"
+#~ msgstr " должен быть в той же звёздной системе\n"
+
+#~ msgid "Bad spectral type in star database, star #\n"
+#~ msgstr "Неверный спектральный тип в базе данных звёзд, звезда #\n"
+
+#~ msgid " star(s) with duplicate catalog numbers deleted.)\n"
+#~ msgstr " дубликатов звезд из каталога удалены.)\n"
+
+#~ msgid "Low res textures"
+#~ msgstr "Текстуры низкого разрешения"
+
+#~ msgid "Medium res textures"
+#~ msgstr "Текстуры среднего разрешения"
+
+#~ msgid "High res textures"
+#~ msgstr "Текстуры высокого разрешения"
+
+#~ msgid "Error reading deep sky file\n"
+#~ msgstr "Ошибка открытия файла пространства\n"
+
+#~ msgid "Version"
+#~ msgstr "Версия"
+
+#~ msgid "Constellation Borders"
+#~ msgstr "Границы созвездий"
+
+#~ msgid "Orbit / Label"
+#~ msgstr "Орбита / Название"
+
+#~ msgid "Mark Features"
+#~ msgstr "Метки"

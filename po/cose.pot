@@ -1,0 +1,1077 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR Chris Laurel
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: chris@teyssier.org\n"
+"POT-Creation-Date: 2009-06-21 16:00+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=CHARSET\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: src/celengine/astro.cpp:827
+msgid "DST"
+msgstr ""
+
+#: src/celengine/astro.cpp:827
+msgid "STD"
+msgstr ""
+
+#: src/celengine/dsodb.cpp:387
+msgid "Loaded "
+msgstr ""
+
+#: src/celengine/dsodb.cpp:387
+msgid " deep space objects"
+msgstr ""
+
+#: src/celengine/fragmentprog.cpp:93
+msgid "Loading NV fragment program: "
+msgstr ""
+
+#: src/celengine/fragmentprog.cpp:98
+msgid "Error loading NV fragment program: "
+msgstr ""
+
+#: src/celengine/fragmentprog.cpp:115
+msgid "Error in fragment program "
+msgstr ""
+
+#: src/celengine/fragmentprog.cpp:126
+msgid "Initializing NV fragment programs . . .\n"
+msgstr ""
+
+#: src/celengine/fragmentprog.cpp:142
+msgid "All NV fragment programs loaded successfully.\n"
+msgstr ""
+
+#: src/celengine/fragmentprog.cpp:150
+msgid "Initializing ARB fragment programs . . .\n"
+msgstr ""
+
+#: src/celengine/galaxy.cpp:197
+#, c-format
+msgid "Galaxy (Hubble type: %s)"
+msgstr ""
+
+#: src/celengine/image.cpp:373
+msgid "Loading image from file "
+msgstr ""
+
+#: src/celengine/image.cpp:391
+msgid ": unrecognized or unsupported image file type.\n"
+msgstr ""
+
+#: src/celengine/image.cpp:654
+msgid "Error opening image file "
+msgstr ""
+
+#: src/celengine/image.cpp:661
+msgid "Error: "
+msgstr ""
+
+#: src/celengine/image.cpp:661
+msgid " is not a PNG file.\n"
+msgstr ""
+
+#: src/celengine/image.cpp:688
+msgid "Error reading PNG image file "
+msgstr ""
+
+#: src/celengine/meshmanager.cpp:84
+msgid "Loading model: "
+msgstr ""
+
+#: src/celengine/meshmanager.cpp:162
+msgid "   Model statistics: "
+msgstr ""
+
+#: src/celengine/meshmanager.cpp:163
+msgid " vertices, "
+msgstr ""
+
+#: src/celengine/meshmanager.cpp:164
+msgid " primitives, "
+msgstr ""
+
+#: src/celengine/meshmanager.cpp:165
+msgid " materials "
+msgstr ""
+
+#: src/celengine/meshmanager.cpp:166
+msgid " unique)\n"
+msgstr ""
+
+#: src/celengine/meshmanager.cpp:170
+msgid "Error loading model '"
+msgstr ""
+
+#: src/celengine/nebula.cpp:47 src/celengine/opencluster.cpp:44
+#, c-format
+msgid "%s"
+msgstr ""
+
+#: src/celengine/solarsys.cpp:93
+msgid "Error in .ssc file (line "
+msgstr ""
+
+#: src/celengine/solarsys.cpp:1200 src/celengine/solarsys.cpp:1267
+msgid "parent body '"
+msgstr ""
+
+#: src/celengine/solarsys.cpp:1200 src/celengine/solarsys.cpp:1267
+msgid "' of '"
+msgstr ""
+
+#: src/celengine/solarsys.cpp:1200
+msgid "' not found."
+msgstr ""
+
+#: src/celengine/solarsys.cpp:1211
+msgid "warning duplicate definition of "
+msgstr ""
+
+#: src/celengine/solarsys.cpp:1247
+msgid "bad alternate surface"
+msgstr ""
+
+#: src/celengine/solarsys.cpp:1261
+msgid "bad location"
+msgstr ""
+
+#: src/celengine/solarsys.cpp:1267
+msgid "' not found.\n"
+msgstr ""
+
+#: src/celengine/stardb.cpp:579
+msgid "Bad header for cross index\n"
+msgstr ""
+
+#: src/celengine/stardb.cpp:592
+msgid "Bad version for cross index\n"
+msgstr ""
+
+#: src/celengine/stardb.cpp:614
+msgid "Loading cross index failed at record "
+msgstr ""
+
+#: src/celengine/stardb.cpp:696
+msgid "Bad spectral type in star database, star #"
+msgstr ""
+
+#: src/celengine/stardb.cpp:711
+msgid " stars in binary database\n"
+msgstr ""
+
+#: src/celengine/stardb.cpp:735
+msgid "Total star count: "
+msgstr ""
+
+#: src/celengine/stardb.cpp:769
+msgid "Error in .stc file (line "
+msgstr ""
+
+#: src/celengine/stardb.cpp:806
+msgid "Invalid star: bad spectral type.\n"
+msgstr ""
+
+#: src/celengine/stardb.cpp:815
+msgid "Invalid star: missing spectral type.\n"
+msgstr ""
+
+#: src/celengine/stardb.cpp:962
+msgid "Barycenter "
+msgstr ""
+
+#: src/celengine/stardb.cpp:962
+msgid " does not exist.\n"
+msgstr ""
+
+#: src/celengine/stardb.cpp:1008
+msgid "Invalid star: missing right ascension\n"
+msgstr ""
+
+#: src/celengine/stardb.cpp:1021
+msgid "Invalid star: missing declination.\n"
+msgstr ""
+
+#: src/celengine/stardb.cpp:1034
+msgid "Invalid star: missing distance.\n"
+msgstr ""
+
+#: src/celengine/stardb.cpp:1070
+msgid "Invalid star: missing magnitude.\n"
+msgstr ""
+
+#: src/celengine/stardb.cpp:1087
+msgid ""
+"Invalid star: absolute (not apparent) magnitude must be specified for star "
+"near origin\n"
+msgstr ""
+
+#: src/celengine/texture.cpp:1019
+msgid "Creating tiled texture. Width="
+msgstr ""
+
+#: src/celengine/texture.cpp:1019
+msgid ", max="
+msgstr ""
+
+#: src/celengine/texture.cpp:1024
+msgid "Creating ordinary texture: "
+msgstr ""
+
+#: src/celengine/vertexprog.cpp:114
+msgid "Loading NV vertex program: "
+msgstr ""
+
+#: src/celengine/vertexprog.cpp:119
+msgid "Error loading NV vertex program: "
+msgstr ""
+
+#: src/celengine/vertexprog.cpp:136 src/celengine/vertexprog.cpp:195
+msgid "Error in vertex program "
+msgstr ""
+
+#: src/celengine/vertexprog.cpp:163
+msgid "Loading ARB vertex program: "
+msgstr ""
+
+#: src/celengine/vertexprog.cpp:168
+msgid "Error loading ARB vertex program: "
+msgstr ""
+
+#: src/celengine/vertexprog.cpp:196
+msgid ", line "
+msgstr ""
+
+#: src/celengine/vertexprog.cpp:208
+msgid "Initializing NV vertex programs . . .\n"
+msgstr ""
+
+#: src/celengine/vertexprog.cpp:240
+msgid "All NV vertex programs loaded successfully.\n"
+msgstr ""
+
+#: src/celengine/vertexprog.cpp:253
+msgid "Initializing ARB vertex programs . . .\n"
+msgstr ""
+
+#: src/celengine/vertexprog.cpp:314
+msgid "All ARB vertex programs loaded successfully.\n"
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:421
+msgid "Error reading favorites file."
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:511
+msgid "Orientation: "
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:558 src/celestia/celestiacore.cpp:560
+msgid "Error opening script file."
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:591
+#, c-format
+msgid "Error opening script '%s'"
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:609
+msgid "Unknown error opening script"
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:621
+msgid "Script coroutine initialization failed"
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:637 src/celestia/celestiacore.cpp:639
+msgid "Invalid filetype"
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:982 src/celestia/celestiacore.cpp:1787
+#: src/celestia/celestiacore.cpp:1805 src/celestia/celestiacore.cpp:2046
+#: src/celestia/celestiacore.cpp:2077
+#, c-format
+msgid "Magnitude limit: %.2f"
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:1417
+msgid "Markers enabled"
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:1420
+msgid "Markers disabled"
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:1430
+msgid "Goto surface"
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:1443
+msgid "Alt-azimuth mode enabled"
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:1446
+msgid "Alt-azimuth mode disabled"
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:1502
+msgid "Star style: fuzzy points"
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:1505
+msgid "Star style: points"
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:1508
+msgid "Star style: scaled discs"
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:1521
+msgid "Comet tails enabled"
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:1524
+msgid "Comet tails disabled"
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:1539
+msgid "Render path: Basic"
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:1542
+msgid "Render path: Multitexture"
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:1545
+msgid "Render path: NVIDIA combiners"
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:1548
+msgid "Render path: OpenGL vertex program"
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:1551
+msgid "Render path: NVIDIA vertex program and combiners"
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:1554
+msgid "Render path: OpenGL vertex program/NVIDIA combiners"
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:1557
+msgid "Render path: OpenGL 1.5 vertex/fragment program"
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:1560
+msgid "Render path: NVIDIA GeForce FX"
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:1563
+msgid "Render path: OpenGL 2.0"
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:1586
+msgid "Auto-magnitude enabled"
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:1591
+msgid "Auto-magnitude disabled"
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:1613
+msgid "Cancel"
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:1649
+msgid "Time and script are paused"
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:1651
+msgid "Time is paused"
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:1655
+msgid "Resume"
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:1730
+#, c-format
+msgid "Light travel time:  %.4f yr "
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:1739
+#, c-format
+msgid "Light travel time:  %d min  %.1f s"
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:1742
+#, c-format
+msgid "Light travel time:  %d h  %d min  %.1f s"
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:1761
+msgid "Light travel delay included"
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:1766
+msgid "Light travel delay switched off"
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:1772
+msgid "Light travel delay ignored"
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:1817
+msgid "Using normal surface textures."
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:1822
+msgid "Using limit of knowledge surface textures."
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:1889
+msgid "Follow"
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:1914
+msgid "Time: Forward"
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:1916
+msgid "Time: Backward"
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:1929 src/celestia/celestiacore.cpp:1945
+msgid "Time rate"
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:2018
+msgid "Sync Orbit"
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:2024
+msgid "Lock"
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:2030
+msgid "Chase"
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:2057 src/celestia/celestiacore.cpp:2088
+#, c-format
+msgid "Auto magnitude limit at 45 degrees:  %.2f"
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:2107 src/celestia/celestiacore.cpp:2122
+#, c-format
+msgid "Ambient light level:  %.2f"
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:2133 src/celestia/celestiacore.cpp:2145
+msgid "Light gain"
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:2165
+msgid "Bloom enabled"
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:2167
+msgid "Bloom disabled"
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:2173 src/celestia/celestiacore.cpp:2181
+msgid "Exposure"
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:2532
+msgid "GL error: "
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:2659
+msgid "View too small to be split"
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:2662
+msgid "Added view"
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:2918
+msgid "ly"
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:2922
+msgid "au"
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:2943
+msgid " days"
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:2945
+msgid " hours"
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:2947
+msgid " minutes"
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:3014
+msgid "Apparent diameter: "
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:3029
+msgid "Apparent magnitude: "
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:3033
+msgid "Absolute magnitude: "
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:3055
+msgid "RA: "
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:3059
+msgid "Dec: "
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:3123
+msgid "km"
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:3152 src/celestia/celestiacore.cpp:3226
+#: src/celestia/celestiacore.cpp:3258 src/celestia/celestiacore.cpp:3359
+msgid "Distance: "
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:3158
+msgid "Star system barycenter\n"
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:3162
+#, c-format
+msgid "Abs (app) mag: %.2f (%.2f)\n"
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:3168
+msgid "Luminosity: "
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:3168
+msgid "x Sun"
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:3169
+msgid "Class: "
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:3171
+msgid "Neutron star"
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:3173
+msgid "Black hole"
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:3183
+msgid "Surface temp: "
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:3186 src/celestia/celestiacore.cpp:3235
+#: src/celestia/celestiacore.cpp:3268
+msgid "Radius: "
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:3189
+msgid "Rsun"
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:3199 src/celestia/celestiacore.cpp:3320
+msgid "Rotation period: "
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:3213
+msgid "Planetary companions present\n"
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:3231
+msgid "Distance from center: "
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:3336
+msgid "Temperature: "
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:3348
+#, c-format
+msgid "Apparent mag: %.2f\n"
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:3516
+msgid "  LT"
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:3525
+msgid "Real time"
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:3527
+msgid "-Real time"
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:3531
+msgid "Time stopped"
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:3536
+msgid " faster"
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:3541
+msgid " slower"
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:3547
+msgid " (Paused)"
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:3565
+msgid "FPS: "
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:3567
+msgid ""
+"\n"
+"Speed: "
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:3571
+msgid " m/s"
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:3573
+msgid " km/s"
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:3577
+msgid " AU/s"
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:3579
+msgid " ly/s"
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:3596
+msgid "Travelling "
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:3609
+msgid "Track "
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:3623
+msgid "Follow "
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:3628
+msgid "Sync Orbit "
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:3633
+msgid "Lock "
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:3642
+msgid "Chase "
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:3658
+msgid "FOV: "
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:3688 src/celestia/celestiacore.cpp:3691
+msgid "Sun"
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:3865
+msgid "Target name: "
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:3947
+msgid " at "
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:3948
+msgid " fps"
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:3950
+msgid "  Recording"
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:3952
+msgid "  Paused"
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:3971
+msgid "F11 Start/Pause    F12 Stop"
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:3980 src/celestia/celestiacore.cpp:3983
+msgid "Edit Mode"
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:4049
+msgid "Loading solar system catalog: "
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:4090
+msgid "Loading "
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:4125
+msgid "License file 'License.txt' is missing!"
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:4146
+msgid "Error reading configuration file."
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:4157
+msgid "Initialization of SPICE library failed."
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:4204
+msgid "Cannot read star database."
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:4226
+msgid "Error opening deepsky catalog file."
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:4278
+msgid "Error opening solar system catalog.\n"
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:4311
+msgid "Error opening asterisms file."
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:4326
+msgid "Error opening constellation boundaries files."
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:4393
+msgid "render path: "
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:4404
+msgid "Failed to initialize renderer"
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:4420
+msgid "Error loading font; text will not be visible.\n"
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:4477
+msgid "Error reading cross index "
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:4479
+msgid "Loaded cross index "
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:4493 src/celestia/celestiacore.cpp:4515
+msgid "Error opening "
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:4500
+msgid "Error reading star names file\n"
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:4523
+msgid "Error reading stars file\n"
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:4550
+msgid "Error opening star catalog "
+msgstr ""
+
+#: src/celestia/oggtheoracapture.cpp:159
+#, c-format
+msgid "Error in creating ogg file %s for capture.\n"
+msgstr ""
+
+#: src/celestia/oggtheoracapture.cpp:253 src/celestia/oggtheoracapture.cpp:273
+msgid "Internal Ogg library error."
+msgstr ""
+
+#: src/celestia/oggtheoracapture.cpp:308
+#, c-format
+msgid ""
+"OggTheoraCapture::start() - Theora video: %s %.2f(%d/%d) fps quality %d %dx%"
+"d offset (%dx%d)\n"
+msgstr ""
+
+#: src/celestia/oggtheoracapture.cpp:423
+#, c-format
+msgid "OggTheoraCapture::cleanup() - wrote %d frames\n"
+msgstr ""
+
+#: src/celestia/url.cpp:653
+msgid "Settings"
+msgstr ""
+
+#: src/celestia/winmain.cpp:625
+msgid "Vendor: "
+msgstr ""
+
+#: src/celestia/winmain.cpp:630
+msgid "Renderer: "
+msgstr ""
+
+#: src/celestia/winmain.cpp:635
+msgid "Version: "
+msgstr ""
+
+#: src/celestia/winmain.cpp:645
+msgid "GLSL version: "
+msgstr ""
+
+#: src/celestia/winmain.cpp:656
+msgid "Max simultaneous textures: "
+msgstr ""
+
+#: src/celestia/winmain.cpp:663
+msgid "Max texture size: "
+msgstr ""
+
+#: src/celestia/winmain.cpp:672
+msgid "Max cube map size: "
+msgstr ""
+
+#: src/celestia/winmain.cpp:680
+msgid "Point size range: "
+msgstr ""
+
+#: src/celestia/winmain.cpp:685
+msgid "Supported Extensions:"
+msgstr ""
+
+#: src/celestia/winmain.cpp:1386
+msgid "Windowed Mode"
+msgstr ""
+
+#: src/celestia/winmain.cpp:1508
+msgid "Asteroids"
+msgstr ""
+
+#: src/celestia/winmain.cpp:1510
+msgid "Comets"
+msgstr ""
+
+#: src/celestia/winmain.cpp:1512
+msgid "Invisibles"
+msgstr ""
+
+#: src/celestia/winmain.cpp:1514
+msgid "Moons"
+msgstr ""
+
+#: src/celestia/winmain.cpp:1516 src/celestia/winmain.cpp:1551
+#: src/celestia/winmain.cpp:1668
+msgid "Planets"
+msgstr ""
+
+#: src/celestia/winmain.cpp:1518
+msgid "Spacecraft"
+msgstr ""
+
+#: src/celestia/winmain.cpp:1608 src/celestia/winmain.cpp:1656
+#: src/celestia/winmain.cpp:1679
+msgid "&Goto"
+msgstr ""
+
+#: src/celestia/winmain.cpp:1609 src/celestia/winmain.cpp:1680
+msgid "&Follow"
+msgstr ""
+
+#: src/celestia/winmain.cpp:1610
+msgid "S&ync Orbit"
+msgstr ""
+
+#: src/celestia/winmain.cpp:1611 src/celestia/winmain.cpp:1657
+#: src/celestia/winmain.cpp:1681
+msgid "&Info"
+msgstr ""
+
+#: src/celestia/winmain.cpp:1613
+msgid "&Reference Vectors"
+msgstr ""
+
+#: src/celestia/winmain.cpp:1614
+msgid "Show Body Axes"
+msgstr ""
+
+#: src/celestia/winmain.cpp:1615
+msgid "Show Frame Axes"
+msgstr ""
+
+#: src/celestia/winmain.cpp:1616
+msgid "Show Sun Direction"
+msgstr ""
+
+#: src/celestia/winmain.cpp:1617
+msgid "Show Velocity Vector"
+msgstr ""
+
+#: src/celestia/winmain.cpp:1618
+msgid "Show Planetographic Grid"
+msgstr ""
+
+#: src/celestia/winmain.cpp:1619
+msgid "Show Terminator"
+msgstr ""
+
+#: src/celestia/winmain.cpp:1633
+msgid "&Satellites"
+msgstr ""
+
+#: src/celestia/winmain.cpp:1643
+msgid "&Alternate Surfaces"
+msgstr ""
+
+#: src/celestia/winmain.cpp:1666
+msgid "Orbiting Bodies"
+msgstr ""
+
+#: src/celestia/winmain.cpp:1693
+msgid "&Unmark"
+msgstr ""
+
+#: src/celestia/winmain.cpp:1695
+msgid "&Mark"
+msgstr ""
+
+#: src/celestia/winmain.cpp:3137
+msgid "Loading: "
+msgstr ""
+
+#: src/celestia/winmain.cpp:3305 src/celutil/util.cpp:72
+#: src/celutil/util.cpp:76
+msgid "LANGUAGE"
+msgstr ""
+
+#: src/celestia/winmain.cpp:3307
+msgid "WinLangID"
+msgstr ""
+
+#: src/celestia/winmain.cpp:3809
+msgid "Copied URL"
+msgstr ""
+
+#: src/celestia/winmain.cpp:3903
+msgid "Loading URL"
+msgstr ""
+
+#: src/celestia/winmain.cpp:3915
+msgid "Error opening script"
+msgstr ""
+
+#: src/celestia/winmain.cpp:3934
+msgid "Error loading script"
+msgstr ""
+
+#: src/celestia/winmain.cpp:3939
+msgid "Running script"
+msgstr ""
+
+#: src/celestia/wineclipses.cpp:58
+msgid "Planet"
+msgstr ""
+
+#: src/celestia/wineclipses.cpp:60
+msgid "Satellite"
+msgstr ""
+
+#: src/celestia/wineclipses.cpp:62
+msgid "Date"
+msgstr ""
+
+#: src/celestia/wineclipses.cpp:64
+msgid "Start"
+msgstr ""
+
+#: src/celestia/wineclipses.cpp:66
+msgid "Duration"
+msgstr ""
+
+#: src/celestia/wineclipses.cpp:316
+msgid "Earth"
+msgstr ""
+
+#: src/celestia/wineclipses.cpp:317
+msgid "Jupiter"
+msgstr ""
+
+#: src/celestia/wineclipses.cpp:318
+msgid "Saturn"
+msgstr ""
+
+#: src/celestia/wineclipses.cpp:319
+msgid "Uranus"
+msgstr ""
+
+#: src/celestia/wineclipses.cpp:320
+msgid "Neptune"
+msgstr ""
+
+#: src/celestia/wineclipses.cpp:321
+msgid "Pluto"
+msgstr ""
+
+#: src/celestia/winstarbrowser.cpp:70
+msgid "Name"
+msgstr ""
+
+#: src/celestia/winstarbrowser.cpp:72
+msgid "Distance (ly)"
+msgstr ""
+
+#: src/celestia/winstarbrowser.cpp:75
+msgid "App. mag"
+msgstr ""
+
+#: src/celestia/winstarbrowser.cpp:77
+msgid "Abs. mag"
+msgstr ""
+
+#: src/celestia/winstarbrowser.cpp:79
+msgid "Type"
+msgstr ""
+
+#: src/celestia/wintime.cpp:95
+msgid "Universal Time"
+msgstr ""
+
+#: src/celestia/wintime.cpp:96
+msgid "Local Time"
+msgstr ""
+
+#: src/celestia/wintime.cpp:97
+msgid "Time Zone Name"
+msgstr ""
+
+#: src/celestia/wintime.cpp:98
+msgid "UTC Offset"
+msgstr ""

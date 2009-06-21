@@ -1,0 +1,2608 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR Chris Laurel
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: chris@teyssier.org\n"
+"POT-Creation-Date: 2009-06-21 16:00+0000\n"
+"PO-Revision-Date: 2008-12-28 13:34-0500\n"
+"Last-Translator: \n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: src/celengine/astro.cpp:827
+msgid "DST"
+msgstr "ora de vară"
+
+#: src/celengine/astro.cpp:827
+msgid "STD"
+msgstr "ora de iarnă"
+
+#: src/celengine/dsodb.cpp:387
+msgid "Loaded "
+msgstr "Încărcat"
+
+#: src/celengine/dsodb.cpp:387
+msgid " deep space objects"
+msgstr " obiect cerestru îndepărtat"
+
+#: src/celengine/fragmentprog.cpp:93
+msgid "Loading NV fragment program: "
+msgstr "Încărcarea programului de fragmentare NV:"
+
+#: src/celengine/fragmentprog.cpp:98
+msgid "Error loading NV fragment program: "
+msgstr "Eroare la încărcarea programului de fragmentare NV:"
+
+#: src/celengine/fragmentprog.cpp:115
+msgid "Error in fragment program "
+msgstr "Eroare în programul de fragmentare"
+
+#: src/celengine/fragmentprog.cpp:126
+msgid "Initializing NV fragment programs . . .\n"
+msgstr "Iniţializarea programelor de fragmentare NV...\n"
+
+#: src/celengine/fragmentprog.cpp:142
+msgid "All NV fragment programs loaded successfully.\n"
+msgstr "Toate programele de fragmentare NV au fost încărcate.\n"
+
+#: src/celengine/fragmentprog.cpp:150
+msgid "Initializing ARB fragment programs . . .\n"
+msgstr "Iniţializarea programelor de fragmentare ARB...\n"
+
+#: src/celengine/galaxy.cpp:197
+#, c-format
+msgid "Galaxy (Hubble type: %s)"
+msgstr "Galaxie (tip Hubble: %s)"
+
+#: src/celengine/image.cpp:373
+msgid "Loading image from file "
+msgstr "Încărcarea imaginei din fişier "
+
+#: src/celengine/image.cpp:391
+msgid ": unrecognized or unsupported image file type.\n"
+msgstr ""
+": formatul fişierului imagine este necunoscut sau nu este implementat.\n"
+
+#: src/celengine/image.cpp:654
+msgid "Error opening image file "
+msgstr "Eroare la deschiderea fişierului imagine "
+
+#: src/celengine/image.cpp:661
+msgid "Error: "
+msgstr "Eroare: "
+
+#: src/celengine/image.cpp:661
+msgid " is not a PNG file.\n"
+msgstr "nu este un fişier PNG.\n"
+
+#: src/celengine/image.cpp:688
+msgid "Error reading PNG image file "
+msgstr "Eroare la citirea fişierului cu imagine PNG "
+
+#: src/celengine/meshmanager.cpp:84
+msgid "Loading model: "
+msgstr "Încărcarea modelului: "
+
+#: src/celengine/meshmanager.cpp:162
+msgid "   Model statistics: "
+msgstr " Statisticile modelului: "
+
+#: src/celengine/meshmanager.cpp:163
+msgid " vertices, "
+msgstr " vârfuri, "
+
+#: src/celengine/meshmanager.cpp:164
+msgid " primitives, "
+msgstr " primitive, "
+
+#: src/celengine/meshmanager.cpp:165
+msgid " materials "
+msgstr " materiale "
+
+#: src/celengine/meshmanager.cpp:166
+msgid " unique)\n"
+msgstr " unic)\n"
+
+#: src/celengine/meshmanager.cpp:170
+msgid "Error loading model '"
+msgstr "Eroare la încărcarea modelului '"
+
+#: src/celengine/nebula.cpp:47 src/celengine/opencluster.cpp:44
+#, c-format
+msgid "%s"
+msgstr "%s"
+
+#: src/celengine/solarsys.cpp:93
+msgid "Error in .ssc file (line "
+msgstr "Eroare in fişierul .scc (linia "
+
+#: src/celengine/solarsys.cpp:1200 src/celengine/solarsys.cpp:1267
+msgid "parent body '"
+msgstr "obiectul părinte '"
+
+#: src/celengine/solarsys.cpp:1200 src/celengine/solarsys.cpp:1267
+msgid "' of '"
+msgstr "' de '"
+
+#: src/celengine/solarsys.cpp:1200
+msgid "' not found."
+msgstr "' nu a fost găsit"
+
+#: src/celengine/solarsys.cpp:1211
+msgid "warning duplicate definition of "
+msgstr "Atenţie, definiţie dublă pentru "
+
+#: src/celengine/solarsys.cpp:1247
+msgid "bad alternate surface"
+msgstr "textură alternativă invalidă"
+
+#: src/celengine/solarsys.cpp:1261
+msgid "bad location"
+msgstr "locaţie invalidă"
+
+#: src/celengine/solarsys.cpp:1267
+msgid "' not found.\n"
+msgstr "' nu a fost găsit.\n"
+
+#: src/celengine/stardb.cpp:579
+msgid "Bad header for cross index\n"
+msgstr "Antet invalid pentru indexul încrucişat\n"
+
+#: src/celengine/stardb.cpp:592
+msgid "Bad version for cross index\n"
+msgstr "Versiune invalidă pentru indexul incrucişat\n"
+
+#: src/celengine/stardb.cpp:614
+msgid "Loading cross index failed at record "
+msgstr "Încărcarea indexului încrucişat a eşual la înregistrarea "
+
+#: src/celengine/stardb.cpp:696
+msgid "Bad spectral type in star database, star #"
+msgstr "Tip spectral invalid în baza de date stelară, steaua #"
+
+#: src/celengine/stardb.cpp:711
+msgid " stars in binary database\n"
+msgstr "stele în baza de date binară\n"
+
+#: src/celengine/stardb.cpp:735
+msgid "Total star count: "
+msgstr "Număr total de stele: "
+
+#: src/celengine/stardb.cpp:769
+msgid "Error in .stc file (line "
+msgstr "Eroare în fişierul .stc (linia "
+
+#: src/celengine/stardb.cpp:806
+msgid "Invalid star: bad spectral type.\n"
+msgstr "Stea invalidă: tip spectral invalid.\n"
+
+#: src/celengine/stardb.cpp:815
+msgid "Invalid star: missing spectral type.\n"
+msgstr "Stea invalidă: tipul spectral lipseste.\n"
+
+#: src/celengine/stardb.cpp:962
+msgid "Barycenter "
+msgstr "Baricentru"
+
+#: src/celengine/stardb.cpp:962
+msgid " does not exist.\n"
+msgstr " nu există.\n"
+
+#: src/celengine/stardb.cpp:1008
+msgid "Invalid star: missing right ascension\n"
+msgstr "Stea invalidă: lipseşte ascensiunea dreaptă\n"
+
+#: src/celengine/stardb.cpp:1021
+msgid "Invalid star: missing declination.\n"
+msgstr "Stea invalidă: lipseşte declinaţia.\n"
+
+#: src/celengine/stardb.cpp:1034
+msgid "Invalid star: missing distance.\n"
+msgstr "Stea invalidă: lipseşte distanţa.\n"
+
+#: src/celengine/stardb.cpp:1070
+msgid "Invalid star: missing magnitude.\n"
+msgstr "Stea invalidă: lipseşte magnitudinea.\n"
+
+#: src/celengine/stardb.cpp:1087
+msgid ""
+"Invalid star: absolute (not apparent) magnitude must be specified for star "
+"near origin\n"
+msgstr ""
+"Stea invalidă: magnitudinea absolută (nu cea aparentă) trebuie specificată "
+"pentru o stea aproape de origine\n"
+
+#: src/celengine/texture.cpp:1019
+msgid "Creating tiled texture. Width="
+msgstr "Crearea texturii de pavaj. Laţime="
+
+#: src/celengine/texture.cpp:1019
+msgid ", max="
+msgstr ", max="
+
+#: src/celengine/texture.cpp:1024
+msgid "Creating ordinary texture: "
+msgstr "Crearea texturii: "
+
+#: src/celengine/vertexprog.cpp:114
+msgid "Loading NV vertex program: "
+msgstr "Încărcarea programului NV vertex: "
+
+#: src/celengine/vertexprog.cpp:119
+msgid "Error loading NV vertex program: "
+msgstr "Eroare la încărcarea programului NV vertex: "
+
+#: src/celengine/vertexprog.cpp:136 src/celengine/vertexprog.cpp:195
+msgid "Error in vertex program "
+msgstr "Eroare îin programul vertex "
+
+#: src/celengine/vertexprog.cpp:163
+msgid "Loading ARB vertex program: "
+msgstr "Încărcarea programului ARB vertex: "
+
+#: src/celengine/vertexprog.cpp:168
+msgid "Error loading ARB vertex program: "
+msgstr "Eraoare la încărcarea programului ARB vertex"
+
+#: src/celengine/vertexprog.cpp:196
+msgid ", line "
+msgstr ", linia "
+
+#: src/celengine/vertexprog.cpp:208
+msgid "Initializing NV vertex programs . . .\n"
+msgstr "Iniţializarea programelor NV vertex...\n"
+
+#: src/celengine/vertexprog.cpp:240
+msgid "All NV vertex programs loaded successfully.\n"
+msgstr "Toate programele NV vertex au fos încărcate cu succes.\n"
+
+#: src/celengine/vertexprog.cpp:253
+msgid "Initializing ARB vertex programs . . .\n"
+msgstr "Iniţializarea programelorARB vertex...\n"
+
+#: src/celengine/vertexprog.cpp:314
+msgid "All ARB vertex programs loaded successfully.\n"
+msgstr "Toate programele ARB vertex au fost încarcate cu succes.\n"
+
+#: src/celestia/celestiacore.cpp:421
+msgid "Error reading favorites file."
+msgstr "Eroare la citirea fişierului."
+
+#: src/celestia/celestiacore.cpp:511
+msgid "Orientation: "
+msgstr "Orientare: "
+
+#: src/celestia/celestiacore.cpp:558 src/celestia/celestiacore.cpp:560
+msgid "Error opening script file."
+msgstr "Eroare la deschiderea fişierului script."
+
+#: src/celestia/celestiacore.cpp:591
+#, c-format
+msgid "Error opening script '%s'"
+msgstr "Eroare la deschiderea scriptului '%s'"
+
+#: src/celestia/celestiacore.cpp:609
+msgid "Unknown error opening script"
+msgstr "Eroare necunoscută la deschiderea scriptului"
+
+#: src/celestia/celestiacore.cpp:621
+msgid "Script coroutine initialization failed"
+msgstr "Iniţializarea corutinei scriptului a eşuat"
+
+#: src/celestia/celestiacore.cpp:637 src/celestia/celestiacore.cpp:639
+msgid "Invalid filetype"
+msgstr "Tipul fişierului este invalid"
+
+#: src/celestia/celestiacore.cpp:982 src/celestia/celestiacore.cpp:1787
+#: src/celestia/celestiacore.cpp:1805 src/celestia/celestiacore.cpp:2046
+#: src/celestia/celestiacore.cpp:2077
+#, c-format
+msgid "Magnitude limit: %.2f"
+msgstr "Magnitudinea limită: %.2f"
+
+#: src/celestia/celestiacore.cpp:1417
+msgid "Markers enabled"
+msgstr "Marcaje activate"
+
+#: src/celestia/celestiacore.cpp:1420
+msgid "Markers disabled"
+msgstr "Marcaje dezactivate"
+
+#: src/celestia/celestiacore.cpp:1430
+msgid "Goto surface"
+msgstr "Mergi la suprafaţa"
+
+#: src/celestia/celestiacore.cpp:1443
+msgid "Alt-azimuth mode enabled"
+msgstr "Modul alt-azimuth activat"
+
+#: src/celestia/celestiacore.cpp:1446
+msgid "Alt-azimuth mode disabled"
+msgstr "Modul alt-azimuth dezactivat"
+
+#: src/celestia/celestiacore.cpp:1502
+msgid "Star style: fuzzy points"
+msgstr "Stilul stelelor: puncte vagi"
+
+#: src/celestia/celestiacore.cpp:1505
+msgid "Star style: points"
+msgstr "Stilul stelelor: puncte"
+
+#: src/celestia/celestiacore.cpp:1508
+msgid "Star style: scaled discs"
+msgstr "Stilul stelelor: discuri la scală"
+
+#: src/celestia/celestiacore.cpp:1521
+msgid "Comet tails enabled"
+msgstr "Coada cometelor activată"
+
+#: src/celestia/celestiacore.cpp:1524
+msgid "Comet tails disabled"
+msgstr "Coada cometelor dezactivată"
+
+#: src/celestia/celestiacore.cpp:1539
+msgid "Render path: Basic"
+msgstr "Calea de ranbarizare: De bază"
+
+#: src/celestia/celestiacore.cpp:1542
+msgid "Render path: Multitexture"
+msgstr "Calea de ranbarizare: Multitexture"
+
+#: src/celestia/celestiacore.cpp:1545
+msgid "Render path: NVIDIA combiners"
+msgstr "Calea de ranbarizare: Combinatorii NVIDIA"
+
+#: src/celestia/celestiacore.cpp:1548
+msgid "Render path: OpenGL vertex program"
+msgstr "Calea de ranbarizare: Programul OpenGL vertex"
+
+#: src/celestia/celestiacore.cpp:1551
+msgid "Render path: NVIDIA vertex program and combiners"
+msgstr "Calea de ranbarizare: Programul şi combinatorii NVIDIA vertex"
+
+#: src/celestia/celestiacore.cpp:1554
+msgid "Render path: OpenGL vertex program/NVIDIA combiners"
+msgstr "Calea de ranbarizare: Programul OpenGL vertex/combinatorii NVIDIA"
+
+#: src/celestia/celestiacore.cpp:1557
+msgid "Render path: OpenGL 1.5 vertex/fragment program"
+msgstr "Calea de ranbarizare: programul vertex/fragment OpenGL 1.5"
+
+#: src/celestia/celestiacore.cpp:1560
+msgid "Render path: NVIDIA GeForce FX"
+msgstr "Calea de ranbarizare: NVIDIA GeForce FX"
+
+#: src/celestia/celestiacore.cpp:1563
+msgid "Render path: OpenGL 2.0"
+msgstr "Calea de ranbarizare: OpenGL 2.0"
+
+#: src/celestia/celestiacore.cpp:1586
+msgid "Auto-magnitude enabled"
+msgstr "Magnitudinea automată activată"
+
+#: src/celestia/celestiacore.cpp:1591
+msgid "Auto-magnitude disabled"
+msgstr "Magnitudinea automată dezactivată"
+
+#: src/celestia/celestiacore.cpp:1613
+msgid "Cancel"
+msgstr "Anulare"
+
+#: src/celestia/celestiacore.cpp:1649
+msgid "Time and script are paused"
+msgstr "Timpul şi scriptul sunt pe pauză"
+
+#: src/celestia/celestiacore.cpp:1651
+msgid "Time is paused"
+msgstr "Timpul este pe pauză"
+
+#: src/celestia/celestiacore.cpp:1655
+msgid "Resume"
+msgstr "Revenire"
+
+#: src/celestia/celestiacore.cpp:1730
+#, c-format
+msgid "Light travel time:  %.4f yr "
+msgstr "Timpul de călătorie al luminii: %.4f al"
+
+#: src/celestia/celestiacore.cpp:1739
+#, c-format
+msgid "Light travel time:  %d min  %.1f s"
+msgstr "Timpul de călătorie al luminii: %d min %.1f s"
+
+#: src/celestia/celestiacore.cpp:1742
+#, c-format
+msgid "Light travel time:  %d h  %d min  %.1f s"
+msgstr "Timpul de călătorie al luminii: %d o %d min %.1f s"
+
+#: src/celestia/celestiacore.cpp:1761
+msgid "Light travel delay included"
+msgstr "Include întârzierea de timp necesar luminii pentru călătorie"
+
+#: src/celestia/celestiacore.cpp:1766
+msgid "Light travel delay switched off"
+msgstr "Întârzierea de timp necesar luminii pentru călătorie oprită"
+
+#: src/celestia/celestiacore.cpp:1772
+msgid "Light travel delay ignored"
+msgstr "Ignoră întârzierea de timp necesar luminii pentru călătorie"
+
+#: src/celestia/celestiacore.cpp:1817
+msgid "Using normal surface textures."
+msgstr "Utilizează texturi normale pentru suprafaţă."
+
+#: src/celestia/celestiacore.cpp:1822
+msgid "Using limit of knowledge surface textures."
+msgstr "Utilizează texturi limitate de cunoaşterea actuala pentru suprafaţă."
+
+#: src/celestia/celestiacore.cpp:1889
+msgid "Follow"
+msgstr "Urmează"
+
+#: src/celestia/celestiacore.cpp:1914
+msgid "Time: Forward"
+msgstr "Timpul: Crescător"
+
+#: src/celestia/celestiacore.cpp:1916
+msgid "Time: Backward"
+msgstr "Timpul: Descrescător"
+
+#: src/celestia/celestiacore.cpp:1929 src/celestia/celestiacore.cpp:1945
+msgid "Time rate"
+msgstr "Rata timpului"
+
+#: src/celestia/celestiacore.cpp:2018
+msgid "Sync Orbit"
+msgstr "Orbitare sincronă"
+
+#: src/celestia/celestiacore.cpp:2024
+msgid "Lock"
+msgstr "Blocheaza"
+
+#: src/celestia/celestiacore.cpp:2030
+msgid "Chase"
+msgstr "Urmareşte"
+
+#: src/celestia/celestiacore.cpp:2057 src/celestia/celestiacore.cpp:2088
+#, c-format
+msgid "Auto magnitude limit at 45 degrees:  %.2f"
+msgstr "Magnitudinea limită automată pentru 45 de grade: %.2f"
+
+#: src/celestia/celestiacore.cpp:2107 src/celestia/celestiacore.cpp:2122
+#, c-format
+msgid "Ambient light level:  %.2f"
+msgstr "Nivelul luminii ambientale: %.2f"
+
+#: src/celestia/celestiacore.cpp:2133 src/celestia/celestiacore.cpp:2145
+msgid "Light gain"
+msgstr "Amplificare luminoasă"
+
+#: src/celestia/celestiacore.cpp:2165
+msgid "Bloom enabled"
+msgstr "Efectul Bloom activat"
+
+#: src/celestia/celestiacore.cpp:2167
+msgid "Bloom disabled"
+msgstr "Efectul Bloom dezactivat"
+
+#: src/celestia/celestiacore.cpp:2173 src/celestia/celestiacore.cpp:2181
+msgid "Exposure"
+msgstr "Expunere"
+
+#: src/celestia/celestiacore.cpp:2532
+msgid "GL error: "
+msgstr "Eroare GL:"
+
+#: src/celestia/celestiacore.cpp:2659
+msgid "View too small to be split"
+msgstr "Vedere prea mică pentru a fi împărţită"
+
+#: src/celestia/celestiacore.cpp:2662
+msgid "Added view"
+msgstr "Vedere adăugată"
+
+#: src/celestia/celestiacore.cpp:2918
+msgid "ly"
+msgstr "al"
+
+#: src/celestia/celestiacore.cpp:2922
+msgid "au"
+msgstr "ua"
+
+#: src/celestia/celestiacore.cpp:2943
+msgid " days"
+msgstr " zile"
+
+#: src/celestia/celestiacore.cpp:2945
+msgid " hours"
+msgstr " ore"
+
+#: src/celestia/celestiacore.cpp:2947
+msgid " minutes"
+msgstr " minute"
+
+#: src/celestia/celestiacore.cpp:3014
+msgid "Apparent diameter: "
+msgstr "Diametru aparent: "
+
+#: src/celestia/celestiacore.cpp:3029
+msgid "Apparent magnitude: "
+msgstr "Magnitudine aparentă: "
+
+#: src/celestia/celestiacore.cpp:3033
+msgid "Absolute magnitude: "
+msgstr "Magnitudine absolută: "
+
+#: src/celestia/celestiacore.cpp:3055
+msgid "RA: "
+msgstr "AD: "
+
+#: src/celestia/celestiacore.cpp:3059
+msgid "Dec: "
+msgstr "Dec.: "
+
+#: src/celestia/celestiacore.cpp:3123
+msgid "km"
+msgstr "km"
+
+#: src/celestia/celestiacore.cpp:3152 src/celestia/celestiacore.cpp:3226
+#: src/celestia/celestiacore.cpp:3258 src/celestia/celestiacore.cpp:3359
+msgid "Distance: "
+msgstr "Distanţă: "
+
+#: src/celestia/celestiacore.cpp:3158
+msgid "Star system barycenter\n"
+msgstr "Baricentrul sistemului stelar\n"
+
+#: src/celestia/celestiacore.cpp:3162
+#, c-format
+msgid "Abs (app) mag: %.2f (%.2f)\n"
+msgstr "Mag abs. (aparentă): %.2f (%.2f)\n"
+
+#: src/celestia/celestiacore.cpp:3168
+msgid "Luminosity: "
+msgstr "Luminozitate: "
+
+#: src/celestia/celestiacore.cpp:3168
+msgid "x Sun"
+msgstr "x soare"
+
+#: src/celestia/celestiacore.cpp:3169
+msgid "Class: "
+msgstr "Clasa: "
+
+#: src/celestia/celestiacore.cpp:3171
+msgid "Neutron star"
+msgstr "Stea de neutroni"
+
+#: src/celestia/celestiacore.cpp:3173
+msgid "Black hole"
+msgstr "Gaura neagra"
+
+#: src/celestia/celestiacore.cpp:3183
+msgid "Surface temp: "
+msgstr "Temperatura la suprafaţă: "
+
+#: src/celestia/celestiacore.cpp:3186 src/celestia/celestiacore.cpp:3235
+#: src/celestia/celestiacore.cpp:3268
+msgid "Radius: "
+msgstr "Raza: "
+
+#: src/celestia/celestiacore.cpp:3189
+msgid "Rsun"
+msgstr "R-soare"
+
+#: src/celestia/celestiacore.cpp:3199 src/celestia/celestiacore.cpp:3320
+msgid "Rotation period: "
+msgstr "Perioada de rotaţie: "
+
+#: src/celestia/celestiacore.cpp:3213
+msgid "Planetary companions present\n"
+msgstr "Însoţitor planetar prezent\n"
+
+#: src/celestia/celestiacore.cpp:3231
+msgid "Distance from center: "
+msgstr "Distanţa de la centru: "
+
+#: src/celestia/celestiacore.cpp:3336
+msgid "Temperature: "
+msgstr "Temperatura: "
+
+#: src/celestia/celestiacore.cpp:3348
+#, c-format
+msgid "Apparent mag: %.2f\n"
+msgstr "Mag. aparentă: %.2f\n"
+
+#: src/celestia/celestiacore.cpp:3516
+msgid "  LT"
+msgstr "  TL"
+
+#: src/celestia/celestiacore.cpp:3525
+msgid "Real time"
+msgstr "Timp real"
+
+#: src/celestia/celestiacore.cpp:3527
+msgid "-Real time"
+msgstr "-Timp real"
+
+#: src/celestia/celestiacore.cpp:3531
+msgid "Time stopped"
+msgstr "Timp oprit"
+
+#: src/celestia/celestiacore.cpp:3536
+msgid " faster"
+msgstr " mai repede"
+
+#: src/celestia/celestiacore.cpp:3541
+msgid " slower"
+msgstr " mai încet"
+
+#: src/celestia/celestiacore.cpp:3547
+msgid " (Paused)"
+msgstr " (Pauză)"
+
+#: src/celestia/celestiacore.cpp:3565
+msgid "FPS: "
+msgstr "IPS: "
+
+#: src/celestia/celestiacore.cpp:3567
+msgid ""
+"\n"
+"Speed: "
+msgstr ""
+"\n"
+"Viteza: "
+
+#: src/celestia/celestiacore.cpp:3571
+msgid " m/s"
+msgstr " m/s"
+
+#: src/celestia/celestiacore.cpp:3573
+msgid " km/s"
+msgstr " km/s"
+
+#: src/celestia/celestiacore.cpp:3577
+msgid " AU/s"
+msgstr " ua/s"
+
+#: src/celestia/celestiacore.cpp:3579
+msgid " ly/s"
+msgstr " al/s"
+
+#: src/celestia/celestiacore.cpp:3596
+msgid "Travelling "
+msgstr "Pe drum"
+
+#: src/celestia/celestiacore.cpp:3609
+msgid "Track "
+msgstr "Rută"
+
+#: src/celestia/celestiacore.cpp:3623
+msgid "Follow "
+msgstr "Urmează "
+
+#: src/celestia/celestiacore.cpp:3628
+msgid "Sync Orbit "
+msgstr "Orbită sincronă"
+
+#: src/celestia/celestiacore.cpp:3633
+msgid "Lock "
+msgstr "Blocat"
+
+#: src/celestia/celestiacore.cpp:3642
+msgid "Chase "
+msgstr "Urmăreşte"
+
+#: src/celestia/celestiacore.cpp:3658
+msgid "FOV: "
+msgstr "CV: "
+
+#: src/celestia/celestiacore.cpp:3688 src/celestia/celestiacore.cpp:3691
+msgid "Sun"
+msgstr "Soare"
+
+#: src/celestia/celestiacore.cpp:3865
+msgid "Target name: "
+msgstr "Numele ţintei: "
+
+#: src/celestia/celestiacore.cpp:3947
+msgid " at "
+msgstr " la "
+
+#: src/celestia/celestiacore.cpp:3948
+msgid " fps"
+msgstr " ips"
+
+#: src/celestia/celestiacore.cpp:3950
+msgid "  Recording"
+msgstr "  Înregistrează"
+
+#: src/celestia/celestiacore.cpp:3952
+msgid "  Paused"
+msgstr "  Pauză"
+
+#: src/celestia/celestiacore.cpp:3971
+msgid "F11 Start/Pause    F12 Stop"
+msgstr "F11 Start/Pauză    F12 Stop"
+
+#: src/celestia/celestiacore.cpp:3980 src/celestia/celestiacore.cpp:3983
+msgid "Edit Mode"
+msgstr "Mod de editare"
+
+#: src/celestia/celestiacore.cpp:4049
+msgid "Loading solar system catalog: "
+msgstr "Încărcarea catalogului sistemului solar: "
+
+#: src/celestia/celestiacore.cpp:4090
+msgid "Loading "
+msgstr "Încarcăre "
+
+#: src/celestia/celestiacore.cpp:4125
+msgid "License file 'License.txt' is missing!"
+msgstr "Fişierul cu liceenţă 'License.txt' lipseşte!"
+
+#: src/celestia/celestiacore.cpp:4146
+msgid "Error reading configuration file."
+msgstr "Eroare la citirea fişierului de configurare."
+
+#: src/celestia/celestiacore.cpp:4157
+msgid "Initialization of SPICE library failed."
+msgstr "Iniţializarea librăriei SPICE a eşuat."
+
+#: src/celestia/celestiacore.cpp:4204
+msgid "Cannot read star database."
+msgstr "Baza de date stelara nu poate fi citită."
+
+#: src/celestia/celestiacore.cpp:4226
+msgid "Error opening deepsky catalog file."
+msgstr "Eroare la deschiderea catalogului cu obiecte cerestre îndepărtate."
+
+#: src/celestia/celestiacore.cpp:4278
+msgid "Error opening solar system catalog.\n"
+msgstr "Eroare la deschiderea catalogului sistemului solar.\n"
+
+#: src/celestia/celestiacore.cpp:4311
+msgid "Error opening asterisms file."
+msgstr "Eroare la deschiderea fişierului asterisms."
+
+#: src/celestia/celestiacore.cpp:4326
+msgid "Error opening constellation boundaries files."
+msgstr "Eroare la deschiderea fişierelor cu limitele constelaţiilor."
+
+#: src/celestia/celestiacore.cpp:4393
+msgid "render path: "
+msgstr "calea de randarizare: "
+
+#: src/celestia/celestiacore.cpp:4404
+msgid "Failed to initialize renderer"
+msgstr "Eşuare la iniţializarea motorului de randarizare"
+
+#: src/celestia/celestiacore.cpp:4420
+msgid "Error loading font; text will not be visible.\n"
+msgstr "Eroare la încarcarea fontului; textul nu va fi vizibil.\n"
+
+#: src/celestia/celestiacore.cpp:4477
+msgid "Error reading cross index "
+msgstr "Eroare la citirea indexului încrucişat "
+
+#: src/celestia/celestiacore.cpp:4479
+msgid "Loaded cross index "
+msgstr "Indexul incrucişat a fost încărcat "
+
+#: src/celestia/celestiacore.cpp:4493 src/celestia/celestiacore.cpp:4515
+msgid "Error opening "
+msgstr "Eroare la deschiderea "
+
+#: src/celestia/celestiacore.cpp:4500
+msgid "Error reading star names file\n"
+msgstr "Eroare la deschiderea fişierului cu numele stelelor\n"
+
+#: src/celestia/celestiacore.cpp:4523
+msgid "Error reading stars file\n"
+msgstr "Eroare la citirea fişierului pentru stele\n"
+
+#: src/celestia/celestiacore.cpp:4550
+msgid "Error opening star catalog "
+msgstr "Eroare la deschiderea catalogului stelar "
+
+#: src/celestia/oggtheoracapture.cpp:159
+#, c-format
+msgid "Error in creating ogg file %s for capture.\n"
+msgstr "Eroare la crearea fişierului ogg %s pentru captură.\n"
+
+#: src/celestia/oggtheoracapture.cpp:253 src/celestia/oggtheoracapture.cpp:273
+msgid "Internal Ogg library error."
+msgstr "Eroare interna a librăriei Ogg."
+
+#: src/celestia/oggtheoracapture.cpp:308
+#, c-format
+msgid ""
+"OggTheoraCapture::start() - Theora video: %s %.2f(%d/%d) fps quality %d %dx%"
+"d offset (%dx%d)\n"
+msgstr ""
+"OggTheoraCapture::start() - Theora video: %s %.2f(%d/%d) fps quality %d %dx%"
+"d offset (%dx%d)\n"
+
+#: src/celestia/oggtheoracapture.cpp:423
+#, c-format
+msgid "OggTheoraCapture::cleanup() - wrote %d frames\n"
+msgstr "OggTheoraCapture::cleanup() - wrote %d frames\n"
+
+#: src/celestia/url.cpp:653
+msgid "Settings"
+msgstr "Setări"
+
+#: src/celestia/winmain.cpp:625
+msgid "Vendor: "
+msgstr "Furnizor: "
+
+#: src/celestia/winmain.cpp:630
+msgid "Renderer: "
+msgstr "Motor de randarizare: "
+
+#: src/celestia/winmain.cpp:635
+msgid "Version: "
+msgstr "Versiune: "
+
+#: src/celestia/winmain.cpp:645
+msgid "GLSL version: "
+msgstr "Versiune GLSL: "
+
+#: src/celestia/winmain.cpp:656
+msgid "Max simultaneous textures: "
+msgstr "Număr maxim de texturi simultane:"
+
+#: src/celestia/winmain.cpp:663
+msgid "Max texture size: "
+msgstr "Mărimea maximă a texturii: "
+
+#: src/celestia/winmain.cpp:672
+msgid "Max cube map size: "
+msgstr "Mărimea maximă a texturii cubice: "
+
+#: src/celestia/winmain.cpp:680
+msgid "Point size range: "
+msgstr "Plaja dimensiunilor pentru puncte: "
+
+#: src/celestia/winmain.cpp:685
+msgid "Supported Extensions:"
+msgstr "Extensii suportate: "
+
+#: src/celestia/winmain.cpp:1386
+msgid "Windowed Mode"
+msgstr "Mod fereastră"
+
+#: src/celestia/winmain.cpp:1508
+msgid "Asteroids"
+msgstr "Asteroizi"
+
+#: src/celestia/winmain.cpp:1510
+msgid "Comets"
+msgstr "Comete"
+
+#: src/celestia/winmain.cpp:1512
+msgid "Invisibles"
+msgstr "Invizibile"
+
+#: src/celestia/winmain.cpp:1514
+msgid "Moons"
+msgstr "Luni"
+
+#: src/celestia/winmain.cpp:1516 src/celestia/winmain.cpp:1551
+#: src/celestia/winmain.cpp:1668
+msgid "Planets"
+msgstr "Planete"
+
+#: src/celestia/winmain.cpp:1518
+msgid "Spacecraft"
+msgstr "Nave spaţiale"
+
+#: src/celestia/winmain.cpp:1608 src/celestia/winmain.cpp:1656
+#: src/celestia/winmain.cpp:1679
+msgid "&Goto"
+msgstr "M&ergi la"
+
+#: src/celestia/winmain.cpp:1609 src/celestia/winmain.cpp:1680
+msgid "&Follow"
+msgstr "&Urmareşte"
+
+#: src/celestia/winmain.cpp:1610
+msgid "S&ync Orbit"
+msgstr "&Orbită sincronă"
+
+#: src/celestia/winmain.cpp:1611 src/celestia/winmain.cpp:1657
+#: src/celestia/winmain.cpp:1681
+msgid "&Info"
+msgstr "&Info"
+
+#: src/celestia/winmain.cpp:1613
+msgid "&Reference Vectors"
+msgstr "Vectori &referinţă"
+
+#: src/celestia/winmain.cpp:1614
+msgid "Show Body Axes"
+msgstr "Afişează axele corpului"
+
+#: src/celestia/winmain.cpp:1615
+msgid "Show Frame Axes"
+msgstr "Afişează axele reper"
+
+#: src/celestia/winmain.cpp:1616
+msgid "Show Sun Direction"
+msgstr "Afişează direcţia Soarelui"
+
+#: src/celestia/winmain.cpp:1617
+msgid "Show Velocity Vector"
+msgstr "Afişează vectorul viteză"
+
+#: src/celestia/winmain.cpp:1618
+msgid "Show Planetographic Grid"
+msgstr "Randarizează grila planetară"
+
+#: src/celestia/winmain.cpp:1619
+msgid "Show Terminator"
+msgstr "Randarizează terminatorul"
+
+#: src/celestia/winmain.cpp:1633
+msgid "&Satellites"
+msgstr "&Sateliţi"
+
+#: src/celestia/winmain.cpp:1643
+msgid "&Alternate Surfaces"
+msgstr "Suprafeţe &alternative"
+
+#: src/celestia/winmain.cpp:1666
+msgid "Orbiting Bodies"
+msgstr "Obiecte în orbită"
+
+#: src/celestia/winmain.cpp:1693
+msgid "&Unmark"
+msgstr "&Demarchează"
+
+#: src/celestia/winmain.cpp:1695
+msgid "&Mark"
+msgstr "&Marchează"
+
+#: src/celestia/winmain.cpp:3137
+msgid "Loading: "
+msgstr "Se încarcă: "
+
+#: src/celestia/winmain.cpp:3305 src/celutil/util.cpp:72
+#: src/celutil/util.cpp:76
+msgid "LANGUAGE"
+msgstr "ro"
+
+#: src/celestia/winmain.cpp:3307
+msgid "WinLangID"
+msgstr "418"
+
+#: src/celestia/winmain.cpp:3809
+msgid "Copied URL"
+msgstr "URL-ul copiat"
+
+#: src/celestia/winmain.cpp:3903
+msgid "Loading URL"
+msgstr "Încarcare URL-ul"
+
+#: src/celestia/winmain.cpp:3915
+msgid "Error opening script"
+msgstr "Eroare la deschiderea scriptului"
+
+#: src/celestia/winmain.cpp:3934
+msgid "Error loading script"
+msgstr "Eroare la încărcarea scriptului"
+
+#: src/celestia/winmain.cpp:3939
+msgid "Running script"
+msgstr "Rulare script"
+
+#: src/celestia/wineclipses.cpp:58
+msgid "Planet"
+msgstr "Planetă"
+
+#: src/celestia/wineclipses.cpp:60
+msgid "Satellite"
+msgstr "Satelit"
+
+#: src/celestia/wineclipses.cpp:62
+msgid "Date"
+msgstr "Dată"
+
+#: src/celestia/wineclipses.cpp:64
+msgid "Start"
+msgstr "Stea"
+
+#: src/celestia/wineclipses.cpp:66
+msgid "Duration"
+msgstr "Durată"
+
+#: src/celestia/wineclipses.cpp:316
+msgid "Earth"
+msgstr "Pământ"
+
+#: src/celestia/wineclipses.cpp:317
+msgid "Jupiter"
+msgstr "Jupiter"
+
+#: src/celestia/wineclipses.cpp:318
+msgid "Saturn"
+msgstr "Saturn"
+
+#: src/celestia/wineclipses.cpp:319
+msgid "Uranus"
+msgstr "Uranus"
+
+#: src/celestia/wineclipses.cpp:320
+msgid "Neptune"
+msgstr "Neptun"
+
+#: src/celestia/wineclipses.cpp:321
+msgid "Pluto"
+msgstr "Pluto"
+
+#: src/celestia/winstarbrowser.cpp:70
+msgid "Name"
+msgstr "Nume"
+
+#: src/celestia/winstarbrowser.cpp:72
+msgid "Distance (ly)"
+msgstr "Distanţa (al)"
+
+#: src/celestia/winstarbrowser.cpp:75
+msgid "App. mag"
+msgstr "Mag. aparentă"
+
+#: src/celestia/winstarbrowser.cpp:77
+msgid "Abs. mag"
+msgstr "Mag. abs."
+
+#: src/celestia/winstarbrowser.cpp:79
+msgid "Type"
+msgstr "Tip"
+
+#: src/celestia/wintime.cpp:95
+msgid "Universal Time"
+msgstr "Fusul orar universal"
+
+#: src/celestia/wintime.cpp:96
+msgid "Local Time"
+msgstr "Fusul orar local"
+
+#: src/celestia/wintime.cpp:97
+msgid "Time Zone Name"
+msgstr "Numele fusului orar"
+
+#: src/celestia/wintime.cpp:98
+msgid "UTC Offset"
+msgstr "Decalaj GMT"
+
+#~ msgid "Celestial Browser"
+#~ msgstr "Navigator celest"
+
+#~ msgid "Moon"
+#~ msgstr "Lună"
+
+#~ msgid "Asteroid"
+#~ msgstr "Asteroid"
+
+#~ msgid "Comet"
+#~ msgstr "Cometă"
+
+#~ msgid "Invisible"
+#~ msgstr "Invizibil"
+
+#~ msgid "Barycenter"
+#~ msgstr "Baricentru"
+
+#~ msgid "Small Body"
+#~ msgstr "Corp mic"
+
+#~ msgid "Dwarf Planet"
+#~ msgstr "Planetă pitică"
+
+#~ msgid "-"
+#~ msgstr "-"
+
+#~ msgid "Eclipse Finder"
+#~ msgstr "Caută eclipse"
+
+#~ msgid "&Add Bookmark"
+#~ msgstr "&Adaugă marcaj"
+
+#~ msgid "Add a bookmark for the current document"
+#~ msgstr "Adaugă un marcaj pentru documentul curent"
+
+#~ msgid "Add &Relative Bookmark"
+#~ msgstr "Adaugă un marcaj &relativ"
+
+#~ msgid "Add a relative bookmark for the current document"
+#~ msgstr "Adaugă un marcaj relativ pentru documentul curent"
+
+#~ msgid "Add &Settings Bookmark"
+#~ msgstr "Adaugă un marcaj pentru setări"
+
+#~ msgid "Add a settings bookmark for the current document"
+#~ msgstr "Adaugă un marcaj pentru setările documentului curent"
+
+#~ msgid "Edit your bookmark collection in a separate window"
+#~ msgstr "Editeazăţ-i colecţia de marcaje într-o fereastră nouă"
+
+#~ msgid "&New Folder..."
+#~ msgstr "Dosar &nou..."
+
+#~ msgid "Create a new bookmark folder in this menu"
+#~ msgstr "Crează un dosar nou pentru marcaje în meniul curent"
+
+#~ msgid "Can't add bookmark with empty URL"
+#~ msgstr "Un marcaj cu URL-ul  gol nu poate fi adăugat"
+
+#~ msgid ""
+#~ "Something seems to be wrong with your installation of Celestia. The "
+#~ "splash screen directory couldn't be found. \n"
+#~ "Start-up will continue, but Celestia will probably be missing some data "
+#~ "files and may not work correctly, please check your installation."
+#~ msgstr ""
+#~ "Ceva pare a fi în neregulă cu copia dvs. de Celestia. Directorul ce "
+#~ "conţine informaţii de iniţialiyare nu a fost găsit. \n"
+#~ "Iniţializarea va continua dar, probabil Celestia nu va rula "
+#~ "corespunzător, va rog sa verificaţi instalarea."
+
+#~ msgid "Go to &URL..."
+#~ msgstr "Mergi &la URL-ul..."
+
+#~ msgid "Go to &Long/Lat..."
+#~ msgstr "Mergi la l&ongitudine/latitudine..."
+
+#~ msgid "&Back"
+#~ msgstr "Îna&poi"
+
+#~ msgid "&Forward"
+#~ msgstr "Îna&inte"
+
+#~ msgid "Home"
+#~ msgstr "Acasă"
+
+#~ msgid "Bookmarks"
+#~ msgstr "Marcaje"
+
+#~ msgid "Full Screen"
+#~ msgstr "Pe tot ecranul"
+
+#~ msgid "Copy URL"
+#~ msgstr "Copiază URL-ul"
+
+#~ msgid "Set Time..."
+#~ msgstr "Seteaza timpul"
+
+#~ msgid "Set Time to Now"
+#~ msgstr "Sincronizează ceasul cu ceasul real"
+
+#~ msgid "Accelerate Time"
+#~ msgstr "Accelerează timpul"
+
+#~ msgid "Decelerate Time"
+#~ msgstr "Încetineşte timpul"
+
+#~ msgid "Accelerate Time (x2)"
+#~ msgstr "Accelerează timpul (x2)"
+
+#~ msgid "Decelerate Time (/2)"
+#~ msgstr "Încetineşte timpul (/2)"
+
+#~ msgid "Pause Time"
+#~ msgstr "Opreşte timpul"
+
+#~ msgid "Reverse Time"
+#~ msgstr "Reporneşte timpul"
+
+#~ msgid "Split View Vertically"
+#~ msgstr "Împarte vederea pe verticală"
+
+#~ msgid "Split View Horizontally"
+#~ msgstr "împarte vederea pe orizontală"
+
+#~ msgid "Cycle View"
+#~ msgstr "Parcurge vederile ciclic"
+
+#~ msgid "Single View"
+#~ msgstr "O singură vedere"
+
+#~ msgid "Delete View"
+#~ msgstr "Şterge vederea"
+
+#~ msgid "Frames Visible"
+#~ msgstr "Vederi vizibile"
+
+#~ msgid "Active Frame Visible"
+#~ msgstr "Vederea activă vizibilă"
+
+#~ msgid "Synchronize Time"
+#~ msgstr "Sincronizează timpul"
+
+#~ msgid "Alt-Azimuth Mode"
+#~ msgstr "Modul alt-azimuth"
+
+#~ msgid "Go To Surface"
+#~ msgstr "Mergi la suprafaţă"
+
+#~ msgid "Show Stars"
+#~ msgstr "Randarizează stelele"
+
+#~ msgid "Show Planets"
+#~ msgstr "Randarizează planetele"
+
+#~ msgid "Show Galaxies"
+#~ msgstr "Randarizează galaxiile"
+
+#~ msgid "Show Globulars"
+#~ msgstr "Randarizează globularii"
+
+#~ msgid "Show Partial Trajectories"
+#~ msgstr "Randarizează traiectoriile parţiale"
+
+#~ msgid "Show Nebulae"
+#~ msgstr "Randarizează nebuloasele"
+
+#~ msgid "Show Open Clusters"
+#~ msgstr "Randarizează roiurile deschise"
+
+#~ msgid "Show Constellations"
+#~ msgstr "Randarizează constelaţiile"
+
+#~ msgid "Show CloudMaps"
+#~ msgstr "Randarizează textura norilor"
+
+#~ msgid "Show Cloud Shadows"
+#~ msgstr "Randarizează umbra norilor"
+
+#~ msgid "Show Orbits"
+#~ msgstr "Randarizează orbitele"
+
+#~ msgid "Show Asteroid Orbits"
+#~ msgstr "Randarizează orbitele asteroizilor"
+
+#~ msgid "Show Comet Orbits"
+#~ msgstr "Randarizează orbitele cometelor"
+
+#~ msgid "Show Moon Orbits"
+#~ msgstr "Randarizează orbitele lunilor"
+
+#~ msgid "Show Star Orbits"
+#~ msgstr "Randarizează orbitele stelelor"
+
+#~ msgid "Show Planet Orbits"
+#~ msgstr "Randarizează orbitele planetelor"
+
+#~ msgid "Show Spacecraft Orbits"
+#~ msgstr "Randarizează orbitele navelor spaţiale"
+
+#~ msgid "Show Celestial Grid"
+#~ msgstr "Randarizează careajul celest"
+
+#~ msgid "Show Night Side Lights"
+#~ msgstr "Randarizează Luminile din timpul noapţi"
+
+#~ msgid "Show Markers"
+#~ msgstr "Randarizează semnele"
+
+#~ msgid "Show Atmospheres"
+#~ msgstr "Randarizează atmosfera"
+
+#~ msgid "Show Smooth Orbit Lines"
+#~ msgstr "Netezeşte liniile orbitelor"
+
+#~ msgid "Show Eclipse Shadows"
+#~ msgstr "Randarizează umbrele eclipselor"
+
+#~ msgid "Cycle Star Mode"
+#~ msgstr "Schimbă modul de afoşare al stelelor"
+
+#~ msgid "Show Ring Shadows"
+#~ msgstr "Randarizează umbrele inelelor"
+
+#~ msgid "Show Boundaries"
+#~ msgstr "Randarizează limitele"
+
+#~ msgid "Auto Magnitudes"
+#~ msgstr "Magnitudine automată"
+
+#~ msgid "Show Comet Tails"
+#~ msgstr "Randarizează cozile cometelor"
+
+#~ msgid "Show Star Labels"
+#~ msgstr "Randarizează numele stelelor"
+
+#~ msgid "Show Planet Labels"
+#~ msgstr "Randarizează numele planetelor"
+
+#~ msgid "Show Moon Labels"
+#~ msgstr "Randarizează numele lunilor"
+
+#~ msgid "Show Comet Labels"
+#~ msgstr "Randarizează numele cometelor"
+
+#~ msgid "Show Constellation Labels"
+#~ msgstr "Randarizează numele constelaţiilor"
+
+#~ msgid "Constellation Labels in Latin"
+#~ msgstr "Randarizează numele in latină"
+
+#~ msgid "Show Galaxy Labels"
+#~ msgstr "Randarizează numele galaxiilor"
+
+#~ msgid "Show Globular Labels"
+#~ msgstr "Randarizează numele globularilor"
+
+#~ msgid "Show Nebula Labels"
+#~ msgstr "Randarizează numele nebuloaselor"
+
+#~ msgid "Show Open Cluster Labels"
+#~ msgstr "Randarizează numele roiurilor deschise"
+
+#~ msgid "Show Asteroid Labels"
+#~ msgstr "Randarizează numele asteroizilor"
+
+#~ msgid "Show Spacecraft Labels"
+#~ msgstr "Randarizează numele navelor spaţiale"
+
+#~ msgid "Show Location Labels"
+#~ msgstr "Randarizează numele locaţiilor"
+
+#~ msgid "Display Local Time"
+#~ msgstr "Afişează timpul local"
+
+#~ msgid "Show City Locations"
+#~ msgstr "Randarizează locaţiile oraşelor"
+
+#~ msgid "Show Observatory Locations"
+#~ msgstr "Randarizeaza locaţiile observatoarelor"
+
+#~ msgid "Show Landing Sites Locations"
+#~ msgstr "Randarizeaza locaţiile zonelor de aterizare"
+
+#~ msgid "Show Crater Locations"
+#~ msgstr "Randarizează locaţiile craterelor"
+
+#~ msgid "Show Mons Locations"
+#~ msgstr "Randarizează locaţiile de pe lună"
+
+#~ msgid "Show Terra Locations"
+#~ msgstr "Randarizează locaţiile de pe Tera"
+
+#~ msgid "Show Vallis Locations"
+#~ msgstr "Randarizează locaţiile de pe Vallis"
+
+#~ msgid "Show Mare Locations"
+#~ msgstr "Randarizează locaţiile de pe Mare"
+
+#~ msgid "Show Other Locations"
+#~ msgstr "Randarizează celelalte locaţii"
+
+#~ msgid "Wireframe Mode"
+#~ msgstr "Mod de randarizare transparent"
+
+#~ msgid "Center on Orbit"
+#~ msgstr "Centrează orbita"
+
+#~ msgid "Basic"
+#~ msgstr "De bază"
+
+#~ msgid "Multitexture"
+#~ msgstr "Texturi multiple"
+
+#~ msgid "NvCombiners"
+#~ msgstr "NvCombiners"
+
+#~ msgid "DOT3 ARBVP"
+#~ msgstr "DOT3 ARBVP"
+
+#~ msgid "NvCombiner NvVP"
+#~ msgstr "NvCombiner NvVP"
+
+#~ msgid "NvCombiner ARBVP"
+#~ msgstr "NvCombiner ARBVP"
+
+#~ msgid "ARBFP ARBVP"
+#~ msgstr "ARBFP ARBVP"
+
+#~ msgid "NV30"
+#~ msgstr "NV30"
+
+#~ msgid "OpenGL 2.0"
+#~ msgstr "OpenGL 2.0"
+
+#~ msgid "Cycle OpenGL Render Path"
+#~ msgstr "Schimbă modul de randarizare OpenGL"
+
+#~ msgid "Sync framerate to video refresh rate"
+#~ msgstr "Sinconizează randarizarea cu rata de improspătare a ecranului"
+
+#~ msgid "Grab Image"
+#~ msgstr "Captură imagine"
+
+#~ msgid "Capture Video"
+#~ msgstr "Captură video"
+
+#~ msgid "OpenGL info"
+#~ msgstr "Informaţii OpenGL"
+
+#~ msgid "Show Bookmark Toolbar"
+#~ msgstr "Arată bara cu unelte pentru marcaje"
+
+#~ msgid "OpenGL Info"
+#~ msgstr "Informaţii OpenGL"
+
+#~ msgid "UTC"
+#~ msgstr "GMT"
+
+#~ msgid ""
+#~ "This version of Celestia was not built with support for movie recording."
+#~ msgstr ""
+#~ "Această versiune de Celestia nu a fost compilată cu suport pentru capturi "
+#~ "video"
+
+#~ msgid "Go to URL"
+#~ msgstr "Mergi la URL"
+
+#~ msgid "Enter URL"
+#~ msgstr "Introdu URL-ul"
+
+#~ msgid "Object: "
+#~ msgstr "Obiect: "
+
+#~ msgid "Longitude: "
+#~ msgstr "Longitudine: "
+
+#~ msgid "East"
+#~ msgstr "Est"
+
+#~ msgid "West"
+#~ msgstr "Vest"
+
+#~ msgid "Latitude: "
+#~ msgstr "Latitudine: "
+
+#~ msgid "North"
+#~ msgstr "Nord"
+
+#~ msgid "South"
+#~ msgstr "Sud"
+
+#~ msgid "Altitude: "
+#~ msgstr "Altitudine: "
+
+#~ msgid "Celestia encountered an error while processing your script"
+#~ msgstr "Celestia a generat o eroare în timpul execuţiei scriptului dvs."
+
+#~ msgid "Celestia"
+#~ msgstr "Celestia"
+
+#~ msgid "Use alternate configuration file"
+#~ msgstr "Foloseşte fişierul de configurare alternativ"
+
+#~ msgid "Use alternate installation directory"
+#~ msgstr "Foloseşte directorul alternativ al instalaţiei"
+
+#~ msgid "Use as additional \"extras\" directory"
+#~ msgstr "Foloseşte ca şi director adiţional pentru \"extras\""
+
+#~ msgid "Start fullscreen"
+#~ msgstr "Porneşte pe tot ecranul"
+
+#~ msgid "Disable splash screen"
+#~ msgstr "Dezactivează imaginea de la început"
+
+#~ msgid "Start and go to url"
+#~ msgstr "Porneşte şi deschide lincul"
+
+#~ msgid "_: NAME OF TRANSLATORS\\nYour names"
+#~ msgstr "Radu Viorel Oana"
+
+#~ msgid "_: EMAIL OF TRANSLATORS\\nYour emails"
+#~ msgstr "oanaradu32@yahoo.com"
+
+#~ msgid "Celestia Preferences"
+#~ msgstr "Preferinţe pentru Celestia"
+
+#~ msgid "Rendering"
+#~ msgstr "Randarizare"
+
+#~ msgid "Show"
+#~ msgstr "Încet"
+
+#~ msgid "Stars"
+#~ msgstr "Stele"
+
+#~ msgid "Galaxies"
+#~ msgstr "Galaxi"
+
+#~ msgid "Nebulae"
+#~ msgstr "Nebuloase"
+
+#~ msgid "Open Clusters"
+#~ msgstr "Rroiuri deschise"
+
+#~ msgid "Atmospheres"
+#~ msgstr "Atmosfere"
+
+#~ msgid "Clouds"
+#~ msgstr "Nori"
+
+#~ msgid "Cloud Shadows"
+#~ msgstr "Umbrele norilor"
+
+#~ msgid "Night Side Lights"
+#~ msgstr "Luminile din timpul noapţi"
+
+#~ msgid "Eclipse Shadows"
+#~ msgstr "Umbrele eclipselor"
+
+#~ msgid "Comet Tails"
+#~ msgstr "Cozile cometelor"
+
+#~ msgid "Orbits"
+#~ msgstr "Orbite"
+
+#~ msgid "Partial Trajectories"
+#~ msgstr "Traiectori parţiale"
+
+#~ msgid "Smooth Orbit Lines"
+#~ msgstr "Liniile orbitelor netezite"
+
+#~ msgid "Celestial Grid"
+#~ msgstr "Caroiaj celestu"
+
+#~ msgid "Constellations"
+#~ msgstr "Constelaţi"
+
+#~ msgid "Markers"
+#~ msgstr "Marcaje"
+
+#~ msgid "Ring Shadows"
+#~ msgstr "Umbrele inelelor"
+
+#~ msgid "Constellation Boundaries"
+#~ msgstr "Limitele constelaţiilor"
+
+#~ msgid "Orbits / Labels"
+#~ msgstr "Orbite/Etichete"
+
+#~ msgid "Labels"
+#~ msgstr "Etichete"
+
+#~ msgid "Constellations in Latin"
+#~ msgstr "Constelaţiile în latină"
+
+#~ msgid "Spacecrafts"
+#~ msgstr "Nave spaţiale"
+
+#~ msgid "Locations"
+#~ msgstr "Locaţii"
+
+#~ msgid "Ambient Light"
+#~ msgstr "Lumină ambientală"
+
+#~ msgid "Limiting Magnitude"
+#~ msgstr "Magnitudinea limită"
+
+#~ msgid "Info Text"
+#~ msgstr "Info text"
+
+#~ msgid "Level: "
+#~ msgstr "Nivel: "
+
+#~ msgid "None"
+#~ msgstr "Nimic"
+
+#~ msgid "Terse"
+#~ msgstr "Concis"
+
+#~ msgid "Verbose"
+#~ msgstr "Complet"
+
+#~ msgid "Textures"
+#~ msgstr "Texturi"
+
+#~ msgid "Resolution: "
+#~ msgstr "Rezoluţie: "
+
+#~ msgid "Low"
+#~ msgstr "Redus"
+
+#~ msgid "Medium"
+#~ msgstr "Mediu"
+
+#~ msgid "High"
+#~ msgstr "Complex"
+
+#~ msgid "Automatic FOV"
+#~ msgstr "Câmp vizual automat"
+
+#~ msgid "Screen DPI: "
+#~ msgstr "Rezoluţie (DPI): "
+
+#~ msgid "Viewing Distance (cm): "
+#~ msgstr "Distanţa de vizionare (cm): "
+
+#~ msgid "Cities"
+#~ msgstr "Oraşe"
+
+#~ msgid "Observatories"
+#~ msgstr "Observatoare"
+
+#~ msgid "Landing Sites"
+#~ msgstr "Zone de aterizare"
+
+#~ msgid "Craters"
+#~ msgstr "Cratere"
+
+#~ msgid "Mons"
+#~ msgstr "Luni"
+
+#~ msgid "Terra"
+#~ msgstr "Pământ"
+
+#~ msgid "Vallis"
+#~ msgstr "Vallis"
+
+#~ msgid "Mare"
+#~ msgstr "Mare"
+
+#~ msgid "Other"
+#~ msgstr "Divers"
+
+#~ msgid "Minimum Feature Size"
+#~ msgstr "Număr minim de facilităţi"
+
+#~ msgid "Date/Time"
+#~ msgstr "Data/Timp"
+
+#~ msgid "Display"
+#~ msgstr "Afişaj"
+
+#~ msgid "Timezone: "
+#~ msgstr "Fus orar: "
+
+#~ msgid "Format: "
+#~ msgstr "Format: "
+
+#~ msgid "Local Format"
+#~ msgstr "Format local"
+
+#~ msgid "Set"
+#~ msgstr "Setează"
+
+#~ msgid "Local Time is only supported for dates between 1902 and 2037.\n"
+#~ msgstr ""
+#~ "Fusul local este disponibil doar pentru date cuprinse între 1902 şi "
+#~ "2037.\n"
+
+#~ msgid "Julian Date: "
+#~ msgstr "Calendarul Iulian: "
+
+#~ msgid "Now"
+#~ msgstr "Prezent"
+
+#~ msgid ""
+#~ "\n"
+#~ "Selection: "
+#~ msgstr ""
+#~ "\n"
+#~ "Selecţia: "
+
+#~ msgid "Include Light Travel Time"
+#~ msgstr "Include timpul de călătorie al lumini"
+
+#~ msgid "Ignore Light Travel Time "
+#~ msgstr "Ignoră timpul de călătorie al luminii"
+
+#~ msgid "OpenGL"
+#~ msgstr "OpenGL"
+
+#~ msgid "Key Bindings"
+#~ msgstr "Atribuirile tastelor"
+
+#~ msgid "<b>Unextended OpenGL 1.1</b>"
+#~ msgstr "<b>OpenGL 1.1 neextins</b>"
+
+#~ msgid "<b>Multiple textures and the ARB_texenv_combine extension</b>"
+#~ msgstr "<b>Multi texturi şi extensia ARB_texenv_combine</b>"
+
+#~ msgid "<b>NVIDIA combiners, no vertex programs</b>"
+#~ msgstr "<b>Combinatorii NVIDIA, fără programe vertex</b>"
+
+#~ msgid "<b>ARB_texenv_DOT3 extension, ARB_vertex_program extension</b>"
+#~ msgstr "<b>Extensia ARB_texenv_DOT3, extensia ARB_vertex_program</b>"
+
+#~ msgid ""
+#~ "<b>NVIDIA Combiners, NV_vertex_program extension</b><br> provide bump "
+#~ "mapping, ring shadows, and specular highlights on any Geforce or ATI "
+#~ "Radeon graphics card, though NvCombiner ARBVP is a slightly better option "
+#~ "for Geforce users"
+#~ msgstr ""
+#~ "<b>Combinatorii NVIDIA, extensia NV_vertex_program</b><br> suportă "
+#~ "maparea în relief, umbra inelelor şi subliniere speculară pe orice placa "
+#~ "GeForce sau ATI radeon, pentru utilizatorii cu placi GeForce NvCombiner "
+#~ "ARBVP este o obţiune mai bună"
+
+#~ msgid "<b>NVIDIA Combiners, ARB_vertex_program extension</b>"
+#~ msgstr "<b>Combinatorii NVIDIA, extensia ARB_vertex_program</b>"
+
+#~ msgid ""
+#~ "<b>ARB_fragment_program and ARB_vertex_program extensions</b><br>provide "
+#~ "advanced effects on Geforce FX and Radeon 9700 cards"
+#~ msgstr ""
+#~ "<b>Extensiile ARB_fragment_program şi ARB_vertex_program</"
+#~ "b><br>furnizează suport pentru efecte complexe pe placile FeGorce FX şi "
+#~ "Radeon 9700"
+
+#~ msgid "<b>NV_fragment_program and ARB_vertex_program extensions</b>"
+#~ msgstr "<b>Extensiile NV_fragment_program şi ARB_vertex_program</b>"
+
+#~ msgid "<b>OpenGL 2.0 Shading Language</b>"
+#~ msgstr "<b>Limbajul de randarizare OpenGL 2.0</b>"
+
+#~ msgid ""
+#~ "File %1 does not exist, using default configuration file %2/celestia.cfg"
+#~ msgstr ""
+#~ "Fişierul %1 nu există, se va folosi fişierul de configurare original %2/"
+#~ "celestia.cfg"
+
+#~ msgid "Directory %1 does not exist, using default %2"
+#~ msgstr "Dosarul %1 nu există, se va folosi dosarul standard %2"
+
+#~ msgid "Extras directory %1 does not exist"
+#~ msgstr "Directorul de extras %1 nu există"
+
+#~ msgid "Abs (app) mag: "
+#~ msgstr "Magnitudinea abs. (aparentă): "
+
+#~ msgid "Surface Temp: "
+#~ msgstr "Temperatura la suprafaţă: "
+
+#~ msgid "Marked objects"
+#~ msgstr "Obiectele marcate"
+
+#~ msgid "&Select"
+#~ msgstr "&Selectează"
+
+#~ msgid "&Center"
+#~ msgstr "&Anulează"
+
+#~ msgid "S&ynch Orbit"
+#~ msgstr "Orbită s&incronizată"
+
+#~ msgid "Unmark &All"
+#~ msgstr "Demarchează &tot"
+
+#~ msgid "Diamond"
+#~ msgstr "Carou"
+
+#~ msgid "Triangle"
+#~ msgstr "Triunghi"
+
+#~ msgid "Square"
+#~ msgstr "Pătrat"
+
+#~ msgid "Filled Square"
+#~ msgstr "Câmp pătrat"
+
+#~ msgid "Plus"
+#~ msgstr "Plus"
+
+#~ msgid "X"
+#~ msgstr "X"
+
+#~ msgid "Left Arrow"
+#~ msgstr "Săgeată stânga"
+
+#~ msgid "Right Arrow"
+#~ msgstr "Săgeată dreapta"
+
+#~ msgid "Up Arrow"
+#~ msgstr "Săgeată sus"
+
+#~ msgid "Down Arrow"
+#~ msgstr "Săgeată jos"
+
+#~ msgid "Circle"
+#~ msgstr "Cerc"
+
+#~ msgid "Disk"
+#~ msgstr "Disc"
+
+#~ msgid "Normal"
+#~ msgstr "Normal"
+
+#~ msgid "Small Bodies"
+#~ msgstr "Corpusi mici"
+
+#~ msgid "Dwarf Planets"
+#~ msgstr "Planete pitici"
+
+#~ msgid "Duration: %1"
+#~ msgstr "Duraţie: %1"
+
+#~ msgid "Size: %1 MB"
+#~ msgstr "Dimensiune: %1 MB"
+
+#~ msgid "Current size: %1 x %2"
+#~ msgstr "Dimensiunea actuală: %1 x %2"
+
+#~ msgid "Current width: %1 x %2"
+#~ msgstr "Laţimea actuală: %1 x %2"
+
+#~ msgid "Current height: %1 x %2"
+#~ msgstr "Înălţimea actuală: %1 x %2"
+
+#~ msgid "You must specify a file name."
+#~ msgstr "Trebuie să specificaţi un nume de fişier."
+
+#~ msgid "Error initializing movie capture."
+#~ msgstr "Eroare la iniţializarea capturii video."
+
+#~ msgid "&Navigation"
+#~ msgstr "&Navigare"
+
+#~ msgid "Options"
+#~ msgstr "Obţiuni"
+
+#~ msgid "Objects"
+#~ msgstr "Obiecte"
+
+#~ msgid "OpenGL Render Path"
+#~ msgstr "Calea de randarizare OpenGL"
+
+#~ msgid "Time"
+#~ msgstr "Timp"
+
+#~ msgid "MultiView"
+#~ msgstr "Vederi multiple"
+
+#~ msgid "Main Toolbar"
+#~ msgstr "Bara de unelte principală"
+
+#~ msgid "Dist."
+#~ msgstr "Dist."
+
+#~ msgid "App. Mag."
+#~ msgstr "Mag. aparentă"
+
+#~ msgid "Abs. Mag."
+#~ msgstr "Mag. abs."
+
+#~ msgid "With Planets"
+#~ msgstr "Cu planete"
+
+#~ msgid "Brightest (Abs.)"
+#~ msgstr "Luminozitate (Abs.)"
+
+#~ msgid "Brightest (App.)"
+#~ msgstr "Luminozitate (Aparentă)"
+
+#~ msgid "Nearest"
+#~ msgstr "Cel/cea mai apropiat(ă)"
+
+#~ msgid "&Close"
+#~ msgstr "Î&nchide"
+
+#~ msgid "Alt+C"
+#~ msgstr "Alt+C"
+
+#~ msgid "Refresh"
+#~ msgstr "Reimprospătează"
+
+#~ msgid "End"
+#~ msgstr "Sfârşit"
+
+#~ msgid "Search parameters"
+#~ msgstr "Parametri la căutare"
+
+#~ msgid "Solar Eclipses"
+#~ msgstr "Eclipsă solară"
+
+#~ msgid "On:"
+#~ msgstr "Pe:"
+
+#~ msgid "Moon Eclipses"
+#~ msgstr "Eclipsă de lună"
+
+#~ msgid "Search"
+#~ msgstr "Caută"
+
+#~ msgid "To:"
+#~ msgstr "La: "
+
+#~ msgid "From:"
+#~ msgstr "De la: "
+
+#~ msgid "Close"
+#~ msgstr "Închide"
+
+#~ msgid "Video Capture"
+#~ msgstr "Captură video"
+
+#~ msgid "Save As:"
+#~ msgstr "Salvează ca:"
+
+#~ msgid "*.ogg"
+#~ msgstr "*.ogg"
+
+#~ msgid "Aspect Ratio:"
+#~ msgstr "Forma:"
+
+#~ msgid "Current"
+#~ msgstr "Curent"
+
+#~ msgid "11:9"
+#~ msgstr "11:9"
+
+#~ msgid "4:3"
+#~ msgstr "4:3"
+
+#~ msgid "16:9"
+#~ msgstr "16:9"
+
+#~ msgid "Image Size:"
+#~ msgstr "Dimesiunea imagini: "
+
+#~ msgid "Frame Rate:"
+#~ msgstr "Imagini pe secundă:"
+
+#~ msgid "Video Quality:"
+#~ msgstr "Calitatea video:"
+
+#~ msgid "Play Video when capture is done"
+#~ msgstr "Rulează filmul la terminarea capturi"
+
+#~ msgid "Usage"
+#~ msgstr "Utilizare"
+
+#~ msgid ""
+#~ "<p>Press <b>F11</b> to start/pause recording<br>\n"
+#~ "Press <b>F12</b> to stop</p>\n"
+#~ "\n"
+#~ "<p>Note that resizing the main window will not be possible until the end "
+#~ "of the capture</p>"
+#~ msgstr ""
+#~ "<p>Apasă <b>F11</b> pentru start/pause<br>\n"
+#~ "Apasă <b>F12</b> pentru stop</p>\n"
+#~ "\n"
+#~ "<p>Atenţie, redimensionarea ferestrei principale nu va fi posibilă până "
+#~ "la încheerea capturii</p>"
+
+#~ msgid "&OK"
+#~ msgstr "&OK"
+
+#~ msgid "&Cancel"
+#~ msgstr "&Anulează"
+
+#~ msgid "Mercury"
+#~ msgstr "Mercur"
+
+#~ msgid "Venus"
+#~ msgstr "Venus"
+
+#~ msgid "Mars"
+#~ msgstr "Marte"
+
+#~ msgid "Phobos"
+#~ msgstr "Phobos"
+
+#~ msgid "Deimos"
+#~ msgstr "Deimos"
+
+#~ msgid "Amalthea"
+#~ msgstr "Amalthea"
+
+#~ msgid "Io"
+#~ msgstr "Io"
+
+#~ msgid "Europa"
+#~ msgstr "Europa"
+
+#~ msgid "Ganymede"
+#~ msgstr "Ganymede"
+
+#~ msgid "Callisto"
+#~ msgstr "Callisto"
+
+#~ msgid "Prometheus"
+#~ msgstr "Prometheus"
+
+#~ msgid "Pandora"
+#~ msgstr "Pandora"
+
+#~ msgid "Epimetheus"
+#~ msgstr "Epimetheus"
+
+#~ msgid "Janus"
+#~ msgstr "Janus"
+
+#~ msgid "Mimas"
+#~ msgstr "Mimas"
+
+#~ msgid "Enceladus"
+#~ msgstr "Enceladus"
+
+#~ msgid "Tethys"
+#~ msgstr "Tethys"
+
+#~ msgid "Dione"
+#~ msgstr "Dione"
+
+#~ msgid "Rhea"
+#~ msgstr "Rhea"
+
+#~ msgid "Titan"
+#~ msgstr "Titan"
+
+#~ msgid "Hyperion"
+#~ msgstr "Hyperion"
+
+#~ msgid "Iapetus"
+#~ msgstr "Iapetus"
+
+#~ msgid "Phoebe"
+#~ msgstr "Phoebe"
+
+#~ msgid "Miranda"
+#~ msgstr "Miranda"
+
+#~ msgid "Ariel"
+#~ msgstr "Ariel"
+
+#~ msgid "Umbriel"
+#~ msgstr "Umbriel"
+
+#~ msgid "Titania"
+#~ msgstr "Titania"
+
+#~ msgid "Oberon"
+#~ msgstr "Oberon"
+
+#~ msgid "Larissa"
+#~ msgstr "Larissa"
+
+#~ msgid "Proteus"
+#~ msgstr "Proteus"
+
+#~ msgid "Triton"
+#~ msgstr "Triton"
+
+#~ msgid "Nereid"
+#~ msgstr "Nereid"
+
+#~ msgid "Pluto-Charon"
+#~ msgstr "Pluto-Charon"
+
+#~ msgid "Charon"
+#~ msgstr "Charon"
+
+#~ msgid "NORTH AMERICA"
+#~ msgstr "AMERICA DE NORD"
+
+#~ msgid "SOUTH AMERICA"
+#~ msgstr "AMERICA DE SUD"
+
+#~ msgid "EURASIA"
+#~ msgstr "EURASIA"
+
+#~ msgid "AFRICA"
+#~ msgstr "AFRICA"
+
+#~ msgid "AUSTRALIA"
+#~ msgstr "AUSTRALIA"
+
+#~ msgid "ANTARCTICA"
+#~ msgstr "ANTARCTICA"
+
+#~ msgid "NORTH ATLANTIC OCEAN"
+#~ msgstr "OCEANUL ATLANTIC DE NORD"
+
+#~ msgid "SOUTH ATLANTIC OCEAN"
+#~ msgstr "OCEANUL ATLANTIC DE SUD"
+
+#~ msgid "NORTH PACIFIC OCEAN"
+#~ msgstr "OCEANUL PACIFIC DE NORD"
+
+#~ msgid "SOUTH PACIFIC OCEAN"
+#~ msgstr "OCEANUL PACIFIC DE SUD"
+
+#~ msgid "INDIAN OCEAN"
+#~ msgstr "OCEANUL INDIAN"
+
+#~ msgid "ARCTIC OCEAN"
+#~ msgstr "OCEANUL ARCTIC"
+
+#~ msgid "Milky Way"
+#~ msgstr "Calea Lactee"
+
+#~ msgid "SMC"
+#~ msgstr "Micul nor al lui Magellan"
+
+#~ msgid "LMC"
+#~ msgstr "Marele nor al lui Magellan"
+
+#~ msgid "Solar System Barycenter"
+#~ msgstr "Baricentrul sistemului solar"
+
+#~ msgid "&File"
+#~ msgstr "&Fişier"
+
+#~ msgid "&Open Script..."
+#~ msgstr "&Deschide script..."
+
+#~ msgid "Scripts"
+#~ msgstr "Scripturi"
+
+#~ msgid "Placeholder"
+#~ msgstr "Substituent"
+
+#~ msgid "Capture &Image...\tF10"
+#~ msgstr "Captură &imagine...\tF10"
+
+#~ msgid "Capture &Movie...\tShift+F10"
+#~ msgstr "Captură &video...\tShift+F10"
+
+#~ msgid "E&xit"
+#~ msgstr "I&eşire"
+
+#~ msgid "Select &Sol\tH"
+#~ msgstr "Selectează &soarele\tH"
+
+#~ msgid "Tour G&uide..."
+#~ msgstr "Tur &de iniţiere..."
+
+#~ msgid "Select &Object..."
+#~ msgstr "Selectează &obiect..."
+
+#~ msgid "Goto Object..."
+#~ msgstr "Mergi la obiect..."
+
+#~ msgid "&Center Selection\tC"
+#~ msgstr "&Centrează selecţia\tC"
+
+#~ msgid "&Go to Selection\tG"
+#~ msgstr "Mer&gi la selecţie\tG"
+
+#~ msgid "&Follow Selection\tF"
+#~ msgstr "Ur&măreşte selecţia\tF"
+
+#~ msgid "S&ync Orbit Selection\tY"
+#~ msgstr "Or&bită sincronă cu selecţia"
+
+#~ msgid "&Track Selection\tT"
+#~ msgstr "&Urmează selecţia"
+
+#~ msgid "Solar System &Browser..."
+#~ msgstr "&Navigator pentru sistemul solar..."
+
+#~ msgid "Star B&rowser..."
+#~ msgstr "Na&vigator pentru stele..."
+
+#~ msgid "&Eclipse Finder"
+#~ msgstr "C&aută eclipse"
+
+#~ msgid "&Time"
+#~ msgstr "&Timp"
+
+#~ msgid "10x &Faster\tL"
+#~ msgstr "10x Mai &repede\tL"
+
+#~ msgid "10x &Slower\tK"
+#~ msgstr "10x M&ai încet\tK"
+
+#~ msgid "Free&ze\tSpace"
+#~ msgstr "&Opreşte\tSpace"
+
+#~ msgid "&Real Time\t\\"
+#~ msgstr "T&imp real\t\\"
+
+#~ msgid "Re&verse Time\tJ"
+#~ msgstr "Inversea&ză timpul\tJ"
+
+#~ msgid "Set &Time..."
+#~ msgstr "Setează &timpul..."
+
+#~ msgid "Show Local Time"
+#~ msgstr "Afişează timpul local"
+
+#~ msgid "&Render"
+#~ msgstr "&Randarizează"
+
+#~ msgid "Select Display Mode..."
+#~ msgstr "Selectează modul de afişare..."
+
+#~ msgid "Toggle Full Screen\tAlt+Enter"
+#~ msgstr "Randarizează pe tot ecranul\tAlt+Enter"
+
+#~ msgid "View Options..."
+#~ msgstr "Vizualizează opţiunile..."
+
+#~ msgid "Locations..."
+#~ msgstr "Locaţia..."
+
+#~ msgid "More Stars Visible\t]"
+#~ msgstr "Mai multe stele vizibile\t]"
+
+#~ msgid "Fewer Stars Visible\t["
+#~ msgstr "Mai puţine stele vizibile\t["
+
+#~ msgid "Auto Magnitude\tCtrl+Y"
+#~ msgstr "Magnitudine automată\tCtrl+Y"
+
+#~ msgid "Star St&yle"
+#~ msgstr "&Formatul stelelor"
+
+#~ msgid "&Fuzzy Points"
+#~ msgstr "Puncte di&fuze"
+
+#~ msgid "&Points"
+#~ msgstr "&Puncte"
+
+#~ msgid "Scaled &Discs"
+#~ msgstr "&Discuri la scală"
+
+#~ msgid "&Ambient Light"
+#~ msgstr "Lunimă &ambientală"
+
+#~ msgid "&None"
+#~ msgstr "&De loc"
+
+#~ msgid "&Low"
+#~ msgstr "&Redusă"
+
+#~ msgid "&Medium"
+#~ msgstr "&Medie"
+
+#~ msgid "&Texture Resolution"
+#~ msgstr "Rezoluţia &texturilor"
+
+#~ msgid "&High"
+#~ msgstr "R&idicat"
+
+#~ msgid "Antialiasing\tCtrl+X"
+#~ msgstr "Antialiasing\tCtrl+X"
+
+#~ msgid "&View"
+#~ msgstr "&Vizualizare"
+
+#~ msgid "Split &Horizontally\tCtrl+R"
+#~ msgstr "Împarte &orizontal\tCtrl+R"
+
+#~ msgid "Split &Vertically\tCtrl+U"
+#~ msgstr "Împarte &vertical\tCtrl+U"
+
+#~ msgid "&Delete Active View\tDEL"
+#~ msgstr "Şterge ve&derea curentă\tDEL"
+
+#~ msgid "&Single View\tCtrl+D"
+#~ msgstr "O &singură vedere\tCtrl+D"
+
+#~ msgid "Show &Frames"
+#~ msgstr "A&fişează marginile"
+
+#~ msgid "Synchronize &Time"
+#~ msgstr "Sincronizează &timpul"
+
+#~ msgid "&Bookmarks"
+#~ msgstr "Marca&je"
+
+#~ msgid "&Add Bookmarks..."
+#~ msgstr "&Adaugă marcaje..."
+
+#~ msgid "&Organize Bookmarks..."
+#~ msgstr "&Organizează marcajele..."
+
+#~ msgid "&Help"
+#~ msgstr "Ajutor"
+
+#~ msgid "Run &Demo"
+#~ msgstr "Rulează &demo"
+
+#~ msgid "&Controls"
+#~ msgstr "&Controale"
+
+#~ msgid "&OpenGL Info"
+#~ msgstr "&Informaţii OpenGL"
+
+#~ msgid "&License"
+#~ msgstr "&Liceenţă"
+
+#~ msgid "&About Celestia"
+#~ msgstr "&Despre Celestia"
+
+#~ msgid "About Celestia"
+#~ msgstr "Despre Celestia"
+
+#~ msgid "OK"
+#~ msgstr "OK"
+
+#~ msgid "Copyright (C) 2001-2008, Celestia Development Team"
+#~ msgstr "Copyright (C) 2001-2008, Celestia Development Team"
+
+#~ msgid "http://www.shatters.net/celestia"
+#~ msgstr "http://www.shatters.net/celestia"
+
+#~ msgid "Celestia is free software and comes with absolutely no warranty."
+#~ msgstr "Celestia este un soft gratuit şi nu are nici un fel de garanţie."
+
+#~ msgid "Authors"
+#~ msgstr "Autori"
+
+#~ msgid "Chris Laurel"
+#~ msgstr "Chris Laurel"
+
+#~ msgid "Clint Weisbrod"
+#~ msgstr "Clint Weisbrod"
+
+#~ msgid "Fridger Schrempp"
+#~ msgstr "Fridger Schrempp"
+
+#~ msgid "Christophe Teyssier"
+#~ msgstr "Christophe Teyssier"
+
+#~ msgid "Grant Hutchison"
+#~ msgstr "Grant Hutchison"
+
+#~ msgid "Pat Suwalski"
+#~ msgstr "Pat Suwalski"
+
+#~ msgid "Toti"
+#~ msgstr "Toti"
+
+#~ msgid "Da Woon Jung"
+#~ msgstr "Da Woon Jung"
+
+#~ msgid "Hank Ramsey"
+#~ msgstr "Hank Ramsey"
+
+#~ msgid "Bob Ippolito"
+#~ msgstr "Bob Ippolito"
+
+#~ msgid "Vincent Giangiulio"
+#~ msgstr "Vincent Giangiulio"
+
+#~ msgid "Select Object"
+#~ msgstr "Selectează obiectul"
+
+#~ msgid "Object Name"
+#~ msgstr "Numele obiectului"
+
+#~ msgid "License"
+#~ msgstr "Liceenţa"
+
+#~ msgid "Celestia Controls"
+#~ msgstr "Controalele folosite de Celestia"
+
+#~ msgid "OpenGL Driver Info"
+#~ msgstr "Informaţii driver OpenGL"
+
+#~ msgid "Set Simulation Time"
+#~ msgstr "Setează timpul simulaţiei"
+
+#~ msgid "Time Zone: "
+#~ msgstr "Fusu orar: "
+
+#~ msgid "Set To Current Time"
+#~ msgstr "Sincronizează cu ora curentă"
+
+#~ msgid "Add Bookmark"
+#~ msgstr "Adaugă marcaj"
+
+#~ msgid "Create in >>"
+#~ msgstr "Crează in >>"
+
+#~ msgid "New Folder..."
+#~ msgstr "Dosar nou..."
+
+#~ msgid "Solar System Browser"
+#~ msgstr "Navigator al sistemului solar"
+
+#~ msgid "Solar System"
+#~ msgstr "Sistem solar"
+
+#~ msgid "&Go To"
+#~ msgstr "&Mergi la"
+
+#~ msgid "Solar System Objects"
+#~ msgstr "Obiectele sistemului solar"
+
+#~ msgid "Star Browser"
+#~ msgstr "Navigator stelar"
+
+#~ msgid "Brightest"
+#~ msgstr "Luminozitate"
+
+#~ msgid "With planets"
+#~ msgstr "Cu planete"
+
+#~ msgid "&Refresh"
+#~ msgstr "&Reactualizează"
+
+#~ msgid "Star Search Criteria"
+#~ msgstr "Criteriu de cautare a stelelor"
+
+#~ msgid "Maximum Stars Displayed in List"
+#~ msgstr "Număr maxim de stele afişate în listă"
+
+#~ msgid "Tour Guide"
+#~ msgstr "Tur de iniţiere..."
+
+#~ msgid "Go To"
+#~ msgstr "Mergi la"
+
+#~ msgid "Select your destination:"
+#~ msgstr "Selectaţi destinaţia:"
+
+#~ msgid "Go to Object"
+#~ msgstr "Mergi la obiect"
+
+#~ msgid "radii"
+#~ msgstr "radius"
+
+#~ msgid "Object"
+#~ msgstr "Obiect"
+
+#~ msgid "Long."
+#~ msgstr "Long."
+
+#~ msgid "Lat."
+#~ msgstr "Lat."
+
+#~ msgid "Distance"
+#~ msgstr "Distanţă"
+
+#~ msgid "Size:"
+#~ msgstr "Mărime:"
+
+#~ msgid "Frame rate:"
+#~ msgstr "Viteza de randarizare:"
+
+#~ msgid "Select Display Mode"
+#~ msgstr "Mod de randarizare"
+
+#~ msgid "Resolution"
+#~ msgstr "Rezoluţie"
+
+#~ msgid "View Options"
+#~ msgstr "Obţiuni de vizualizare"
+
+#~ msgid "Globulars"
+#~ msgstr "globularii"
+
+#~ msgid "Grids"
+#~ msgstr "Caroiaje"
+
+#~ msgid "Celestial"
+#~ msgstr "Celest"
+
+#~ msgid "Horizontal"
+#~ msgstr "Orizontal"
+
+#~ msgid "Galactic"
+#~ msgstr "Galactic"
+
+#~ msgid "Ecliptic"
+#~ msgstr "Ecliptică"
+
+#~ msgid "Minor Moons"
+#~ msgstr "Loni minore"
+
+#~ msgid "DSO Labels"
+#~ msgstr "Nume obiecte îndepartate"
+
+#~ msgid "Diagrams"
+#~ msgstr "Diagrame"
+
+#~ msgid "Boundaries"
+#~ msgstr "Limite"
+
+#~ msgid "Latin Names"
+#~ msgstr "Nume latine"
+
+#~ msgid "Information Text"
+#~ msgstr "Text informativ"
+
+#~ msgid "Filter Stars"
+#~ msgstr "Filtrează stelele"
+
+#~ msgid "Montes (Mountains)"
+#~ msgstr "Montes (Munţi)"
+
+#~ msgid "Maria (Seas)"
+#~ msgstr "Maria (Mări)"
+
+#~ msgid "Valles (Valleys)"
+#~ msgstr "Valles (Văi)"
+
+#~ msgid "Terrae (Land masses)"
+#~ msgstr "Terrae (Continente)"
+
+#~ msgid "Volcanoes"
+#~ msgstr "Vulcani"
+
+#~ msgid "Other features"
+#~ msgstr "Altele"
+
+#~ msgid "Label Features"
+#~ msgstr "Nume"
+
+#~ msgid "Show Features"
+#~ msgstr "Afişează caracteristicile"
+
+#~ msgid "Minimum Labeled Feature Size"
+#~ msgstr "Mărime minimă a numelor reperelor"
+
+#~ msgid "Add New Bookmark Folder"
+#~ msgstr "Adaugă dosar nou pentru marcaje"
+
+#~ msgid "Folder Name"
+#~ msgstr "Numele dosarului"
+
+#~ msgid "Organize Bookmarks"
+#~ msgstr "Organizează marcajele"
+
+#~ msgid "Rename..."
+#~ msgstr "Redenumeşte..."
+
+#~ msgid "Delete"
+#~ msgstr "Şterge"
+
+#~ msgid "Rename Bookmark or Folder"
+#~ msgstr "Redenumeşte marcaj sau dosar"
+
+#~ msgid "New Name"
+#~ msgstr "Nume nou"
+
+#~ msgid "Compute"
+#~ msgstr "Calculează"
+
+#~ msgid "Set Date and Go to Planet"
+#~ msgstr "Setează ceasul şi mergi la planetă"
+
+#~ msgid "Lunar Eclipses"
+#~ msgstr "Eclipsă de Lună"
+
+#~ msgid "Jan"
+#~ msgstr "Ian"
+
+#~ msgid "Feb"
+#~ msgstr "Feb"
+
+#~ msgid "Mar"
+#~ msgstr "Mar"
+
+#~ msgid "Apr"
+#~ msgstr "Apr"
+
+#~ msgid "May"
+#~ msgstr "Mai"
+
+#~ msgid "Jun"
+#~ msgstr "Iun"
+
+#~ msgid "Jul"
+#~ msgstr "Iul"
+
+#~ msgid "Aug"
+#~ msgstr "Aug"
+
+#~ msgid "Sep"
+#~ msgstr "Sep"
+
+#~ msgid "Oct"
+#~ msgstr "Oct"
+
+#~ msgid "Nov"
+#~ msgstr "Noi"
+
+#~ msgid "Dec"
+#~ msgstr "Dec"

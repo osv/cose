@@ -1,0 +1,2405 @@
+# translation of celestia-kde_br_pt.po to Brazilian Portuguese
+# translation of celestia-kde.po to Brazilian Portuguese
+# This file is distributed under the same license as the PACKAGE package.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# Luis Gabriel <lgabriel@brazilmail.com>, 2003
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: celestia-kde_pt_br\n"
+"Report-Msgid-Bugs-To: chris@teyssier.org\n"
+"POT-Creation-Date: 2009-06-21 16:00+0000\n"
+"PO-Revision-Date: 2003-07-06 18:59-0300\n"
+"Last-Translator: Luis Gabriel <lgabriel@brazilmail.com>\n"
+"Language-Team: Brazilian Portuguese <en@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: KBabel 1.0\n"
+
+#: src/celengine/astro.cpp:827
+msgid "DST"
+msgstr ""
+
+#: src/celengine/astro.cpp:827
+msgid "STD"
+msgstr ""
+
+#: src/celengine/dsodb.cpp:387
+#, fuzzy
+msgid "Loaded "
+msgstr "Longitude: "
+
+#: src/celengine/dsodb.cpp:387
+#, fuzzy
+msgid " deep space objects"
+msgstr "Objetos marcados"
+
+#: src/celengine/fragmentprog.cpp:93
+msgid "Loading NV fragment program: "
+msgstr ""
+
+#: src/celengine/fragmentprog.cpp:98
+msgid "Error loading NV fragment program: "
+msgstr ""
+
+#: src/celengine/fragmentprog.cpp:115
+msgid "Error in fragment program "
+msgstr ""
+
+#: src/celengine/fragmentprog.cpp:126
+msgid "Initializing NV fragment programs . . .\n"
+msgstr ""
+
+#: src/celengine/fragmentprog.cpp:142
+msgid "All NV fragment programs loaded successfully.\n"
+msgstr ""
+
+#: src/celengine/fragmentprog.cpp:150
+msgid "Initializing ARB fragment programs . . .\n"
+msgstr ""
+
+#: src/celengine/galaxy.cpp:197
+#, c-format
+msgid "Galaxy (Hubble type: %s)"
+msgstr ""
+
+#: src/celengine/image.cpp:373
+msgid "Loading image from file "
+msgstr ""
+
+#: src/celengine/image.cpp:391
+msgid ": unrecognized or unsupported image file type.\n"
+msgstr ""
+
+#: src/celengine/image.cpp:654
+#, fuzzy
+msgid "Error opening image file "
+msgstr "Limites das Constelações"
+
+#: src/celengine/image.cpp:661
+msgid "Error: "
+msgstr ""
+
+#: src/celengine/image.cpp:661
+msgid " is not a PNG file.\n"
+msgstr ""
+
+#: src/celengine/image.cpp:688
+msgid "Error reading PNG image file "
+msgstr ""
+
+#: src/celengine/meshmanager.cpp:84
+#, fuzzy
+msgid "Loading model: "
+msgstr "Longitude: "
+
+#: src/celengine/meshmanager.cpp:162
+msgid "   Model statistics: "
+msgstr ""
+
+#: src/celengine/meshmanager.cpp:163
+msgid " vertices, "
+msgstr ""
+
+#: src/celengine/meshmanager.cpp:164
+msgid " primitives, "
+msgstr ""
+
+#: src/celengine/meshmanager.cpp:165
+msgid " materials "
+msgstr ""
+
+#: src/celengine/meshmanager.cpp:166
+msgid " unique)\n"
+msgstr ""
+
+#: src/celengine/meshmanager.cpp:170
+msgid "Error loading model '"
+msgstr ""
+
+#: src/celengine/nebula.cpp:47 src/celengine/opencluster.cpp:44
+#, c-format
+msgid "%s"
+msgstr ""
+
+#: src/celengine/solarsys.cpp:93
+msgid "Error in .ssc file (line "
+msgstr ""
+
+#: src/celengine/solarsys.cpp:1200 src/celengine/solarsys.cpp:1267
+msgid "parent body '"
+msgstr ""
+
+#: src/celengine/solarsys.cpp:1200 src/celengine/solarsys.cpp:1267
+msgid "' of '"
+msgstr ""
+
+#: src/celengine/solarsys.cpp:1200
+msgid "' not found."
+msgstr ""
+
+#: src/celengine/solarsys.cpp:1211
+msgid "warning duplicate definition of "
+msgstr ""
+
+#: src/celengine/solarsys.cpp:1247
+#, fuzzy
+msgid "bad alternate surface"
+msgstr "Superfícies &Alternativas"
+
+#: src/celengine/solarsys.cpp:1261
+#, fuzzy
+msgid "bad location"
+msgstr "Constelações"
+
+#: src/celengine/solarsys.cpp:1267
+msgid "' not found.\n"
+msgstr ""
+
+#: src/celengine/stardb.cpp:579
+msgid "Bad header for cross index\n"
+msgstr ""
+
+#: src/celengine/stardb.cpp:592
+msgid "Bad version for cross index\n"
+msgstr ""
+
+#: src/celengine/stardb.cpp:614
+msgid "Loading cross index failed at record "
+msgstr ""
+
+#: src/celengine/stardb.cpp:696
+msgid "Bad spectral type in star database, star #"
+msgstr ""
+
+#: src/celengine/stardb.cpp:711
+msgid " stars in binary database\n"
+msgstr ""
+
+#: src/celengine/stardb.cpp:735
+msgid "Total star count: "
+msgstr ""
+
+#: src/celengine/stardb.cpp:769
+msgid "Error in .stc file (line "
+msgstr ""
+
+#: src/celengine/stardb.cpp:806
+msgid "Invalid star: bad spectral type.\n"
+msgstr ""
+
+#: src/celengine/stardb.cpp:815
+msgid "Invalid star: missing spectral type.\n"
+msgstr ""
+
+#: src/celengine/stardb.cpp:962
+msgid "Barycenter "
+msgstr ""
+
+#: src/celengine/stardb.cpp:962
+msgid " does not exist.\n"
+msgstr ""
+
+#: src/celengine/stardb.cpp:1008
+msgid "Invalid star: missing right ascension\n"
+msgstr ""
+
+#: src/celengine/stardb.cpp:1021
+msgid "Invalid star: missing declination.\n"
+msgstr ""
+
+#: src/celengine/stardb.cpp:1034
+msgid "Invalid star: missing distance.\n"
+msgstr ""
+
+#: src/celengine/stardb.cpp:1070
+msgid "Invalid star: missing magnitude.\n"
+msgstr ""
+
+#: src/celengine/stardb.cpp:1087
+msgid ""
+"Invalid star: absolute (not apparent) magnitude must be specified for star "
+"near origin\n"
+msgstr ""
+
+#: src/celengine/texture.cpp:1019
+msgid "Creating tiled texture. Width="
+msgstr ""
+
+#: src/celengine/texture.cpp:1019
+msgid ", max="
+msgstr ""
+
+#: src/celengine/texture.cpp:1024
+msgid "Creating ordinary texture: "
+msgstr ""
+
+#: src/celengine/vertexprog.cpp:114
+msgid "Loading NV vertex program: "
+msgstr ""
+
+#: src/celengine/vertexprog.cpp:119
+msgid "Error loading NV vertex program: "
+msgstr ""
+
+#: src/celengine/vertexprog.cpp:136 src/celengine/vertexprog.cpp:195
+msgid "Error in vertex program "
+msgstr ""
+
+#: src/celengine/vertexprog.cpp:163
+msgid "Loading ARB vertex program: "
+msgstr ""
+
+#: src/celengine/vertexprog.cpp:168
+msgid "Error loading ARB vertex program: "
+msgstr ""
+
+#: src/celengine/vertexprog.cpp:196
+msgid ", line "
+msgstr ""
+
+#: src/celengine/vertexprog.cpp:208
+msgid "Initializing NV vertex programs . . .\n"
+msgstr ""
+
+#: src/celengine/vertexprog.cpp:240
+msgid "All NV vertex programs loaded successfully.\n"
+msgstr ""
+
+#: src/celengine/vertexprog.cpp:253
+msgid "Initializing ARB vertex programs . . .\n"
+msgstr ""
+
+#: src/celengine/vertexprog.cpp:314
+msgid "All ARB vertex programs loaded successfully.\n"
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:421
+msgid "Error reading favorites file."
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:511
+msgid "Orientation: "
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:558 src/celestia/celestiacore.cpp:560
+msgid "Error opening script file."
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:591
+#, c-format
+msgid "Error opening script '%s'"
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:609
+msgid "Unknown error opening script"
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:621
+msgid "Script coroutine initialization failed"
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:637 src/celestia/celestiacore.cpp:639
+msgid "Invalid filetype"
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:982 src/celestia/celestiacore.cpp:1787
+#: src/celestia/celestiacore.cpp:1805 src/celestia/celestiacore.cpp:2046
+#: src/celestia/celestiacore.cpp:2077
+#, c-format
+msgid "Magnitude limit: %.2f"
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:1417
+#, fuzzy
+msgid "Markers enabled"
+msgstr "Marcas"
+
+#: src/celestia/celestiacore.cpp:1420
+#, fuzzy
+msgid "Markers disabled"
+msgstr "Marcas"
+
+#: src/celestia/celestiacore.cpp:1430
+#, fuzzy
+msgid "Goto surface"
+msgstr "Vá Para a Superfície"
+
+#: src/celestia/celestiacore.cpp:1443
+#, fuzzy
+msgid "Alt-azimuth mode enabled"
+msgstr "Modo Alt-Azimute"
+
+#: src/celestia/celestiacore.cpp:1446
+#, fuzzy
+msgid "Alt-azimuth mode disabled"
+msgstr "Modo Alt-Azimute"
+
+#: src/celestia/celestiacore.cpp:1502
+#, fuzzy
+msgid "Star style: fuzzy points"
+msgstr "Estrelas Como Pontos"
+
+#: src/celestia/celestiacore.cpp:1505
+#, fuzzy
+msgid "Star style: points"
+msgstr "Estrelas Como Pontos"
+
+#: src/celestia/celestiacore.cpp:1508
+msgid "Star style: scaled discs"
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:1521
+#, fuzzy
+msgid "Comet tails enabled"
+msgstr "Caudas dos Cometas"
+
+#: src/celestia/celestiacore.cpp:1524
+#, fuzzy
+msgid "Comet tails disabled"
+msgstr "Caudas dos Cometas"
+
+#: src/celestia/celestiacore.cpp:1539
+msgid "Render path: Basic"
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:1542
+#, fuzzy
+msgid "Render path: Multitexture"
+msgstr "Multitextura"
+
+#: src/celestia/celestiacore.cpp:1545
+msgid "Render path: NVIDIA combiners"
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:1548
+msgid "Render path: OpenGL vertex program"
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:1551
+msgid "Render path: NVIDIA vertex program and combiners"
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:1554
+msgid "Render path: OpenGL vertex program/NVIDIA combiners"
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:1557
+msgid "Render path: OpenGL 1.5 vertex/fragment program"
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:1560
+msgid "Render path: NVIDIA GeForce FX"
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:1563
+msgid "Render path: OpenGL 2.0"
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:1586
+#, fuzzy
+msgid "Auto-magnitude enabled"
+msgstr "Magnitude Automática"
+
+#: src/celestia/celestiacore.cpp:1591
+#, fuzzy
+msgid "Auto-magnitude disabled"
+msgstr "Magnitude Automática"
+
+#: src/celestia/celestiacore.cpp:1613
+msgid "Cancel"
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:1649
+msgid "Time and script are paused"
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:1651
+msgid "Time is paused"
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:1655
+msgid "Resume"
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:1730
+#, fuzzy, c-format
+msgid "Light travel time:  %.4f yr "
+msgstr "Ignora Tempo de Viagem na Velocidade da Luz"
+
+#: src/celestia/celestiacore.cpp:1739
+#, c-format
+msgid "Light travel time:  %d min  %.1f s"
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:1742
+#, c-format
+msgid "Light travel time:  %d h  %d min  %.1f s"
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:1761
+msgid "Light travel delay included"
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:1766
+msgid "Light travel delay switched off"
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:1772
+msgid "Light travel delay ignored"
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:1817
+msgid "Using normal surface textures."
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:1822
+msgid "Using limit of knowledge surface textures."
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:1889
+#, fuzzy
+msgid "Follow"
+msgstr "&Seguir"
+
+#: src/celestia/celestiacore.cpp:1914
+#, fuzzy
+msgid "Time: Forward"
+msgstr "&Avançar"
+
+#: src/celestia/celestiacore.cpp:1916
+msgid "Time: Backward"
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:1929 src/celestia/celestiacore.cpp:1945
+#, fuzzy
+msgid "Time rate"
+msgstr "Zona Horária: "
+
+#: src/celestia/celestiacore.cpp:2018
+#, fuzzy
+msgid "Sync Orbit"
+msgstr "Órbita S&íncrona"
+
+#: src/celestia/celestiacore.cpp:2024
+msgid "Lock"
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:2030
+msgid "Chase"
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:2057 src/celestia/celestiacore.cpp:2088
+#, c-format
+msgid "Auto magnitude limit at 45 degrees:  %.2f"
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:2107 src/celestia/celestiacore.cpp:2122
+#, fuzzy, c-format
+msgid "Ambient light level:  %.2f"
+msgstr "Luz Ambiente"
+
+#: src/celestia/celestiacore.cpp:2133 src/celestia/celestiacore.cpp:2145
+msgid "Light gain"
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:2165
+#, fuzzy
+msgid "Bloom enabled"
+msgstr "Caudas dos Cometas"
+
+#: src/celestia/celestiacore.cpp:2167
+#, fuzzy
+msgid "Bloom disabled"
+msgstr "Caudas dos Cometas"
+
+#: src/celestia/celestiacore.cpp:2173 src/celestia/celestiacore.cpp:2181
+msgid "Exposure"
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:2532
+msgid "GL error: "
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:2659
+msgid "View too small to be split"
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:2662
+msgid "Added view"
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:2918
+msgid "ly"
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:2922
+msgid "au"
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:2943
+msgid " days"
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:2945
+msgid " hours"
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:2947
+msgid " minutes"
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:3014
+msgid "Apparent diameter: "
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:3029
+#, fuzzy
+msgid "Apparent magnitude: "
+msgstr "Magnitude Automática"
+
+#: src/celestia/celestiacore.cpp:3033
+#, fuzzy
+msgid "Absolute magnitude: "
+msgstr "Magnitude Automática"
+
+#: src/celestia/celestiacore.cpp:3055
+msgid "RA: "
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:3059
+#, fuzzy
+msgid "Dec: "
+msgstr "Objeto: "
+
+#: src/celestia/celestiacore.cpp:3123
+msgid "km"
+msgstr "km"
+
+#: src/celestia/celestiacore.cpp:3152 src/celestia/celestiacore.cpp:3226
+#: src/celestia/celestiacore.cpp:3258 src/celestia/celestiacore.cpp:3359
+msgid "Distance: "
+msgstr "Distância: "
+
+#: src/celestia/celestiacore.cpp:3158
+msgid "Star system barycenter\n"
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:3162
+#, fuzzy, c-format
+msgid "Abs (app) mag: %.2f (%.2f)\n"
+msgstr "Mag abs (apar.): "
+
+#: src/celestia/celestiacore.cpp:3168
+msgid "Luminosity: "
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:3168
+#, fuzzy
+msgid "x Sun"
+msgstr "Saturno"
+
+#: src/celestia/celestiacore.cpp:3169
+msgid "Class: "
+msgstr "Classe: "
+
+#: src/celestia/celestiacore.cpp:3171
+msgid "Neutron star"
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:3173
+msgid "Black hole"
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:3183
+#, fuzzy
+msgid "Surface temp: "
+msgstr "Temp. Superfície: "
+
+#: src/celestia/celestiacore.cpp:3186 src/celestia/celestiacore.cpp:3235
+#: src/celestia/celestiacore.cpp:3268
+msgid "Radius: "
+msgstr "Raio: "
+
+#: src/celestia/celestiacore.cpp:3189
+msgid "Rsun"
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:3199 src/celestia/celestiacore.cpp:3320
+msgid "Rotation period: "
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:3213
+msgid "Planetary companions present\n"
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:3231
+#, fuzzy
+msgid "Distance from center: "
+msgstr "Distância: "
+
+#: src/celestia/celestiacore.cpp:3336
+msgid "Temperature: "
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:3348
+#, c-format
+msgid "Apparent mag: %.2f\n"
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:3516
+msgid "  LT"
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:3525
+#, fuzzy
+msgid "Real time"
+msgstr "Hora Local"
+
+#: src/celestia/celestiacore.cpp:3527
+#, fuzzy
+msgid "-Real time"
+msgstr "Hora Local"
+
+#: src/celestia/celestiacore.cpp:3531
+msgid "Time stopped"
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:3536
+msgid " faster"
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:3541
+msgid " slower"
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:3547
+#, fuzzy
+msgid " (Paused)"
+msgstr "Para o Tempo"
+
+#: src/celestia/celestiacore.cpp:3565
+msgid "FPS: "
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:3567
+#, fuzzy
+msgid ""
+"\n"
+"Speed: "
+msgstr ""
+"\n"
+"Seleção: "
+
+#: src/celestia/celestiacore.cpp:3571
+msgid " m/s"
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:3573
+msgid " km/s"
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:3577
+msgid " AU/s"
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:3579
+msgid " ly/s"
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:3596
+msgid "Travelling "
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:3609
+msgid "Track "
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:3623
+#, fuzzy
+msgid "Follow "
+msgstr "&Seguir"
+
+#: src/celestia/celestiacore.cpp:3628
+#, fuzzy
+msgid "Sync Orbit "
+msgstr "Órbita S&íncrona"
+
+#: src/celestia/celestiacore.cpp:3633
+msgid "Lock "
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:3642
+#, fuzzy
+msgid "Chase "
+msgstr "Classe: "
+
+#: src/celestia/celestiacore.cpp:3658
+msgid "FOV: "
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:3688 src/celestia/celestiacore.cpp:3691
+#, fuzzy
+msgid "Sun"
+msgstr "Saturno"
+
+#: src/celestia/celestiacore.cpp:3865
+msgid "Target name: "
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:3947
+msgid " at "
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:3948
+msgid " fps"
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:3950
+#, fuzzy
+msgid "  Recording"
+msgstr "Renderizando"
+
+#: src/celestia/celestiacore.cpp:3952
+msgid "  Paused"
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:3971
+msgid "F11 Start/Pause    F12 Stop"
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:3980 src/celestia/celestiacore.cpp:3983
+msgid "Edit Mode"
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:4049
+msgid "Loading solar system catalog: "
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:4090
+#, fuzzy
+msgid "Loading "
+msgstr "Longitude: "
+
+#: src/celestia/celestiacore.cpp:4125
+msgid "License file 'License.txt' is missing!"
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:4146
+msgid "Error reading configuration file."
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:4157
+msgid "Initialization of SPICE library failed."
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:4204
+msgid "Cannot read star database."
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:4226
+#, fuzzy
+msgid "Error opening deepsky catalog file."
+msgstr "Limites das Constelações"
+
+#: src/celestia/celestiacore.cpp:4278
+msgid "Error opening solar system catalog.\n"
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:4311
+msgid "Error opening asterisms file."
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:4326
+#, fuzzy
+msgid "Error opening constellation boundaries files."
+msgstr "Limites das Constelações"
+
+#: src/celestia/celestiacore.cpp:4393
+msgid "render path: "
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:4404
+msgid "Failed to initialize renderer"
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:4420
+msgid "Error loading font; text will not be visible.\n"
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:4477
+msgid "Error reading cross index "
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:4479
+msgid "Loaded cross index "
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:4493 src/celestia/celestiacore.cpp:4515
+msgid "Error opening "
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:4500
+msgid "Error reading star names file\n"
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:4523
+msgid "Error reading stars file\n"
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:4550
+msgid "Error opening star catalog "
+msgstr ""
+
+#: src/celestia/oggtheoracapture.cpp:159
+#, c-format
+msgid "Error in creating ogg file %s for capture.\n"
+msgstr ""
+
+#: src/celestia/oggtheoracapture.cpp:253 src/celestia/oggtheoracapture.cpp:273
+msgid "Internal Ogg library error."
+msgstr ""
+
+#: src/celestia/oggtheoracapture.cpp:308
+#, c-format
+msgid ""
+"OggTheoraCapture::start() - Theora video: %s %.2f(%d/%d) fps quality %d %dx%"
+"d offset (%dx%d)\n"
+msgstr ""
+
+#: src/celestia/oggtheoracapture.cpp:423
+#, c-format
+msgid "OggTheoraCapture::cleanup() - wrote %d frames\n"
+msgstr ""
+
+#: src/celestia/url.cpp:653
+msgid "Settings"
+msgstr ""
+
+#: src/celestia/winmain.cpp:625
+msgid "Vendor: "
+msgstr ""
+
+#: src/celestia/winmain.cpp:630
+#, fuzzy
+msgid "Renderer: "
+msgstr "Renderizando"
+
+#: src/celestia/winmain.cpp:635
+msgid "Version: "
+msgstr ""
+
+#: src/celestia/winmain.cpp:645
+msgid "GLSL version: "
+msgstr ""
+
+#: src/celestia/winmain.cpp:656
+msgid "Max simultaneous textures: "
+msgstr ""
+
+#: src/celestia/winmain.cpp:663
+msgid "Max texture size: "
+msgstr ""
+
+#: src/celestia/winmain.cpp:672
+msgid "Max cube map size: "
+msgstr ""
+
+#: src/celestia/winmain.cpp:680
+msgid "Point size range: "
+msgstr ""
+
+#: src/celestia/winmain.cpp:685
+msgid "Supported Extensions:"
+msgstr ""
+
+#: src/celestia/winmain.cpp:1386
+msgid "Windowed Mode"
+msgstr ""
+
+#: src/celestia/winmain.cpp:1508
+msgid "Asteroids"
+msgstr "Asteróides"
+
+#: src/celestia/winmain.cpp:1510
+#, fuzzy
+msgid "Comets"
+msgstr "Cometa"
+
+#: src/celestia/winmain.cpp:1512
+msgid "Invisibles"
+msgstr ""
+
+#: src/celestia/winmain.cpp:1514
+msgid "Moons"
+msgstr "Luas"
+
+#: src/celestia/winmain.cpp:1516 src/celestia/winmain.cpp:1551
+#: src/celestia/winmain.cpp:1668
+msgid "Planets"
+msgstr "Planetas"
+
+#: src/celestia/winmain.cpp:1518
+msgid "Spacecraft"
+msgstr "Espaçonave"
+
+#: src/celestia/winmain.cpp:1608 src/celestia/winmain.cpp:1656
+#: src/celestia/winmain.cpp:1679
+msgid "&Goto"
+msgstr "&Vá Para"
+
+#: src/celestia/winmain.cpp:1609 src/celestia/winmain.cpp:1680
+msgid "&Follow"
+msgstr "&Seguir"
+
+#: src/celestia/winmain.cpp:1610
+#, fuzzy
+msgid "S&ync Orbit"
+msgstr "Órbita S&íncrona"
+
+#: src/celestia/winmain.cpp:1611 src/celestia/winmain.cpp:1657
+#: src/celestia/winmain.cpp:1681
+msgid "&Info"
+msgstr "&Informação"
+
+#: src/celestia/winmain.cpp:1613
+msgid "&Reference Vectors"
+msgstr ""
+
+#: src/celestia/winmain.cpp:1614
+#, fuzzy
+msgid "Show Body Axes"
+msgstr "Mostrar Limites"
+
+#: src/celestia/winmain.cpp:1615
+#, fuzzy
+msgid "Show Frame Axes"
+msgstr "Mostrar Marcas"
+
+#: src/celestia/winmain.cpp:1616
+#, fuzzy
+msgid "Show Sun Direction"
+msgstr "Mostrar Constelações"
+
+#: src/celestia/winmain.cpp:1617
+#, fuzzy
+msgid "Show Velocity Vector"
+msgstr "Mostrar Nome das Luas"
+
+#: src/celestia/winmain.cpp:1618
+#, fuzzy
+msgid "Show Planetographic Grid"
+msgstr "Mostrar Planetas"
+
+#: src/celestia/winmain.cpp:1619
+#, fuzzy
+msgid "Show Terminator"
+msgstr "Mostrar Marcas"
+
+#: src/celestia/winmain.cpp:1633
+#, fuzzy
+msgid "&Satellites"
+msgstr "Satélites"
+
+#: src/celestia/winmain.cpp:1643
+msgid "&Alternate Surfaces"
+msgstr "Superfícies &Alternativas"
+
+#: src/celestia/winmain.cpp:1666
+msgid "Orbiting Bodies"
+msgstr ""
+
+#: src/celestia/winmain.cpp:1693
+msgid "&Unmark"
+msgstr "&Desmarcar"
+
+#: src/celestia/winmain.cpp:1695
+msgid "&Mark"
+msgstr "&Marcar"
+
+#: src/celestia/winmain.cpp:3137
+#, fuzzy
+msgid "Loading: "
+msgstr "Longitude: "
+
+#: src/celestia/winmain.cpp:3305 src/celutil/util.cpp:72
+#: src/celutil/util.cpp:76
+msgid "LANGUAGE"
+msgstr "pt_br"
+
+#: src/celestia/winmain.cpp:3307
+msgid "WinLangID"
+msgstr "416"
+
+#: src/celestia/winmain.cpp:3809
+#, fuzzy
+msgid "Copied URL"
+msgstr "Copia URL"
+
+#: src/celestia/winmain.cpp:3903
+#, fuzzy
+msgid "Loading URL"
+msgstr "Longitude: "
+
+#: src/celestia/winmain.cpp:3915
+#, fuzzy
+msgid "Error opening script"
+msgstr "Limites das Constelações"
+
+#: src/celestia/winmain.cpp:3934
+msgid "Error loading script"
+msgstr ""
+
+#: src/celestia/winmain.cpp:3939
+msgid "Running script"
+msgstr ""
+
+#: src/celestia/wineclipses.cpp:58
+msgid "Planet"
+msgstr "Planeta"
+
+#: src/celestia/wineclipses.cpp:60
+#, fuzzy
+msgid "Satellite"
+msgstr "Satélites"
+
+#: src/celestia/wineclipses.cpp:62
+msgid "Date"
+msgstr "Data"
+
+#: src/celestia/wineclipses.cpp:64
+msgid "Start"
+msgstr "Início"
+
+#: src/celestia/wineclipses.cpp:66
+#, fuzzy
+msgid "Duration"
+msgstr "Diamante"
+
+#: src/celestia/wineclipses.cpp:316
+msgid "Earth"
+msgstr "Terra"
+
+#: src/celestia/wineclipses.cpp:317
+msgid "Jupiter"
+msgstr "Júpiter"
+
+#: src/celestia/wineclipses.cpp:318
+msgid "Saturn"
+msgstr "Saturno"
+
+#: src/celestia/wineclipses.cpp:319
+#, fuzzy
+msgid "Uranus"
+msgstr "Urano"
+
+#: src/celestia/wineclipses.cpp:320
+msgid "Neptune"
+msgstr "Netuno"
+
+#: src/celestia/wineclipses.cpp:321
+msgid "Pluto"
+msgstr "Plutão"
+
+#: src/celestia/winstarbrowser.cpp:70
+msgid "Name"
+msgstr "Nome"
+
+#: src/celestia/winstarbrowser.cpp:72
+#, fuzzy
+msgid "Distance (ly)"
+msgstr "Distância: "
+
+#: src/celestia/winstarbrowser.cpp:75
+#, fuzzy
+msgid "App. mag"
+msgstr "Mag. Apar."
+
+#: src/celestia/winstarbrowser.cpp:77
+#, fuzzy
+msgid "Abs. mag"
+msgstr "Mag. Abs."
+
+#: src/celestia/winstarbrowser.cpp:79
+#, fuzzy
+msgid "Type"
+msgstr "Tipo"
+
+#: src/celestia/wintime.cpp:95
+#, fuzzy
+msgid "Universal Time"
+msgstr "Reverte o Tempo"
+
+#: src/celestia/wintime.cpp:96
+msgid "Local Time"
+msgstr "Hora Local"
+
+#: src/celestia/wintime.cpp:97
+#, fuzzy
+msgid "Time Zone Name"
+msgstr "Zona Horária: "
+
+#: src/celestia/wintime.cpp:98
+msgid "UTC Offset"
+msgstr ""
+
+#~ msgid "Celestial Browser"
+#~ msgstr "Visualizador Celestial"
+
+#~ msgid "Moon"
+#~ msgstr "Lua"
+
+#~ msgid "Asteroid"
+#~ msgstr "Asteróide"
+
+#~ msgid "Comet"
+#~ msgstr "Cometa"
+
+#, fuzzy
+#~ msgid "Dwarf Planet"
+#~ msgstr "Planeta"
+
+#~ msgid "-"
+#~ msgstr "-"
+
+#~ msgid "Eclipse Finder"
+#~ msgstr "Buscador de Eclipse"
+
+#, fuzzy
+#~ msgid "&Add Bookmark"
+#~ msgstr "Marcadores"
+
+#~ msgid "Add a bookmark for the current document"
+#~ msgstr "Adicione um marcador do documento atual"
+
+#~ msgid "Add &Relative Bookmark"
+#~ msgstr "Adicione um Marcador &Relativo"
+
+#~ msgid "Add a relative bookmark for the current document"
+#~ msgstr "Adicione um marcador relativo para o documento atual"
+
+#~ msgid "Add &Settings Bookmark"
+#~ msgstr "Adicionar &Configurações do Marcador"
+
+#~ msgid "Add a settings bookmark for the current document"
+#~ msgstr "Adicione um marcador do documento corrente"
+
+#~ msgid "Edit your bookmark collection in a separate window"
+#~ msgstr "Edite a sua coleção de marcadores em uma janela separada"
+
+#~ msgid "&New Folder..."
+#~ msgstr "&Nova Pasta..."
+
+#~ msgid "Create a new bookmark folder in this menu"
+#~ msgstr "Crie uma nova pasta de marcadores neste menu"
+
+#~ msgid "Can't add bookmark with empty URL"
+#~ msgstr "Não posso adicionar um marcador com uma URL vazia"
+
+#~ msgid "Go to &URL..."
+#~ msgstr "Vá para &URL"
+
+#~ msgid "Go to &Long/Lat..."
+#~ msgstr "Vá para &Long/Lat..."
+
+#~ msgid "&Back"
+#~ msgstr "&Voltar"
+
+#~ msgid "&Forward"
+#~ msgstr "&Avançar"
+
+#, fuzzy
+#~ msgid "Home"
+#~ msgstr "Cometa"
+
+#~ msgid "Bookmarks"
+#~ msgstr "Marcadores"
+
+#~ msgid "Full Screen"
+#~ msgstr "Tela Cheia"
+
+#~ msgid "Copy URL"
+#~ msgstr "Copia URL"
+
+#~ msgid "Set Time..."
+#~ msgstr "Ajusta Hora..."
+
+#~ msgid "Set Time to Now"
+#~ msgstr "Ajusta Hora para Agora"
+
+#~ msgid "Accelerate Time"
+#~ msgstr "Acelera Tempo"
+
+#~ msgid "Decelerate Time"
+#~ msgstr "Desacelera Tempo"
+
+#, fuzzy
+#~ msgid "Accelerate Time (x2)"
+#~ msgstr "Acelera Tempo"
+
+#, fuzzy
+#~ msgid "Decelerate Time (/2)"
+#~ msgstr "Desacelera Tempo"
+
+#~ msgid "Pause Time"
+#~ msgstr "Para o Tempo"
+
+#~ msgid "Reverse Time"
+#~ msgstr "Reverte o Tempo"
+
+#~ msgid "Split View Vertically"
+#~ msgstr "Divide a Tela Verticalmente"
+
+#~ msgid "Split View Horizontally"
+#~ msgstr "Divide a Tela Horizontalmente"
+
+#~ msgid "Cycle View"
+#~ msgstr "Visão Cíclica"
+
+#~ msgid "Single View"
+#~ msgstr "Visão Única"
+
+#~ msgid "Delete View"
+#~ msgstr "Apaga Visão"
+
+#~ msgid "Frames Visible"
+#~ msgstr "Frames Visíveis"
+
+#~ msgid "Active Frame Visible"
+#~ msgstr "Frame Ativo Visível"
+
+#~ msgid "Synchronize Time"
+#~ msgstr "Sincroniza a Hora"
+
+#~ msgid "Alt-Azimuth Mode"
+#~ msgstr "Modo Alt-Azimute"
+
+#~ msgid "Go To Surface"
+#~ msgstr "Vá Para a Superfície"
+
+#~ msgid "Show Stars"
+#~ msgstr "Mostrar Estrelas"
+
+#~ msgid "Show Planets"
+#~ msgstr "Mostrar Planetas"
+
+#~ msgid "Show Galaxies"
+#~ msgstr "Mostrar Galáxias"
+
+#, fuzzy
+#~ msgid "Show Globulars"
+#~ msgstr "Mostrar Mapas de Nuvens"
+
+#, fuzzy
+#~ msgid "Show Partial Trajectories"
+#~ msgstr "Mostrar Planetas"
+
+#, fuzzy
+#~ msgid "Show Nebulae"
+#~ msgstr "Mostrar Planetas"
+
+#~ msgid "Show Constellations"
+#~ msgstr "Mostrar Constelações"
+
+#~ msgid "Show CloudMaps"
+#~ msgstr "Mostrar Mapas de Nuvens"
+
+#, fuzzy
+#~ msgid "Show Cloud Shadows"
+#~ msgstr "Mostrar Mapas de Nuvens"
+
+#~ msgid "Show Orbits"
+#~ msgstr "Mostrar Órbitas"
+
+#, fuzzy
+#~ msgid "Show Asteroid Orbits"
+#~ msgstr "Mostrar Nome dos Asteróides"
+
+#, fuzzy
+#~ msgid "Show Comet Orbits"
+#~ msgstr "Mostrar Cauda dos Cometas"
+
+#, fuzzy
+#~ msgid "Show Moon Orbits"
+#~ msgstr "Mostrar Órbitas"
+
+#, fuzzy
+#~ msgid "Show Star Orbits"
+#~ msgstr "Mostrar Órbitas"
+
+#, fuzzy
+#~ msgid "Show Planet Orbits"
+#~ msgstr "Mostrar Planetas"
+
+#, fuzzy
+#~ msgid "Show Spacecraft Orbits"
+#~ msgstr "Mostrar Nome das Espaçonaves"
+
+#~ msgid "Show Celestial Grid"
+#~ msgstr "Mostrar Grade Celestial"
+
+#~ msgid "Show Night Side Lights"
+#~ msgstr "Mostrar Luzes no Lado Escuro"
+
+#~ msgid "Show Markers"
+#~ msgstr "Mostrar Marcas"
+
+#~ msgid "Show Atmospheres"
+#~ msgstr "Mostrar Atmosferas"
+
+#~ msgid "Show Smooth Orbit Lines"
+#~ msgstr "Mostrar Linhas Orbitais Suaves"
+
+#~ msgid "Show Eclipse Shadows"
+#~ msgstr "Mostrar Sombras dos Eclipses "
+
+#~ msgid "Show Ring Shadows"
+#~ msgstr "Mostrar Sombras nos Anéis"
+
+#~ msgid "Show Boundaries"
+#~ msgstr "Mostrar Limites"
+
+#~ msgid "Auto Magnitudes"
+#~ msgstr "Magnitude Automática"
+
+#~ msgid "Show Comet Tails"
+#~ msgstr "Mostrar Cauda dos Cometas"
+
+#~ msgid "Show Star Labels"
+#~ msgstr "Mostrar Nome das Estrelas"
+
+#~ msgid "Show Planet Labels"
+#~ msgstr "Mostrar Nome dos Planetas"
+
+#~ msgid "Show Moon Labels"
+#~ msgstr "Mostrar Nome das Luas"
+
+#, fuzzy
+#~ msgid "Show Comet Labels"
+#~ msgstr "Mostrar Cauda dos Cometas"
+
+#~ msgid "Show Constellation Labels"
+#~ msgstr "Mostrar Nome das Constelações"
+
+#, fuzzy
+#~ msgid "Constellation Labels in Latin"
+#~ msgstr "Mostrar Nome das Constelações"
+
+#~ msgid "Show Galaxy Labels"
+#~ msgstr "Mostrar Nome das Galáxias"
+
+#, fuzzy
+#~ msgid "Show Globular Labels"
+#~ msgstr "Mostrar Nome dos Planetas"
+
+#, fuzzy
+#~ msgid "Show Nebula Labels"
+#~ msgstr "Mostrar Nome dos Planetas"
+
+#, fuzzy
+#~ msgid "Show Open Cluster Labels"
+#~ msgstr "Mostrar Nome dos Asteróides"
+
+#~ msgid "Show Asteroid Labels"
+#~ msgstr "Mostrar Nome dos Asteróides"
+
+#~ msgid "Show Spacecraft Labels"
+#~ msgstr "Mostrar Nome das Espaçonaves"
+
+#, fuzzy
+#~ msgid "Show Location Labels"
+#~ msgstr "Mostrar Nome das Luas"
+
+#~ msgid "Display Local Time"
+#~ msgstr "Mostrar a Hora Local"
+
+#, fuzzy
+#~ msgid "Show City Locations"
+#~ msgstr "Mostrar Nome das Luas"
+
+#, fuzzy
+#~ msgid "Show Observatory Locations"
+#~ msgstr "Mostrar Nome das Luas"
+
+#, fuzzy
+#~ msgid "Show Landing Sites Locations"
+#~ msgstr "Mostrar Luzes no Lado Escuro"
+
+#, fuzzy
+#~ msgid "Show Crater Locations"
+#~ msgstr "Mostrar Constelações"
+
+#, fuzzy
+#~ msgid "Show Mons Locations"
+#~ msgstr "Mostrar Constelações"
+
+#, fuzzy
+#~ msgid "Show Terra Locations"
+#~ msgstr "Mostrar Nome das Luas"
+
+#, fuzzy
+#~ msgid "Show Vallis Locations"
+#~ msgstr "Mostrar Nome das Luas"
+
+#, fuzzy
+#~ msgid "Show Mare Locations"
+#~ msgstr "Mostrar Nome das Luas"
+
+#, fuzzy
+#~ msgid "Show Other Locations"
+#~ msgstr "Mostrar Nome das Luas"
+
+#~ msgid "Wireframe Mode"
+#~ msgstr "Modo Wireframe"
+
+#~ msgid "Basic"
+#~ msgstr "Básico"
+
+#~ msgid "Multitexture"
+#~ msgstr "Multitextura"
+
+#~ msgid "NvCombiners"
+#~ msgstr "NvCombiners"
+
+#~ msgid "DOT3 ARBVP"
+#~ msgstr "DOT3-ARBVP"
+
+#~ msgid "NvCombiner NvVP"
+#~ msgstr "NvCombiner NvVP"
+
+#~ msgid "NvCombiner ARBVP"
+#~ msgstr "NvCombiner ARBVP"
+
+#~ msgid "ARBFP ARBVP"
+#~ msgstr "ARBFP ARBVP"
+
+#~ msgid "NV30"
+#~ msgstr "NV30"
+
+#, fuzzy
+#~ msgid "OpenGL 2.0"
+#~ msgstr "OPenGL"
+
+#~ msgid "Cycle OpenGL Render Path"
+#~ msgstr "Renderização OpenGL Cíclica"
+
+#~ msgid "Grab Image"
+#~ msgstr "Captura Imagem"
+
+#~ msgid "OpenGL info"
+#~ msgstr "Informação OpenGL"
+
+#~ msgid "Show Bookmark Toolbar"
+#~ msgstr "Mostra a Barra de Ferramentas de Marcadores"
+
+#~ msgid "OpenGL Info"
+#~ msgstr "Informação OpenGL"
+
+#~ msgid "UTC"
+#~ msgstr "UTC"
+
+#, fuzzy
+#~ msgid "Go to URL"
+#~ msgstr "Vá para &URL"
+
+#~ msgid "Enter URL"
+#~ msgstr "Entre com a URL"
+
+#~ msgid "Object: "
+#~ msgstr "Objeto: "
+
+#~ msgid "Longitude: "
+#~ msgstr "Longitude: "
+
+#~ msgid "East"
+#~ msgstr "Leste"
+
+#~ msgid "West"
+#~ msgstr "Oeste"
+
+#~ msgid "Latitude: "
+#~ msgstr "Latitude: "
+
+#~ msgid "North"
+#~ msgstr "Norte"
+
+#~ msgid "South"
+#~ msgstr "Sul"
+
+#~ msgid "Altitude: "
+#~ msgstr "Altitude: "
+
+#~ msgid "Celestia encountered an error while processing your script"
+#~ msgstr "Celestia encontrou um erro enquanto processava seu script"
+
+#, fuzzy
+#~ msgid "Celestia"
+#~ msgstr "Grade Celestial"
+
+#~ msgid "Start and go to url"
+#~ msgstr "Iniciar e ir para a url"
+
+#, fuzzy
+#~ msgid "_: NAME OF TRANSLATORS\\nYour names"
+#~ msgstr "Luis Gustavo de B. Gabriel"
+
+#, fuzzy
+#~ msgid "_: EMAIL OF TRANSLATORS\\nYour emails"
+#~ msgstr "lgabriel@brazilmail.com"
+
+#~ msgid "Celestia Preferences"
+#~ msgstr "Preferências do Celestia"
+
+#~ msgid "Rendering"
+#~ msgstr "Renderizando"
+
+#~ msgid "Show"
+#~ msgstr "Mostrar"
+
+#~ msgid "Stars"
+#~ msgstr "Estrelas"
+
+#~ msgid "Galaxies"
+#~ msgstr "Galáxias"
+
+#~ msgid "Atmospheres"
+#~ msgstr "Atmosferas"
+
+#~ msgid "Clouds"
+#~ msgstr "Nuvens"
+
+#, fuzzy
+#~ msgid "Cloud Shadows"
+#~ msgstr "Sombras dos Eclipses"
+
+#~ msgid "Night Side Lights"
+#~ msgstr "Luzes do Lado Escuro"
+
+#~ msgid "Eclipse Shadows"
+#~ msgstr "Sombras dos Eclipses"
+
+#~ msgid "Comet Tails"
+#~ msgstr "Caudas dos Cometas"
+
+#~ msgid "Orbits"
+#~ msgstr "Órbitas"
+
+#~ msgid "Smooth Orbit Lines"
+#~ msgstr "Linhas de Órbita Suaves"
+
+#~ msgid "Celestial Grid"
+#~ msgstr "Grade Celestial"
+
+#~ msgid "Constellations"
+#~ msgstr "Constelações"
+
+#~ msgid "Markers"
+#~ msgstr "Marcas"
+
+#~ msgid "Ring Shadows"
+#~ msgstr "Sombras nos Anéis"
+
+#~ msgid "Constellation Boundaries"
+#~ msgstr "Limites das Constelações"
+
+#~ msgid "Labels"
+#~ msgstr "Etiquetas"
+
+#, fuzzy
+#~ msgid "Constellations in Latin"
+#~ msgstr "Constelações"
+
+#~ msgid "Spacecrafts"
+#~ msgstr "Espaçonaves"
+
+#, fuzzy
+#~ msgid "Locations"
+#~ msgstr "Constelações"
+
+#~ msgid "Ambient Light"
+#~ msgstr "Luz Ambiente"
+
+#~ msgid "Limiting Magnitude"
+#~ msgstr "Magnitude Limite"
+
+#~ msgid "Info Text"
+#~ msgstr "Informação de Texto"
+
+#~ msgid "Level: "
+#~ msgstr "Nível: "
+
+#~ msgid "None"
+#~ msgstr "Nenhum"
+
+#~ msgid "Terse"
+#~ msgstr "Breve"
+
+#~ msgid "Verbose"
+#~ msgstr "Completa"
+
+#, fuzzy
+#~ msgid "Textures"
+#~ msgstr "Breve"
+
+#, fuzzy
+#~ msgid "Resolution: "
+#~ msgstr ""
+#~ "\n"
+#~ "Seleção: "
+
+#, fuzzy
+#~ msgid "Low"
+#~ msgstr "Agora"
+
+#~ msgid "Automatic FOV"
+#~ msgstr "Campo de Visão Automático"
+
+#~ msgid "Screen DPI: "
+#~ msgstr "Tela DPI: "
+
+#~ msgid "Viewing Distance (cm): "
+#~ msgstr "Distância de Visualização (cm): "
+
+#, fuzzy
+#~ msgid "Mons"
+#~ msgstr "Luas"
+
+#, fuzzy
+#~ msgid "Terra"
+#~ msgstr "Breve"
+
+#, fuzzy
+#~ msgid "Vallis"
+#~ msgstr "Satélites"
+
+#, fuzzy
+#~ msgid "Mare"
+#~ msgstr "Marcas"
+
+#~ msgid "Date/Time"
+#~ msgstr "Data/Hora"
+
+#~ msgid "Display"
+#~ msgstr "Display"
+
+#~ msgid "Timezone: "
+#~ msgstr "Zona Horária: "
+
+#, fuzzy
+#~ msgid "Local Format"
+#~ msgstr "Hora Local"
+
+#~ msgid "Set"
+#~ msgstr "Ajusta"
+
+#~ msgid "Local Time is only supported for dates between 1902 and 2037.\n"
+#~ msgstr "Hora Local só é suportada para datas entre 1902 e 2037.\n"
+
+#~ msgid "Now"
+#~ msgstr "Agora"
+
+#~ msgid ""
+#~ "\n"
+#~ "Selection: "
+#~ msgstr ""
+#~ "\n"
+#~ "Seleção: "
+
+#~ msgid "Include Light Travel Time"
+#~ msgstr "Inclui Tempo de Viagem na Velocidade da Luz"
+
+#~ msgid "Ignore Light Travel Time "
+#~ msgstr "Ignora Tempo de Viagem na Velocidade da Luz"
+
+#~ msgid "OpenGL"
+#~ msgstr "OPenGL"
+
+#~ msgid "Key Bindings"
+#~ msgstr "Definições de Teclado"
+
+#~ msgid "<b>Unextended OpenGL 1.1</b>"
+#~ msgstr "<b>OpenGL 1.1 Não Estendido</b>"
+
+#~ msgid "<b>Multiple textures and the ARB_texenv_combine extension</b>"
+#~ msgstr "<b>Múltiplas texturas e extensão ARB_texenv_combine</b>"
+
+#~ msgid "<b>NVIDIA combiners, no vertex programs</b>"
+#~ msgstr "<b>combinadores NVIDIA, sem programas vertex</b>"
+
+#~ msgid "<b>ARB_texenv_DOT3 extension, ARB_vertex_program extension</b>"
+#~ msgstr "<b>extensão ARB_texenv_DOT3, extensão ARB_vertex_program</b>"
+
+#~ msgid ""
+#~ "<b>NVIDIA Combiners, NV_vertex_program extension</b><br> provide bump "
+#~ "mapping, ring shadows, and specular highlights on any Geforce or ATI "
+#~ "Radeon graphics card, though NvCombiner ARBVP is a slightly better option "
+#~ "for Geforce users"
+#~ msgstr ""
+#~ "<b>Combinadores NVIDIA, extensão NV_vertex_program</b><br> fornece bump "
+#~ "mapping, sombras nos anéis, e brilho especular em qualquer placa gráfica "
+#~ "Geforce ou ATI Radeon, embora NvCombiner ARBVP é uma opção ligeiramente "
+#~ "melhor para usuários de Geforce"
+
+#~ msgid "<b>NVIDIA Combiners, ARB_vertex_program extension</b>"
+#~ msgstr "<b>Combinadores NVIDIA, extensão ARB_vertex_program</b>"
+
+#~ msgid ""
+#~ "<b>ARB_fragment_program and ARB_vertex_program extensions</b><br>provide "
+#~ "advanced effects on Geforce FX and Radeon 9700 cards"
+#~ msgstr ""
+#~ "<b>Extensões ARB_fragment_program e ARB_vertex_program</b><br>fornecem "
+#~ "efeitos avançados nas placas Geforce FX e Radeon 9700"
+
+#~ msgid "<b>NV_fragment_program and ARB_vertex_program extensions</b>"
+#~ msgstr "<b>Extensões NV_fragment_program e ARB_vertex_program</b>"
+
+#~ msgid "Abs (app) mag: "
+#~ msgstr "Mag abs (apar.): "
+
+#~ msgid "Surface Temp: "
+#~ msgstr "Temp. Superfície: "
+
+#~ msgid "Marked objects"
+#~ msgstr "Objetos marcados"
+
+#~ msgid "&Select"
+#~ msgstr "&Selecionar"
+
+#~ msgid "&Center"
+#~ msgstr "&Centralizar"
+
+#~ msgid "S&ynch Orbit"
+#~ msgstr "Órbita S&íncrona"
+
+#~ msgid "Unmark &All"
+#~ msgstr "Desmarcar &Tudo"
+
+#~ msgid "Diamond"
+#~ msgstr "Diamante"
+
+#~ msgid "Triangle"
+#~ msgstr "Triângulo"
+
+#~ msgid "Square"
+#~ msgstr "Quadrado"
+
+#, fuzzy
+#~ msgid "Filled Square"
+#~ msgstr "Quadrado"
+
+#~ msgid "Plus"
+#~ msgstr "Mais"
+
+#~ msgid "X"
+#~ msgstr "X"
+
+#, fuzzy
+#~ msgid "Disk"
+#~ msgstr "Dist."
+
+#~ msgid "Normal"
+#~ msgstr "Normal"
+
+#, fuzzy
+#~ msgid "Small Bodies"
+#~ msgstr "Satélites"
+
+#, fuzzy
+#~ msgid "Dwarf Planets"
+#~ msgstr "Planeta"
+
+#~ msgid "&Navigation"
+#~ msgstr "&Navegação"
+
+#, fuzzy
+#~ msgid "Options"
+#~ msgstr "Órbitas"
+
+#, fuzzy
+#~ msgid "Objects"
+#~ msgstr "Objeto: "
+
+#~ msgid "OpenGL Render Path"
+#~ msgstr "Caminho de Renderização do OpenGL"
+
+#~ msgid "Time"
+#~ msgstr "Hora"
+
+#~ msgid "MultiView"
+#~ msgstr "MultiVisão"
+
+#~ msgid "Dist."
+#~ msgstr "Dist."
+
+#~ msgid "App. Mag."
+#~ msgstr "Mag. Apar."
+
+#~ msgid "Abs. Mag."
+#~ msgstr "Mag. Abs."
+
+#~ msgid "With Planets"
+#~ msgstr "Com Planetas"
+
+#~ msgid "Brightest (Abs.)"
+#~ msgstr "Mais brilhante (Abs.)"
+
+#~ msgid "Brightest (App.)"
+#~ msgstr "Mais brilhante (Apar.)"
+
+#~ msgid "Nearest"
+#~ msgstr "Mais próximo"
+
+#, fuzzy
+#~ msgid "&Close"
+#~ msgstr "Nuvens"
+
+#~ msgid "Alt+C"
+#~ msgstr "Alt+C"
+
+#~ msgid "Refresh"
+#~ msgstr "Atualiza"
+
+#, fuzzy
+#~ msgid "End"
+#~ msgstr "Fim"
+
+#~ msgid "Solar Eclipses"
+#~ msgstr "Eclipses Solares"
+
+#~ msgid "Moon Eclipses"
+#~ msgstr "Eclipses Lunares"
+
+#, fuzzy
+#~ msgid "Search"
+#~ msgstr "Buscar"
+
+#, fuzzy
+#~ msgid "Close"
+#~ msgstr "Nuvens"
+
+#, fuzzy
+#~ msgid "Frame Rate:"
+#~ msgstr "Zona Horária: "
+
+#, fuzzy
+#~ msgid "Venus"
+#~ msgstr "Luas"
+
+#, fuzzy
+#~ msgid "Mars"
+#~ msgstr "Marcas"
+
+#, fuzzy
+#~ msgid "Deimos"
+#~ msgstr "Diamante"
+
+#, fuzzy
+#~ msgid "Callisto"
+#~ msgstr "Satélites"
+
+#, fuzzy
+#~ msgid "Prometheus"
+#~ msgstr "Cometa"
+
+#, fuzzy
+#~ msgid "Epimetheus"
+#~ msgstr "Cometa"
+
+#, fuzzy
+#~ msgid "Janus"
+#~ msgstr "Urano"
+
+#, fuzzy
+#~ msgid "Mimas"
+#~ msgstr "Marcas"
+
+#, fuzzy
+#~ msgid "Dione"
+#~ msgstr "Diamante"
+
+#, fuzzy
+#~ msgid "Titan"
+#~ msgstr "Triângulo"
+
+#, fuzzy
+#~ msgid "Hyperion"
+#~ msgstr "Órbitas"
+
+#, fuzzy
+#~ msgid "Iapetus"
+#~ msgstr "Cometa"
+
+#, fuzzy
+#~ msgid "Ariel"
+#~ msgstr "Órbitas"
+
+#, fuzzy
+#~ msgid "Umbriel"
+#~ msgstr "Órbitas"
+
+#, fuzzy
+#~ msgid "Titania"
+#~ msgstr "Triângulo"
+
+#, fuzzy
+#~ msgid "Oberon"
+#~ msgstr "Órbitas"
+
+#, fuzzy
+#~ msgid "Proteus"
+#~ msgstr "Breve"
+
+#, fuzzy
+#~ msgid "Triton"
+#~ msgstr "Órbitas"
+
+#, fuzzy
+#~ msgid "Nereid"
+#~ msgstr "Breve"
+
+#, fuzzy
+#~ msgid "Pluto-Charon"
+#~ msgstr "Classe: "
+
+#, fuzzy
+#~ msgid "Charon"
+#~ msgstr "Classe: "
+
+#, fuzzy
+#~ msgid "Solar System Barycenter"
+#~ msgstr "Eclipses Solares"
+
+#, fuzzy
+#~ msgid "Scripts"
+#~ msgstr "Órbitas"
+
+#, fuzzy
+#~ msgid "Select &Sol\tH"
+#~ msgstr "&Selecionar"
+
+#, fuzzy
+#~ msgid "&Go to Selection\tG"
+#~ msgstr ""
+#~ "\n"
+#~ "Seleção: "
+
+#, fuzzy
+#~ msgid "S&ync Orbit Selection\tY"
+#~ msgstr "Órbita S&íncrona"
+
+#, fuzzy
+#~ msgid "&Track Selection\tT"
+#~ msgstr ""
+#~ "\n"
+#~ "Seleção: "
+
+#, fuzzy
+#~ msgid "Star B&rowser..."
+#~ msgstr "Visualizador Celestial"
+
+#, fuzzy
+#~ msgid "&Eclipse Finder"
+#~ msgstr "Buscador de Eclipse"
+
+#, fuzzy
+#~ msgid "&Time"
+#~ msgstr "Hora"
+
+#, fuzzy
+#~ msgid "&Real Time\t\\"
+#~ msgstr "Hora Local"
+
+#, fuzzy
+#~ msgid "Re&verse Time\tJ"
+#~ msgstr "Reverte o Tempo"
+
+#, fuzzy
+#~ msgid "Set &Time..."
+#~ msgstr "Ajusta Hora..."
+
+#, fuzzy
+#~ msgid "Show Local Time"
+#~ msgstr "Hora Local"
+
+#, fuzzy
+#~ msgid "&Render"
+#~ msgstr "Renderizando"
+
+#, fuzzy
+#~ msgid "View Options..."
+#~ msgstr "Órbitas"
+
+#, fuzzy
+#~ msgid "Locations..."
+#~ msgstr "Constelações"
+
+#, fuzzy
+#~ msgid "More Stars Visible\t]"
+#~ msgstr "Frames Visíveis"
+
+#, fuzzy
+#~ msgid "Fewer Stars Visible\t["
+#~ msgstr "Frames Visíveis"
+
+#, fuzzy
+#~ msgid "Auto Magnitude\tCtrl+Y"
+#~ msgstr "Magnitude Automática"
+
+#, fuzzy
+#~ msgid "Star St&yle"
+#~ msgstr "Início"
+
+#, fuzzy
+#~ msgid "&Ambient Light"
+#~ msgstr "Luz Ambiente"
+
+#, fuzzy
+#~ msgid "&None"
+#~ msgstr "Nenhum"
+
+#, fuzzy
+#~ msgid "&Texture Resolution"
+#~ msgstr ""
+#~ "\n"
+#~ "Seleção: "
+
+#, fuzzy
+#~ msgid "Split &Horizontally\tCtrl+R"
+#~ msgstr "Divide a Tela Horizontalmente"
+
+#, fuzzy
+#~ msgid "Split &Vertically\tCtrl+U"
+#~ msgstr "Divide a Tela Verticalmente"
+
+#, fuzzy
+#~ msgid "&Delete Active View\tDEL"
+#~ msgstr "Apaga Visão"
+
+#, fuzzy
+#~ msgid "&Single View\tCtrl+D"
+#~ msgstr "Visão Única"
+
+#, fuzzy
+#~ msgid "Show &Frames"
+#~ msgstr "Mostrar Marcas"
+
+#, fuzzy
+#~ msgid "Synchronize &Time"
+#~ msgstr "Sincroniza a Hora"
+
+#, fuzzy
+#~ msgid "&Bookmarks"
+#~ msgstr "Marcadores"
+
+#, fuzzy
+#~ msgid "&Add Bookmarks..."
+#~ msgstr "Marcadores"
+
+#, fuzzy
+#~ msgid "&Controls"
+#~ msgstr "&Centralizar"
+
+#, fuzzy
+#~ msgid "&OpenGL Info"
+#~ msgstr "Informação OpenGL"
+
+#, fuzzy
+#~ msgid "&About Celestia"
+#~ msgstr "Grade Celestial"
+
+#, fuzzy
+#~ msgid "About Celestia"
+#~ msgstr "Grade Celestial"
+
+#, fuzzy
+#~ msgid "Authors"
+#~ msgstr "Quadrado"
+
+#, fuzzy
+#~ msgid "Select Object"
+#~ msgstr "Objeto: "
+
+#, fuzzy
+#~ msgid "Object Name"
+#~ msgstr "Objeto: "
+
+#, fuzzy
+#~ msgid "License"
+#~ msgstr "Breve"
+
+#, fuzzy
+#~ msgid "Celestia Controls"
+#~ msgstr "Visualizador Celestial"
+
+#, fuzzy
+#~ msgid "OpenGL Driver Info"
+#~ msgstr "Informação OpenGL"
+
+#, fuzzy
+#~ msgid "Time Zone: "
+#~ msgstr "Zona Horária: "
+
+#, fuzzy
+#~ msgid "Add Bookmark"
+#~ msgstr "Marcadores"
+
+#, fuzzy
+#~ msgid "Create in >>"
+#~ msgstr "&Centralizar"
+
+#, fuzzy
+#~ msgid "New Folder..."
+#~ msgstr "&Nova Pasta..."
+
+#, fuzzy
+#~ msgid "Solar System"
+#~ msgstr "Eclipses Solares"
+
+#, fuzzy
+#~ msgid "&Go To"
+#~ msgstr "&Vá Para"
+
+#, fuzzy
+#~ msgid "Star Browser"
+#~ msgstr "Visualizador Celestial"
+
+#, fuzzy
+#~ msgid "Brightest"
+#~ msgstr "Mais brilhante (Apar.)"
+
+#, fuzzy
+#~ msgid "With planets"
+#~ msgstr "Com Planetas"
+
+#, fuzzy
+#~ msgid "&Refresh"
+#~ msgstr "Atualiza"
+
+#, fuzzy
+#~ msgid "Go To"
+#~ msgstr "&Vá Para"
+
+#, fuzzy
+#~ msgid "Go to Object"
+#~ msgstr "Objeto: "
+
+#, fuzzy
+#~ msgid "Object"
+#~ msgstr "Objeto: "
+
+#, fuzzy
+#~ msgid "Long."
+#~ msgstr "Longitude: "
+
+#, fuzzy
+#~ msgid "Distance"
+#~ msgstr "Distância: "
+
+#, fuzzy
+#~ msgid "View Options"
+#~ msgstr "Órbitas"
+
+#, fuzzy
+#~ msgid "Celestial"
+#~ msgstr "Grade Celestial"
+
+#, fuzzy
+#~ msgid "Horizontal"
+#~ msgstr "Divide a Tela Horizontalmente"
+
+#, fuzzy
+#~ msgid "Galactic"
+#~ msgstr "Galáxias"
+
+#, fuzzy
+#~ msgid "Minor Moons"
+#~ msgstr "Luas"
+
+#, fuzzy
+#~ msgid "DSO Labels"
+#~ msgstr "Etiquetas"
+
+#, fuzzy
+#~ msgid "Boundaries"
+#~ msgstr "Mostrar Limites"
+
+#, fuzzy
+#~ msgid "Latin Names"
+#~ msgstr "Constelações"
+
+#, fuzzy
+#~ msgid "Information Text"
+#~ msgstr "Informação de Texto"
+
+#, fuzzy
+#~ msgid "Volcanoes"
+#~ msgstr "Planetas"
+
+#, fuzzy
+#~ msgid "Label Features"
+#~ msgstr "Etiquetas"
+
+#, fuzzy
+#~ msgid "Show Features"
+#~ msgstr "Mostrar Marcas"
+
+#, fuzzy
+#~ msgid "Add New Bookmark Folder"
+#~ msgstr "Marcadores"
+
+#, fuzzy
+#~ msgid "Organize Bookmarks"
+#~ msgstr "Marcadores"
+
+#, fuzzy
+#~ msgid "Rename..."
+#~ msgstr "Ajusta Hora..."
+
+#, fuzzy
+#~ msgid "Delete"
+#~ msgstr "Apaga Visão"
+
+#, fuzzy
+#~ msgid "Rename Bookmark or Folder"
+#~ msgstr "Mostra a Barra de Ferramentas de Marcadores"
+
+#, fuzzy
+#~ msgid "New Name"
+#~ msgstr "Nome"
+
+#, fuzzy
+#~ msgid "Compute"
+#~ msgstr "Cometa"
+
+#, fuzzy
+#~ msgid "Set Date and Go to Planet"
+#~ msgstr "Iniciar e ir para a url"
+
+#, fuzzy
+#~ msgid "Lunar Eclipses"
+#~ msgstr "Eclipses Solares"
+
+#, fuzzy
+#~ msgid "Jan"
+#~ msgstr "Urano"
+
+#, fuzzy
+#~ msgid "Mar"
+#~ msgstr "Marcas"
+
+#, fuzzy
+#~ msgid "Sep"
+#~ msgstr "Ajusta"
+
+#, fuzzy
+#~ msgid "Oct"
+#~ msgstr "Objeto: "
+
+#, fuzzy
+#~ msgid "Nov"
+#~ msgstr "Agora"
+
+#, fuzzy
+#~ msgid "Deimos:Mars II"
+#~ msgstr "Diamante"
+
+#, fuzzy
+#~ msgid "Io:Jupiter I"
+#~ msgstr "Júpiter"
+
+#, fuzzy
+#~ msgid "Mimas:Saturn I"
+#~ msgstr "Saturno"
+
+#, fuzzy
+#~ msgid "Rhea:Saturn V"
+#~ msgstr "Saturno"
+
+#, fuzzy
+#~ msgid "Ariel:Uranus I"
+#~ msgstr "Urano"
+
+#, fuzzy
+#~ msgid "Triton:Neptune I"
+#~ msgstr "Netuno"
+
+#, fuzzy
+#~ msgid "Version"
+#~ msgstr "Órbitas"
+
+#, fuzzy
+#~ msgid "Constellation Borders"
+#~ msgstr "Limites das Constelações"
+
+#, fuzzy
+#~ msgid "Mark Features"
+#~ msgstr "Marcas"
+
+#, fuzzy
+#~ msgid " UTC"
+#~ msgstr "UTC"
+
+#, fuzzy
+#~ msgid "Radius: %.2f Rsun\n"
+#~ msgstr "Raio: "
+
+#, fuzzy
+#~ msgid "moon"
+#~ msgstr "Lua"
+
+#, fuzzy
+#~ msgid "Solar eclipses"
+#~ msgstr "Eclipses Solares"
+
+#~ msgid "<p align=\"right\">On:</p>"
+#~ msgstr "<p align=\"right\">Em:</p>"
+
+#~ msgid "<p align=\"right\">To:</p>"
+#~ msgstr "<p align=\"right\">Para:</p>"
+
+#~ msgid "<p align=\"right\">From:</p>"
+#~ msgstr "<p align=\"right\">De:</p>"
+
+#, fuzzy
+#~ msgid "eclipse on"
+#~ msgstr "Buscador de Eclipse"
+
+#~ msgid "buttonGroup1"
+#~ msgstr "buttonGroup1"
+
+#~ msgid "EclipseFinderDlgBase"
+#~ msgstr "EclipseFinderDlgBase"
+
+#~ msgid "EclipseFinderDlg"
+#~ msgstr "EclipseFinderDlg"
+
+#~ msgid "CelestialBrowserBase"
+#~ msgstr "CelestialBrowserBase"
+
+#~ msgid "CelestialBrowser"
+#~ msgstr "CelestialBrowser"
+
+#~ msgid "KdeApp"
+#~ msgstr "KdeApp"
+
+#~ msgid "LongLatDialog"
+#~ msgstr "LongLatDialog"
+
+#~ msgid "KdeGlWidget"
+#~ msgstr "KdeGlWidget"
+
+#~ msgid "KdePreferencesDialog"
+#~ msgstr "KdePreferencesDialog"
+
+#~ msgid "KdeUniqueCelestia"
+#~ msgstr "KdeUniqueCelestia"
+
+#~ msgid "KCelBookmarkMenu"
+#~ msgstr "KCelBookmarkMenu"
+
+#~ msgid "SelectionPopup"
+#~ msgstr "SelectionPopup"
+
+#~ msgid "Show Stars as Points"
+#~ msgstr "Mostrar Estrelas como Pontos"

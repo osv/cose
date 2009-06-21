@@ -1,0 +1,2708 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR Chris Laurel
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Celestia\n"
+"Report-Msgid-Bugs-To: chris@teyssier.org\n"
+"POT-Creation-Date: 2009-06-21 16:00+0000\n"
+"PO-Revision-Date: 2008-02-13 12:29+0200\n"
+"Last-Translator: \n"
+"Language-Team: Latviešu <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Poedit-Language: lv\n"
+"X-Poedit-Country: LATVIA\n"
+"X-Poedit-SourceCharset: utf-8\n"
+
+#: src/celengine/astro.cpp:827
+msgid "DST"
+msgstr "DST"
+
+#: src/celengine/astro.cpp:827
+msgid "STD"
+msgstr "STD"
+
+#: src/celengine/dsodb.cpp:387
+msgid "Loaded "
+msgstr "Ielādēts "
+
+#: src/celengine/dsodb.cpp:387
+msgid " deep space objects"
+msgstr " dziļā kosmosa objekti"
+
+#: src/celengine/fragmentprog.cpp:93
+msgid "Loading NV fragment program: "
+msgstr "Ielādē NV fragmentprogrammu: "
+
+#: src/celengine/fragmentprog.cpp:98
+msgid "Error loading NV fragment program: "
+msgstr "Kļūda ielādējot NV fragmentprogrammu:"
+
+#: src/celengine/fragmentprog.cpp:115
+msgid "Error in fragment program "
+msgstr "Kļūda fragmentprogrammā"
+
+#: src/celengine/fragmentprog.cpp:126
+msgid "Initializing NV fragment programs . . .\n"
+msgstr "Inicializē NV fragmentprogrammas . . .\n"
+
+#: src/celengine/fragmentprog.cpp:142
+msgid "All NV fragment programs loaded successfully.\n"
+msgstr "Visas NV fragmentprogrammas ielādējās veiksmīgi.\n"
+
+#: src/celengine/fragmentprog.cpp:150
+msgid "Initializing ARB fragment programs . . .\n"
+msgstr "Inicializē ARB fragmentprogrammas . . .\n"
+
+#: src/celengine/galaxy.cpp:197
+#, c-format
+msgid "Galaxy (Hubble type: %s)"
+msgstr "Galaktika (Habla tips: %s)"
+
+#: src/celengine/image.cpp:373
+msgid "Loading image from file "
+msgstr "Ielādē attēlu no faila"
+
+#: src/celengine/image.cpp:391
+msgid ": unrecognized or unsupported image file type.\n"
+msgstr ": neatpazīts vai neatbalstīts attēla faila tips.\n"
+
+#: src/celengine/image.cpp:654
+msgid "Error opening image file "
+msgstr "Kļūda atverot attēla failu"
+
+#: src/celengine/image.cpp:661
+msgid "Error: "
+msgstr "Kļūda: "
+
+#: src/celengine/image.cpp:661
+msgid " is not a PNG file.\n"
+msgstr " nav PNG fails. \n"
+
+#: src/celengine/image.cpp:688
+msgid "Error reading PNG image file "
+msgstr "Kļūda ielādējot PNG attēla failu"
+
+#: src/celengine/meshmanager.cpp:84
+msgid "Loading model: "
+msgstr "Ielādē modeli: "
+
+#: src/celengine/meshmanager.cpp:162
+msgid "   Model statistics: "
+msgstr "   Modeļa īpašības: "
+
+#: src/celengine/meshmanager.cpp:163
+msgid " vertices, "
+msgstr " verteksi, "
+
+#: src/celengine/meshmanager.cpp:164
+msgid " primitives, "
+msgstr " primitīvi, "
+
+#: src/celengine/meshmanager.cpp:165
+msgid " materials "
+msgstr " materiāli "
+
+#: src/celengine/meshmanager.cpp:166
+msgid " unique)\n"
+msgstr " unikāli)\n"
+
+#: src/celengine/meshmanager.cpp:170
+msgid "Error loading model '"
+msgstr "Kļūda ielādējot modeli '"
+
+#: src/celengine/nebula.cpp:47 src/celengine/opencluster.cpp:44
+#, c-format
+msgid "%s"
+msgstr "%s"
+
+#: src/celengine/solarsys.cpp:93
+msgid "Error in .ssc file (line "
+msgstr "Kļūda .ssc filā(līnijā "
+
+#: src/celengine/solarsys.cpp:1200 src/celengine/solarsys.cpp:1267
+msgid "parent body '"
+msgstr "cilmes objektā '"
+
+#: src/celengine/solarsys.cpp:1200 src/celengine/solarsys.cpp:1267
+msgid "' of '"
+msgstr "' '"
+
+#: src/celengine/solarsys.cpp:1200
+#, fuzzy
+msgid "' not found."
+msgstr "' netika atrasts.\n"
+
+#: src/celengine/solarsys.cpp:1211
+msgid "warning duplicate definition of "
+msgstr "uzmanību dubulta definīcija "
+
+#: src/celengine/solarsys.cpp:1247
+msgid "bad alternate surface"
+msgstr "nederīga alternatīvā virsma"
+
+#: src/celengine/solarsys.cpp:1261
+msgid "bad location"
+msgstr "nederīga vieta"
+
+#: src/celengine/solarsys.cpp:1267
+msgid "' not found.\n"
+msgstr "' netika atrasts.\n"
+
+#: src/celengine/stardb.cpp:579
+msgid "Bad header for cross index\n"
+msgstr "Kopējam indeksam bojāta galvane\n"
+
+#: src/celengine/stardb.cpp:592
+msgid "Bad version for cross index\n"
+msgstr "Kopējam indekstam nederīga versija\n"
+
+#: src/celengine/stardb.cpp:614
+msgid "Loading cross index failed at record "
+msgstr "Kopējā indeksa ielāde apstājās pie ieraksta "
+
+#: src/celengine/stardb.cpp:696
+msgid "Bad spectral type in star database, star #"
+msgstr "Nepareiza spektra klase datubāzē zvaigznei #"
+
+#: src/celengine/stardb.cpp:711
+msgid " stars in binary database\n"
+msgstr " zvaizgnes binārajā datubāzē\n"
+
+#: src/celengine/stardb.cpp:735
+msgid "Total star count: "
+msgstr "Kopējais zvaigzņu skaits: "
+
+#: src/celengine/stardb.cpp:769
+msgid "Error in .stc file (line "
+msgstr "Kļūda .stc failā (līnijā "
+
+#: src/celengine/stardb.cpp:806
+msgid "Invalid star: bad spectral type.\n"
+msgstr "Kļūdaina zvaigzne: nederīga spektra klase.\n"
+
+#: src/celengine/stardb.cpp:815
+msgid "Invalid star: missing spectral type.\n"
+msgstr "Kļūdaina zvaigzne: nav norādīta spektra klase.\n"
+
+#: src/celengine/stardb.cpp:962
+msgid "Barycenter "
+msgstr "Baricentrs"
+
+#: src/celengine/stardb.cpp:962
+msgid " does not exist.\n"
+msgstr " neeksistē.\n"
+
+#: src/celengine/stardb.cpp:1008
+msgid "Invalid star: missing right ascension\n"
+msgstr "Nederīga zvaigznes: trūkst rektascensijas\n"
+
+#: src/celengine/stardb.cpp:1021
+msgid "Invalid star: missing declination.\n"
+msgstr "Nederīga zvaigzne: trūkst deklinācijas.\n"
+
+#: src/celengine/stardb.cpp:1034
+msgid "Invalid star: missing distance.\n"
+msgstr "Nederīga zvaigzne: trūkst distances.\n"
+
+#: src/celengine/stardb.cpp:1070
+msgid "Invalid star: missing magnitude.\n"
+msgstr "Nederīga zvaigzne: trūkst zvaigžņlieluma.\n"
+
+#: src/celengine/stardb.cpp:1087
+msgid ""
+"Invalid star: absolute (not apparent) magnitude must be specified for star "
+"near origin\n"
+msgstr ""
+"Nederīga zvaigzne: jānorāda absolūtais nevis redzamais zvaigžņlielums "
+"zvaigznej izvelsmes vietas tuvumā\n"
+
+#: src/celengine/texture.cpp:1019
+msgid "Creating tiled texture. Width="
+msgstr "Tiek veidota sadalīta tekstūra. Platums="
+
+#: src/celengine/texture.cpp:1019
+msgid ", max="
+msgstr ", max="
+
+#: src/celengine/texture.cpp:1024
+msgid "Creating ordinary texture: "
+msgstr "Tiek veidota parasta tekstūra: "
+
+#: src/celengine/vertexprog.cpp:114
+msgid "Loading NV vertex program: "
+msgstr "Ielādē NV verteksu programmu: "
+
+#: src/celengine/vertexprog.cpp:119
+msgid "Error loading NV vertex program: "
+msgstr "Kļūda ielādējot NV verteksu programmu: "
+
+#: src/celengine/vertexprog.cpp:136 src/celengine/vertexprog.cpp:195
+msgid "Error in vertex program "
+msgstr "Kļūda verteksu programmā "
+
+#: src/celengine/vertexprog.cpp:163
+msgid "Loading ARB vertex program: "
+msgstr "Ielādē ARB verteksu programmu: "
+
+#: src/celengine/vertexprog.cpp:168
+msgid "Error loading ARB vertex program: "
+msgstr "Kļūda ielādējot ARB verteksu programmu: "
+
+#: src/celengine/vertexprog.cpp:196
+msgid ", line "
+msgstr ", līnijā "
+
+#: src/celengine/vertexprog.cpp:208
+msgid "Initializing NV vertex programs . . .\n"
+msgstr "Inicializēt NV verteksu programmas . . .\n"
+
+#: src/celengine/vertexprog.cpp:240
+msgid "All NV vertex programs loaded successfully.\n"
+msgstr "Visas NV verteksu programmas veiksmīgi ielādētas.\n"
+
+#: src/celengine/vertexprog.cpp:253
+msgid "Initializing ARB vertex programs . . .\n"
+msgstr "Inicializēt ARB verteksu programmas . . .\n"
+
+#: src/celengine/vertexprog.cpp:314
+msgid "All ARB vertex programs loaded successfully.\n"
+msgstr "Visas ARB verteksu programmas veiksmīgi ielādētas.\n"
+
+#: src/celestia/celestiacore.cpp:421
+msgid "Error reading favorites file."
+msgstr "Visas NV verteksu programmas veiksmīgi ielādētas."
+
+#: src/celestia/celestiacore.cpp:511
+msgid "Orientation: "
+msgstr "Orientācija: "
+
+#: src/celestia/celestiacore.cpp:558 src/celestia/celestiacore.cpp:560
+msgid "Error opening script file."
+msgstr "Kļūda atverot skripta failu."
+
+#: src/celestia/celestiacore.cpp:591
+#, c-format
+msgid "Error opening script '%s'"
+msgstr "Kļūda atverot skriptu '%s'"
+
+#: src/celestia/celestiacore.cpp:609
+msgid "Unknown error opening script"
+msgstr "Nenosakāma kļūda atverot skriptu"
+
+#: src/celestia/celestiacore.cpp:621
+msgid "Script coroutine initialization failed"
+msgstr "Skripta korutīnas inicializācija neizdevās"
+
+#: src/celestia/celestiacore.cpp:637 src/celestia/celestiacore.cpp:639
+msgid "Invalid filetype"
+msgstr "Nepareizs faila veids"
+
+#: src/celestia/celestiacore.cpp:982 src/celestia/celestiacore.cpp:1787
+#: src/celestia/celestiacore.cpp:1805 src/celestia/celestiacore.cpp:2046
+#: src/celestia/celestiacore.cpp:2077
+#, c-format
+msgid "Magnitude limit: %.2f"
+msgstr "Limitējošais zvaigžņlielums iestādīts uz: %.2f"
+
+#: src/celestia/celestiacore.cpp:1417
+msgid "Markers enabled"
+msgstr "Marķieri aktivizēti"
+
+#: src/celestia/celestiacore.cpp:1420
+msgid "Markers disabled"
+msgstr "Marķieri izslēgti"
+
+#: src/celestia/celestiacore.cpp:1430
+msgid "Goto surface"
+msgstr "Nolaisties uz virsmas"
+
+#: src/celestia/celestiacore.cpp:1443
+msgid "Alt-azimuth mode enabled"
+msgstr "Azimutālais režīms ieslēgts"
+
+#: src/celestia/celestiacore.cpp:1446
+msgid "Alt-azimuth mode disabled"
+msgstr "Azimutālais režīms izslēgts"
+
+#: src/celestia/celestiacore.cpp:1502
+msgid "Star style: fuzzy points"
+msgstr "Zvaigznes: kā izplūduši punktiņi"
+
+#: src/celestia/celestiacore.cpp:1505
+msgid "Star style: points"
+msgstr "Zvaigznes: kā punkti"
+
+#: src/celestia/celestiacore.cpp:1508
+msgid "Star style: scaled discs"
+msgstr "Zvaigznes: kā mērogoti diski"
+
+#: src/celestia/celestiacore.cpp:1521
+msgid "Comet tails enabled"
+msgstr "Komētu astes aktivizētas"
+
+#: src/celestia/celestiacore.cpp:1524
+msgid "Comet tails disabled"
+msgstr "Komētu astes deaktivizētas"
+
+#: src/celestia/celestiacore.cpp:1539
+msgid "Render path: Basic"
+msgstr "Renderēšanas ceļš: pamata"
+
+#: src/celestia/celestiacore.cpp:1542
+msgid "Render path: Multitexture"
+msgstr "Renderēšanas ceļš: multitekstūru"
+
+#: src/celestia/celestiacore.cpp:1545
+msgid "Render path: NVIDIA combiners"
+msgstr "Renderēšanas ceļš: NVIDIA kombinatori"
+
+#: src/celestia/celestiacore.cpp:1548
+msgid "Render path: OpenGL vertex program"
+msgstr "Render path: OpenGL verteksu programma"
+
+#: src/celestia/celestiacore.cpp:1551
+msgid "Render path: NVIDIA vertex program and combiners"
+msgstr "Renderēšanas ceļš: NVIDIA verteksu programma un kombinatori"
+
+#: src/celestia/celestiacore.cpp:1554
+msgid "Render path: OpenGL vertex program/NVIDIA combiners"
+msgstr "Renderēšanas ceļš: OpenGL verteksu programma/NVIDIA kombinatori"
+
+#: src/celestia/celestiacore.cpp:1557
+msgid "Render path: OpenGL 1.5 vertex/fragment program"
+msgstr "Renderēšanas ceļš: OpenGL 1.5 verteksu/fragmentu programma"
+
+#: src/celestia/celestiacore.cpp:1560
+msgid "Render path: NVIDIA GeForce FX"
+msgstr "Renderēšanas ceļš: NVIDIA GeForce FX"
+
+#: src/celestia/celestiacore.cpp:1563
+msgid "Render path: OpenGL 2.0"
+msgstr "Renderēšanas ceļš: OpenGL 2.0"
+
+#: src/celestia/celestiacore.cpp:1586
+msgid "Auto-magnitude enabled"
+msgstr "Automātiskie zvaigžņlielumi aktivizēti"
+
+#: src/celestia/celestiacore.cpp:1591
+msgid "Auto-magnitude disabled"
+msgstr "Automātiskie zvaigžņlielumi atslēgti"
+
+#: src/celestia/celestiacore.cpp:1613
+msgid "Cancel"
+msgstr "Atcelt"
+
+#: src/celestia/celestiacore.cpp:1649
+msgid "Time and script are paused"
+msgstr "Laiks un skripts apturēti (pauze)"
+
+#: src/celestia/celestiacore.cpp:1651
+msgid "Time is paused"
+msgstr "Laiks ir apstādināts (pauze)"
+
+#: src/celestia/celestiacore.cpp:1655
+msgid "Resume"
+msgstr "Turpināt"
+
+#: src/celestia/celestiacore.cpp:1730
+#, c-format
+msgid "Light travel time:  %.4f yr "
+msgstr "Gaismas ceļošanas ilgums:  %.4f gadi "
+
+#: src/celestia/celestiacore.cpp:1739
+#, c-format
+msgid "Light travel time:  %d min  %.1f s"
+msgstr "Gaismas ceļošanas ilgums: %d min  %.1f s"
+
+#: src/celestia/celestiacore.cpp:1742
+#, c-format
+msgid "Light travel time:  %d h  %d min  %.1f s"
+msgstr "Gaismas ceļošanas ilgums:  %d h  %d min  %.1f s"
+
+#: src/celestia/celestiacore.cpp:1761
+msgid "Light travel delay included"
+msgstr "Ierēķināts gaismas ceļošanas ilgums"
+
+#: src/celestia/celestiacore.cpp:1766
+msgid "Light travel delay switched off"
+msgstr "Gaismas ceļošanas ilgums atslēgts"
+
+#: src/celestia/celestiacore.cpp:1772
+msgid "Light travel delay ignored"
+msgstr "Gaismas ceļošanas ilgums ignorēts"
+
+#: src/celestia/celestiacore.cpp:1817
+msgid "Using normal surface textures."
+msgstr "Izmanto normālās virsmu tekstūras"
+
+#: src/celestia/celestiacore.cpp:1822
+msgid "Using limit of knowledge surface textures."
+msgstr "Izmanto zināmā robežu tekstūras."
+
+#: src/celestia/celestiacore.cpp:1889
+msgid "Follow"
+msgstr "Sekot"
+
+#: src/celestia/celestiacore.cpp:1914
+msgid "Time: Forward"
+msgstr "Laiks: uz priekšu"
+
+#: src/celestia/celestiacore.cpp:1916
+msgid "Time: Backward"
+msgstr "Laiks: atpakaļ"
+
+#: src/celestia/celestiacore.cpp:1929 src/celestia/celestiacore.cpp:1945
+msgid "Time rate"
+msgstr "Laika ātrums"
+
+#: src/celestia/celestiacore.cpp:2018
+msgid "Sync Orbit"
+msgstr "Sinhronizēt orbītu"
+
+#: src/celestia/celestiacore.cpp:2024
+msgid "Lock"
+msgstr "Sabloķēt"
+
+#: src/celestia/celestiacore.cpp:2030
+msgid "Chase"
+msgstr "Novērot"
+
+#: src/celestia/celestiacore.cpp:2057 src/celestia/celestiacore.cpp:2088
+#, c-format
+msgid "Auto magnitude limit at 45 degrees:  %.2f"
+msgstr "Automātiskais magnitūdas limits ir 45 grādi: %.2f"
+
+#: src/celestia/celestiacore.cpp:2107 src/celestia/celestiacore.cpp:2122
+#, c-format
+msgid "Ambient light level:  %.2f"
+msgstr "Fona gaismas daudzums:  %.2f"
+
+#: src/celestia/celestiacore.cpp:2133 src/celestia/celestiacore.cpp:2145
+msgid "Light gain"
+msgstr "Gaismas pastiprinājums"
+
+#: src/celestia/celestiacore.cpp:2165
+#, fuzzy
+msgid "Bloom enabled"
+msgstr "Komētu astes aktivizētas"
+
+#: src/celestia/celestiacore.cpp:2167
+#, fuzzy
+msgid "Bloom disabled"
+msgstr "Komētu astes deaktivizētas"
+
+#: src/celestia/celestiacore.cpp:2173 src/celestia/celestiacore.cpp:2181
+msgid "Exposure"
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:2532
+msgid "GL error: "
+msgstr "GL kļūda: "
+
+#: src/celestia/celestiacore.cpp:2659
+msgid "View too small to be split"
+msgstr "Skats par mazu lai sadalītu"
+
+#: src/celestia/celestiacore.cpp:2662
+msgid "Added view"
+msgstr "Pievienots skatījums"
+
+#: src/celestia/celestiacore.cpp:2918
+msgid "ly"
+msgstr "ly"
+
+#: src/celestia/celestiacore.cpp:2922
+msgid "au"
+msgstr "au"
+
+#: src/celestia/celestiacore.cpp:2943
+msgid " days"
+msgstr " dienas"
+
+#: src/celestia/celestiacore.cpp:2945
+msgid " hours"
+msgstr " stundas"
+
+#: src/celestia/celestiacore.cpp:2947
+msgid " minutes"
+msgstr " minūtes"
+
+#: src/celestia/celestiacore.cpp:3014
+msgid "Apparent diameter: "
+msgstr "Redzamais diametrs: "
+
+#: src/celestia/celestiacore.cpp:3029
+msgid "Apparent magnitude: "
+msgstr "Redzamais spožums: "
+
+#: src/celestia/celestiacore.cpp:3033
+msgid "Absolute magnitude: "
+msgstr "Absolūtais spožums: "
+
+#: src/celestia/celestiacore.cpp:3055
+msgid "RA: "
+msgstr "RA: "
+
+#: src/celestia/celestiacore.cpp:3059
+msgid "Dec: "
+msgstr "Dec: "
+
+#: src/celestia/celestiacore.cpp:3123
+msgid "km"
+msgstr "km"
+
+#: src/celestia/celestiacore.cpp:3152 src/celestia/celestiacore.cpp:3226
+#: src/celestia/celestiacore.cpp:3258 src/celestia/celestiacore.cpp:3359
+msgid "Distance: "
+msgstr "Distance: "
+
+#: src/celestia/celestiacore.cpp:3158
+msgid "Star system barycenter\n"
+msgstr "Zvaigžņu sistēmas baricentrs\n"
+
+#: src/celestia/celestiacore.cpp:3162
+#, c-format
+msgid "Abs (app) mag: %.2f (%.2f)\n"
+msgstr "Absolūtais (redz.) spožums: %.2f (%.2f)\n"
+
+#: src/celestia/celestiacore.cpp:3168
+msgid "Luminosity: "
+msgstr "Starjauda: "
+
+#: src/celestia/celestiacore.cpp:3168
+msgid "x Sun"
+msgstr "x Saule(s)"
+
+#: src/celestia/celestiacore.cpp:3169
+msgid "Class: "
+msgstr "Klase: "
+
+#: src/celestia/celestiacore.cpp:3171
+msgid "Neutron star"
+msgstr "Neitronu zvaigzne"
+
+#: src/celestia/celestiacore.cpp:3173
+msgid "Black hole"
+msgstr "Melnais caurums"
+
+#: src/celestia/celestiacore.cpp:3183
+msgid "Surface temp: "
+msgstr "Virsmas temperatūra: "
+
+#: src/celestia/celestiacore.cpp:3186 src/celestia/celestiacore.cpp:3235
+#: src/celestia/celestiacore.cpp:3268
+msgid "Radius: "
+msgstr "Radiuss: "
+
+#: src/celestia/celestiacore.cpp:3189
+msgid "Rsun"
+msgstr "RSaules"
+
+#: src/celestia/celestiacore.cpp:3199 src/celestia/celestiacore.cpp:3320
+msgid "Rotation period: "
+msgstr "Rotācijas periods: "
+
+#: src/celestia/celestiacore.cpp:3213
+msgid "Planetary companions present\n"
+msgstr "Šai sistēmā ir planētas\n"
+
+#: src/celestia/celestiacore.cpp:3231
+msgid "Distance from center: "
+msgstr "Attālums no centra:"
+
+#: src/celestia/celestiacore.cpp:3336
+msgid "Temperature: "
+msgstr "Temperatūra: "
+
+#: src/celestia/celestiacore.cpp:3348
+#, c-format
+msgid "Apparent mag: %.2f\n"
+msgstr "Redzamais zvaigžņlielums: %.2f\n"
+
+#: src/celestia/celestiacore.cpp:3516
+msgid "  LT"
+msgstr "  LT"
+
+#: src/celestia/celestiacore.cpp:3525
+msgid "Real time"
+msgstr "Reālais laiks"
+
+#: src/celestia/celestiacore.cpp:3527
+msgid "-Real time"
+msgstr "-Reālais laiks"
+
+#: src/celestia/celestiacore.cpp:3531
+msgid "Time stopped"
+msgstr "Laiks apturēts"
+
+#: src/celestia/celestiacore.cpp:3536
+msgid " faster"
+msgstr "ātrāk"
+
+#: src/celestia/celestiacore.cpp:3541
+msgid " slower"
+msgstr "lēnāk"
+
+#: src/celestia/celestiacore.cpp:3547
+msgid " (Paused)"
+msgstr " (Pauze)"
+
+#: src/celestia/celestiacore.cpp:3565
+msgid "FPS: "
+msgstr "FPS: "
+
+#: src/celestia/celestiacore.cpp:3567
+msgid ""
+"\n"
+"Speed: "
+msgstr ""
+"\n"
+"Ātrums: "
+
+#: src/celestia/celestiacore.cpp:3571
+msgid " m/s"
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:3573
+msgid " km/s"
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:3577
+msgid " AU/s"
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:3579
+#, fuzzy
+msgid " ly/s"
+msgstr " dienas"
+
+#: src/celestia/celestiacore.cpp:3596
+msgid "Travelling "
+msgstr "Ceļā"
+
+#: src/celestia/celestiacore.cpp:3609
+msgid "Track "
+msgstr "Tur skatu uz objektu "
+
+#: src/celestia/celestiacore.cpp:3623
+msgid "Follow "
+msgstr "Seko objektam"
+
+#: src/celestia/celestiacore.cpp:3628
+msgid "Sync Orbit "
+msgstr "Sinhronajā orbītītā ap objektu "
+
+#: src/celestia/celestiacore.cpp:3633
+msgid "Lock "
+msgstr "Sabloķēti objekti "
+
+#: src/celestia/celestiacore.cpp:3642
+msgid "Chase "
+msgstr "Novēro objektu "
+
+#: src/celestia/celestiacore.cpp:3658
+msgid "FOV: "
+msgstr "Skata leņķis: "
+
+#: src/celestia/celestiacore.cpp:3688 src/celestia/celestiacore.cpp:3691
+msgid "Sun"
+msgstr "Saule"
+
+#: src/celestia/celestiacore.cpp:3865
+msgid "Target name: "
+msgstr "Izvēlamā objekta nosaukums: "
+
+#: src/celestia/celestiacore.cpp:3947
+msgid " at "
+msgstr " "
+
+#: src/celestia/celestiacore.cpp:3948
+msgid " fps"
+msgstr "fps"
+
+#: src/celestia/celestiacore.cpp:3950
+msgid "  Recording"
+msgstr "Ieraksta"
+
+#: src/celestia/celestiacore.cpp:3952
+msgid "  Paused"
+msgstr "Pauze"
+
+#: src/celestia/celestiacore.cpp:3971
+msgid "F11 Start/Pause    F12 Stop"
+msgstr "F11 Sākt/Pauze    F12 Stop"
+
+#: src/celestia/celestiacore.cpp:3980 src/celestia/celestiacore.cpp:3983
+msgid "Edit Mode"
+msgstr "Rediģēšanas režīms"
+
+#: src/celestia/celestiacore.cpp:4049
+msgid "Loading solar system catalog: "
+msgstr "Ielādē zvaigžņu sistēmas katalogu: "
+
+#: src/celestia/celestiacore.cpp:4090
+msgid "Loading "
+msgstr "Ielādē "
+
+#: src/celestia/celestiacore.cpp:4125
+msgid "License file 'License.txt' is missing!"
+msgstr "Trūkst licences faila 'License.txt'!"
+
+#: src/celestia/celestiacore.cpp:4146
+msgid "Error reading configuration file."
+msgstr "Kļūda nolasot konfigurācijas failu."
+
+#: src/celestia/celestiacore.cpp:4157
+msgid "Initialization of SPICE library failed."
+msgstr "SPICE bibliotēkas inicializācija neizdevās."
+
+#: src/celestia/celestiacore.cpp:4204
+msgid "Cannot read star database."
+msgstr "Nevar ielasīt zvaigžņu datubāzi."
+
+#: src/celestia/celestiacore.cpp:4226
+#, fuzzy
+msgid "Error opening deepsky catalog file."
+msgstr "Kļūda atverot zvaigžņu katalogu "
+
+#: src/celestia/celestiacore.cpp:4278
+msgid "Error opening solar system catalog.\n"
+msgstr "Kļūda atverot zvaigžņu sistēmas katalogu.\n"
+
+#: src/celestia/celestiacore.cpp:4311
+msgid "Error opening asterisms file."
+msgstr "Kļūda atverot asterismu failu."
+
+#: src/celestia/celestiacore.cpp:4326
+msgid "Error opening constellation boundaries files."
+msgstr "Kļūda atverot zvaigznāju robežu failus."
+
+#: src/celestia/celestiacore.cpp:4393
+msgid "render path: "
+msgstr "renderēšanas ceļš: "
+
+#: src/celestia/celestiacore.cpp:4404
+msgid "Failed to initialize renderer"
+msgstr "Nevarēja inicializēt renderētāju"
+
+#: src/celestia/celestiacore.cpp:4420
+msgid "Error loading font; text will not be visible.\n"
+msgstr "Kļūda ielādējot fontus; teksts nebūs redzams.\n"
+
+#: src/celestia/celestiacore.cpp:4477
+msgid "Error reading cross index "
+msgstr "Kļuda lasot kopējo indeksu "
+
+#: src/celestia/celestiacore.cpp:4479
+msgid "Loaded cross index "
+msgstr "Kopējais indekss ielādēts "
+
+#: src/celestia/celestiacore.cpp:4493 src/celestia/celestiacore.cpp:4515
+msgid "Error opening "
+msgstr "Kļūda atverot "
+
+#: src/celestia/celestiacore.cpp:4500
+msgid "Error reading star names file\n"
+msgstr "Kļūda ielasot zvaigžņu nosaukumu failu\n"
+
+#: src/celestia/celestiacore.cpp:4523
+msgid "Error reading stars file\n"
+msgstr "Kļūda ielasot zvaigžņu failu\n"
+
+#: src/celestia/celestiacore.cpp:4550
+msgid "Error opening star catalog "
+msgstr "Kļūda atverot zvaigžņu katalogu "
+
+#: src/celestia/oggtheoracapture.cpp:159
+#, c-format
+msgid "Error in creating ogg file %s for capture.\n"
+msgstr "Kļūda atverot ogg failu %s ierakstam.\n"
+
+#: src/celestia/oggtheoracapture.cpp:253 src/celestia/oggtheoracapture.cpp:273
+msgid "Internal Ogg library error."
+msgstr "Internālā Ogg bibliotēkas kļūda."
+
+#: src/celestia/oggtheoracapture.cpp:308
+#, c-format
+msgid ""
+"OggTheoraCapture::start() - Theora video: %s %.2f(%d/%d) fps quality %d %dx%"
+"d offset (%dx%d)\n"
+msgstr ""
+"OggTheoraCapture::start() - Theora video: %s %.2f(%d/%d) kadri/s kvalitāte %"
+"d %dx%d offsets(%dx%d)\n"
+
+#: src/celestia/oggtheoracapture.cpp:423
+#, c-format
+msgid "OggTheoraCapture::cleanup() - wrote %d frames\n"
+msgstr "OggTheoraCapture::cleanup() - ierakstīja %d kadrus\n"
+
+#: src/celestia/url.cpp:653
+msgid "Settings"
+msgstr "Iestatījumi"
+
+#: src/celestia/winmain.cpp:625
+msgid "Vendor: "
+msgstr "Ražotājs: "
+
+#: src/celestia/winmain.cpp:630
+msgid "Renderer: "
+msgstr "Renderētājs: "
+
+#: src/celestia/winmain.cpp:635
+msgid "Version: "
+msgstr "Versija: "
+
+#: src/celestia/winmain.cpp:645
+msgid "GLSL version: "
+msgstr "GLSL Versija: "
+
+#: src/celestia/winmain.cpp:656
+msgid "Max simultaneous textures: "
+msgstr "Maksimālais tekstūru skaits vienlaicīgi: "
+
+#: src/celestia/winmain.cpp:663
+msgid "Max texture size: "
+msgstr "Maksimālais tekstūras izmērs: "
+
+#: src/celestia/winmain.cpp:672
+msgid "Max cube map size: "
+msgstr "Maksimālais tekstūras izmērs: "
+
+#: src/celestia/winmain.cpp:680
+msgid "Point size range: "
+msgstr "Punktu mērogošanas attālums: "
+
+#: src/celestia/winmain.cpp:685
+msgid "Supported Extensions:"
+msgstr "Atbalstītie paplašinājumi:"
+
+#: src/celestia/winmain.cpp:1386
+msgid "Windowed Mode"
+msgstr "Logu režīms"
+
+#: src/celestia/winmain.cpp:1508
+msgid "Asteroids"
+msgstr "Asteroīdiem"
+
+#: src/celestia/winmain.cpp:1510
+msgid "Comets"
+msgstr "Komētām"
+
+#: src/celestia/winmain.cpp:1512
+msgid "Invisibles"
+msgstr "Neredzamajiem"
+
+#: src/celestia/winmain.cpp:1514
+msgid "Moons"
+msgstr "Pavadoņiem"
+
+# This string should not be reused for rendering and labels / orbits - certain languages (like Latvian) require different word forms for different contexts - using single string for both cases makes it impossible to translate correctly for both cases
+#: src/celestia/winmain.cpp:1516 src/celestia/winmain.cpp:1551
+#: src/celestia/winmain.cpp:1668
+msgid "Planets"
+msgstr "Planētām"
+
+#: src/celestia/winmain.cpp:1518
+msgid "Spacecraft"
+msgstr "Mākslīgie pavadoņi"
+
+#: src/celestia/winmain.cpp:1608 src/celestia/winmain.cpp:1656
+#: src/celestia/winmain.cpp:1679
+msgid "&Goto"
+msgstr "&Doties uz"
+
+#: src/celestia/winmain.cpp:1609 src/celestia/winmain.cpp:1680
+msgid "&Follow"
+msgstr "&Sekot"
+
+#: src/celestia/winmain.cpp:1610
+msgid "S&ync Orbit"
+msgstr "&Synhronizēt ar orbītu"
+
+#: src/celestia/winmain.cpp:1611 src/celestia/winmain.cpp:1657
+#: src/celestia/winmain.cpp:1681
+msgid "&Info"
+msgstr "&Informācija"
+
+#: src/celestia/winmain.cpp:1613
+msgid "&Reference Vectors"
+msgstr "&References vektori"
+
+#: src/celestia/winmain.cpp:1614
+msgid "Show Body Axes"
+msgstr "Rādīt ķermeņu asis"
+
+#: src/celestia/winmain.cpp:1615
+msgid "Show Frame Axes"
+msgstr "Rādīt &rāmju asis"
+
+#: src/celestia/winmain.cpp:1616
+msgid "Show Sun Direction"
+msgstr "Rādīt Saules virzienu"
+
+#: src/celestia/winmain.cpp:1617
+msgid "Show Velocity Vector"
+msgstr "Rādīt ātruma vektoru"
+
+#: src/celestia/winmain.cpp:1618
+#, fuzzy
+msgid "Show Planetographic Grid"
+msgstr "Rādīt planētu Orbītas"
+
+#: src/celestia/winmain.cpp:1619
+#, fuzzy
+msgid "Show Terminator"
+msgstr "Rādīt struktūras"
+
+#: src/celestia/winmain.cpp:1633
+msgid "&Satellites"
+msgstr "&Pavadoņi"
+
+#: src/celestia/winmain.cpp:1643
+msgid "&Alternate Surfaces"
+msgstr "&Alternatīvās virsmas"
+
+#: src/celestia/winmain.cpp:1666
+msgid "Orbiting Bodies"
+msgstr "Apriņķojošie objekti"
+
+#: src/celestia/winmain.cpp:1693
+msgid "&Unmark"
+msgstr "&Atcelt iezīmēto"
+
+#: src/celestia/winmain.cpp:1695
+msgid "&Mark"
+msgstr "&Iezīmēt"
+
+#: src/celestia/winmain.cpp:3137
+msgid "Loading: "
+msgstr "Ielādē: "
+
+#: src/celestia/winmain.cpp:3305 src/celutil/util.cpp:72
+#: src/celutil/util.cpp:76
+msgid "LANGUAGE"
+msgstr "lv"
+
+#: src/celestia/winmain.cpp:3307
+msgid "WinLangID"
+msgstr "0426"
+
+#: src/celestia/winmain.cpp:3809
+msgid "Copied URL"
+msgstr "Iekopēja URL"
+
+#: src/celestia/winmain.cpp:3903
+msgid "Loading URL"
+msgstr "Ielādē URL"
+
+#: src/celestia/winmain.cpp:3915
+msgid "Error opening script"
+msgstr "Kļūda atverot scenāriju"
+
+#: src/celestia/winmain.cpp:3934
+msgid "Error loading script"
+msgstr "Kļūda ielādējot scenāriju"
+
+#: src/celestia/winmain.cpp:3939
+msgid "Running script"
+msgstr "Izpilda scenāriju"
+
+#: src/celestia/wineclipses.cpp:58
+msgid "Planet"
+msgstr "Planēta"
+
+#: src/celestia/wineclipses.cpp:60
+msgid "Satellite"
+msgstr "Pavadonis"
+
+#: src/celestia/wineclipses.cpp:62
+msgid "Date"
+msgstr "Datums"
+
+#: src/celestia/wineclipses.cpp:64
+msgid "Start"
+msgstr "Sākt"
+
+#: src/celestia/wineclipses.cpp:66
+msgid "Duration"
+msgstr "Ilgums"
+
+#: src/celestia/wineclipses.cpp:316
+msgid "Earth"
+msgstr "Zeme"
+
+#: src/celestia/wineclipses.cpp:317
+msgid "Jupiter"
+msgstr "Jupiters"
+
+#: src/celestia/wineclipses.cpp:318
+msgid "Saturn"
+msgstr "Saturns"
+
+#: src/celestia/wineclipses.cpp:319
+msgid "Uranus"
+msgstr "Urāns"
+
+#: src/celestia/wineclipses.cpp:320
+msgid "Neptune"
+msgstr "Neptūns"
+
+#: src/celestia/wineclipses.cpp:321
+msgid "Pluto"
+msgstr "Plutons"
+
+#: src/celestia/winstarbrowser.cpp:70
+msgid "Name"
+msgstr "Nosaukums"
+
+#: src/celestia/winstarbrowser.cpp:72
+msgid "Distance (ly)"
+msgstr "Attālums(ly)"
+
+#: src/celestia/winstarbrowser.cpp:75
+msgid "App. mag"
+msgstr "Redz.spož."
+
+#: src/celestia/winstarbrowser.cpp:77
+msgid "Abs. mag"
+msgstr "Abs.spož."
+
+#: src/celestia/winstarbrowser.cpp:79
+msgid "Type"
+msgstr "Tips"
+
+#: src/celestia/wintime.cpp:95
+msgid "Universal Time"
+msgstr "Universālais Laiks"
+
+#: src/celestia/wintime.cpp:96
+msgid "Local Time"
+msgstr "Vietējais laiks"
+
+#: src/celestia/wintime.cpp:97
+msgid "Time Zone Name"
+msgstr "Laika zona"
+
+#: src/celestia/wintime.cpp:98
+msgid "UTC Offset"
+msgstr "UTC nobīde"
+
+#~ msgid "Celestial Browser"
+#~ msgstr "Debesu pārlūks"
+
+#~ msgid "Moon"
+#~ msgstr "Mēness"
+
+#~ msgid "Asteroid"
+#~ msgstr "Asteroīds"
+
+#~ msgid "Comet"
+#~ msgstr "Komēta"
+
+#~ msgid "Invisible"
+#~ msgstr "Neredzams"
+
+#~ msgid "Barycenter"
+#~ msgstr "Baricentrs"
+
+#~ msgid "Small Body"
+#~ msgstr "Mazs objekts"
+
+#~ msgid "Dwarf Planet"
+#~ msgstr "Pundurplanēta"
+
+#~ msgid "-"
+#~ msgstr "-"
+
+#~ msgid "Eclipse Finder"
+#~ msgstr "Aptumsumu meklētājs"
+
+#~ msgid "&Add Bookmark"
+#~ msgstr "&Pievienot grāmatzīmi"
+
+#~ msgid "Add a bookmark for the current document"
+#~ msgstr "Pievienot grāmatzīmi šobdrīdējam dokumentam"
+
+#~ msgid "Add &Relative Bookmark"
+#~ msgstr "Pievienot &relatīvo grāmatzīmi"
+
+#~ msgid "Add a relative bookmark for the current document"
+#~ msgstr "Pievienot relatīvo grāmatzīmi šobdrīdējam dokumentam"
+
+#~ msgid "Add &Settings Bookmark"
+#~ msgstr "Pievienot &iestatījumu grāmatzīmi"
+
+#~ msgid "Add a settings bookmark for the current document"
+#~ msgstr "Pievienot iestatījumu grāmatzīmi šim dokumentam"
+
+#~ msgid "Edit your bookmark collection in a separate window"
+#~ msgstr "Rediģēt grāmatzīmju kolekciju atsevišķā logā"
+
+#~ msgid "&New Folder..."
+#~ msgstr "&Jauna mape..."
+
+#~ msgid "Create a new bookmark folder in this menu"
+#~ msgstr "Radīt jaunu grāmatzīmju mapi šai izvēlnē"
+
+#~ msgid "Can't add bookmark with empty URL"
+#~ msgstr "Nevar pievienot grāmatzīmi, kas nesatur URL"
+
+#~ msgid ""
+#~ "Something seems to be wrong with your installation of Celestia. The "
+#~ "splash screen directory couldn't be found. \n"
+#~ "Start-up will continue, but Celestia will probably be missing some data "
+#~ "files and may not work correctly, please check your installation."
+#~ msgstr ""
+#~ "Šķiet kaut kas nav kārtībā ar Celestia instalāciju. Logo direktorija "
+#~ "netika atrasta. \n"
+#~ "Ielāde tiks turpināta, bet visticamāk, ka trūks kādu failu un Celestia "
+#~ "var nedarboties korekti. Lūdzu pārbaudiet savu instalāciju."
+
+#~ msgid "Go to &URL..."
+#~ msgstr "Iet uz &URL..."
+
+#~ msgid "Go to &Long/Lat..."
+#~ msgstr "Iet uz &koordinātēm..."
+
+#~ msgid "&Back"
+#~ msgstr "&Atpakaļ"
+
+#~ msgid "&Forward"
+#~ msgstr "&Tālāk"
+
+#~ msgid "Home"
+#~ msgstr "Mājas"
+
+#~ msgid "Bookmarks"
+#~ msgstr "Grāmatzīme"
+
+#~ msgid "Full Screen"
+#~ msgstr "Pilns ekrāns"
+
+#~ msgid "Copy URL"
+#~ msgstr "Iekopēt URL"
+
+#~ msgid "Set Time..."
+#~ msgstr "Iestādīt laiku..."
+
+#~ msgid "Set Time to Now"
+#~ msgstr "Iestādīt šobrīdējo laiku"
+
+#~ msgid "Accelerate Time"
+#~ msgstr "Paātrināt laiku"
+
+#~ msgid "Decelerate Time"
+#~ msgstr "Palēnināt laiku"
+
+#~ msgid "Accelerate Time (x2)"
+#~ msgstr "Paātrināt laiku (x2)"
+
+#~ msgid "Decelerate Time (/2)"
+#~ msgstr "Palēnināt laiku (x2)"
+
+#~ msgid "Pause Time"
+#~ msgstr "Nopauzēt laiku"
+
+#~ msgid "Reverse Time"
+#~ msgstr "Pagriezt laiku pretējā virzienā"
+
+#~ msgid "Split View Vertically"
+#~ msgstr "Sadalīt skatu vertikāli"
+
+#~ msgid "Split View Horizontally"
+#~ msgstr "Sadalīt skatu horizontāli"
+
+#~ msgid "Cycle View"
+#~ msgstr "Cikliskais skats"
+
+#~ msgid "Single View"
+#~ msgstr "Viens skatījums"
+
+#~ msgid "Delete View"
+#~ msgstr "Izdzēst skatījumu"
+
+#~ msgid "Frames Visible"
+#~ msgstr "Redzamie rāmji"
+
+#~ msgid "Active Frame Visible"
+#~ msgstr "Aktīvais rāmis redzams"
+
+#~ msgid "Synchronize Time"
+#~ msgstr "Sinhronizēt laiku"
+
+#~ msgid "Alt-Azimuth Mode"
+#~ msgstr "Azimutālais režīms"
+
+#~ msgid "Go To Surface"
+#~ msgstr "Doties uz virsmu"
+
+#~ msgid "Show Stars"
+#~ msgstr "Rādīt zvaigznes"
+
+#~ msgid "Show Planets"
+#~ msgstr "Rādīt planētas"
+
+#~ msgid "Show Galaxies"
+#~ msgstr "Rādīt galaktikas"
+
+#, fuzzy
+#~ msgid "Show Globulars"
+#~ msgstr "Rādīt mākoņu kartes"
+
+#~ msgid "Show Partial Trajectories"
+#~ msgstr "Rādīt daļējas trajektorijas"
+
+#~ msgid "Show Nebulae"
+#~ msgstr "Rādīt miglājus"
+
+#~ msgid "Show Open Clusters"
+#~ msgstr "Rādīt vaļējās kopas"
+
+#~ msgid "Show Constellations"
+#~ msgstr "Rādīt zvaigznājus"
+
+#~ msgid "Show CloudMaps"
+#~ msgstr "Rādīt mākoņu kartes"
+
+#~ msgid "Show Cloud Shadows"
+#~ msgstr "Rādīt mākoņu ēnas"
+
+#~ msgid "Show Orbits"
+#~ msgstr "Rādīt orbītas"
+
+#~ msgid "Show Asteroid Orbits"
+#~ msgstr "Rādīt asteroīdu orbītas"
+
+#~ msgid "Show Comet Orbits"
+#~ msgstr "Rādīt komētu orbītas"
+
+#~ msgid "Show Moon Orbits"
+#~ msgstr "Rādīt pavadoņu Orbītas"
+
+#~ msgid "Show Star Orbits"
+#~ msgstr "Rādīt zvaigžņu orbītas"
+
+#~ msgid "Show Planet Orbits"
+#~ msgstr "Rādīt planētu Orbītas"
+
+#~ msgid "Show Spacecraft Orbits"
+#~ msgstr "Rādīt kosmisko aparātu orbītas"
+
+#~ msgid "Show Celestial Grid"
+#~ msgstr "Parādīt koordinātu tīklu"
+
+#~ msgid "Show Night Side Lights"
+#~ msgstr "Rādīt gaismas nakts pusē"
+
+#~ msgid "Show Markers"
+#~ msgstr "Rādīt marķierus"
+
+#~ msgid "Show Atmospheres"
+#~ msgstr "Rādīt atmosfēras"
+
+#~ msgid "Show Smooth Orbit Lines"
+#~ msgstr "Rādīt nogludinātas orbītu līnijas"
+
+#~ msgid "Show Eclipse Shadows"
+#~ msgstr "Rādīt aptumsumu ēnas"
+
+#~ msgid "Cycle Star Mode"
+#~ msgstr "Cikliskās zvaigznes režīms"
+
+#~ msgid "Show Ring Shadows"
+#~ msgstr "Rādīt ēnas riņķiem"
+
+#~ msgid "Show Boundaries"
+#~ msgstr "Rādīt robežas"
+
+#~ msgid "Auto Magnitudes"
+#~ msgstr "Automātiski zvaigžņlielumi"
+
+#~ msgid "Show Comet Tails"
+#~ msgstr "Rādīt komētu astes"
+
+#~ msgid "Show Star Labels"
+#~ msgstr "Rādīt zvaigžņu nosaukumus"
+
+#~ msgid "Show Planet Labels"
+#~ msgstr "Rādīt planētu nosaukumus"
+
+#~ msgid "Show Moon Labels"
+#~ msgstr "Rādīt toponīmus uz Mēness "
+
+#~ msgid "Show Comet Labels"
+#~ msgstr "Rādīt komētu nosaukumus"
+
+#~ msgid "Show Constellation Labels"
+#~ msgstr "Rādīt zvaigznāju nosaukumus"
+
+#~ msgid "Constellation Labels in Latin"
+#~ msgstr "Zvaigznāju latīniskie nosaukumi"
+
+#~ msgid "Show Galaxy Labels"
+#~ msgstr "Rādīt galaktiku nosaukumus"
+
+#, fuzzy
+#~ msgid "Show Globular Labels"
+#~ msgstr "Rādīt miglāju nosaukumus"
+
+#~ msgid "Show Nebula Labels"
+#~ msgstr "Rādīt miglāju nosaukumus"
+
+#~ msgid "Show Open Cluster Labels"
+#~ msgstr "Rādīt vaļējo kopu nosaukumus"
+
+#~ msgid "Show Asteroid Labels"
+#~ msgstr "Rādīt asteroīdu nosaukumus"
+
+#~ msgid "Show Spacecraft Labels"
+#~ msgstr "Rādīt komsiskajiem lidaparātiem"
+
+#~ msgid "Show Location Labels"
+#~ msgstr "Rādīt vietvārdus"
+
+#~ msgid "Display Local Time"
+#~ msgstr "Rādīt vietējo laiku"
+
+#~ msgid "Show City Locations"
+#~ msgstr "Rādīt pilsētu novietojumu"
+
+#~ msgid "Show Observatory Locations"
+#~ msgstr "Rādīt observatoriju novietojumu"
+
+#~ msgid "Show Landing Sites Locations"
+#~ msgstr "Rādīt nosēšanās vietas"
+
+#~ msgid "Show Crater Locations"
+#~ msgstr "Rādīt krāteru vietas"
+
+#~ msgid "Show Mons Locations"
+#~ msgstr "Rādīt kalnus"
+
+#~ msgid "Show Terra Locations"
+#~ msgstr "Rādīt zemienes"
+
+#~ msgid "Show Vallis Locations"
+#~ msgstr "Rādīt ielejas"
+
+#~ msgid "Show Mare Locations"
+#~ msgstr "Rādīt jūras"
+
+#~ msgid "Show Other Locations"
+#~ msgstr "Rādīt citas vietas"
+
+#~ msgid "Wireframe Mode"
+#~ msgstr "Karkasu režīms"
+
+#~ msgid "Center on Orbit"
+#~ msgstr "Iecentrēt orbītu"
+
+#~ msgid "Basic"
+#~ msgstr "Pamata"
+
+#~ msgid "Multitexture"
+#~ msgstr "Multitekstūru"
+
+#~ msgid "NvCombiners"
+#~ msgstr "NvCombiners"
+
+#~ msgid "DOT3 ARBVP"
+#~ msgstr "DOT3 ARBVP"
+
+#~ msgid "NvCombiner NvVP"
+#~ msgstr "NvCombiner NvVP"
+
+#~ msgid "NvCombiner ARBVP"
+#~ msgstr "NvCombiner ARBVP"
+
+#~ msgid "ARBFP ARBVP"
+#~ msgstr "ARBFP ARBVP"
+
+#~ msgid "NV30"
+#~ msgstr "NV30"
+
+#~ msgid "OpenGL 2.0"
+#~ msgstr "OpenGL 2.0"
+
+#~ msgid "Cycle OpenGL Render Path"
+#~ msgstr "Ieciklēt OpenGL renderēšanas ceļu"
+
+#~ msgid "Sync framerate to video refresh rate"
+#~ msgstr "Sinhronizēt kadrus skaitu ar displeja pārzīmēšanas frekvenci"
+
+#~ msgid "Grab Image"
+#~ msgstr "Paņemt attēlu"
+
+#~ msgid "Capture Video"
+#~ msgstr "Ierakstīt video"
+
+#~ msgid "OpenGL info"
+#~ msgstr "OpenGL informācija"
+
+#~ msgid "Show Bookmark Toolbar"
+#~ msgstr "Rādīt grāmatzīmju rīkjoslu"
+
+#~ msgid "OpenGL Info"
+#~ msgstr "OpenGL informācija"
+
+#~ msgid "UTC"
+#~ msgstr "UTC"
+
+#~ msgid ""
+#~ "This version of Celestia was not built with support for movie recording."
+#~ msgstr "Šai Celestia versijā nav tikusi iekļauta video ieraksta funkcija."
+
+#~ msgid "Go to URL"
+#~ msgstr "Atvērt &URL..."
+
+#~ msgid "Enter URL"
+#~ msgstr "Ievadiet URL"
+
+#~ msgid "Object: "
+#~ msgstr "Objekts: "
+
+#~ msgid "Longitude: "
+#~ msgstr "Garums: "
+
+#~ msgid "East"
+#~ msgstr "Austrumi"
+
+#~ msgid "West"
+#~ msgstr "Rietumi"
+
+#~ msgid "Latitude: "
+#~ msgstr "Platums: "
+
+#~ msgid "North"
+#~ msgstr "Ziemeļi"
+
+#~ msgid "South"
+#~ msgstr "Dienvidi"
+
+#~ msgid "Altitude: "
+#~ msgstr "Augstums: "
+
+#~ msgid "Celestia encountered an error while processing your script"
+#~ msgstr "Celestia saskārās ar kļūdu jūsu skripa izpildes laikā"
+
+#~ msgid "Celestia"
+#~ msgstr "Celestia"
+
+#~ msgid "Use alternate configuration file"
+#~ msgstr "Izmantot citu konfigurācijas failu"
+
+#~ msgid "Use alternate installation directory"
+#~ msgstr "Izmantot citu instalācijas direktoriju"
+
+#~ msgid "Use as additional \"extras\" directory"
+#~ msgstr "Izmantot kā papildus \"extras\" direktoriju"
+
+#~ msgid "Start fullscreen"
+#~ msgstr "Sākt pa pilnu ekrānu"
+
+#~ msgid "Disable splash screen"
+#~ msgstr "Nerādīt sākuma ekrānu"
+
+#~ msgid "Start and go to url"
+#~ msgstr "Startēt un iet uz URL"
+
+#~ msgid "_: NAME OF TRANSLATORS\\nYour names"
+#~ msgstr "_: NAME OF TRANSLATORS\\nJanis Jatnieks"
+
+#~ msgid "_: EMAIL OF TRANSLATORS\\nYour emails"
+#~ msgstr "_: EMAIL OF TRANSLATORS\\nsg30022(at)lanet.lv"
+
+#~ msgid "Celestia Preferences"
+#~ msgstr "Celestia iestatījumi"
+
+#~ msgid "Rendering"
+#~ msgstr "Izzīmēšana"
+
+#~ msgid "Show"
+#~ msgstr "Rādīt"
+
+#~ msgid "Stars"
+#~ msgstr "Zvaigznes"
+
+#~ msgid "Galaxies"
+#~ msgstr "Galaktikas"
+
+#~ msgid "Nebulae"
+#~ msgstr "Miglājus"
+
+#~ msgid "Open Clusters"
+#~ msgstr "Vaļējās kopas"
+
+#~ msgid "Atmospheres"
+#~ msgstr "Atmosfēras"
+
+#~ msgid "Clouds"
+#~ msgstr "Mākoņus"
+
+#~ msgid "Cloud Shadows"
+#~ msgstr "Mākoņu ēnas"
+
+#~ msgid "Night Side Lights"
+#~ msgstr "Pilsētu gaismas ēnas pusē"
+
+#~ msgid "Eclipse Shadows"
+#~ msgstr "Aptumsumu ēnas"
+
+#~ msgid "Comet Tails"
+#~ msgstr "Komētu astes"
+
+#~ msgid "Orbits"
+#~ msgstr "Orbītas"
+
+#~ msgid "Partial Trajectories"
+#~ msgstr "Daļējas trajektorijas"
+
+#~ msgid "Smooth Orbit Lines"
+#~ msgstr "Izlīdzināt orbītu līnijas"
+
+#~ msgid "Celestial Grid"
+#~ msgstr "Koordinātu tīklu"
+
+#~ msgid "Constellations"
+#~ msgstr "Zvaigznājus"
+
+#~ msgid "Markers"
+#~ msgstr "Marķierus"
+
+#~ msgid "Ring Shadows"
+#~ msgstr "Rinķu ēnas"
+
+#~ msgid "Constellation Boundaries"
+#~ msgstr "Zvaigznāju ēnas"
+
+#~ msgid "Orbits / Labels"
+#~ msgstr "Orbītas un nosaukumi"
+
+#~ msgid "Labels"
+#~ msgstr "Nosaukumus"
+
+#~ msgid "Constellations in Latin"
+#~ msgstr "Zvaigznājus latīniski"
+
+#~ msgid "Spacecrafts"
+#~ msgstr "Kosmiskos aparātus"
+
+#~ msgid "Locations"
+#~ msgstr "Vietas"
+
+#~ msgid "Ambient Light"
+#~ msgstr "Fona gaismu"
+
+#~ msgid "Limiting Magnitude"
+#~ msgstr "Limitējošais spožums"
+
+#~ msgid "Info Text"
+#~ msgstr "Informatīvais teksts"
+
+#~ msgid "Level: "
+#~ msgstr "Līmenis:"
+
+#~ msgid "None"
+#~ msgstr "nav"
+
+#~ msgid "Terse"
+#~ msgstr "īss"
+
+#~ msgid "Verbose"
+#~ msgstr "pilnīgs"
+
+#~ msgid "Textures"
+#~ msgstr "Tekstūras"
+
+#~ msgid "Resolution: "
+#~ msgstr "Izšķirtspēja: "
+
+#~ msgid "Low"
+#~ msgstr "&nedaudz"
+
+#~ msgid "Medium"
+#~ msgstr "&vidēji daudz"
+
+#~ msgid "High"
+#~ msgstr "daudz"
+
+#~ msgid "Automatic FOV"
+#~ msgstr "Automātiskais redzes leņķis (FOV)"
+
+#~ msgid "Screen DPI: "
+#~ msgstr "Ekrāna izšķirtspēja (DPI): "
+
+#~ msgid "Viewing Distance (cm): "
+#~ msgstr "Skata attālums (cm): "
+
+#~ msgid "Cities"
+#~ msgstr "Pilsētas"
+
+#~ msgid "Observatories"
+#~ msgstr "Observatorijas"
+
+#~ msgid "Landing Sites"
+#~ msgstr "Piezemēšanās vietas"
+
+#~ msgid "Craters"
+#~ msgstr "Krāteri"
+
+#~ msgid "Mons"
+#~ msgstr "Kalni"
+
+#~ msgid "Terra"
+#~ msgstr "Zemienes"
+
+#~ msgid "Vallis"
+#~ msgstr "Ielejas"
+
+#~ msgid "Mare"
+#~ msgstr "Jūras"
+
+#~ msgid "Other"
+#~ msgstr "Citas"
+
+#~ msgid "Minimum Feature Size"
+#~ msgstr "Struktūras mazākais izmērs"
+
+#~ msgid "Date/Time"
+#~ msgstr "Datums/Laiks"
+
+#~ msgid "Display"
+#~ msgstr "Rādīt"
+
+#~ msgid "Timezone: "
+#~ msgstr "Laika zona:"
+
+#~ msgid "Format: "
+#~ msgstr "Formāts: "
+
+#~ msgid "Local Format"
+#~ msgstr "Vietējais formāts"
+
+#~ msgid "Set"
+#~ msgstr "Iestādīt"
+
+#~ msgid "Local Time is only supported for dates between 1902 and 2037.\n"
+#~ msgstr ""
+#~ "Vietējais laiks tiek nodrošināts tikai datumiem no 1902.-2037. gadam.\n"
+
+#~ msgid "Julian Date: "
+#~ msgstr "Juliāna diena: "
+
+#~ msgid "Now"
+#~ msgstr "Tagadne"
+
+#~ msgid ""
+#~ "\n"
+#~ "Selection: "
+#~ msgstr ""
+#~ "\n"
+#~ "Izvēlēts: "
+
+#~ msgid "Include Light Travel Time"
+#~ msgstr "Iekļaut gaismas ceļošanas ilgumu"
+
+#~ msgid "Ignore Light Travel Time "
+#~ msgstr "Ignorēt gaismas ceļošanas ilgumu"
+
+#~ msgid "OpenGL"
+#~ msgstr "OpenGL"
+
+#~ msgid "Key Bindings"
+#~ msgstr "Galvenie saistījumi"
+
+#~ msgid "<b>Unextended OpenGL 1.1</b>"
+#~ msgstr "<b>Nepaplašināts OpenGL 1.1</b>"
+
+#~ msgid "<b>Multiple textures and the ARB_texenv_combine extension</b>"
+#~ msgstr "<b>Dažādas tekstūras un ARB_texenv_combine paplašinājums</b>"
+
+#~ msgid "<b>NVIDIA combiners, no vertex programs</b>"
+#~ msgstr "<b>NVIDIA kombinators, bez verteksu programmām</b>"
+
+#~ msgid "<b>ARB_texenv_DOT3 extension, ARB_vertex_program extension</b>"
+#~ msgstr ""
+#~ "<b>ARB_texenv_DOT3 paplašinājums, ARB_vertex_program paplašinājums</b>"
+
+#~ msgid ""
+#~ "<b>NVIDIA Combiners, NV_vertex_program extension</b><br> provide bump "
+#~ "mapping, ring shadows, and specular highlights on any Geforce or ATI "
+#~ "Radeon graphics card, though NvCombiner ARBVP is a slightly better option "
+#~ "for Geforce users"
+#~ msgstr ""
+#~ "<b>NVIDIA Kombinatori, NV_vertex_program paplašinājums</b><br> nodrošina "
+#~ "izciļņu kartējumus, riņķu ēnojumus, un iespaidīgus gaismas efektus  ar "
+#~ "jebkuru Geforce vai ATI Radeon grafisko karti, taču NvCombiner ARBVP ir "
+#~ "nedaudz labāka izvēle Geforce lietotājiem"
+
+#~ msgid "<b>NVIDIA Combiners, ARB_vertex_program extension</b>"
+#~ msgstr "<b>NVIDIA Kombinatori, ARB_vertex_program paplašinājums</b>"
+
+#~ msgid ""
+#~ "<b>ARB_fragment_program and ARB_vertex_program extensions</b><br>provide "
+#~ "advanced effects on Geforce FX and Radeon 9700 cards"
+#~ msgstr ""
+#~ "<b>ARB_fragment_program un ARB_vertex_program paplašinājumu</"
+#~ "b><br>nodrošina uzlabotus effektus ar Geforce FX un Radeon 9700 kartēm"
+
+#~ msgid "<b>NV_fragment_program and ARB_vertex_program extensions</b>"
+#~ msgstr "<b>NV_fragment_program and ARB_vertex_program paplašinājumi</b>"
+
+#~ msgid "<b>OpenGL 2.0 Shading Language</b>"
+#~ msgstr "<b>OpenGL 2.0 ēnojuma valoda</b>"
+
+#~ msgid ""
+#~ "File %1 does not exist, using default configuration file %2/celestia.cfg"
+#~ msgstr ""
+#~ "Fails %1 neeksistē, izmanto nokulsēto konfigurāciju failu%2/celestia.cfg"
+
+#~ msgid "Directory %1 does not exist, using default %2"
+#~ msgstr "Direktorija %1 neeksistē, izmanto noklusēto %2"
+
+#~ msgid "Extras directory %1 does not exist"
+#~ msgstr "Papildinājumu direktorija %1 neeksistē"
+
+#~ msgid "Abs (app) mag: "
+#~ msgstr "Abs.(redz.) mag: "
+
+#~ msgid "Surface Temp: "
+#~ msgstr "Virsmas temp.: "
+
+#~ msgid "Marked objects"
+#~ msgstr "Marķētie objekti"
+
+#~ msgid "&Select"
+#~ msgstr "&Izvēlēties"
+
+#~ msgid "&Center"
+#~ msgstr "&Iecentrēt"
+
+#~ msgid "S&ynch Orbit"
+#~ msgstr "&Sinhronā orbīta"
+
+#~ msgid "Unmark &All"
+#~ msgstr "&Nemarķēt visus"
+
+#~ msgid "Diamond"
+#~ msgstr "Rombs"
+
+#~ msgid "Triangle"
+#~ msgstr "Trijstūris"
+
+#~ msgid "Square"
+#~ msgstr "Kvadrāts"
+
+#~ msgid "Filled Square"
+#~ msgstr "Aizpildīts kvadrāts"
+
+#~ msgid "Plus"
+#~ msgstr "Pluss"
+
+#~ msgid "X"
+#~ msgstr "X"
+
+#~ msgid "Left Arrow"
+#~ msgstr "Kreisā bulta"
+
+#~ msgid "Right Arrow"
+#~ msgstr "Labā bulta"
+
+#~ msgid "Up Arrow"
+#~ msgstr "Bulta uz augšu"
+
+#~ msgid "Down Arrow"
+#~ msgstr "Bulta uz leju"
+
+#~ msgid "Circle"
+#~ msgstr "Rinķis"
+
+#~ msgid "Disk"
+#~ msgstr "Disks"
+
+#~ msgid "Normal"
+#~ msgstr "Normāls"
+
+#~ msgid "Small Bodies"
+#~ msgstr "Mazi ķermeņi"
+
+#~ msgid "Dwarf Planets"
+#~ msgstr "Pundurplanētas"
+
+#~ msgid "Duration: %1"
+#~ msgstr "Ilgums: %1"
+
+#~ msgid "Size: %1 MB"
+#~ msgstr "Izmērs: %1 MB"
+
+#~ msgid "Current size: %1 x %2"
+#~ msgstr "Šobrīdējais izmērs: %1 x %2"
+
+#~ msgid "Current width: %1 x %2"
+#~ msgstr "Šobrīdējais platums: %1 x %2"
+
+#~ msgid "Current height: %1 x %2"
+#~ msgstr "Šobrīdējais augstums: %1 x %2"
+
+#~ msgid "You must specify a file name."
+#~ msgstr "Jums jānorāda faila nosaukums."
+
+#~ msgid "Error initializing movie capture."
+#~ msgstr "Kļūda inicializējot filmas ierakstu."
+
+#~ msgid "&Navigation"
+#~ msgstr "&Navigācija"
+
+#~ msgid "Options"
+#~ msgstr "Opcijas"
+
+#~ msgid "Objects"
+#~ msgstr "Objekti"
+
+#~ msgid "OpenGL Render Path"
+#~ msgstr "OpenGL renderēšanas ceļš"
+
+#~ msgid "Time"
+#~ msgstr "Laiks"
+
+#~ msgid "MultiView"
+#~ msgstr "MultiView"
+
+#~ msgid "Main Toolbar"
+#~ msgstr "Galvenā rīkjosla"
+
+#~ msgid "Dist."
+#~ msgstr "Att."
+
+#~ msgid "App. Mag."
+#~ msgstr "Abs. Mag."
+
+#~ msgid "Abs. Mag."
+#~ msgstr "Abs. Mag."
+
+#~ msgid "With Planets"
+#~ msgstr "Ar planētām"
+
+#~ msgid "Brightest (Abs.)"
+#~ msgstr "Spožākā(Abs.)"
+
+#~ msgid "Brightest (App.)"
+#~ msgstr "Spožākā(redz.)"
+
+#~ msgid "Nearest"
+#~ msgstr "Tuvākais"
+
+#~ msgid "&Close"
+#~ msgstr "&Aizvērt"
+
+#~ msgid "Alt+C"
+#~ msgstr "Alt+C"
+
+#~ msgid "Refresh"
+#~ msgstr "Atjaunināt"
+
+#~ msgid "End"
+#~ msgstr "Beigt"
+
+#~ msgid "Search parameters"
+#~ msgstr "Meklēšanas paramteri"
+
+#~ msgid "Solar Eclipses"
+#~ msgstr "Saules aptumsumi"
+
+#~ msgid "On:"
+#~ msgstr "Uz:"
+
+#~ msgid "Moon Eclipses"
+#~ msgstr "Mēness aptumsumi"
+
+#~ msgid "Search"
+#~ msgstr "Meklēšana"
+
+#~ msgid "To:"
+#~ msgstr "Uz:"
+
+#~ msgid "From:"
+#~ msgstr "No:"
+
+#~ msgid "Close"
+#~ msgstr "Aizvērt"
+
+#~ msgid "Video Capture"
+#~ msgstr "Video ieraksts"
+
+#~ msgid "Save As:"
+#~ msgstr "Saglabāt kā:"
+
+#~ msgid "*.ogg"
+#~ msgstr "*.ogg"
+
+#~ msgid "Aspect Ratio:"
+#~ msgstr "Proporcija:"
+
+#~ msgid "Current"
+#~ msgstr "Pašreizējā"
+
+#~ msgid "11:9"
+#~ msgstr "11:9"
+
+#~ msgid "4:3"
+#~ msgstr "4:3"
+
+#~ msgid "16:9"
+#~ msgstr "16:9"
+
+#~ msgid "Image Size:"
+#~ msgstr "Attēla izmērs:"
+
+#~ msgid "Frame Rate:"
+#~ msgstr "Kadru skaits:"
+
+#~ msgid "Video Quality:"
+#~ msgstr "Video kvalitāte:"
+
+#~ msgid "Play Video when capture is done"
+#~ msgstr "Apskatīt video pēc ieraksta"
+
+#~ msgid "Usage"
+#~ msgstr "Lietošana"
+
+#~ msgid ""
+#~ "<p>Press <b>F11</b> to start/pause recording<br>\n"
+#~ "Press <b>F12</b> to stop</p>\n"
+#~ "\n"
+#~ "<p>Note that resizing the main window will not be possible until the end "
+#~ "of the capture</p>"
+#~ msgstr ""
+#~ "<p>Spiediet <b>F11</b> lai sāktu un apturētu ierakstu un <br>\n"
+#~ "<b>F12</b>, lai ierakstu beigtu</p>\n"
+#~ "\n"
+#~ "<p>Ņemiet vērā, ka līdz ieraksta pabeigšanai programmas loga izmēri nebūs "
+#~ "maināmi</p>"
+
+#~ msgid "&OK"
+#~ msgstr "&Labi"
+
+#~ msgid "&Cancel"
+#~ msgstr "&Atcelt"
+
+#~ msgid "Mercury"
+#~ msgstr "Merkūrs"
+
+#~ msgid "Venus"
+#~ msgstr "Venera"
+
+#~ msgid "Mars"
+#~ msgstr "Marss"
+
+#, fuzzy
+#~ msgid "Phobos"
+#~ msgstr "Fēbs"
+
+#, fuzzy
+#~ msgid "Deimos"
+#~ msgstr "Rombs"
+
+#, fuzzy
+#~ msgid "Amalthea"
+#~ msgstr "Amalteja"
+
+#~ msgid "Io"
+#~ msgstr "Jo"
+
+#~ msgid "Europa"
+#~ msgstr "Eiropa"
+
+#~ msgid "Ganymede"
+#~ msgstr "Ganimēds"
+
+#~ msgid "Callisto"
+#~ msgstr "Kalisto"
+
+#~ msgid "Prometheus"
+#~ msgstr "Prometejs"
+
+#~ msgid "Pandora"
+#~ msgstr "Pandora"
+
+#~ msgid "Epimetheus"
+#~ msgstr "Epimetejs"
+
+#~ msgid "Janus"
+#~ msgstr "Jānuss"
+
+#~ msgid "Mimas"
+#~ msgstr "Mimass"
+
+#, fuzzy
+#~ msgid "Enceladus"
+#~ msgstr "Encelads"
+
+#~ msgid "Tethys"
+#~ msgstr "Tētija"
+
+#~ msgid "Dione"
+#~ msgstr "Diona"
+
+#~ msgid "Rhea"
+#~ msgstr "Reja"
+
+#~ msgid "Titan"
+#~ msgstr "Titāns"
+
+#~ msgid "Hyperion"
+#~ msgstr "Hiperions"
+
+#~ msgid "Iapetus"
+#~ msgstr "Japets"
+
+#~ msgid "Phoebe"
+#~ msgstr "Fēbs"
+
+#, fuzzy
+#~ msgid "Miranda"
+#~ msgstr "Miranda"
+
+#~ msgid "Ariel"
+#~ msgstr "Ariels"
+
+#~ msgid "Umbriel"
+#~ msgstr "Umbriels"
+
+#~ msgid "Titania"
+#~ msgstr "Titānija"
+
+#~ msgid "Oberon"
+#~ msgstr "Oberons"
+
+#~ msgid "Larissa"
+#~ msgstr "Lārisa"
+
+#~ msgid "Proteus"
+#~ msgstr "Protejs"
+
+#~ msgid "Triton"
+#~ msgstr "Tritons"
+
+#~ msgid "Nereid"
+#~ msgstr "Nereīda"
+
+#~ msgid "Pluto-Charon"
+#~ msgstr "Pluto-Harons"
+
+#~ msgid "Charon"
+#~ msgstr "Harons"
+
+#~ msgid "NORTH AMERICA"
+#~ msgstr "ZIEMEĻAMERIKA"
+
+#~ msgid "SOUTH AMERICA"
+#~ msgstr "DIENVIDAMERIKA"
+
+#~ msgid "EURASIA"
+#~ msgstr "EIRĀZIJA"
+
+#~ msgid "AFRICA"
+#~ msgstr "ĀFRIKA"
+
+#~ msgid "AUSTRALIA"
+#~ msgstr "AUSTRĀLIJA"
+
+#~ msgid "ANTARCTICA"
+#~ msgstr "ANTARKTIKA"
+
+#~ msgid "NORTH ATLANTIC OCEAN"
+#~ msgstr "ATLANTIJAS OKEĀNA ZIEMEĻI"
+
+#~ msgid "SOUTH ATLANTIC OCEAN"
+#~ msgstr "ATLANTIJAS OKEĀNA DIENVIDI"
+
+#~ msgid "NORTH PACIFIC OCEAN"
+#~ msgstr "KLUSĀ OKEĀNA ZIEMEĻI"
+
+#~ msgid "SOUTH PACIFIC OCEAN"
+#~ msgstr "KLUSĀ OKEĀNA DIENVIDI"
+
+#~ msgid "INDIAN OCEAN"
+#~ msgstr "INDIJAS OKEĀNS"
+
+#~ msgid "ARCTIC OCEAN"
+#~ msgstr "ZIEMEĻU LEDUS OKEĀNS"
+
+#~ msgid "Milky Way"
+#~ msgstr "Piena Ceļš"
+
+#, fuzzy
+#~ msgid "Solar System Barycenter"
+#~ msgstr "Zvaigžņu sistēmas baricentrs\n"
+
+#~ msgid "&File"
+#~ msgstr "&Faili"
+
+#~ msgid "&Open Script..."
+#~ msgstr "&Atvērt scenāriju..."
+
+#~ msgid "Scripts"
+#~ msgstr "Scenāriji"
+
+#~ msgid "Placeholder"
+#~ msgstr "Marķieris"
+
+#~ msgid "Capture &Image...\tF10"
+#~ msgstr "Saglabāt ekrāna &attēlu...\tF10"
+
+#~ msgid "Capture &Movie...\tShift+F10"
+#~ msgstr "Uzņemt filmu &filmu...\tShift+F10"
+
+#~ msgid "E&xit"
+#~ msgstr "I&ziet no programmas"
+
+#~ msgid "Select &Sol\tH"
+#~ msgstr "Izvēlēties &Sauli\tH"
+
+#~ msgid "Tour G&uide..."
+#~ msgstr "Ceļojumu &gids..."
+
+#~ msgid "Select &Object..."
+#~ msgstr "Izvēlēties &objektu..."
+
+#~ msgid "Goto Object..."
+#~ msgstr "Iet uz objektu"
+
+#~ msgid "&Center Selection\tC"
+#~ msgstr "Iecentrēt izvēlēto\tC"
+
+#~ msgid "&Go to Selection\tG"
+#~ msgstr "&Iet uz izvēlēto\tG"
+
+#~ msgid "&Follow Selection\tF"
+#~ msgstr "&Sekot izvēlētajam\tF"
+
+#~ msgid "S&ync Orbit Selection\tY"
+#~ msgstr "Sinhronizēt orbītu ap izvēlēto\tY"
+
+#~ msgid "&Track Selection\tT"
+#~ msgstr "&Turēt skatu uz izvēlēto\tT"
+
+#~ msgid "Solar System &Browser..."
+#~ msgstr "Saules sistēmas &pārlūks..."
+
+#~ msgid "Star B&rowser..."
+#~ msgstr "&Zvaigžņu pārlūks..."
+
+#~ msgid "&Eclipse Finder"
+#~ msgstr "&Aptumsumu meklētājs"
+
+#~ msgid "&Time"
+#~ msgstr "&Laiks"
+
+#~ msgid "10x &Faster\tL"
+#~ msgstr "10x Ā&trāk\tL"
+
+#~ msgid "10x &Slower\tK"
+#~ msgstr "10x &Lēnāk\tK"
+
+#~ msgid "Free&ze\tSpace"
+#~ msgstr "A&pturēt\tSpace"
+
+#~ msgid "&Real Time\t\\"
+#~ msgstr "&Reālais laiks\t\\"
+
+#~ msgid "Re&verse Time\tJ"
+#~ msgstr "Laiks &atpakaļ\tJ"
+
+#~ msgid "Set &Time..."
+#~ msgstr "Ie&statīt laiku..."
+
+#~ msgid "Show Local Time"
+#~ msgstr "Rādīt vietējo laiku"
+
+#~ msgid "&Render"
+#~ msgstr "I&zzīmēt"
+
+#~ msgid "Select Display Mode..."
+#~ msgstr "Izvēlēties ekrāna režīmus..."
+
+#~ msgid "Toggle Full Screen\tAlt+Enter"
+#~ msgstr "Pārslēgt pilnekrāna režīmu\tAlt+Enter"
+
+#~ msgid "View Options..."
+#~ msgstr "Vizuālās opcijas..."
+
+#~ msgid "Locations..."
+#~ msgstr "Vietas..."
+
+#~ msgid "More Stars Visible\t]"
+#~ msgstr "Rādīt vairāk zvaigžņu\t]"
+
+#~ msgid "Fewer Stars Visible\t["
+#~ msgstr "Rādīt mazāk zvaigžņu\t["
+
+#~ msgid "Auto Magnitude\tCtrl+Y"
+#~ msgstr "Automātiskie zvaigžņlielumi\tCtrl+Y"
+
+#~ msgid "Star St&yle"
+#~ msgstr "Zvaigznes izskatās kā"
+
+#~ msgid "&Fuzzy Points"
+#~ msgstr "&izplūduši punkti"
+
+#~ msgid "&Points"
+#~ msgstr "&punkti"
+
+#~ msgid "Scaled &Discs"
+#~ msgstr "&mērogoti diskveida objekti"
+
+#~ msgid "&Ambient Light"
+#~ msgstr "&Fona gaisma"
+
+#~ msgid "&None"
+#~ msgstr "&nav vispār"
+
+#~ msgid "&Low"
+#~ msgstr "&nedaudz"
+
+#~ msgid "&Medium"
+#~ msgstr "&vidēji daudz"
+
+#, fuzzy
+#~ msgid "&Texture Resolution"
+#~ msgstr "Izšķirtspēja"
+
+#, fuzzy
+#~ msgid "&High"
+#~ msgstr "daudz"
+
+#~ msgid "Antialiasing\tCtrl+X"
+#~ msgstr "Kropļojumnovērse\tCtrl+X"
+
+#~ msgid "&View"
+#~ msgstr "&Skats"
+
+#~ msgid "Split &Horizontally\tCtrl+R"
+#~ msgstr "Sadalīt &horizontāli\tCtrl+R"
+
+#~ msgid "Split &Vertically\tCtrl+U"
+#~ msgstr "Sadalīt &vertikāli\tCtrl+U"
+
+#~ msgid "&Delete Active View\tDEL"
+#~ msgstr "Aizvērt &aktīvo skatījumu\tDEL"
+
+#~ msgid "&Single View\tCtrl+D"
+#~ msgstr "&Viens skatījums\tCtrl+D"
+
+#~ msgid "Show &Frames"
+#~ msgstr "Izmantot &rāmjus"
+
+#~ msgid "Synchronize &Time"
+#~ msgstr "&Sinhronizēt laiku"
+
+#~ msgid "&Bookmarks"
+#~ msgstr "&Grāmatzīmes"
+
+#~ msgid "&Add Bookmarks..."
+#~ msgstr "&Pievienot grāmatzīmes"
+
+#~ msgid "&Organize Bookmarks..."
+#~ msgstr "&Organizēt grāmatzīmes"
+
+#~ msgid "&Help"
+#~ msgstr "&Palīdzība"
+
+#~ msgid "Run &Demo"
+#~ msgstr "Sākt &demonstrāciju"
+
+#~ msgid "&Controls"
+#~ msgstr "&Kontroles"
+
+#~ msgid "&OpenGL Info"
+#~ msgstr "&OpenGL Informācija"
+
+#~ msgid "&License"
+#~ msgstr "&Licence"
+
+#~ msgid "&About Celestia"
+#~ msgstr "&Par Celestia"
+
+#~ msgid "About Celestia"
+#~ msgstr "Par Celestia"
+
+#~ msgid "OK"
+#~ msgstr "Labi"
+
+#~ msgid "Copyright (C) 2001-2008, Celestia Development Team"
+#~ msgstr "Copyright (C) 2001-2008, Celestia Development Team"
+
+#~ msgid "http://www.shatters.net/celestia"
+#~ msgstr "http://www.shatters.net/celestia"
+
+#~ msgid "Celestia is free software and comes with absolutely no warranty."
+#~ msgstr ""
+#~ "Celestia ir bezmaksas programma un tai nav absolūti nekādu garantiju."
+
+#~ msgid "Authors"
+#~ msgstr "Autori"
+
+#~ msgid "Chris Laurel"
+#~ msgstr "Kriss Lorels (Chris Laurel)"
+
+#~ msgid "Clint Weisbrod"
+#~ msgstr "Clint Weisbrod"
+
+#~ msgid "Fridger Schrempp"
+#~ msgstr "Fridger Schrempp"
+
+#~ msgid "Christophe Teyssier"
+#~ msgstr "Christophe Teyssier"
+
+#~ msgid "Grant Hutchison"
+#~ msgstr "Grant Hutchison"
+
+#~ msgid "Pat Suwalski"
+#~ msgstr "Pat Suwalski"
+
+#~ msgid "Toti"
+#~ msgstr "Toti"
+
+#~ msgid "Da Woon Jung"
+#~ msgstr "Da Woon Jung"
+
+#~ msgid "Hank Ramsey"
+#~ msgstr "Hank Ramsey"
+
+#~ msgid "Bob Ippolito"
+#~ msgstr "Bob Ippolito"
+
+#~ msgid "Vincent Giangiulio"
+#~ msgstr "Vincent Giangiulio"
+
+#~ msgid "Select Object"
+#~ msgstr "Izvēlēties objektu"
+
+#~ msgid "Object Name"
+#~ msgstr "Objekta nosaukums"
+
+#~ msgid "License"
+#~ msgstr "Licence"
+
+#~ msgid "Celestia Controls"
+#~ msgstr "Celestia kontrolēšana"
+
+#~ msgid "OpenGL Driver Info"
+#~ msgstr "OpenGL draivera informācija"
+
+#~ msgid "Set Simulation Time"
+#~ msgstr "Iestādīt simlācijas laiku"
+
+#~ msgid "Time Zone: "
+#~ msgstr "Laika zona: "
+
+#~ msgid "Set To Current Time"
+#~ msgstr "Pārslēgt uz tagadni"
+
+#~ msgid "Add Bookmark"
+#~ msgstr "Pievienot grāmatzīmi"
+
+#~ msgid "Create in >>"
+#~ msgstr "Izveidot iekš >>"
+
+#~ msgid "New Folder..."
+#~ msgstr "Jauna mape..."
+
+#~ msgid "Solar System Browser"
+#~ msgstr "Saules sistēmas pārlūks"
+
+#~ msgid "Solar System"
+#~ msgstr "Saules sistēma"
+
+#~ msgid "&Go To"
+#~ msgstr "&Iet uz"
+
+#~ msgid "Solar System Objects"
+#~ msgstr "Saules sistēmas objekti"
+
+#~ msgid "Star Browser"
+#~ msgstr "Zvaigžņu pārlūks"
+
+#~ msgid "Brightest"
+#~ msgstr "Spožākās"
+
+#~ msgid "With planets"
+#~ msgstr "Ar planētām"
+
+#~ msgid "&Refresh"
+#~ msgstr "&Atjaunot"
+
+#~ msgid "Star Search Criteria"
+#~ msgstr "Zvaigžņu meklēšanas kritēriji"
+
+#~ msgid "Maximum Stars Displayed in List"
+#~ msgstr "Maksimālais zvaigžņu skaits sarakstā"
+
+#~ msgid "Tour Guide"
+#~ msgstr "Ceļojumu gids"
+
+#~ msgid "Go To"
+#~ msgstr "Iet uz"
+
+#~ msgid "Select your destination:"
+#~ msgstr "Izvēlieties galamērķi:"
+
+#~ msgid "Go to Object"
+#~ msgstr "Iet uz objektu"
+
+#~ msgid "radii"
+#~ msgstr "radii"
+
+#~ msgid "Object"
+#~ msgstr "Objekts"
+
+#~ msgid "Long."
+#~ msgstr "Garums"
+
+#~ msgid "Lat."
+#~ msgstr "Platums"
+
+#~ msgid "Distance"
+#~ msgstr "Attālums"
+
+#~ msgid "Size:"
+#~ msgstr "Izmērs:"
+
+#~ msgid "Frame rate:"
+#~ msgstr "Kadru skaits:"
+
+#~ msgid "Select Display Mode"
+#~ msgstr "Izvēlēties displeja režīmu"
+
+#~ msgid "Resolution"
+#~ msgstr "Izšķirtspēja"
+
+#~ msgid "View Options"
+#~ msgstr "Skata opcijas"
+
+#, fuzzy
+#~ msgid "Celestial"
+#~ msgstr "Celestia"
+
+#, fuzzy
+#~ msgid "Horizontal"
+#~ msgstr "Sadalīt skatu horizontāli"
+
+#, fuzzy
+#~ msgid "Galactic"
+#~ msgstr "Galaktikas"
+
+#, fuzzy
+#~ msgid "Minor Moons"
+#~ msgstr "Pavadoņiem"
+
+#, fuzzy
+#~ msgid "DSO Labels"
+#~ msgstr "Nosaukumus"
+
+#, fuzzy
+#~ msgid "Boundaries"
+#~ msgstr "Rādīt robežas"
+
+#, fuzzy
+#~ msgid "Latin Names"
+#~ msgstr "Vietas"
+
+#~ msgid "Information Text"
+#~ msgstr "Informatīvais teksts"
+
+#~ msgid "Filter Stars"
+#~ msgstr "Filtrēt zvaigznes no"
+
+#~ msgid "Montes (Mountains)"
+#~ msgstr "Kalnus"
+
+#~ msgid "Maria (Seas)"
+#~ msgstr "Jūras"
+
+#~ msgid "Valles (Valleys)"
+#~ msgstr "Ielejas"
+
+#~ msgid "Terrae (Land masses)"
+#~ msgstr "Zemienes"
+
+# This string should not be reused for rendering and labels / orbits - certain languages (like Latvian) require different word forms for different contexts - using single string for both cases makes it impossible to translate correctly for both cases
+#, fuzzy
+#~ msgid "Volcanoes"
+#~ msgstr "Planētām"
+
+#~ msgid "Other features"
+#~ msgstr "Citas struktūras"
+
+#~ msgid "Label Features"
+#~ msgstr "Nosaukt struktūras"
+
+#~ msgid "Show Features"
+#~ msgstr "Rādīt struktūras"
+
+#~ msgid "Minimum Labeled Feature Size"
+#~ msgstr "Minimālais izmērs nosaucamajām struktūrām"
+
+#~ msgid "Add New Bookmark Folder"
+#~ msgstr "Pievienot jaunu grāmazīmju mapi"
+
+#~ msgid "Folder Name"
+#~ msgstr "Mapes nosaukums"
+
+#~ msgid "Organize Bookmarks"
+#~ msgstr "Kārtot grāmatzīmes"
+
+#~ msgid "Rename..."
+#~ msgstr "Pārsaukt..."
+
+#~ msgid "Delete"
+#~ msgstr "Dzēst"
+
+#~ msgid "Rename Bookmark or Folder"
+#~ msgstr "Pārsaukt grāmatzīmi vai mapi"
+
+#~ msgid "New Name"
+#~ msgstr "Jauns nosaukums"
+
+#~ msgid "Compute"
+#~ msgstr "Aprēķināt"
+
+#~ msgid "Set Date and Go to Planet"
+#~ msgstr "Iestādīt datumu un doties uz planētu"
+
+#~ msgid "Lunar Eclipses"
+#~ msgstr "Mēness aptumsumi"
+
+#~ msgid "Jan"
+#~ msgstr "Jan"
+
+#~ msgid "Feb"
+#~ msgstr "Feb"
+
+#~ msgid "Mar"
+#~ msgstr "Mar"
+
+#~ msgid "Apr"
+#~ msgstr "Apr"
+
+#~ msgid "May"
+#~ msgstr "Mai"
+
+#~ msgid "Jun"
+#~ msgstr "Jūn"
+
+#~ msgid "Jul"
+#~ msgstr "Jūl"
+
+#~ msgid "Aug"
+#~ msgstr "Aug"
+
+#~ msgid "Sep"
+#~ msgstr "Sep"
+
+#~ msgid "Oct"
+#~ msgstr "Okt"
+
+#~ msgid "Nov"
+#~ msgstr "Nov"
+
+#~ msgid "Dec"
+#~ msgstr "Dec"
+
+#~ msgid "limit of knowledge"
+#~ msgstr "zināmā robeža"
+
+#, fuzzy
+#~ msgid "Phobos:Mars I"
+#~ msgstr "Foboss"
+
+#, fuzzy
+#~ msgid "Deimos:Mars II"
+#~ msgstr "Deimoss"
+
+#, fuzzy
+#~ msgid "Io:Jupiter I"
+#~ msgstr "Jupiters"
+
+#, fuzzy
+#~ msgid "Mimas:Saturn I"
+#~ msgstr "Saturns"
+
+#, fuzzy
+#~ msgid "Rhea:Saturn V"
+#~ msgstr "Saturns"
+
+#, fuzzy
+#~ msgid "Ariel:Uranus I"
+#~ msgstr "Urāns"
+
+#, fuzzy
+#~ msgid "Triton:Neptune I"
+#~ msgstr "Neptūns"
+
+#~ msgid "Day length: "
+#~ msgstr "Dienas garums: "
+
+#~ msgid " of "
+#~ msgstr " "
+
+#~ msgid " must be in same star system\n"
+#~ msgstr " jābūt tai pašā zvaigžņu sistēmā\n"
+
+#~ msgid "Bad spectral type in star database, star #\n"
+#~ msgstr "Nepareiza spektra klase datubāzē zvaigznei #\n"
+
+#~ msgid " star(s) with duplicate catalog numbers deleted.)\n"
+#~ msgstr " zvaigzne(s) ar vienādiem kataloga numuriem tika izdzēstas.)\n"
+
+#~ msgid "Low res textures"
+#~ msgstr "Zemas izšķirtspējas tekstūras"
+
+#~ msgid "Medium res textures"
+#~ msgstr "Vidējās izšķirtpējas tekstūras"
+
+#~ msgid "High res textures"
+#~ msgstr "Augstās izšķirtspējas tekstūras"
+
+#~ msgid "Error reading deep sky file\n"
+#~ msgstr "Kļūda atverot tālā kosmosa failu\n"
+
+#~ msgid "Version"
+#~ msgstr "Versija"
+
+#~ msgid "Constellation Borders"
+#~ msgstr "Zvaigznāju robežas"
+
+#~ msgid "Orbit / Label"
+#~ msgstr "Orbītas / Nosaukumi"
+
+#~ msgid "Mark Features"
+#~ msgstr "Iezīmēt struktūras"
+
+#~ msgid " UTC"
+#~ msgstr " UTC"
+
+#~ msgid "' is not a star or planet.\n"
+#~ msgstr "' nav ne zvaigzne ne planēta.\n"
+
+#, fuzzy
+#~ msgid "Time rate: %'.12g"
+#~ msgstr "Laika koeficients: %.1f"
+
+#~ msgid "Radius: %.2f Rsun\n"
+#~ msgstr "Radiuss: %.2f RSaules\n"
+
+#~ msgid "1.4.1"
+#~ msgstr "1.4.1"
+
+#~ msgid "Error reading star file: %s\n"
+#~ msgstr "Kļūda nolasot zvaigžnes failu: %s\n"
+
+#~ msgid "Error opening test.xml\n"
+#~ msgstr "Kļūda atverot test.xml.\n"

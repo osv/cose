@@ -1,0 +1,2732 @@
+# Swedish translation of celestia.
+# Copyright (C) 2006-2008 Free Software Foundation, Inc.
+# This file is distributed under the same license as the celestia package.
+# Daniel Nylander <po@danielnylander.se>, 2006, 2007, 2008.
+# Tobias Svedberg <sleepylion@gmail.com>, 2006, 2007, 2008.
+# 
+msgid ""
+msgstr ""
+"Project-Id-Version: celestia\n"
+"Report-Msgid-Bugs-To: chris@teyssier.org\n"
+"POT-Creation-Date: 2009-06-21 16:00+0000\n"
+"PO-Revision-Date: 2008-12-06 12:55+0100\n"
+"Last-Translator: Anders Pamdal <anders@pamdal.se>\n"
+"Language-Team: Swedish <tp-sv@listor.tp-sv.se>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: src/celengine/astro.cpp:827
+msgid "DST"
+msgstr "Sommartid"
+
+#: src/celengine/astro.cpp:827
+msgid "STD"
+msgstr "Standardtid"
+
+#: src/celengine/dsodb.cpp:387
+msgid "Loaded "
+msgstr "Lästa "
+
+#: src/celengine/dsodb.cpp:387
+msgid " deep space objects"
+msgstr " rymdobjekt"
+
+#: src/celengine/fragmentprog.cpp:93
+msgid "Loading NV fragment program: "
+msgstr "Läser NV-fragmentprogram: "
+
+#: src/celengine/fragmentprog.cpp:98
+msgid "Error loading NV fragment program: "
+msgstr "Fel vid läsning av NV-fragmentprogram: "
+
+#: src/celengine/fragmentprog.cpp:115
+msgid "Error in fragment program "
+msgstr "Fel i fragmentprogram "
+
+#: src/celengine/fragmentprog.cpp:126
+msgid "Initializing NV fragment programs . . .\n"
+msgstr "Initierar NV-fragmentprogram . . .\n"
+
+#: src/celengine/fragmentprog.cpp:142
+msgid "All NV fragment programs loaded successfully.\n"
+msgstr "Alla NV-fragmentprogram lästa.\n"
+
+#: src/celengine/fragmentprog.cpp:150
+msgid "Initializing ARB fragment programs . . .\n"
+msgstr "Initierar ARB-fragmentprogram . . .\n"
+
+#: src/celengine/galaxy.cpp:197
+#, c-format
+msgid "Galaxy (Hubble type: %s)"
+msgstr "Galax (Hubble-typ: %s)"
+
+#: src/celengine/image.cpp:373
+msgid "Loading image from file "
+msgstr "Läser bild från fil "
+
+#: src/celengine/image.cpp:391
+msgid ": unrecognized or unsupported image file type.\n"
+msgstr ": okänd eller ej stödd bildfilstyp.\n"
+
+#: src/celengine/image.cpp:654
+msgid "Error opening image file "
+msgstr "Fel vid öppning av bildfil "
+
+#: src/celengine/image.cpp:661
+msgid "Error: "
+msgstr "Fel: "
+
+#: src/celengine/image.cpp:661
+msgid " is not a PNG file.\n"
+msgstr " är ej en PNG-fil.\n"
+
+#: src/celengine/image.cpp:688
+msgid "Error reading PNG image file "
+msgstr "Fel vid läsning av PNG-bildfil "
+
+#: src/celengine/meshmanager.cpp:84
+msgid "Loading model: "
+msgstr "Läser modell: "
+
+#: src/celengine/meshmanager.cpp:162
+msgid "   Model statistics: "
+msgstr "   Modellstatistik: "
+
+#: src/celengine/meshmanager.cpp:163
+msgid " vertices, "
+msgstr " vertex, "
+
+#: src/celengine/meshmanager.cpp:164
+msgid " primitives, "
+msgstr " primitiver, "
+
+#: src/celengine/meshmanager.cpp:165
+msgid " materials "
+msgstr " material "
+
+#: src/celengine/meshmanager.cpp:166
+msgid " unique)\n"
+msgstr " unika)\n"
+
+#: src/celengine/meshmanager.cpp:170
+msgid "Error loading model '"
+msgstr "Fel vid inläsning av modell '"
+
+#: src/celengine/nebula.cpp:47 src/celengine/opencluster.cpp:44
+#, c-format
+msgid "%s"
+msgstr "%s"
+
+#: src/celengine/solarsys.cpp:93
+msgid "Error in .ssc file (line "
+msgstr "Fel i .ssc-fil (rad "
+
+#: src/celengine/solarsys.cpp:1200 src/celengine/solarsys.cpp:1267
+msgid "parent body '"
+msgstr "föräldrakropp '"
+
+#: src/celengine/solarsys.cpp:1200 src/celengine/solarsys.cpp:1267
+msgid "' of '"
+msgstr "' av '"
+
+#: src/celengine/solarsys.cpp:1200
+msgid "' not found."
+msgstr "' hittades ej."
+
+#: src/celengine/solarsys.cpp:1211
+msgid "warning duplicate definition of "
+msgstr "varning för dubbla definitioner av "
+
+#: src/celengine/solarsys.cpp:1247
+msgid "bad alternate surface"
+msgstr "felaktig alternativ yta"
+
+#: src/celengine/solarsys.cpp:1261
+msgid "bad location"
+msgstr "felaktig plats"
+
+#: src/celengine/solarsys.cpp:1267
+msgid "' not found.\n"
+msgstr "' hittades ej.\n"
+
+#: src/celengine/stardb.cpp:579
+msgid "Bad header for cross index\n"
+msgstr "Felaktigt huvud för korsindex\n"
+
+#: src/celengine/stardb.cpp:592
+msgid "Bad version for cross index\n"
+msgstr "Felaktig version för korsindex\n"
+
+#: src/celengine/stardb.cpp:614
+msgid "Loading cross index failed at record "
+msgstr "Läsning av korsindex misslyckades på post "
+
+#: src/celengine/stardb.cpp:696
+msgid "Bad spectral type in star database, star #"
+msgstr "Felaktig spektraltyp i stjärndatabas, stjärna #"
+
+#: src/celengine/stardb.cpp:711
+msgid " stars in binary database\n"
+msgstr " stjärnor i binärdatabasen\n"
+
+#: src/celengine/stardb.cpp:735
+msgid "Total star count: "
+msgstr "Totalt antal stjärnor: "
+
+#: src/celengine/stardb.cpp:769
+msgid "Error in .stc file (line "
+msgstr "Fel i .stc-fil (rad "
+
+#: src/celengine/stardb.cpp:806
+msgid "Invalid star: bad spectral type.\n"
+msgstr "Ogiltig stjärna: felaktig spektraltyp.\n"
+
+#: src/celengine/stardb.cpp:815
+msgid "Invalid star: missing spectral type.\n"
+msgstr "Ogiltig stjärna: saknar spektraltyp.\n"
+
+#: src/celengine/stardb.cpp:962
+msgid "Barycenter "
+msgstr "Masscentrum "
+
+#: src/celengine/stardb.cpp:962
+msgid " does not exist.\n"
+msgstr " finns ej.\n"
+
+#: src/celengine/stardb.cpp:1008
+msgid "Invalid star: missing right ascension\n"
+msgstr "Ogiltig stjärna: saknar rektascension\n"
+
+#: src/celengine/stardb.cpp:1021
+msgid "Invalid star: missing declination.\n"
+msgstr "Ogiltig stjärna: saknar deklination.\n"
+
+#: src/celengine/stardb.cpp:1034
+msgid "Invalid star: missing distance.\n"
+msgstr "Ogiltig stjärna: saknar avstånd.\n"
+
+#: src/celengine/stardb.cpp:1070
+msgid "Invalid star: missing magnitude.\n"
+msgstr "Ogiltig stjärna: saknar magnitud.\n"
+
+#: src/celengine/stardb.cpp:1087
+msgid ""
+"Invalid star: absolute (not apparent) magnitude must be specified for star "
+"near origin\n"
+msgstr ""
+"Felaktig stjärna: absolut (ej apparent) magnitud måste anges för en stjärna "
+"nära ursprung\n"
+
+#: src/celengine/texture.cpp:1019
+msgid "Creating tiled texture. Width="
+msgstr "Skapar rutad textur. Bredd="
+
+#: src/celengine/texture.cpp:1019
+msgid ", max="
+msgstr ", max="
+
+#: src/celengine/texture.cpp:1024
+msgid "Creating ordinary texture: "
+msgstr "Skapar vanlig textur: "
+
+#: src/celengine/vertexprog.cpp:114
+msgid "Loading NV vertex program: "
+msgstr "Läser NV-vertexprogram: "
+
+#: src/celengine/vertexprog.cpp:119
+msgid "Error loading NV vertex program: "
+msgstr "Fel vid läsning av NV-vertexprogram: "
+
+#: src/celengine/vertexprog.cpp:136 src/celengine/vertexprog.cpp:195
+msgid "Error in vertex program "
+msgstr "Fel i vertexprogram "
+
+#: src/celengine/vertexprog.cpp:163
+msgid "Loading ARB vertex program: "
+msgstr "Läser ARB-vertexprogram: "
+
+#: src/celengine/vertexprog.cpp:168
+msgid "Error loading ARB vertex program: "
+msgstr "Fel vid inläsning av ARB-vertexprogram: "
+
+#: src/celengine/vertexprog.cpp:196
+msgid ", line "
+msgstr ", rad "
+
+#: src/celengine/vertexprog.cpp:208
+msgid "Initializing NV vertex programs . . .\n"
+msgstr "Initierar NV-vertexprogram . . .\n"
+
+#: src/celengine/vertexprog.cpp:240
+msgid "All NV vertex programs loaded successfully.\n"
+msgstr "Alla NV-vertexprogram lästa.\n"
+
+#: src/celengine/vertexprog.cpp:253
+msgid "Initializing ARB vertex programs . . .\n"
+msgstr "Initierar ARB-vertexprogram . . .\n"
+
+#: src/celengine/vertexprog.cpp:314
+msgid "All ARB vertex programs loaded successfully.\n"
+msgstr "Alla ARB-vertexprogram lästa.\n"
+
+#: src/celestia/celestiacore.cpp:421
+msgid "Error reading favorites file."
+msgstr "Fel vid läsning av favoritfil."
+
+#: src/celestia/celestiacore.cpp:511
+msgid "Orientation: "
+msgstr "Orientering: "
+
+#: src/celestia/celestiacore.cpp:558 src/celestia/celestiacore.cpp:560
+msgid "Error opening script file."
+msgstr "Fel vid öppning av skriptfil."
+
+#: src/celestia/celestiacore.cpp:591
+#, c-format
+msgid "Error opening script '%s'"
+msgstr "Fel vid öppning av skript '%s'"
+
+#: src/celestia/celestiacore.cpp:609
+msgid "Unknown error opening script"
+msgstr "Okänt fel vid öppning av skript"
+
+#: src/celestia/celestiacore.cpp:621
+msgid "Script coroutine initialization failed"
+msgstr "Initiering av skriptets medrutin misslyckades"
+
+#: src/celestia/celestiacore.cpp:637 src/celestia/celestiacore.cpp:639
+msgid "Invalid filetype"
+msgstr "Ogiltig filtyp"
+
+#: src/celestia/celestiacore.cpp:982 src/celestia/celestiacore.cpp:1787
+#: src/celestia/celestiacore.cpp:1805 src/celestia/celestiacore.cpp:2046
+#: src/celestia/celestiacore.cpp:2077
+#, c-format
+msgid "Magnitude limit: %.2f"
+msgstr "Magnitudgräns: %.2f"
+
+#: src/celestia/celestiacore.cpp:1417
+msgid "Markers enabled"
+msgstr "Markörer aktiverade"
+
+#: src/celestia/celestiacore.cpp:1420
+msgid "Markers disabled"
+msgstr "Markörer inaktiverade"
+
+#: src/celestia/celestiacore.cpp:1430
+msgid "Goto surface"
+msgstr "Gå till yta"
+
+#: src/celestia/celestiacore.cpp:1443
+msgid "Alt-azimuth mode enabled"
+msgstr "Alt-azimutläge aktiverat"
+
+#: src/celestia/celestiacore.cpp:1446
+msgid "Alt-azimuth mode disabled"
+msgstr "Alt-azimutläge inaktiverat"
+
+#: src/celestia/celestiacore.cpp:1502
+msgid "Star style: fuzzy points"
+msgstr "Visa stjärnor som: suddiga punkter"
+
+#: src/celestia/celestiacore.cpp:1505
+msgid "Star style: points"
+msgstr "Visa stjärnor som: punkter"
+
+#: src/celestia/celestiacore.cpp:1508
+msgid "Star style: scaled discs"
+msgstr "Visa stjärnor som: skalenliga skivor"
+
+#: src/celestia/celestiacore.cpp:1521
+msgid "Comet tails enabled"
+msgstr "Kometsvansar aktiverade"
+
+#: src/celestia/celestiacore.cpp:1524
+msgid "Comet tails disabled"
+msgstr "Kometsvansar inaktiverade"
+
+#: src/celestia/celestiacore.cpp:1539
+msgid "Render path: Basic"
+msgstr "Renderingsläge: Enkel"
+
+#: src/celestia/celestiacore.cpp:1542
+msgid "Render path: Multitexture"
+msgstr "Renderingsläge: Multitextur"
+
+#: src/celestia/celestiacore.cpp:1545
+msgid "Render path: NVIDIA combiners"
+msgstr "Renderingsläge: NVIDIA-kombinerare"
+
+#: src/celestia/celestiacore.cpp:1548
+msgid "Render path: OpenGL vertex program"
+msgstr "Renderingsläge: OpenGL-vertexprogram"
+
+#: src/celestia/celestiacore.cpp:1551
+msgid "Render path: NVIDIA vertex program and combiners"
+msgstr "Renderingsläge: NVIDIA-vertexprogram och kombinerare"
+
+#: src/celestia/celestiacore.cpp:1554
+msgid "Render path: OpenGL vertex program/NVIDIA combiners"
+msgstr "Renderingsläge: OpenGL-vertexprogram/NVIDIA-kombinerare"
+
+#: src/celestia/celestiacore.cpp:1557
+msgid "Render path: OpenGL 1.5 vertex/fragment program"
+msgstr "Renderingsläge: OpenGL 1.5 vertex-/fragmentprogram"
+
+#: src/celestia/celestiacore.cpp:1560
+msgid "Render path: NVIDIA GeForce FX"
+msgstr "Renderingsläge: NVIDIA GeForce FX"
+
+#: src/celestia/celestiacore.cpp:1563
+msgid "Render path: OpenGL 2.0"
+msgstr "Renderingsläge: OpenGL 2.0"
+
+#: src/celestia/celestiacore.cpp:1586
+msgid "Auto-magnitude enabled"
+msgstr "Automagnitud aktiverad"
+
+#: src/celestia/celestiacore.cpp:1591
+msgid "Auto-magnitude disabled"
+msgstr "Automagnitud inaktiverad"
+
+#: src/celestia/celestiacore.cpp:1613
+msgid "Cancel"
+msgstr "Avbryt"
+
+#: src/celestia/celestiacore.cpp:1649
+msgid "Time and script are paused"
+msgstr "Tid och skript är pausade"
+
+#: src/celestia/celestiacore.cpp:1651
+msgid "Time is paused"
+msgstr "Tiden är pausad"
+
+#: src/celestia/celestiacore.cpp:1655
+msgid "Resume"
+msgstr "Återuppta"
+
+#: src/celestia/celestiacore.cpp:1730
+#, c-format
+msgid "Light travel time:  %.4f yr "
+msgstr "Ljusets restid:  %.4f år "
+
+#: src/celestia/celestiacore.cpp:1739
+#, c-format
+msgid "Light travel time:  %d min  %.1f s"
+msgstr "Ljusets restid:  %d min  %.1f s"
+
+#: src/celestia/celestiacore.cpp:1742
+#, c-format
+msgid "Light travel time:  %d h  %d min  %.1f s"
+msgstr "Ljusets restid:  %d h  %d min  %.1f s"
+
+#: src/celestia/celestiacore.cpp:1761
+msgid "Light travel delay included"
+msgstr "Fördröjning för ljusets resa inberäknad"
+
+#: src/celestia/celestiacore.cpp:1766
+msgid "Light travel delay switched off"
+msgstr "Fördröjning för ljusets resa avstängd"
+
+#: src/celestia/celestiacore.cpp:1772
+msgid "Light travel delay ignored"
+msgstr "Fördröjning för ljusets resa ignoreras"
+
+#: src/celestia/celestiacore.cpp:1817
+msgid "Using normal surface textures."
+msgstr "Använder normala yttexturer."
+
+#: src/celestia/celestiacore.cpp:1822
+msgid "Using limit of knowledge surface textures."
+msgstr "Använder yttexturer utanför kunskapsgräns."
+
+#: src/celestia/celestiacore.cpp:1889
+msgid "Follow"
+msgstr "Följ"
+
+#: src/celestia/celestiacore.cpp:1914
+msgid "Time: Forward"
+msgstr "Tid: Framåt"
+
+#: src/celestia/celestiacore.cpp:1916
+msgid "Time: Backward"
+msgstr "Tid: Bakåt"
+
+#: src/celestia/celestiacore.cpp:1929 src/celestia/celestiacore.cpp:1945
+msgid "Time rate"
+msgstr "Tidsfrekvens"
+
+#: src/celestia/celestiacore.cpp:2018
+msgid "Sync Orbit"
+msgstr "Synkronisera omloppsbana"
+
+#: src/celestia/celestiacore.cpp:2024
+msgid "Lock"
+msgstr "Lås"
+
+#: src/celestia/celestiacore.cpp:2030
+msgid "Chase"
+msgstr "Jaga"
+
+#: src/celestia/celestiacore.cpp:2057 src/celestia/celestiacore.cpp:2088
+#, c-format
+msgid "Auto magnitude limit at 45 degrees:  %.2f"
+msgstr "Automagnitudgräns på 45 grader:  %.2f"
+
+#: src/celestia/celestiacore.cpp:2107 src/celestia/celestiacore.cpp:2122
+#, c-format
+msgid "Ambient light level:  %.2f"
+msgstr "Nivå för omgivande ljus: %.2f"
+
+#: src/celestia/celestiacore.cpp:2133 src/celestia/celestiacore.cpp:2145
+msgid "Light gain"
+msgstr "Ljusförstärkning"
+
+#: src/celestia/celestiacore.cpp:2165
+msgid "Bloom enabled"
+msgstr "Överstrålning aktiverad"
+
+#: src/celestia/celestiacore.cpp:2167
+msgid "Bloom disabled"
+msgstr "Överstrålning inaktiverad"
+
+#: src/celestia/celestiacore.cpp:2173 src/celestia/celestiacore.cpp:2181
+msgid "Exposure"
+msgstr "Exponering"
+
+#: src/celestia/celestiacore.cpp:2532
+msgid "GL error: "
+msgstr "GL-fel: "
+
+#: src/celestia/celestiacore.cpp:2659
+msgid "View too small to be split"
+msgstr "Vy för liten för att delas upp"
+
+#: src/celestia/celestiacore.cpp:2662
+msgid "Added view"
+msgstr "Lade till vy"
+
+#: src/celestia/celestiacore.cpp:2918
+msgid "ly"
+msgstr "lå"
+
+#: src/celestia/celestiacore.cpp:2922
+msgid "au"
+msgstr "au"
+
+#: src/celestia/celestiacore.cpp:2943
+msgid " days"
+msgstr " dagar"
+
+#: src/celestia/celestiacore.cpp:2945
+msgid " hours"
+msgstr " timmar"
+
+#: src/celestia/celestiacore.cpp:2947
+msgid " minutes"
+msgstr " minuter"
+
+#: src/celestia/celestiacore.cpp:3014
+msgid "Apparent diameter: "
+msgstr "Apparent diameter: "
+
+#: src/celestia/celestiacore.cpp:3029
+msgid "Apparent magnitude: "
+msgstr "Apparent magnitud: "
+
+#: src/celestia/celestiacore.cpp:3033
+msgid "Absolute magnitude: "
+msgstr "Absolut magnitud: "
+
+#: src/celestia/celestiacore.cpp:3055
+msgid "RA: "
+msgstr "RA: "
+
+#: src/celestia/celestiacore.cpp:3059
+msgid "Dec: "
+msgstr "Dec: "
+
+#: src/celestia/celestiacore.cpp:3123
+msgid "km"
+msgstr "km"
+
+#: src/celestia/celestiacore.cpp:3152 src/celestia/celestiacore.cpp:3226
+#: src/celestia/celestiacore.cpp:3258 src/celestia/celestiacore.cpp:3359
+msgid "Distance: "
+msgstr "Avstånd: "
+
+#: src/celestia/celestiacore.cpp:3158
+msgid "Star system barycenter\n"
+msgstr "Stjärnsystemets masscentrum\n"
+
+#: src/celestia/celestiacore.cpp:3162
+#, c-format
+msgid "Abs (app) mag: %.2f (%.2f)\n"
+msgstr "Abs (ungefärlig) mag: %.2f (%.2f)\n"
+
+#: src/celestia/celestiacore.cpp:3168
+msgid "Luminosity: "
+msgstr "Ljusstyrka: "
+
+#: src/celestia/celestiacore.cpp:3168
+msgid "x Sun"
+msgstr "x Sol"
+
+#: src/celestia/celestiacore.cpp:3169
+msgid "Class: "
+msgstr "Klass: "
+
+#: src/celestia/celestiacore.cpp:3171
+msgid "Neutron star"
+msgstr "Neutronstjärna"
+
+#: src/celestia/celestiacore.cpp:3173
+msgid "Black hole"
+msgstr "Svart hål"
+
+#: src/celestia/celestiacore.cpp:3183
+msgid "Surface temp: "
+msgstr "Yttemperatur: "
+
+#: src/celestia/celestiacore.cpp:3186 src/celestia/celestiacore.cpp:3235
+#: src/celestia/celestiacore.cpp:3268
+msgid "Radius: "
+msgstr "Radie: "
+
+#: src/celestia/celestiacore.cpp:3189
+msgid "Rsun"
+msgstr "Rsol"
+
+#: src/celestia/celestiacore.cpp:3199 src/celestia/celestiacore.cpp:3320
+msgid "Rotation period: "
+msgstr "Rotationsperiod: "
+
+#: src/celestia/celestiacore.cpp:3213
+msgid "Planetary companions present\n"
+msgstr "Följeslagare till stjärnan finns\n"
+
+#: src/celestia/celestiacore.cpp:3231
+msgid "Distance from center: "
+msgstr "Avstånd från centrum: "
+
+#: src/celestia/celestiacore.cpp:3336
+msgid "Temperature: "
+msgstr "Temperatur: "
+
+#: src/celestia/celestiacore.cpp:3348
+#, c-format
+msgid "Apparent mag: %.2f\n"
+msgstr "Apparent mag: %.2f\n"
+
+#: src/celestia/celestiacore.cpp:3516
+msgid "  LT"
+msgstr "  LT"
+
+#: src/celestia/celestiacore.cpp:3525
+msgid "Real time"
+msgstr "Realtid"
+
+#: src/celestia/celestiacore.cpp:3527
+msgid "-Real time"
+msgstr "-Realtid"
+
+#: src/celestia/celestiacore.cpp:3531
+msgid "Time stopped"
+msgstr "Tid stoppad"
+
+#: src/celestia/celestiacore.cpp:3536
+msgid " faster"
+msgstr " snabbare"
+
+#: src/celestia/celestiacore.cpp:3541
+msgid " slower"
+msgstr " långsammare"
+
+#: src/celestia/celestiacore.cpp:3547
+msgid " (Paused)"
+msgstr " (Pausad)"
+
+#: src/celestia/celestiacore.cpp:3565
+msgid "FPS: "
+msgstr "FPS: "
+
+#: src/celestia/celestiacore.cpp:3567
+msgid ""
+"\n"
+"Speed: "
+msgstr ""
+"\n"
+"Hastighet: "
+
+#: src/celestia/celestiacore.cpp:3571
+msgid " m/s"
+msgstr " m/s"
+
+#: src/celestia/celestiacore.cpp:3573
+msgid " km/s"
+msgstr " km/s"
+
+#: src/celestia/celestiacore.cpp:3577
+msgid " AU/s"
+msgstr " AU/s"
+
+#: src/celestia/celestiacore.cpp:3579
+msgid " ly/s"
+msgstr " lå/s"
+
+#: src/celestia/celestiacore.cpp:3596
+msgid "Travelling "
+msgstr "Reser "
+
+#: src/celestia/celestiacore.cpp:3609
+msgid "Track "
+msgstr "Spåra "
+
+#: src/celestia/celestiacore.cpp:3623
+msgid "Follow "
+msgstr "Följ "
+
+#: src/celestia/celestiacore.cpp:3628
+msgid "Sync Orbit "
+msgstr "Synkronisera omloppsbana "
+
+#: src/celestia/celestiacore.cpp:3633
+msgid "Lock "
+msgstr "Lås"
+
+#: src/celestia/celestiacore.cpp:3642
+msgid "Chase "
+msgstr "Jaga"
+
+#: src/celestia/celestiacore.cpp:3658
+msgid "FOV: "
+msgstr "Synfält: "
+
+#: src/celestia/celestiacore.cpp:3688 src/celestia/celestiacore.cpp:3691
+msgid "Sun"
+msgstr "Sol"
+
+#: src/celestia/celestiacore.cpp:3865
+msgid "Target name: "
+msgstr "Målnamn: "
+
+#: src/celestia/celestiacore.cpp:3947
+msgid " at "
+msgstr " i "
+
+#: src/celestia/celestiacore.cpp:3948
+msgid " fps"
+msgstr " fps"
+
+#: src/celestia/celestiacore.cpp:3950
+msgid "  Recording"
+msgstr "  Spelar in"
+
+#: src/celestia/celestiacore.cpp:3952
+msgid "  Paused"
+msgstr "  Pausad"
+
+#: src/celestia/celestiacore.cpp:3971
+msgid "F11 Start/Pause    F12 Stop"
+msgstr "F11 Start/Paus     F12 Stopp"
+
+#: src/celestia/celestiacore.cpp:3980 src/celestia/celestiacore.cpp:3983
+msgid "Edit Mode"
+msgstr "Redigeringsläge"
+
+#: src/celestia/celestiacore.cpp:4049
+msgid "Loading solar system catalog: "
+msgstr "Läser solsystemskatalog: "
+
+#: src/celestia/celestiacore.cpp:4090
+msgid "Loading "
+msgstr "Läser "
+
+#: src/celestia/celestiacore.cpp:4125
+msgid "License file 'License.txt' is missing!"
+msgstr "Licensfil 'License.txt' saknas!"
+
+#: src/celestia/celestiacore.cpp:4146
+msgid "Error reading configuration file."
+msgstr "Fel vid läsning av konfigurationsfil."
+
+#: src/celestia/celestiacore.cpp:4157
+msgid "Initialization of SPICE library failed."
+msgstr "Initiering av SPICE-biblioteket misslyckades."
+
+#: src/celestia/celestiacore.cpp:4204
+msgid "Cannot read star database."
+msgstr "Kan ej läsa stjärndatabas."
+
+#: src/celestia/celestiacore.cpp:4226
+msgid "Error opening deepsky catalog file."
+msgstr "Fel vid öppning av deep-sky-katalog "
+
+#: src/celestia/celestiacore.cpp:4278
+msgid "Error opening solar system catalog.\n"
+msgstr "Fel vid öppning av solsystemskatalog.\n"
+
+#: src/celestia/celestiacore.cpp:4311
+msgid "Error opening asterisms file."
+msgstr "Fel vid öppning av asterismfil."
+
+#: src/celestia/celestiacore.cpp:4326
+msgid "Error opening constellation boundaries files."
+msgstr "Fel vid öppning av filer för begränsning av stjärnbilder."
+
+#: src/celestia/celestiacore.cpp:4393
+msgid "render path: "
+msgstr "renderingsläge: "
+
+#: src/celestia/celestiacore.cpp:4404
+msgid "Failed to initialize renderer"
+msgstr "Misslyckades med att initiera renderare"
+
+#: src/celestia/celestiacore.cpp:4420
+msgid "Error loading font; text will not be visible.\n"
+msgstr "Fel vid läsning av typsnitt; text kommer ej att vara synlig.\n"
+
+#: src/celestia/celestiacore.cpp:4477
+msgid "Error reading cross index "
+msgstr "Fel vid läsning av korsindex "
+
+#: src/celestia/celestiacore.cpp:4479
+msgid "Loaded cross index "
+msgstr "Läste in korsindex "
+
+#: src/celestia/celestiacore.cpp:4493 src/celestia/celestiacore.cpp:4515
+msgid "Error opening "
+msgstr "Fel vid öppning av "
+
+#: src/celestia/celestiacore.cpp:4500
+msgid "Error reading star names file\n"
+msgstr "Fel vid läsning av stjärnnamnsfil\n"
+
+#: src/celestia/celestiacore.cpp:4523
+msgid "Error reading stars file\n"
+msgstr "Fel vid läsning av stjärnfil\n"
+
+#: src/celestia/celestiacore.cpp:4550
+msgid "Error opening star catalog "
+msgstr "Fel vid öppning av stjärnkatalog "
+
+#: src/celestia/oggtheoracapture.cpp:159
+#, c-format
+msgid "Error in creating ogg file %s for capture.\n"
+msgstr "Fel vid skapande av ogg-filen %s för fångst.\n"
+
+#: src/celestia/oggtheoracapture.cpp:253 src/celestia/oggtheoracapture.cpp:273
+msgid "Internal Ogg library error."
+msgstr "Internt fel i Ogg-bibliotek."
+
+#: src/celestia/oggtheoracapture.cpp:308
+#, c-format
+msgid ""
+"OggTheoraCapture::start() - Theora video: %s %.2f(%d/%d) fps quality %d %dx%"
+"d offset (%dx%d)\n"
+msgstr ""
+"OggTheoraCapture::start() - Theora-video: %s %.2f(%d/%d) fps kvalitet %d %dx%"
+"d position (%dx%d)\n"
+
+#: src/celestia/oggtheoracapture.cpp:423
+#, c-format
+msgid "OggTheoraCapture::cleanup() - wrote %d frames\n"
+msgstr "OggTheoraCapture::cleanup() - skrev %d frames\n"
+
+#: src/celestia/url.cpp:653
+msgid "Settings"
+msgstr "Inställningar"
+
+#: src/celestia/winmain.cpp:625
+msgid "Vendor: "
+msgstr "Tillverkare: "
+
+#: src/celestia/winmain.cpp:630
+msgid "Renderer: "
+msgstr "Uppritare: "
+
+#: src/celestia/winmain.cpp:635
+msgid "Version: "
+msgstr "Version: "
+
+#: src/celestia/winmain.cpp:645
+msgid "GLSL version: "
+msgstr "GLSL-version: "
+
+#: src/celestia/winmain.cpp:656
+msgid "Max simultaneous textures: "
+msgstr "Max samtidiga texturer: "
+
+#: src/celestia/winmain.cpp:663
+msgid "Max texture size: "
+msgstr "Max texturstorlek: "
+
+#: src/celestia/winmain.cpp:672
+msgid "Max cube map size: "
+msgstr "Max kubmappstorlek: "
+
+#: src/celestia/winmain.cpp:680
+msgid "Point size range: "
+msgstr "Intervall för punktstorlek: "
+
+#: src/celestia/winmain.cpp:685
+msgid "Supported Extensions:"
+msgstr "Utökningar som stöds:"
+
+#: src/celestia/winmain.cpp:1386
+msgid "Windowed Mode"
+msgstr "Fönsterläge"
+
+#: src/celestia/winmain.cpp:1508
+msgid "Asteroids"
+msgstr "Asteroider"
+
+#: src/celestia/winmain.cpp:1510
+msgid "Comets"
+msgstr "Kometer"
+
+#: src/celestia/winmain.cpp:1512
+msgid "Invisibles"
+msgstr "Osynliga"
+
+#: src/celestia/winmain.cpp:1514
+msgid "Moons"
+msgstr "Månar"
+
+#: src/celestia/winmain.cpp:1516 src/celestia/winmain.cpp:1551
+#: src/celestia/winmain.cpp:1668
+msgid "Planets"
+msgstr "Planeter"
+
+#: src/celestia/winmain.cpp:1518
+msgid "Spacecraft"
+msgstr "Rymdfarkost"
+
+#: src/celestia/winmain.cpp:1608 src/celestia/winmain.cpp:1656
+#: src/celestia/winmain.cpp:1679
+msgid "&Goto"
+msgstr "&Gå till"
+
+#: src/celestia/winmain.cpp:1609 src/celestia/winmain.cpp:1680
+msgid "&Follow"
+msgstr "&Följ"
+
+#: src/celestia/winmain.cpp:1610
+msgid "S&ync Orbit"
+msgstr "S&ynkronisera omloppsbana"
+
+#: src/celestia/winmain.cpp:1611 src/celestia/winmain.cpp:1657
+#: src/celestia/winmain.cpp:1681
+msgid "&Info"
+msgstr "&Info"
+
+#: src/celestia/winmain.cpp:1613
+msgid "&Reference Vectors"
+msgstr "&Referensvektorer"
+
+#: src/celestia/winmain.cpp:1614
+msgid "Show Body Axes"
+msgstr "Visa kroppsaxlar"
+
+#: src/celestia/winmain.cpp:1615
+msgid "Show Frame Axes"
+msgstr "Visa ramaxlar"
+
+#: src/celestia/winmain.cpp:1616
+msgid "Show Sun Direction"
+msgstr "Visa solriktning"
+
+#: src/celestia/winmain.cpp:1617
+msgid "Show Velocity Vector"
+msgstr "Visa hastighetsvektor"
+
+#: src/celestia/winmain.cpp:1618
+msgid "Show Planetographic Grid"
+msgstr "Visa planetografiskt rutnät"
+
+#: src/celestia/winmain.cpp:1619
+msgid "Show Terminator"
+msgstr "Visa terminator"
+
+#: src/celestia/winmain.cpp:1633
+msgid "&Satellites"
+msgstr "&Satelliter"
+
+#: src/celestia/winmain.cpp:1643
+msgid "&Alternate Surfaces"
+msgstr "&Alternativa ytor"
+
+#: src/celestia/winmain.cpp:1666
+msgid "Orbiting Bodies"
+msgstr "Himlakroppar i omloppsbana"
+
+#: src/celestia/winmain.cpp:1693
+msgid "&Unmark"
+msgstr "&Avmarkera"
+
+#: src/celestia/winmain.cpp:1695
+msgid "&Mark"
+msgstr "&Markera"
+
+#: src/celestia/winmain.cpp:3137
+msgid "Loading: "
+msgstr "Läser: "
+
+#: src/celestia/winmain.cpp:3305 src/celutil/util.cpp:72
+#: src/celutil/util.cpp:76
+msgid "LANGUAGE"
+msgstr "sv"
+
+#: src/celestia/winmain.cpp:3307
+msgid "WinLangID"
+msgstr "41d"
+
+#: src/celestia/winmain.cpp:3809
+msgid "Copied URL"
+msgstr "Kopierad URL"
+
+#: src/celestia/winmain.cpp:3903
+msgid "Loading URL"
+msgstr "Läser url"
+
+#: src/celestia/winmain.cpp:3915
+msgid "Error opening script"
+msgstr "Fel vid öppning av skript"
+
+#: src/celestia/winmain.cpp:3934
+msgid "Error loading script"
+msgstr "Fel vid läsning av skript"
+
+#: src/celestia/winmain.cpp:3939
+msgid "Running script"
+msgstr "Kör skript"
+
+#: src/celestia/wineclipses.cpp:58
+msgid "Planet"
+msgstr "Planet"
+
+#: src/celestia/wineclipses.cpp:60
+msgid "Satellite"
+msgstr "Satellit"
+
+#: src/celestia/wineclipses.cpp:62
+msgid "Date"
+msgstr "Datum"
+
+#: src/celestia/wineclipses.cpp:64
+msgid "Start"
+msgstr "Start"
+
+#: src/celestia/wineclipses.cpp:66
+msgid "Duration"
+msgstr "Längd"
+
+#: src/celestia/wineclipses.cpp:316
+msgid "Earth"
+msgstr "Jorden"
+
+#: src/celestia/wineclipses.cpp:317
+msgid "Jupiter"
+msgstr "Jupiter"
+
+#: src/celestia/wineclipses.cpp:318
+msgid "Saturn"
+msgstr "Saturnus"
+
+#: src/celestia/wineclipses.cpp:319
+msgid "Uranus"
+msgstr "Uranus"
+
+#: src/celestia/wineclipses.cpp:320
+msgid "Neptune"
+msgstr "Neptunus"
+
+#: src/celestia/wineclipses.cpp:321
+msgid "Pluto"
+msgstr "Pluto"
+
+#: src/celestia/winstarbrowser.cpp:70
+msgid "Name"
+msgstr "Namn"
+
+#: src/celestia/winstarbrowser.cpp:72
+msgid "Distance (ly)"
+msgstr "Avstånd (lj)"
+
+#: src/celestia/winstarbrowser.cpp:75
+msgid "App. mag"
+msgstr "App. mag"
+
+#: src/celestia/winstarbrowser.cpp:77
+msgid "Abs. mag"
+msgstr "Abs. mag"
+
+#: src/celestia/winstarbrowser.cpp:79
+msgid "Type"
+msgstr "Typ"
+
+#: src/celestia/wintime.cpp:95
+msgid "Universal Time"
+msgstr "Universaltid"
+
+#: src/celestia/wintime.cpp:96
+msgid "Local Time"
+msgstr "Lokal tid"
+
+#: src/celestia/wintime.cpp:97
+msgid "Time Zone Name"
+msgstr "Namn på tidszon"
+
+#: src/celestia/wintime.cpp:98
+msgid "UTC Offset"
+msgstr "Avvikelse från UTC"
+
+#~ msgid "Celestial Browser"
+#~ msgstr "Himlabläddrare"
+
+#~ msgid "Moon"
+#~ msgstr "Måne"
+
+#~ msgid "Asteroid"
+#~ msgstr "Asteroid"
+
+#~ msgid "Comet"
+#~ msgstr "Komet"
+
+#~ msgid "Invisible"
+#~ msgstr "Osynlig"
+
+#~ msgid "Barycenter"
+#~ msgstr "Masscentrum "
+
+#~ msgid "Small Body"
+#~ msgstr "Liten kropp"
+
+#~ msgid "Dwarf Planet"
+#~ msgstr "Dvärgplanet"
+
+#~ msgid "-"
+#~ msgstr "-"
+
+#~ msgid "Eclipse Finder"
+#~ msgstr "Förmörkelsefinnare"
+
+#~ msgid "&Add Bookmark"
+#~ msgstr "&Lägg till bokmärke"
+
+#~ msgid "Add a bookmark for the current document"
+#~ msgstr "Lägg till ett bokmärke för aktuellt dokument"
+
+#~ msgid "Add &Relative Bookmark"
+#~ msgstr "Lägg till &relativt bokmärke"
+
+#~ msgid "Add a relative bookmark for the current document"
+#~ msgstr "Lägg till ett relativt bokmärke för aktuellt dokument"
+
+#~ msgid "Add &Settings Bookmark"
+#~ msgstr "Lägg till &inställningsbokmärke"
+
+#~ msgid "Add a settings bookmark for the current document"
+#~ msgstr "Lägg till ett inställningsbokmärke för aktuellt dokument"
+
+#~ msgid "Edit your bookmark collection in a separate window"
+#~ msgstr "Redigera din bokmärkessamling i ett separat fönster"
+
+#~ msgid "&New Folder..."
+#~ msgstr "&Ny mapp..."
+
+#~ msgid "Create a new bookmark folder in this menu"
+#~ msgstr "Skapa en ny bokmärkesmapp i denna meny"
+
+#~ msgid "Can't add bookmark with empty URL"
+#~ msgstr "Kan ej lägga till bokmärke med tom URL"
+
+#~ msgid ""
+#~ "Something seems to be wrong with your installation of Celestia. The "
+#~ "splash screen directory couldn't be found. \n"
+#~ "Start-up will continue, but Celestia will probably be missing some data "
+#~ "files and may not work correctly, please check your installation."
+#~ msgstr ""
+#~ "Något verkar vara fel med din installation av Celestia. Katalogen för "
+#~ "uppstartsbilder kunde ej hittas. \n"
+#~ "Uppstarten kommer att fortsätta men Celestia kommer antagligen att sakna "
+#~ "vissa datafiler och fungerar kanske ej korrekt, vänligen kontrollera din "
+#~ "installation."
+
+#~ msgid "Go to &URL..."
+#~ msgstr "Gå till &URL..."
+
+#~ msgid "Go to &Long/Lat..."
+#~ msgstr "Gå till &Long/Lat..."
+
+#~ msgid "&Back"
+#~ msgstr "&Bakåt"
+
+#~ msgid "&Forward"
+#~ msgstr "&Framåt"
+
+#~ msgid "Home"
+#~ msgstr "Hem"
+
+#~ msgid "Bookmarks"
+#~ msgstr "Bokmärken"
+
+#~ msgid "Full Screen"
+#~ msgstr "Helskärm"
+
+#~ msgid "Copy URL"
+#~ msgstr "Kopiera URL"
+
+#~ msgid "Set Time..."
+#~ msgstr "Ställ tid..."
+
+#~ msgid "Set Time to Now"
+#~ msgstr "Ställ tid till nu"
+
+#~ msgid "Accelerate Time"
+#~ msgstr "Accelerera tid"
+
+#~ msgid "Decelerate Time"
+#~ msgstr "Sakta ner tid"
+
+#~ msgid "Accelerate Time (x2)"
+#~ msgstr "Accelerera tid (x2)"
+
+#~ msgid "Decelerate Time (/2)"
+#~ msgstr "Sakta ner tid (/2)"
+
+#~ msgid "Pause Time"
+#~ msgstr "Pausa tid"
+
+#~ msgid "Reverse Time"
+#~ msgstr "Omvänd tid"
+
+#~ msgid "Split View Vertically"
+#~ msgstr "Dela vy vertikalt"
+
+#~ msgid "Split View Horizontally"
+#~ msgstr "Dela vy horisontellt"
+
+#~ msgid "Cycle View"
+#~ msgstr "Växla vy"
+
+#~ msgid "Single View"
+#~ msgstr "Enkel vy"
+
+#~ msgid "Delete View"
+#~ msgstr "Ta bort vy"
+
+#~ msgid "Frames Visible"
+#~ msgstr "Synliga ramar"
+
+#~ msgid "Active Frame Visible"
+#~ msgstr "Aktiva ramar synliga"
+
+#~ msgid "Synchronize Time"
+#~ msgstr "Synkronisera tid"
+
+#~ msgid "Alt-Azimuth Mode"
+#~ msgstr "Alt-Azimutläge"
+
+#~ msgid "Go To Surface"
+#~ msgstr "Gå till yta"
+
+#~ msgid "Show Stars"
+#~ msgstr "Visa stjärnor"
+
+#~ msgid "Show Planets"
+#~ msgstr "Visa planeter"
+
+#~ msgid "Show Galaxies"
+#~ msgstr "Visa galaxer"
+
+#~ msgid "Show Globulars"
+#~ msgstr "Visa klotformiga stjärnhopar"
+
+#~ msgid "Show Partial Trajectories"
+#~ msgstr "Visa partiella banor"
+
+#~ msgid "Show Nebulae"
+#~ msgstr "Visa nebulosor"
+
+#~ msgid "Show Open Clusters"
+#~ msgstr "Visa öppna stjärnhopar"
+
+#~ msgid "Show Constellations"
+#~ msgstr "Visa stjärnbilder"
+
+#~ msgid "Show CloudMaps"
+#~ msgstr "Visa molnkartor"
+
+#~ msgid "Show Cloud Shadows"
+#~ msgstr "Visa molnskuggor"
+
+#~ msgid "Show Orbits"
+#~ msgstr "Visa omloppsbanor"
+
+#~ msgid "Show Asteroid Orbits"
+#~ msgstr "Visa asteroiders omloppsbanor"
+
+#~ msgid "Show Comet Orbits"
+#~ msgstr "Visa kometers omloppsbanor"
+
+#~ msgid "Show Moon Orbits"
+#~ msgstr "Visa månars omloppsbanor"
+
+#~ msgid "Show Star Orbits"
+#~ msgstr "Visa omloppsbanor"
+
+#~ msgid "Show Planet Orbits"
+#~ msgstr "Visa planeters omloppsbanor"
+
+#~ msgid "Show Spacecraft Orbits"
+#~ msgstr "Visa rymdfarkosters omloppsbanor"
+
+#~ msgid "Show Celestial Grid"
+#~ msgstr "Visa himlarutnät"
+
+#~ msgid "Show Night Side Lights"
+#~ msgstr "Visa ljus på nattsidan"
+
+#~ msgid "Show Markers"
+#~ msgstr "Visa markörer"
+
+#~ msgid "Show Atmospheres"
+#~ msgstr "Visa atmosfärer"
+
+#~ msgid "Show Smooth Orbit Lines"
+#~ msgstr "Visa mjuka omloppsbanor"
+
+#~ msgid "Show Eclipse Shadows"
+#~ msgstr "Visa förmörkelseskuggor"
+
+#~ msgid "Cycle Star Mode"
+#~ msgstr "Växla stjärnläge"
+
+#~ msgid "Show Ring Shadows"
+#~ msgstr "Visa ringskuggor"
+
+#~ msgid "Show Boundaries"
+#~ msgstr "Visa gränser"
+
+#~ msgid "Auto Magnitudes"
+#~ msgstr "Automagnituder"
+
+#~ msgid "Show Comet Tails"
+#~ msgstr "Visa kometsvansar"
+
+#~ msgid "Show Star Labels"
+#~ msgstr "Visa etiketter på stjärnor"
+
+#~ msgid "Show Planet Labels"
+#~ msgstr "Visa etiketter på planeter"
+
+#~ msgid "Show Moon Labels"
+#~ msgstr "Visa etiketter på månar"
+
+#~ msgid "Show Comet Labels"
+#~ msgstr "Visa etiketter på kometer"
+
+#~ msgid "Show Constellation Labels"
+#~ msgstr "Visa etiketter på stjärnbilder"
+
+#~ msgid "Constellation Labels in Latin"
+#~ msgstr "Stjärnbildsetiketter på latin"
+
+#~ msgid "Show Galaxy Labels"
+#~ msgstr "Visa etiketter på galaxer"
+
+#~ msgid "Show Globular Labels"
+#~ msgstr "Visa etiketter för klotformiga stjärnhopar"
+
+#~ msgid "Show Nebula Labels"
+#~ msgstr "Visa etiketter på nebulosor"
+
+#~ msgid "Show Open Cluster Labels"
+#~ msgstr "Visa etiketter för öppna stjärnhopar"
+
+#~ msgid "Show Asteroid Labels"
+#~ msgstr "Visa etiketterpå asteroider"
+
+#~ msgid "Show Spacecraft Labels"
+#~ msgstr "Visa etiketter på rymdfarkoster"
+
+#~ msgid "Show Location Labels"
+#~ msgstr "Visa etiketter på platser"
+
+#~ msgid "Display Local Time"
+#~ msgstr "Visa lokal tid"
+
+#~ msgid "Show City Locations"
+#~ msgstr "Visa städers placering"
+
+#~ msgid "Show Observatory Locations"
+#~ msgstr "Visa observatorieplatser"
+
+#~ msgid "Show Landing Sites Locations"
+#~ msgstr "Visa platser för landningsplatser"
+
+#~ msgid "Show Crater Locations"
+#~ msgstr "Visa kraterplatser"
+
+#~ msgid "Show Mons Locations"
+#~ msgstr "Visa Monsplatser"
+
+#~ msgid "Show Terra Locations"
+#~ msgstr "Visa Terraplatser"
+
+#~ msgid "Show Vallis Locations"
+#~ msgstr "Visa Vallisplatser"
+
+#~ msgid "Show Mare Locations"
+#~ msgstr "Visa Mareplatser"
+
+#~ msgid "Show Other Locations"
+#~ msgstr "Visa övriga platser"
+
+#~ msgid "Wireframe Mode"
+#~ msgstr "Trådramsläge"
+
+#~ msgid "Center on Orbit"
+#~ msgstr "Centrera på omloppsbana"
+
+#~ msgid "Basic"
+#~ msgstr "Enkel"
+
+#~ msgid "Multitexture"
+#~ msgstr "Multitextur"
+
+#~ msgid "NvCombiners"
+#~ msgstr "NvKombinerare"
+
+#~ msgid "DOT3 ARBVP"
+#~ msgstr "DOT3 ARBVP"
+
+#~ msgid "NvCombiner NvVP"
+#~ msgstr "NvCombiner NvVP"
+
+#~ msgid "NvCombiner ARBVP"
+#~ msgstr "NvCombiner ARBVP"
+
+#~ msgid "ARBFP ARBVP"
+#~ msgstr "ARBFP ARBVP"
+
+#~ msgid "NV30"
+#~ msgstr "NV30"
+
+#~ msgid "OpenGL 2.0"
+#~ msgstr "OpenGL 2.0"
+
+#~ msgid "Cycle OpenGL Render Path"
+#~ msgstr "Växla OpenGL-uppritningsläge"
+
+#~ msgid "Sync framerate to video refresh rate"
+#~ msgstr "Synkronisera bildfrekvensen till skärmens uppdateringsfrekvens"
+
+#~ msgid "Grab Image"
+#~ msgstr "Fånga bild"
+
+#~ msgid "Capture Video"
+#~ msgstr "Fånga video"
+
+#~ msgid "OpenGL info"
+#~ msgstr "OpenGL-info"
+
+#~ msgid "Show Bookmark Toolbar"
+#~ msgstr "Visa verktygsrad för bokmärken"
+
+#~ msgid "OpenGL Info"
+#~ msgstr "OpenGL-Info"
+
+#~ msgid "UTC"
+#~ msgstr "UTC"
+
+#~ msgid ""
+#~ "This version of Celestia was not built with support for movie recording."
+#~ msgstr "Denna version av Celestia byggdes ej med stöd för fångst av video."
+
+#~ msgid "Go to URL"
+#~ msgstr "Gå till URL"
+
+#~ msgid "Enter URL"
+#~ msgstr "Ange URL"
+
+#~ msgid "Object: "
+#~ msgstr "Objekt: "
+
+#~ msgid "Longitude: "
+#~ msgstr "Longitud: "
+
+#~ msgid "East"
+#~ msgstr "Öst"
+
+#~ msgid "West"
+#~ msgstr "Väst"
+
+#~ msgid "Latitude: "
+#~ msgstr "Latitud: "
+
+#~ msgid "North"
+#~ msgstr "Nord"
+
+#~ msgid "South"
+#~ msgstr "Syd"
+
+#~ msgid "Altitude: "
+#~ msgstr "Höjd: "
+
+#~ msgid "Celestia encountered an error while processing your script"
+#~ msgstr "Celestia påträffade ett fel vid behandling av ditt skript"
+
+#~ msgid "Celestia"
+#~ msgstr "Celestia"
+
+#~ msgid "Use alternate configuration file"
+#~ msgstr "Använd alternativ konfigurationsfil"
+
+#~ msgid "Use alternate installation directory"
+#~ msgstr "Använd alternativ installationskatalog"
+
+#~ msgid "Use as additional \"extras\" directory"
+#~ msgstr "Använd ytterligare en \"extras\"-katalog"
+
+#~ msgid "Start fullscreen"
+#~ msgstr "Starta helskärm"
+
+#~ msgid "Disable splash screen"
+#~ msgstr "Inaktivera uppstartsbild"
+
+#~ msgid "Start and go to url"
+#~ msgstr "Starta och gå till URL"
+
+#~ msgid "_: NAME OF TRANSLATORS\\nYour names"
+#~ msgstr ""
+#~ "Anders Pamdal\n"
+#~ "Daniel Nylander\n"
+#~ "Tobias Svedberg"
+
+#~ msgid "_: EMAIL OF TRANSLATORS\\nYour emails"
+#~ msgstr ""
+#~ "anders@pamdal.se\n"
+#~ "po@danielnylander.se\n"
+#~ "sleepylion@gmail.com"
+
+#~ msgid "Celestia Preferences"
+#~ msgstr "Inställningar för Celestia"
+
+#~ msgid "Rendering"
+#~ msgstr "Rendering"
+
+#~ msgid "Show"
+#~ msgstr "Visa"
+
+#~ msgid "Stars"
+#~ msgstr "Stjärnor"
+
+#~ msgid "Galaxies"
+#~ msgstr "Galaxer"
+
+#~ msgid "Nebulae"
+#~ msgstr "Nebulosor"
+
+#~ msgid "Open Clusters"
+#~ msgstr "Öppna stjärnhopar"
+
+#~ msgid "Atmospheres"
+#~ msgstr "Atmosfärer"
+
+#~ msgid "Clouds"
+#~ msgstr "Moln"
+
+#~ msgid "Cloud Shadows"
+#~ msgstr "Molnskuggor"
+
+#~ msgid "Night Side Lights"
+#~ msgstr "Ljus på nattsidan"
+
+#~ msgid "Eclipse Shadows"
+#~ msgstr "Förmörkelseskuggor"
+
+#~ msgid "Comet Tails"
+#~ msgstr "Kometsvansar"
+
+#~ msgid "Orbits"
+#~ msgstr "Omloppsbanor"
+
+#~ msgid "Partial Trajectories"
+#~ msgstr "Partiella banor"
+
+#~ msgid "Smooth Orbit Lines"
+#~ msgstr "Mjuka omloppsbanor"
+
+#~ msgid "Celestial Grid"
+#~ msgstr "Himlarutnät"
+
+#~ msgid "Constellations"
+#~ msgstr "Stjärnbilder"
+
+#~ msgid "Markers"
+#~ msgstr "Markörer"
+
+#~ msgid "Ring Shadows"
+#~ msgstr "Ringskuggor"
+
+#~ msgid "Constellation Boundaries"
+#~ msgstr "Gränser för stjärnbilder"
+
+#~ msgid "Orbits / Labels"
+#~ msgstr "Omloppsbanor / Etiketter"
+
+#~ msgid "Labels"
+#~ msgstr "Etiketter"
+
+#~ msgid "Constellations in Latin"
+#~ msgstr "Stjärnbilder på latin"
+
+#~ msgid "Spacecrafts"
+#~ msgstr "Rymdfarkoster"
+
+#~ msgid "Locations"
+#~ msgstr "Platser"
+
+#~ msgid "Ambient Light"
+#~ msgstr "Omgivande ljus"
+
+#~ msgid "Limiting Magnitude"
+#~ msgstr "Begränsa magnitud"
+
+#~ msgid "Info Text"
+#~ msgstr "Infotext"
+
+#~ msgid "Level: "
+#~ msgstr "Nivå: "
+
+#~ msgid "None"
+#~ msgstr "Ingen"
+
+#~ msgid "Terse"
+#~ msgstr "Fåordig"
+
+#~ msgid "Verbose"
+#~ msgstr "Informativ"
+
+#~ msgid "Textures"
+#~ msgstr "Texturer"
+
+#~ msgid "Resolution: "
+#~ msgstr "Upplösning: "
+
+#~ msgid "Low"
+#~ msgstr "Låg"
+
+#~ msgid "Medium"
+#~ msgstr "Medel"
+
+#~ msgid "High"
+#~ msgstr "Hög"
+
+#~ msgid "Automatic FOV"
+#~ msgstr "Automatiskt synfält"
+
+#~ msgid "Screen DPI: "
+#~ msgstr "Skärmens DPI: "
+
+#~ msgid "Viewing Distance (cm): "
+#~ msgstr "Visningsavstånd (cm): "
+
+#~ msgid "Cities"
+#~ msgstr "Städer"
+
+#~ msgid "Observatories"
+#~ msgstr "Observatorier"
+
+#~ msgid "Landing Sites"
+#~ msgstr "Landningsplatser"
+
+#~ msgid "Craters"
+#~ msgstr "Kratrar"
+
+#~ msgid "Mons"
+#~ msgstr "Mons"
+
+#~ msgid "Terra"
+#~ msgstr "Terra"
+
+#~ msgid "Vallis"
+#~ msgstr "Vallis"
+
+#~ msgid "Mare"
+#~ msgstr "Mare"
+
+#~ msgid "Other"
+#~ msgstr "Annan"
+
+#~ msgid "Minimum Feature Size"
+#~ msgstr "Minimum funktionsstorlek"
+
+#~ msgid "Date/Time"
+#~ msgstr "Datum/Tid"
+
+#~ msgid "Display"
+#~ msgstr "Visa"
+
+#~ msgid "Timezone: "
+#~ msgstr "Tidszon: "
+
+#~ msgid "Format: "
+#~ msgstr "Format: "
+
+#~ msgid "Local Format"
+#~ msgstr "Lokalt format"
+
+#~ msgid "Set"
+#~ msgstr "Ställ in"
+
+#~ msgid "Local Time is only supported for dates between 1902 and 2037.\n"
+#~ msgstr "Lokaltid stöds endast för datum mellan 1902 och 2037.\n"
+
+#~ msgid "Julian Date: "
+#~ msgstr "Julianskt datum: "
+
+#~ msgid "Now"
+#~ msgstr "Nu"
+
+#~ msgid ""
+#~ "\n"
+#~ "Selection: "
+#~ msgstr ""
+#~ "\n"
+#~ "Val: "
+
+#~ msgid "Include Light Travel Time"
+#~ msgstr "Inkludera ljusets restid"
+
+#~ msgid "Ignore Light Travel Time "
+#~ msgstr "Ignorera ljusets restid "
+
+#~ msgid "OpenGL"
+#~ msgstr "OpenGL"
+
+#~ msgid "Key Bindings"
+#~ msgstr "Tangentbindningar"
+
+#~ msgid "<b>Unextended OpenGL 1.1</b>"
+#~ msgstr "<b>Ej utökad OpenGL 1.1</b>"
+
+#~ msgid "<b>Multiple textures and the ARB_texenv_combine extension</b>"
+#~ msgstr "<b>Multipla texturer och ARB_texenv_combine-utökning</b>"
+
+#~ msgid "<b>NVIDIA combiners, no vertex programs</b>"
+#~ msgstr "<b>NVIDIA-kombinerare, inga vertexprogram</b>"
+
+#~ msgid "<b>ARB_texenv_DOT3 extension, ARB_vertex_program extension</b>"
+#~ msgstr "<b>ARB_texenv_DOT3-utökning, ARB_vertex_program-utökning</b>"
+
+#~ msgid ""
+#~ "<b>NVIDIA Combiners, NV_vertex_program extension</b><br> provide bump "
+#~ "mapping, ring shadows, and specular highlights on any Geforce or ATI "
+#~ "Radeon graphics card, though NvCombiner ARBVP is a slightly better option "
+#~ "for Geforce users"
+#~ msgstr ""
+#~ "<b>NVIDIA-kombinerare, NV_vertex_program-utökning</b><br> ger "
+#~ "bumpmappning, ringskuggor och specular highlights på alla Geforce- eller "
+#~ "ATI Radeon-grafikkort, även om NvKombinerare ARBVP är ett lite bättre "
+#~ "alternativ för Geforce-användare"
+
+#~ msgid "<b>NVIDIA Combiners, ARB_vertex_program extension</b>"
+#~ msgstr "<b>NVIDIA-kombinerare, ARB_vertex_program-utökning</b>"
+
+#~ msgid ""
+#~ "<b>ARB_fragment_program and ARB_vertex_program extensions</b><br>provide "
+#~ "advanced effects on Geforce FX and Radeon 9700 cards"
+#~ msgstr ""
+#~ "<b>ARB_fragment_program och ARB_vertex_program extensions</b><br>ger "
+#~ "avancerade effekter på Geforce FX- och Radeon 9700-kort"
+
+#~ msgid "<b>NV_fragment_program and ARB_vertex_program extensions</b>"
+#~ msgstr "<b>NV_fragment_program- och ARB_vertex_program-utökningar</b>"
+
+#~ msgid "<b>OpenGL 2.0 Shading Language</b>"
+#~ msgstr "<b>OpenGL 2.0-skuggspråk</b>"
+
+#~ msgid ""
+#~ "File %1 does not exist, using default configuration file %2/celestia.cfg"
+#~ msgstr ""
+#~ "Filen %1 finns ej, använder förvald konfigurationsfil %2/celestia.cfg"
+
+#~ msgid "Directory %1 does not exist, using default %2"
+#~ msgstr "Katalogen %1 finns ej, använder förvald %2"
+
+#~ msgid "Extras directory %1 does not exist"
+#~ msgstr "Katalogen för extrafiler %1 finns ej"
+
+#~ msgid "Abs (app) mag: "
+#~ msgstr "Abs (ungefärlig) mag: "
+
+#~ msgid "Surface Temp: "
+#~ msgstr "Yttemperatur: "
+
+#~ msgid "Marked objects"
+#~ msgstr "Markerade objekt"
+
+#~ msgid "&Select"
+#~ msgstr "&Välj"
+
+#~ msgid "&Center"
+#~ msgstr "&Centrera"
+
+#~ msgid "S&ynch Orbit"
+#~ msgstr "S&ynkronisera omloppsbana"
+
+#~ msgid "Unmark &All"
+#~ msgstr "Avmarkera &alla"
+
+#~ msgid "Diamond"
+#~ msgstr "Diamant"
+
+#~ msgid "Triangle"
+#~ msgstr "Triangel"
+
+#~ msgid "Square"
+#~ msgstr "Kvadrat"
+
+#~ msgid "Filled Square"
+#~ msgstr "Fylld fyrkant"
+
+#~ msgid "Plus"
+#~ msgstr "Plus"
+
+#~ msgid "X"
+#~ msgstr "X"
+
+#~ msgid "Left Arrow"
+#~ msgstr "Vänsterpil"
+
+#~ msgid "Right Arrow"
+#~ msgstr "Högerpil"
+
+#~ msgid "Up Arrow"
+#~ msgstr "Uppåtpil"
+
+#~ msgid "Down Arrow"
+#~ msgstr "Nedåtpil"
+
+#~ msgid "Circle"
+#~ msgstr "Cirkel"
+
+#~ msgid "Disk"
+#~ msgstr "Disk"
+
+#~ msgid "Normal"
+#~ msgstr "Normal"
+
+#~ msgid "Small Bodies"
+#~ msgstr "Små kroppar"
+
+#~ msgid "Dwarf Planets"
+#~ msgstr "Dvärgplaneter"
+
+#~ msgid "Duration: %1"
+#~ msgstr "Längd: %1"
+
+#~ msgid "Size: %1 MB"
+#~ msgstr "Storlek: %1 MB"
+
+#~ msgid "Current size: %1 x %2"
+#~ msgstr "Aktuell storlek: %1 x %2"
+
+#~ msgid "Current width: %1 x %2"
+#~ msgstr "Aktuell bredd: %1 x %2"
+
+#~ msgid "Current height: %1 x %2"
+#~ msgstr "Aktuell höjd: %1 x %2"
+
+#~ msgid "You must specify a file name."
+#~ msgstr "Du måste ange ett filnamn."
+
+#~ msgid "Error initializing movie capture."
+#~ msgstr "Fel vid initiering av videofångst."
+
+#~ msgid "&Navigation"
+#~ msgstr "&Navigering"
+
+#~ msgid "Options"
+#~ msgstr "Alternativ"
+
+#~ msgid "Objects"
+#~ msgstr "Objekt"
+
+#~ msgid "OpenGL Render Path"
+#~ msgstr "OpenGL-uppritningsläge"
+
+#~ msgid "Time"
+#~ msgstr "Tid"
+
+#~ msgid "MultiView"
+#~ msgstr "Vyer"
+
+#~ msgid "Main Toolbar"
+#~ msgstr "Huvudverktygsrad"
+
+#~ msgid "Dist."
+#~ msgstr "Avstånd"
+
+#~ msgid "App. Mag."
+#~ msgstr "App. Mag."
+
+#~ msgid "Abs. Mag."
+#~ msgstr "Abs. Mag."
+
+#~ msgid "With Planets"
+#~ msgstr "Med planeter"
+
+#~ msgid "Brightest (Abs.)"
+#~ msgstr "Ljusstarkaste (Abs.)"
+
+#~ msgid "Brightest (App.)"
+#~ msgstr "Ljusstarkaste (App.)"
+
+#~ msgid "Nearest"
+#~ msgstr "Närmaste"
+
+#~ msgid "&Close"
+#~ msgstr "&Stäng"
+
+#~ msgid "Alt+C"
+#~ msgstr "Alt+C"
+
+#~ msgid "Refresh"
+#~ msgstr "Uppdatera"
+
+#~ msgid "End"
+#~ msgstr "Slut"
+
+#~ msgid "Search parameters"
+#~ msgstr "Sökparametrar"
+
+#~ msgid "Solar Eclipses"
+#~ msgstr "Solförmörkelser"
+
+# Datum? Vad? På?
+#~ msgid "On:"
+#~ msgstr "Den:"
+
+#~ msgid "Moon Eclipses"
+#~ msgstr "Månförmörkelser"
+
+#~ msgid "Search"
+#~ msgstr "Sök"
+
+#~ msgid "To:"
+#~ msgstr "Till:"
+
+#~ msgid "From:"
+#~ msgstr "Från:"
+
+#~ msgid "Close"
+#~ msgstr "Stäng"
+
+#~ msgid "Video Capture"
+#~ msgstr "Videofångst"
+
+#~ msgid "Save As:"
+#~ msgstr "Spara som:"
+
+#~ msgid "*.ogg"
+#~ msgstr "*.ogg"
+
+#~ msgid "Aspect Ratio:"
+#~ msgstr "Bildformat:"
+
+#~ msgid "Current"
+#~ msgstr "Aktuell"
+
+#~ msgid "11:9"
+#~ msgstr "11:9"
+
+#~ msgid "4:3"
+#~ msgstr "4:3"
+
+#~ msgid "16:9"
+#~ msgstr "16:9"
+
+#~ msgid "Image Size:"
+#~ msgstr "Bildstorlek:"
+
+#~ msgid "Frame Rate:"
+#~ msgstr "Bildfrekvens:"
+
+#~ msgid "Video Quality:"
+#~ msgstr "Videokvalitet:"
+
+#~ msgid "Play Video when capture is done"
+#~ msgstr "Spela upp video när fångsten är klar"
+
+#~ msgid "Usage"
+#~ msgstr "Användning"
+
+#~ msgid ""
+#~ "<p>Press <b>F11</b> to start/pause recording<br>\n"
+#~ "Press <b>F12</b> to stop</p>\n"
+#~ "\n"
+#~ "<p>Note that resizing the main window will not be possible until the end "
+#~ "of the capture</p>"
+#~ msgstr ""
+#~ "<p>Tryck <b>F11</b> för att starta/pausa inspelningen<br>\n"
+#~ "Tryck <b>F12</b> för att stoppa</p>\n"
+#~ "\n"
+#~ "<p>Notera att ändring av huvudfönstrets storlek ej är möjlig till efter "
+#~ "fångsten är klar</p>"
+
+#~ msgid "&OK"
+#~ msgstr "&OK"
+
+#~ msgid "&Cancel"
+#~ msgstr "&Avbryt"
+
+#~ msgid "Mercury"
+#~ msgstr "Merkurius"
+
+#~ msgid "Venus"
+#~ msgstr "Venus"
+
+#~ msgid "Mars"
+#~ msgstr "Mars"
+
+#~ msgid "Phobos"
+#~ msgstr "Phobos"
+
+#~ msgid "Deimos"
+#~ msgstr "Deimos"
+
+#~ msgid "Amalthea"
+#~ msgstr "Amalthea"
+
+#~ msgid "Io"
+#~ msgstr "Io"
+
+#~ msgid "Europa"
+#~ msgstr "Europa"
+
+#~ msgid "Ganymede"
+#~ msgstr "Ganymede"
+
+#~ msgid "Callisto"
+#~ msgstr "Callisto"
+
+#~ msgid "Prometheus"
+#~ msgstr "Prometheus"
+
+#~ msgid "Pandora"
+#~ msgstr "Pandora"
+
+#~ msgid "Epimetheus"
+#~ msgstr "Epimetheus"
+
+#~ msgid "Janus"
+#~ msgstr "Janus"
+
+#~ msgid "Mimas"
+#~ msgstr "Mimas"
+
+#~ msgid "Enceladus"
+#~ msgstr "Enceladus"
+
+#~ msgid "Tethys"
+#~ msgstr "Tethys"
+
+#~ msgid "Dione"
+#~ msgstr "Dione"
+
+#~ msgid "Rhea"
+#~ msgstr "Rhea"
+
+#~ msgid "Titan"
+#~ msgstr "Titan"
+
+#~ msgid "Hyperion"
+#~ msgstr "Hyperion"
+
+#~ msgid "Iapetus"
+#~ msgstr "Iapetus"
+
+#~ msgid "Phoebe"
+#~ msgstr "Phobos"
+
+#~ msgid "Miranda"
+#~ msgstr "Miranda"
+
+#~ msgid "Ariel"
+#~ msgstr "Ariel"
+
+#~ msgid "Umbriel"
+#~ msgstr "Umbriel"
+
+#~ msgid "Titania"
+#~ msgstr "Titania"
+
+#~ msgid "Oberon"
+#~ msgstr "Oberon"
+
+#~ msgid "Larissa"
+#~ msgstr "Larissa"
+
+#~ msgid "Proteus"
+#~ msgstr "Proteus"
+
+#~ msgid "Triton"
+#~ msgstr "Triton"
+
+#~ msgid "Nereid"
+#~ msgstr "Nereid"
+
+#~ msgid "Pluto-Charon"
+#~ msgstr "Pluto-Charon"
+
+#~ msgid "Charon"
+#~ msgstr "Charon"
+
+#~ msgid "NORTH AMERICA"
+#~ msgstr "NORDAMERIKA"
+
+#~ msgid "SOUTH AMERICA"
+#~ msgstr "SYDAMERIKA"
+
+#~ msgid "EURASIA"
+#~ msgstr "EURASIEN"
+
+#~ msgid "AFRICA"
+#~ msgstr "AFRIKA"
+
+#~ msgid "AUSTRALIA"
+#~ msgstr "AUSTRALIEN"
+
+#~ msgid "ANTARCTICA"
+#~ msgstr "ANTARKTIS"
+
+#~ msgid "NORTH ATLANTIC OCEAN"
+#~ msgstr "NORDATLANTEN"
+
+#~ msgid "SOUTH ATLANTIC OCEAN"
+#~ msgstr "SYDATLANTEN"
+
+#~ msgid "NORTH PACIFIC OCEAN"
+#~ msgstr "NORRA STILLA HAVET"
+
+#~ msgid "SOUTH PACIFIC OCEAN"
+#~ msgstr "SÖDRA STILLA HAVET"
+
+#~ msgid "INDIAN OCEAN"
+#~ msgstr "INDISKA OCEANEN"
+
+#~ msgid "ARCTIC OCEAN"
+#~ msgstr "NORRA ISHAVET"
+
+#~ msgid "Milky Way"
+#~ msgstr "Vintergatan"
+
+#~ msgid "SMC"
+#~ msgstr "SMC"
+
+#~ msgid "LMC"
+#~ msgstr "LMC"
+
+#~ msgid "Solar System Barycenter"
+#~ msgstr "Stjärnsystemets masscentrum"
+
+#~ msgid "&File"
+#~ msgstr "&Arkiv"
+
+#~ msgid "&Open Script..."
+#~ msgstr "Ö&ppna skript..."
+
+#~ msgid "Scripts"
+#~ msgstr "Skript"
+
+#~ msgid "Placeholder"
+#~ msgstr "Platshållare"
+
+#~ msgid "Capture &Image...\tF10"
+#~ msgstr "Fånga &bild...\tF10"
+
+#~ msgid "Capture &Movie...\tShift+F10"
+#~ msgstr "Fånga &film...\tShift+F10"
+
+#~ msgid "E&xit"
+#~ msgstr "&Avsluta"
+
+# SOL???
+#~ msgid "Select &Sol\tH"
+#~ msgstr "Välj &sol\tH"
+
+#~ msgid "Tour G&uide..."
+#~ msgstr "Turnég&uide..."
+
+#~ msgid "Select &Object..."
+#~ msgstr "Välj &objekt..."
+
+#~ msgid "Goto Object..."
+#~ msgstr "Gå till objekt..."
+
+#~ msgid "&Center Selection\tC"
+#~ msgstr "&Centrera valt objekt\tC"
+
+#~ msgid "&Go to Selection\tG"
+#~ msgstr "&Gå till valt objekt\tG"
+
+#~ msgid "&Follow Selection\tF"
+#~ msgstr "&Följ valt objekt\tF"
+
+# Otydlig och svår att översätta
+#~ msgid "S&ync Orbit Selection\tY"
+#~ msgstr "S&ynkronisera valets omloppsbana\tY"
+
+#~ msgid "&Track Selection\tT"
+#~ msgstr "&Spåra valt objekt\tT"
+
+#~ msgid "Solar System &Browser..."
+#~ msgstr "&Bläddra i solsystemet..."
+
+#~ msgid "Star B&rowser..."
+#~ msgstr "Stjärn&bläddrare..."
+
+#~ msgid "&Eclipse Finder"
+#~ msgstr "&Hitta förmörkelse"
+
+#~ msgid "&Time"
+#~ msgstr "&Tid"
+
+#~ msgid "10x &Faster\tL"
+#~ msgstr "10x &snabbare\tL"
+
+#~ msgid "10x &Slower\tK"
+#~ msgstr "10x &långsammare\tK"
+
+#~ msgid "Free&ze\tSpace"
+#~ msgstr "Fry&s\tBlanksteg"
+
+#~ msgid "&Real Time\t\\"
+#~ msgstr "&Realtid\t\\"
+
+#~ msgid "Re&verse Time\tJ"
+#~ msgstr "Om&vänd tid\tJ"
+
+#~ msgid "Set &Time..."
+#~ msgstr "Ställ in &tid..."
+
+#~ msgid "Show Local Time"
+#~ msgstr "Visa lokal tid"
+
+#~ msgid "&Render"
+#~ msgstr "&Rita upp"
+
+#~ msgid "Select Display Mode..."
+#~ msgstr "Välj visningsläge..."
+
+#~ msgid "Toggle Full Screen\tAlt+Enter"
+#~ msgstr "Växla helskärm\tAlt+Enter"
+
+#~ msgid "View Options..."
+#~ msgstr "Visningsalternativ..."
+
+#~ msgid "Locations..."
+#~ msgstr "Platser..."
+
+#~ msgid "More Stars Visible\t]"
+#~ msgstr "Fler synliga stjärnor\t]"
+
+#~ msgid "Fewer Stars Visible\t["
+#~ msgstr "Färre synliga stjärnor\t["
+
+#~ msgid "Auto Magnitude\tCtrl+Y"
+#~ msgstr "Automagnitud\tCtrl+Y"
+
+#~ msgid "Star St&yle"
+#~ msgstr "Stjärnutseende"
+
+#~ msgid "&Fuzzy Points"
+#~ msgstr "&Suddiga punkter"
+
+#~ msgid "&Points"
+#~ msgstr "&Punkter"
+
+#~ msgid "Scaled &Discs"
+#~ msgstr "Nedskalade &skivor"
+
+#~ msgid "&Ambient Light"
+#~ msgstr "&Omgivande ljus"
+
+#~ msgid "&None"
+#~ msgstr "&Ingen"
+
+#~ msgid "&Low"
+#~ msgstr "&Låg"
+
+#~ msgid "&Medium"
+#~ msgstr "&Medel"
+
+#~ msgid "&Texture Resolution"
+#~ msgstr "&Texturens upplösning"
+
+#~ msgid "&High"
+#~ msgstr "&Hög"
+
+#~ msgid "Antialiasing\tCtrl+X"
+#~ msgstr "Kantutjämning\tCtrl+X"
+
+#~ msgid "&View"
+#~ msgstr "&Visa"
+
+#~ msgid "Split &Horizontally\tCtrl+R"
+#~ msgstr "Dela vy &horisontellt\tCtrl+R"
+
+#~ msgid "Split &Vertically\tCtrl+U"
+#~ msgstr "Dela vy &vertikalt\tCtrl+U"
+
+#~ msgid "&Delete Active View\tDEL"
+#~ msgstr "&Ta bort aktiv vy\tDEL"
+
+#~ msgid "&Single View\tCtrl+D"
+#~ msgstr "&Enkel vy\tCtrl+D"
+
+#~ msgid "Show &Frames"
+#~ msgstr "Visa &ramar"
+
+#~ msgid "Synchronize &Time"
+#~ msgstr "Synkronisera &tid"
+
+#~ msgid "&Bookmarks"
+#~ msgstr "&Bokmärken"
+
+#~ msgid "&Add Bookmarks..."
+#~ msgstr "&Lägg till bokmärke..."
+
+#~ msgid "&Organize Bookmarks..."
+#~ msgstr "&Organisera bokmärken..."
+
+#~ msgid "&Help"
+#~ msgstr "&Hjälp"
+
+#~ msgid "Run &Demo"
+#~ msgstr "Kör &demonstration"
+
+#~ msgid "&Controls"
+#~ msgstr "&Kontroller"
+
+#~ msgid "&OpenGL Info"
+#~ msgstr "&OpenGL-Info"
+
+#~ msgid "&License"
+#~ msgstr "&Licens"
+
+#~ msgid "&About Celestia"
+#~ msgstr "&Om Celestia"
+
+#~ msgid "About Celestia"
+#~ msgstr "Om Celestia"
+
+#~ msgid "OK"
+#~ msgstr "OK"
+
+#~ msgid "Copyright (C) 2001-2008, Celestia Development Team"
+#~ msgstr "Copyright © 2001-2008, Celestias utvecklingsteam"
+
+#~ msgid "http://www.shatters.net/celestia"
+#~ msgstr "http://www.shatters.net/celestia"
+
+#~ msgid "Celestia is free software and comes with absolutely no warranty."
+#~ msgstr "Celestia är fri programvara och absolut ingen garanti gäller."
+
+#~ msgid "Authors"
+#~ msgstr "Upphovsmän"
+
+#~ msgid "Chris Laurel"
+#~ msgstr "Chris Laurel"
+
+#~ msgid "Clint Weisbrod"
+#~ msgstr "Clint Weisbrod"
+
+#~ msgid "Fridger Schrempp"
+#~ msgstr "Fridger Schrempp"
+
+#~ msgid "Christophe Teyssier"
+#~ msgstr "Christophe Teyssier"
+
+#~ msgid "Grant Hutchison"
+#~ msgstr "Grant Hutchison"
+
+#~ msgid "Pat Suwalski"
+#~ msgstr "Pat Suwalski"
+
+#~ msgid "Toti"
+#~ msgstr "Toti"
+
+#~ msgid "Da Woon Jung"
+#~ msgstr "Da Woon Jung"
+
+#~ msgid "Hank Ramsey"
+#~ msgstr "Hank Ramsey"
+
+#~ msgid "Bob Ippolito"
+#~ msgstr "Bob Ippolito"
+
+#~ msgid "Vincent Giangiulio"
+#~ msgstr "Vincent Giangiulio"
+
+#~ msgid "Select Object"
+#~ msgstr "Välj objekt"
+
+#~ msgid "Object Name"
+#~ msgstr "Objektnamn"
+
+#~ msgid "License"
+#~ msgstr "Licens"
+
+#~ msgid "Celestia Controls"
+#~ msgstr "Kontrollera Celestia"
+
+#~ msgid "OpenGL Driver Info"
+#~ msgstr "Info om OpenGL-drivrutin"
+
+#~ msgid "Set Simulation Time"
+#~ msgstr "Ställ in simuleringstid"
+
+#~ msgid "Time Zone: "
+#~ msgstr "Tidszon: "
+
+#~ msgid "Set To Current Time"
+#~ msgstr "Ställ in till aktuell tid"
+
+#~ msgid "Add Bookmark"
+#~ msgstr "Lägg till bokmärke"
+
+#~ msgid "Create in >>"
+#~ msgstr "Skapa i >>"
+
+#~ msgid "New Folder..."
+#~ msgstr "Ny mapp..."
+
+#~ msgid "Solar System Browser"
+#~ msgstr "Bläddra i stjärnsystemet"
+
+#~ msgid "Solar System"
+#~ msgstr "Solsystemet"
+
+#~ msgid "&Go To"
+#~ msgstr "&Gå till"
+
+#~ msgid "Solar System Objects"
+#~ msgstr "Stjärnsystemobjekt"
+
+#~ msgid "Star Browser"
+#~ msgstr "Stjärnbläddrare"
+
+#~ msgid "Brightest"
+#~ msgstr "Ljusstarkast"
+
+#~ msgid "With planets"
+#~ msgstr "Med planeter"
+
+#~ msgid "&Refresh"
+#~ msgstr "Uppdate&ra"
+
+#~ msgid "Star Search Criteria"
+#~ msgstr "Kriteria för stjärnsökning"
+
+#~ msgid "Maximum Stars Displayed in List"
+#~ msgstr "Maximalt antal stjärnor visade i lista"
+
+#~ msgid "Tour Guide"
+#~ msgstr "Turnéguide"
+
+#~ msgid "Go To"
+#~ msgstr "Gå till"
+
+#~ msgid "Select your destination:"
+#~ msgstr "Välj ditt mål:"
+
+#~ msgid "Go to Object"
+#~ msgstr "Gå till objekt"
+
+#~ msgid "radii"
+#~ msgstr "radii"
+
+#~ msgid "Object"
+#~ msgstr "Objekt"
+
+#~ msgid "Long."
+#~ msgstr "Long."
+
+#~ msgid "Lat."
+#~ msgstr "Lat."
+
+#~ msgid "Distance"
+#~ msgstr "Avstånd"
+
+#~ msgid "Size:"
+#~ msgstr "Storlek:"
+
+#~ msgid "Frame rate:"
+#~ msgstr "Bildfrekvens:"
+
+#~ msgid "Select Display Mode"
+#~ msgstr "Välj visningsläge"
+
+#~ msgid "Resolution"
+#~ msgstr "Upplösning"
+
+#~ msgid "View Options"
+#~ msgstr "Visningsalternativ"
+
+#~ msgid "Globulars"
+#~ msgstr "Klotformiga stjärnhopar"
+
+#~ msgid "Grids"
+#~ msgstr "Rutnät"
+
+#~ msgid "Celestial"
+#~ msgstr "Celest"
+
+#~ msgid "Horizontal"
+#~ msgstr "Horisontell"
+
+#~ msgid "Galactic"
+#~ msgstr "Galaktisk"
+
+#~ msgid "Ecliptic"
+#~ msgstr "Ekliptika"
+
+#~ msgid "Minor Moons"
+#~ msgstr "Mindre månar"
+
+#~ msgid "DSO Labels"
+#~ msgstr "DSO-etiketter"
+
+#~ msgid "Diagrams"
+#~ msgstr "Diagram"
+
+#~ msgid "Boundaries"
+#~ msgstr "Gränser"
+
+#~ msgid "Latin Names"
+#~ msgstr "Latinska namn"
+
+#~ msgid "Information Text"
+#~ msgstr "Informationstext"
+
+#~ msgid "Filter Stars"
+#~ msgstr "Filtrera stjärnor"
+
+#~ msgid "Montes (Mountains)"
+#~ msgstr "Montes (Berg)"
+
+#~ msgid "Maria (Seas)"
+#~ msgstr "Maria (Hav)"
+
+#~ msgid "Valles (Valleys)"
+#~ msgstr "Valles (Dalar)"
+
+#~ msgid "Terrae (Land masses)"
+#~ msgstr "Terrae (Landmassa)"
+
+#~ msgid "Volcanoes"
+#~ msgstr "Vulkaner"
+
+#~ msgid "Other features"
+#~ msgstr "Övriga funktioner"
+
+#~ msgid "Label Features"
+#~ msgstr "Etikettfunktioner"
+
+#~ msgid "Show Features"
+#~ msgstr "Visa funktioner"
+
+#~ msgid "Minimum Labeled Feature Size"
+#~ msgstr "Minsta objektsstorlek för visning av etiketter"
+
+#~ msgid "Add New Bookmark Folder"
+#~ msgstr "Lägg till ny bokmärkesmapp"
+
+#~ msgid "Folder Name"
+#~ msgstr "Mappnamn"
+
+#~ msgid "Organize Bookmarks"
+#~ msgstr "Organisera bokmärken"
+
+#~ msgid "Rename..."
+#~ msgstr "Byt namn..."
+
+#~ msgid "Delete"
+#~ msgstr "Ta bort"
+
+#~ msgid "Rename Bookmark or Folder"
+#~ msgstr "Byt namn på bokmärke eller mapp"
+
+#~ msgid "New Name"
+#~ msgstr "Nytt namn"
+
+#~ msgid "Compute"
+#~ msgstr "Beräkna"
+
+#~ msgid "Set Date and Go to Planet"
+#~ msgstr "Ställ in datum och gå till planet"
+
+#~ msgid "Lunar Eclipses"
+#~ msgstr "Månförmörkelser"
+
+#~ msgid "Jan"
+#~ msgstr "Jan"
+
+#~ msgid "Feb"
+#~ msgstr "Feb"
+
+#~ msgid "Mar"
+#~ msgstr "Mar"
+
+#~ msgid "Apr"
+#~ msgstr "Apr"
+
+#~ msgid "May"
+#~ msgstr "Maj"
+
+#~ msgid "Jun"
+#~ msgstr "Jun"
+
+#~ msgid "Jul"
+#~ msgstr "Jul"
+
+#~ msgid "Aug"
+#~ msgstr "Aug"
+
+#~ msgid "Sep"
+#~ msgstr "Sep"
+
+#~ msgid "Oct"
+#~ msgstr "Okt"
+
+#~ msgid "Nov"
+#~ msgstr "Nov"
+
+#~ msgid "Dec"
+#~ msgstr "Dec"
+
+#~ msgid "limit of knowledge"
+#~ msgstr "kunskapsgräns"
+
+#, fuzzy
+#~ msgid "Phobos:Mars I"
+#~ msgstr "Phobos"
+
+#, fuzzy
+#~ msgid "Deimos:Mars II"
+#~ msgstr "Deimos"
+
+#, fuzzy
+#~ msgid "Io:Jupiter I"
+#~ msgstr "Jupiter"
+
+#, fuzzy
+#~ msgid "Mimas:Saturn I"
+#~ msgstr "Saturnus"
+
+#, fuzzy
+#~ msgid "Rhea:Saturn V"
+#~ msgstr "Saturnus"
+
+#, fuzzy
+#~ msgid "Ariel:Uranus I"
+#~ msgstr "Uranus"
+
+#, fuzzy
+#~ msgid "Triton:Neptune I"
+#~ msgstr "Neptunus"
+
+#~ msgid "Day length: "
+#~ msgstr "Dagens längd: "
+
+#~ msgid " of "
+#~ msgstr " av "
+
+#~ msgid " must be in same star system\n"
+#~ msgstr " måste vara i samma solsystem\n"
+
+#~ msgid "Bad spectral type in star database, star #\n"
+#~ msgstr "Felaktig spektraltyp i stjärndatabas, stjärna #\n"
+
+#~ msgid " star(s) with duplicate catalog numbers deleted.)\n"
+#~ msgstr " stjärnor med dubbla katalognummer togs bort.)\n"
+
+#~ msgid "Low res textures"
+#~ msgstr "Lågupplösta texturer"
+
+#~ msgid "Medium res textures"
+#~ msgstr "Medelupplösta texturer"
+
+#~ msgid "High res textures"
+#~ msgstr "Högupplösta texturer"
+
+#~ msgid "Error reading deep sky file\n"
+#~ msgstr "Fel vid öppning av djuprymdsfil\n"
+
+#~ msgid "Version"
+#~ msgstr "Version"
+
+#~ msgid "Constellation Borders"
+#~ msgstr "Gränser för stjärnbilder"
+
+#~ msgid "Orbit / Label"
+#~ msgstr "Omloppsbana / Etikett"
+
+#~ msgid "Mark Features"
+#~ msgstr "Markörfunktioner"
+
+#~ msgid " UTC"
+#~ msgstr " UTC"
+
+#~ msgid "' is not a star or planet.\n"
+#~ msgstr "' är inte en stjärna eller planet.\n"
+
+#, fuzzy
+#~ msgid "Time rate: %'.12g"
+#~ msgstr "Tidshastighet: %.1f"
+
+#~ msgid "Radius: %.2f Rsun\n"
+#~ msgstr "Radie: %.2f Rsol\n"
+
+#~ msgid "1.4.1"
+#~ msgstr "1.4.1"
+
+#~ msgid "Error reading star file: %s\n"
+#~ msgstr "Fel vid läsning av stjärnfil: %s\n"
+
+#~ msgid "Error opening test.xml\n"
+#~ msgstr "Fel vid öppning av test.xml\n"
+
+#~ msgid "solar"
+#~ msgstr "solar"
+
+#~ msgid "moon"
+#~ msgstr "måne"
+
+#, fuzzy
+#~ msgid "Solar eclipses"
+#~ msgstr "Solförmörkelser"
+
+#~ msgid "<p align=\"right\">On:</p>"
+#~ msgstr "<p align=\"right\">På:</p>"
+
+#~ msgid "<p align=\"right\">To:</p>"
+#~ msgstr "<p align=\"right\">Till:</p>"
+
+#~ msgid "<p align=\"right\">From:</p>"
+#~ msgstr "<p align=\"right\">Från:</p>"
+
+#~ msgid "Find"
+#~ msgstr "Sök"
+
+#~ msgid "to"
+#~ msgstr "till"
+
+#~ msgid "eclipse on"
+#~ msgstr "förmörkelse den"
