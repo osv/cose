@@ -15,6 +15,7 @@
 
 #include "gkey.h"
 
+#include "geekconsole.h"
 using namespace std;
 
 GameCore *appGame = NULL;
@@ -223,7 +224,7 @@ static int FocusWindowAt(int x, int y)
     return (0);
 }
 
-static void BG_Resize(int x, int y, int w, int h)
+static void BG_Resize(int w, int h)
 {
     glMatrixMode(GL_TEXTURE);	glPushMatrix();	glLoadIdentity();
     glMatrixMode(GL_MODELVIEW);	glPushMatrix();	glLoadIdentity();
@@ -234,7 +235,7 @@ static void BG_Resize(int x, int y, int w, int h)
 
     glPushAttrib(GL_ALL_ATTRIB_BITS );
 
-    celAppCore->resize(x, y, w, h);
+    celAppCore->resize(w, h);
 
     glPopAttrib();
 
@@ -271,8 +272,6 @@ static void BG_Resize(SDL_Event *ev)
 // make sure that main menu not over BG
 static void BG_ResizeWithMenu()
 {
-    int x = 0;
-    int y = 0;
     int w;
     int h;
     if (!AG_WindowIsVisible(agAppMenuWin))
@@ -285,7 +284,7 @@ static void BG_ResizeWithMenu()
 		w = agView->w;
 		h = agView->h - (AGWIDGET(agAppMenuWin)->h);
     }
-    BG_Resize(x, y, w, h);
+    BG_Resize(w, h);
 }
 
 void BG_GainFocus()
@@ -477,15 +476,23 @@ int CL_ProcessEvent(SDL_Event *ev)
 		break;
     case SDL_VIDEORESIZE:
 		BG_Resize(ev);
+		if (geekConsole)
+		    geekConsole->resize(ev->resize.w, ev->resize.h);
 		rv = AG_ProcessEvent(ev);
 		break;
     case SDL_KEYDOWN:
 		// First check for global key for agar copat..
 		// We need this because when BG is active agar's keydown event 
 		// not passed
-		// struct ag_global_key *gk;
+		// struct ag_global_key *gk    
+		// after global keys dispatch to geek console if it active
 		if (GK_ProcessGlobalKey(ev))
 			return 1;
+		if (geekConsole && geekConsole->isVisible)
+		{
+		    geekConsole->charEntered(ev->key.keysym.unicode, ev->key.keysym.mod);
+		    return 1;
+		}
     default:
 		if (!bgFocuse && UI::showUI)
 		{
@@ -562,11 +569,16 @@ static void BG_Draw()
 		//celAppCore->getRenderer()->setVideoSync(true);
 		UI::syncRenderToAgar();
 
+		// LoadLuaGeekConsoleLibrary(celAppCore->celxScript->getState());
+		// LoadLuaGeekConsoleLibrary(celAppCore->luaHook->getState());
+		// LoadLuaGeekConsoleLibrary(celAppCore->luaSandbox->getState());
+		
 		if (!startFile.empty())
 		{
 			cout << "*** Using CEL File: " << startFile << endl;
 			celAppCore->runScript(startFile);
 		}
+
 		ready = true;
 
     }
@@ -613,6 +625,26 @@ void EventLoop_FixedFPS(void)
 					AG_ObjectUnlock(win);
 				}
 			}
+			glMatrixMode(GL_TEXTURE);
+			glPushMatrix();
+
+			glMatrixMode(GL_PROJECTION);
+			glPushMatrix();
+		
+			glMatrixMode(GL_MODELVIEW);
+			glPushMatrix();
+			glPushAttrib(GL_ALL_ATTRIB_BITS );
+    
+ 			geekConsole->render();
+			glPopAttrib();
+			glMatrixMode(GL_MODELVIEW);
+			glPopMatrix();
+			glMatrixMode(GL_TEXTURE);
+			glPopMatrix();
+			glMatrixMode(GL_PROJECTION);
+			glPopMatrix();
+	
+
 			AG_EndRendering();
 			AG_UnlockVFS(agView);
 			
@@ -637,6 +669,7 @@ void gameTerminate()
 {
 	if (fullscreen)
 		ToggleFullscreen();
+	destroyGCInteractivesAndFunctions();
 	// memory leak 
 	Core::removeAllSolSys();
 
@@ -660,7 +693,6 @@ static void usage()
 int main(int argc, char* argv[])
 {
     int i;
-
     setlocale(LC_ALL, "");
     setlocale(LC_NUMERIC, "C");
     bindtextdomain(PACKAGE, LOCALEDIR);
@@ -731,6 +763,9 @@ int main(int argc, char* argv[])
 
     celAppCore = new CelestiaCore();
 
+    // init geek console
+    geekConsole = new GeekConsole(celAppCore);
+    initGCInteractivesAndFunctions(geekConsole);
     UI::Init();
 
     if (celAppCore == NULL)

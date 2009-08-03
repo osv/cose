@@ -1,0 +1,292 @@
+#ifndef _GEEKCONSOLE_H_
+#define _GEEKCONSOLE_H_
+
+#include <map>
+#include <vector>
+#include <string>
+#include <celengine/overlay.h>
+#include <celestia/celestiacore.h>
+#include <celx.h>
+#include <celx_internal.h>
+
+#define MAX_HISTORY_SYZE 128
+
+/*
+                   GeekConsole
+
+ GeekConsole used for interacting using callback function:
+
+ int _somefun(GeekConsole *gc, int state, std::string value)
+ {
+    switch (state)
+    {
+    case 1:
+	if (value == "yes")
+	    exit(1);
+	else
+	    gc->finish(); // finish interacting and hide console
+    case 0:
+	gc->setInteractive(listInteract, "quit", "Are You Sure?", "Quit from game");
+	listInteractive->setCompletionFromSemicolonStr("yes;no");
+	listInteractive->setMatchCompletion(true);
+    }
+    return state;
+ }
+
+ So you can call console's interactive:
+
+ GCFunc somefun(_somefun);
+ geekConsole->execFunction(&somefun);
+
+ Function _somefun will be called by geekconsole, and you must call 
+ some interacter in this.
+ For first exec of fun state is 0.
+ State will inc by 1 before GCInteractive finished.
+
+ Key binds:
+C-s............... Change size of console
+C-g............... Cancel interactive
+Esc............... Cancel interactive
+Ctrl+p............ Prev in history
+Ctrl+n............ Next in history
+Ctrl+z............ Remove expanded part from input
+Ctrl+w............ Kill backword
+Ctrl+u............ Kill whole line
+TAB............... Try complete or scroll completion
+Alt+/............. Expand next
+Alt+?............. Expand prev
+Alt+c............. cel object promt: select & center view
+*/
+
+class GeekConsole;
+class GCFunction;
+class GCInteractive;
+
+// colors for theming
+struct Color32
+{
+    Color32(GLubyte r, GLubyte g, GLubyte b, GLubyte a)
+	{
+	    rgba[0]= r;
+	    rgba[1]= g;
+	    rgba[2]= b;
+	    rgba[3]= a;
+	}
+    union
+    {
+	GLubyte rgba[4];
+	uint32 i;
+    };
+};
+
+/*
+ * Interactive for geek console
+ */
+class GCInteractive
+{
+public:
+    GCInteractive(std::string name, bool useHistory = true);
+    ~GCInteractive();
+    virtual void Interactive(GeekConsole *gc, string historyName);
+    virtual void charEntered(const wchar_t wc, int modifiers);
+    virtual void cancelInteractive();
+    /* You must render Interactive by using GeekConsole's overlay
+     * because overlay->beginText() called before call renderInteractive.
+     */
+    virtual void renderInteractive();
+    /* render with default font gc->getCompletionFont()
+     */
+    virtual void renderCompletion(float height, float width);
+    GeekConsole *gc;
+    typedef std::map<std::string, std::vector<std::string>, CompareIgnoringCasePredicate> History;
+    History history;
+    std::string curHistoryName;
+    uint typedHistoryCompletionIdx;
+    void prepareHistoryCompletion();
+    std::vector<std::string> typedHistoryCompletion;
+    uint bufSizeBeforeHystory; //size of buf befor apply mathed str from hist. need for restore prev buf
+    void setBufferText(std::string str);
+    std::string getBufferText()const
+	{return buf;}
+private:
+    std::string buf;
+    std::string InteractiveName;
+    bool useHistory;
+};
+
+
+// Interactive with autocompletion list
+class ListInteractive: public GCInteractive
+{
+public:
+    ListInteractive(std::string name):GCInteractive(name, true)
+	{};
+    void Interactive(GeekConsole *_gc, string historyName);
+    bool tryComplete();
+    void charEntered(const wchar_t wc, int modifiers);
+    void renderCompletion(float height, float width);
+    void setCompletion(std::vector<std::string> completion);
+    void setMatchCompletion(bool mustMatch); // true - result must be matched in completion. Default false
+    void setCompletionFromSemicolonStr(std::string); // add completion by str like "yes;no"
+protected:
+    void updateTextCompletion();
+    std::vector<std::string> completionList;
+    uint pageScrollIdx;
+    uint scrollSize; // number of compl. items to scroll
+    uint completedIdx;
+    int rows;
+    std::vector<std::string> typedTextCompletion;
+    bool mustMatch; // if true - on RET key finish promt only if matched in completionList
+};
+
+class CelBodyInteractive: public GCInteractive
+{
+public:
+    CelBodyInteractive(std::string name, CelestiaCore *celApp);
+    void Interactive(GeekConsole *_gc, string historyName);
+    bool tryComplete();
+    void charEntered(const wchar_t wc, int modifiers);
+    void renderCompletion(float height, float width);
+    void setRightText(std::string str);
+    std::string getRightText()const; // return text before after "/"
+    void setMatchCompletion(bool mustMatch); // true - result must be real object. Default true
+    void updateDescrStr(); // update descr str of consl. with info about body
+    void cancelInteractive();
+private:
+    void updateTextCompletion();
+    std::vector<std::string> completionList;
+    uint pageScrollIdx;
+    uint scrollSize; // number of compl. items to scroll
+    uint completedIdx;
+    int rows;
+    std::vector<std::string> typedTextCompletion;
+    bool mustMatch; // if true - on RET key finish promt only if matched in completionList
+    CelestiaCore *celApp;
+    Selection lastCompletionSel;
+};
+
+// no history + ****** Interactive
+class PasswordInteractive: public GCInteractive
+{
+public:
+    PasswordInteractive(std::string name):GCInteractive(name, true)
+	{};
+    ~PasswordInteractive()
+	{};
+    void renderInteractive();
+};
+
+// container for C and lua function
+typedef int (* CFunc)(GeekConsole *gc, int state, std::string value);
+
+class GCFunc
+{
+public:
+    GCFunc():
+	isNil(true) {};
+    // constructor for c function
+    GCFunc(CFunc cfun): isLuaFunc(false), cFun(cfun), isNil(false){};
+    // constructor for name of lua function
+    GCFunc(const char *name, lua_State* l): isLuaFunc(true), luaFunName(name),
+					    isNil(false), lua(l){};
+    int call(GeekConsole *gc, int state, std::string value);
+private:
+    bool isLuaFunc;
+    CFunc cFun;
+    string luaFunName;
+    bool isNil;
+    lua_State* lua;
+};
+
+
+class GeekConsole
+{
+public:
+    enum ConsoleType
+    {
+	Tiny = 1,
+	Medium = 2,
+	Big = 3
+    };
+
+    GeekConsole(CelestiaCore *celCore);
+    ~GeekConsole();
+
+    void addPromter(std::string name,
+		    GCInteractive *Interactive);
+    void execFunction(GCFunc *fun);
+    // call callback fun for describe interactive text with state -1
+    void describeCurText(string text);
+    void registerFunction(GCFunc fun, std::string name);
+    void reRegisterFunction(GCFunc fun, std::string name);
+    GCFunc *getFunctionByName(std::string);
+    std::vector<std::string> getFunctionsNames();
+    void charEntered(const wchar_t wc, int modifiers);
+
+    void resize(int w, int h)
+	{
+	    overlay->setWindowSize(w, h);
+	    width = w; height = h;
+	};
+    void render();
+    bool isVisible;
+    int consoleType;
+
+    TextureFont* getInteractiveFont() const
+	{return titleFont;}
+    TextureFont* getCompletionFont() const
+	{return font;}
+    Overlay* getOverlay() const
+	{return overlay;}
+    void setInteractive(GCInteractive *Interactive, std::string historyName,
+		   std::string InteractiveStr,
+		   std::string descrStr);
+
+    void InteractiveingFinished(std::string value);
+    void finish();
+    CelestiaCore *getCelCore() const
+	{return celCore;}
+
+    std::string InteractivePrefixStr;
+    std::string descriptionStr;
+private:
+    TextureFont* titleFont;
+    TextureFont* font;
+
+    CelestiaCore *celCore;
+    Overlay* overlay;
+    int width; // width of viewport
+    int height; // height of viewport
+
+    GCInteractive *curInteractive;
+    GCFunc *curFun;
+    int funState;
+    typedef std::map<std::string, GCFunc>  Functions;
+    Functions functions;
+};
+
+extern GCFunc execFunction;
+extern void initGCInteractivesAndFunctions(GeekConsole *gc);
+extern void destroyGCInteractivesAndFunctions();
+extern void LoadLuaGeekConsoleLibrary(lua_State* l);
+extern GeekConsole *geekConsole;
+extern ListInteractive *listInteractive;
+extern PasswordInteractive *passwordInteractive;
+
+// direcory to store history (default = "history/")
+extern std::string historyDir;
+
+extern Color32 *clBackground;
+extern Color32 *clBgInteractive;
+extern Color32 *clBgInteractiveBrd;
+extern Color32 *clInteractiveFnt;
+extern Color32 *clInteractivePrefixFnt;
+extern Color32 *clInteractiveExpand;
+extern Color32 *clDescrFnt;
+extern Color32 *clCompletionFnt;
+extern Color32 *clCompletionMatchCharFnt;
+extern Color32 *clCompletionAfterMatch;
+extern Color32 *clCompletionMatchCharBg;
+extern Color32 *clCompletionExpandBrd;
+
+#endif // _GEEKCONSOLE_H_

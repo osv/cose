@@ -6,6 +6,7 @@
 #include "cgame.h"
 #include "ui.h"
 #include "videocapture.h"
+#include "geekconsole.h"
 
 #include <celengine/starbrowser.h>
 #include <celutil/directory.h>
@@ -343,6 +344,7 @@ namespace UI
         }
 
         void createCelCfgWindow()
+
         {
             int i;
             AG_NotebookTab *tab;
@@ -381,6 +383,15 @@ namespace UI
             GK_BindGlobalKey(SDLK_4, KMOD_LCTRL, setCelRenderFlagsSets4);
             GK_BindGlobalKey(SDLK_5, KMOD_LCTRL, setCelRenderFlagsSets5);
         }
+
+	int GCShowCelPreference(GeekConsole *gc, int state, std::string value)
+	{
+	    celPreference(NULL);
+	    gc->finish();
+	    riseUI();
+	    return state;
+	}
+
     }
 
     namespace SolarSysBrowser
@@ -693,6 +704,15 @@ namespace UI
             if (solarSys)
                 createStarBrwWindow(solarSys->getStar());
         }
+
+	// callback for geekconsole
+	int GCBrowseNearestSolarSystem(GeekConsole *gc, int state, std::string value)
+	{
+	    browseNearestSolarSystem(NULL);
+	    gc->finish();
+	    riseUI();
+	    return state;
+	}
     }
 
     namespace StarBrowserDialog
@@ -922,7 +942,16 @@ namespace UI
             }
 
         }
-        
+
+	// callback for geekconsole
+	int GCShowStarBrowser(GeekConsole *gc, int state, std::string value)
+	{
+	    showStarBrowser(NULL);
+	    gc->finish();
+	    riseUI();
+	    return state;
+	}
+
     } // StarBrowserDialog
 
     namespace Menu
@@ -1120,7 +1149,18 @@ namespace UI
             celAppCore->recordEnd();
 	agMainMenuSticky=false;
     }
-        
+
+    void showGeekConsole()
+    {
+	geekConsole->execFunction(&execFunction);
+    }
+
+    void riseUI()
+    {
+	BG_LostFocus();
+	showUI = true;
+    }
+
     void Init()
     {
         RenderCfgDial::setCelRenderFlagsSets1();
@@ -1138,6 +1178,11 @@ namespace UI
 	// rebind some celestia key
         GK_BindGlobalKey(SDLK_F11, KMOD_NONE, startTogVidRecord);
         GK_BindGlobalKey(SDLK_F12, KMOD_NONE, stopVidRecord);
+        GK_BindGlobalKey(SDLK_x, KMOD_LALT, showGeekConsole);
 
+	// geekconsole
+	geekConsole->registerFunction(CFunc(StarBrowserDialog::GCShowStarBrowser), "show solar browser");
+	geekConsole->registerFunction(GCFunc(SolarSysBrowser::GCBrowseNearestSolarSystem), "show solar system browser");
+	geekConsole->registerFunction(GCFunc(RenderCfgDial::GCShowCelPreference), "show preference");
     }
 } //namespace UI

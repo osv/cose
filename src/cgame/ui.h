@@ -14,6 +14,7 @@ namespace UI
     void gameQuit(AG_Event *event);
     void syncRenderFromAgar(); // sync render flags and other from agar ui sys
     void syncRenderToAgar(); // sync render flags and other to agar ui sys
+    void riseUI(); // Show ui and take focus
 }
 
 namespace ContextMenu

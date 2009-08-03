@@ -3931,7 +3931,7 @@ cout << "loading lua lib\n"; cout.flush();
 #endif // LUA_VER < 0x050100
 
 // ==================== Load Libraries ================================================
-
+extern void LoadLuaGeekConsoleLibrary(lua_State* l);
 static void loadLuaLibs(lua_State* state)
 {
 #if LUA_VER >= 0x050100
@@ -3963,6 +3963,7 @@ static void loadLuaLibs(lua_State* state)
     CreateTextureMetaTable(state);
     ExtendCelestiaMetaTable(state);
     ExtendObjectMetaTable(state);
+    LoadLuaGeekConsoleLibrary(state);
 
     LoadLuaGraphicsLibrary(state);
 }
