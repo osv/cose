@@ -87,7 +87,7 @@ class GCInteractive
 public:
     GCInteractive(std::string name, bool useHistory = true);
     ~GCInteractive();
-    virtual void Interactive(GeekConsole *gc, string historyName);
+    virtual void Interact(GeekConsole *gc, string historyName);
     virtual void charEntered(const wchar_t wc, int modifiers);
     virtual void cancelInteractive();
     /* You must render Interactive by using GeekConsole's overlay
@@ -121,7 +121,7 @@ class ListInteractive: public GCInteractive
 public:
     ListInteractive(std::string name):GCInteractive(name, true)
 	{};
-    void Interactive(GeekConsole *_gc, string historyName);
+    void Interact(GeekConsole *_gc, string historyName);
     bool tryComplete();
     void charEntered(const wchar_t wc, int modifiers);
     void renderCompletion(float height, float width);
@@ -143,13 +143,12 @@ class CelBodyInteractive: public GCInteractive
 {
 public:
     CelBodyInteractive(std::string name, CelestiaCore *celApp);
-    void Interactive(GeekConsole *_gc, string historyName);
+    void Interact(GeekConsole *_gc, string historyName);
     bool tryComplete();
     void charEntered(const wchar_t wc, int modifiers);
     void renderCompletion(float height, float width);
     void setRightText(std::string str);
     std::string getRightText()const; // return text before after "/"
-    void setMatchCompletion(bool mustMatch); // true - result must be real object. Default true
     void updateDescrStr(); // update descr str of consl. with info about body
     void cancelInteractive();
 private:
@@ -160,7 +159,6 @@ private:
     uint completedIdx;
     int rows;
     std::vector<std::string> typedTextCompletion;
-    bool mustMatch; // if true - on RET key finish promt only if matched in completionList
     CelestiaCore *celApp;
     Selection lastCompletionSel;
 };
@@ -238,9 +236,10 @@ public:
 	{return font;}
     Overlay* getOverlay() const
 	{return overlay;}
-    void setInteractive(GCInteractive *Interactive, std::string historyName,
-		   std::string InteractiveStr,
-		   std::string descrStr);
+    void setInteractive(GCInteractive *Interactive,
+			std::string historyName,  // if empty - dont use history
+			std::string InteractiveStr, // str before prompt
+			std::string descrStr); // describe str (bottom)
 
     void InteractiveingFinished(std::string value);
     void finish();

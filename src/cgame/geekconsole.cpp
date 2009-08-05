@@ -148,7 +148,7 @@ static void planetocentricCoords2Sstream(std::stringstream& ss,
 
 GeekConsole::GeekConsole(CelestiaCore *celCore):
     isVisible(false),
-    consoleType(Big),
+    consoleType(Medium),
     titleFont(NULL),
     font(NULL),
     celCore(celCore),
@@ -323,7 +323,7 @@ void GeekConsole::render()
 void GeekConsole::setInteractive(GCInteractive *Interactive, std::string historyName, std::string InteractiveStr, std::string descrStr)
 {
     curInteractive = Interactive;
-    curInteractive->Interactive(this, historyName);
+    curInteractive->Interact(this, historyName);
     InteractivePrefixStr = InteractiveStr;
     descriptionStr = descrStr;
 }
@@ -407,7 +407,7 @@ GCInteractive::~GCInteractive()
 	cout << "Cann't locate '" << historyDir <<"' dir. GeekConsole's history not saved." << "\n";
 }
 
-void GCInteractive::Interactive(GeekConsole *_gc, string historyName)
+void GCInteractive::Interact(GeekConsole *_gc, string historyName)
 {
     gc = _gc;
     buf = "";
@@ -427,7 +427,7 @@ void GCInteractive::charEntered(const wchar_t wc, int modifiers)
     case '\n':
     case '\r':
 	{
-	    if (useHistory)
+	    if (useHistory && !curHistoryName.empty())
 	    {
 		// append history only if buf not empty and not equal to oprev hist
 		if (!buf.empty())
@@ -574,9 +574,9 @@ void PasswordInteractive::renderInteractive()
 }
 // ListInteractive
 
-void ListInteractive::Interactive(GeekConsole *_gc, string historyName)
+void ListInteractive::Interact(GeekConsole *_gc, string historyName)
 {
-    GCInteractive::Interactive(_gc, historyName);
+    GCInteractive::Interact(_gc, historyName);
     setMatchCompletion(false);
     typedTextCompletion.clear();
     completionList.clear();
@@ -885,18 +885,12 @@ void CelBodyInteractive::setRightText(std::string text)
 	GCInteractive::setBufferText(text);
 }
 
-void CelBodyInteractive::setMatchCompletion(bool _mustMatch)
+void CelBodyInteractive::Interact(GeekConsole *_gc, string historyName)
 {
-    mustMatch = _mustMatch;
-}
-
-void CelBodyInteractive::Interactive(GeekConsole *_gc, string historyName)
-{
-    GCInteractive::Interactive(_gc, historyName);
+    GCInteractive::Interact(_gc, historyName);
     updateTextCompletion();
     pageScrollIdx = 0;
     completedIdx = 0;
-    mustMatch = true;
     lastCompletionSel = Selection();
 }
 
@@ -1013,12 +1007,9 @@ void CelBodyInteractive::charEntered(const wchar_t wc, int modifiers)
     }
     else if ((C == '\n' || C == '\r'))
     {
-	if(mustMatch)
-	{
-	    Selection sel = celApp->getSimulation()->findObjectFromPath(GCInteractive::getBufferText(), true);
-	    if (sel.empty()) // dont continue if not match any obj
-		return;
-	}
+	Selection sel = celApp->getSimulation()->findObjectFromPath(GCInteractive::getBufferText(), true);
+	if (sel.empty()) // dont continue if not match any obj
+	    return;
 	GCInteractive::charEntered(wc, modifiers);
 	return;
     }
@@ -1329,8 +1320,8 @@ static int registerFunction(lua_State* l)
 {
     CelxLua celx(l);
     celx.checkArgs(2, 2, "Two arguments expected for gc.registerFunction(string, string)");
-    const char *luaFunName = celx.safeGetString(1, AllErrors, "argument 1 to gc.registerFunction must be a string");
-    const char *gcFunName = celx.safeGetString(2, AllErrors, "argument 2 to gc.registerFunction must be a string");
+    const char *gcFunName = celx.safeGetString(1, AllErrors, "argument 1 to gc.reRegisterFunction must be a string");
+    const char *luaFunName = celx.safeGetString(2, AllErrors, "argument 2 to gc.reRegisterFunction must be a string");
     geekConsole->registerFunction(GCFunc(luaFunName, l), gcFunName);
     return 0;
 }
@@ -1339,16 +1330,16 @@ static int reRegisterFunction(lua_State* l)
 {
     CelxLua celx(l);
     celx.checkArgs(2, 2, "Two arguments expected for gc.reRegisterFunction(string, string)");
-    const char *luaFunName = celx.safeGetString(1, AllErrors, "argument 1 to gc.reRegisterFunction must be a string");
-    const char *gcFunName = celx.safeGetString(2, AllErrors, "argument 2 to gc.reRegisterFunction must be a string");
+    const char *gcFunName = celx.safeGetString(1, AllErrors, "argument 1 to gc.reRegisterFunction must be a string");
+    const char *luaFunName = celx.safeGetString(2, AllErrors, "argument 2 to gc.reRegisterFunction must be a string");
     geekConsole->reRegisterFunction(GCFunc(luaFunName, l), gcFunName);
     return 0;
 }
 
-static int setListInteractiveer(lua_State* l)
+static int setListInteractive(lua_State* l)
 {
     CelxLua celx(l);
-    celx.checkArgs(5, 5, "Two or three arguments expected for gc.listInteractive(sCompletion, shistory, sPrefix, sDescr, flag)");
+    celx.checkArgs(5, 5, "Two or three arguments expected for gc.listInteractive(sCompletion, shistory, sPrefix, sDescr, mustMatch)");
     const char *completion = celx.safeGetString(1, AllErrors, "argument 1 to gc.listInteractive must be a string");
     const char *history = celx.safeGetString(2, AllErrors, "argument 2 to gc.listInteractive must be a string");
     const char *prefix = celx.safeGetString(3, AllErrors, "argument 3 to gc.listInteractive must be a string");
@@ -1360,13 +1351,24 @@ static int setListInteractiveer(lua_State* l)
     return 0;
 }
 
-static int setPasswdInteractiveer(lua_State* l)
+static int setPasswdInteractive(lua_State* l)
 {
     CelxLua celx(l);
-    celx.checkArgs(2, 2, "Two or three arguments expected for gc.listInteractive(sCompletion, shistory, sPrefix, sDescr, flag)");
+    celx.checkArgs(2, 2, "Two or three arguments expected for gc.listInteractive(sPrefix, sDescr)");
     const char *prefix = celx.safeGetString(1, AllErrors, "argument 1 to gc.listInteractive must be a string");
     const char *descr = celx.safeGetString(2, AllErrors, "argument 2 to gc.listInteractive must be a string");
     geekConsole->setInteractive(passwordInteractive, "", prefix, descr);
+    return 0;
+}
+
+static int setCelBodyInteractive(lua_State* l)
+{
+    CelxLua celx(l);
+    celx.checkArgs(3, 3, "Two or three arguments expected for gc.celBodyInteractive(shistory, sPrefix, sDescr)");
+    const char *history = celx.safeGetString(1, AllErrors, "argument 1 to gc.listInteractive must be a string");
+    const char *prefix = celx.safeGetString(2, AllErrors, "argument 2 to gc.listInteractive must be a string");
+    const char *descr = celx.safeGetString(3, AllErrors, "argument 3 to gc.listInteractive must be a string");
+    geekConsole->setInteractive(celBodyInteractive, history, prefix, descr);
     return 0;
 }
 
@@ -1386,8 +1388,9 @@ void LoadLuaGeekConsoleLibrary(lua_State* l)
     lua_newtable(l);
     celx.registerMethod("registerFunction", registerFunction);
     celx.registerMethod("reRegisterFunction", reRegisterFunction);
-    celx.registerMethod("listInteractive", setListInteractiveer);
-    celx.registerMethod("passwdInteractive", setPasswdInteractiveer);
+    celx.registerMethod("listInteractive", setListInteractive);
+    celx.registerMethod("passwdInteractive", setPasswdInteractive);
+    celx.registerMethod("celBodyInteractive", setCelBodyInteractive);
     celx.registerMethod("finish", finishGConsole);
     lua_settable(l, LUA_GLOBALSINDEX);
 }
