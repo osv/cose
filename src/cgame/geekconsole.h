@@ -213,6 +213,7 @@ public:
     void addPromter(std::string name,
 		    GCInteractive *Interactive);
     void execFunction(GCFunc *fun);
+    void execFunction(std::string funName);
     // call callback fun for describe interactive text with state -1
     void describeCurText(string text);
     void registerFunction(GCFunc fun, std::string name);
@@ -241,7 +242,7 @@ public:
 			std::string InteractiveStr, // str before prompt
 			std::string descrStr); // describe str (bottom)
 
-    void InteractiveingFinished(std::string value);
+    void InteractFinished(std::string value);
     void finish();
     CelestiaCore *getCelCore() const
 	{return celCore;}

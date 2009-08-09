@@ -169,10 +169,24 @@ GeekConsole::~GeekConsole()
 
 void GeekConsole::execFunction(GCFunc *fun)
 {
-    curFun=fun;
+    curFun = fun;
     funState = 0;
     isVisible = true;
     fun->call(this, funState, "");
+}
+
+void GeekConsole::execFunction(std::string funName)
+{
+    GCFunc *f = getFunctionByName(funName);
+    curFun = f;
+    funState = 0;
+    if (f)
+    {
+        isVisible = true;
+	f->call(this, funState, "");
+    }
+    else
+        isVisible = false;
 }
 
 void GeekConsole::describeCurText(std::string text)
@@ -185,12 +199,16 @@ void GeekConsole::registerFunction(GCFunc fun, std::string name)
 {
     Functions::iterator it = functions.find(name);
     if (it == functions.end())
+    {
 	functions[name] = fun;
+	DPRINTF(1, "Registering function for geek console: '%s'\n", name.c_str());
+    }
 }
 
 void GeekConsole::reRegisterFunction(GCFunc fun, std::string name)
 {
     functions[name] = fun;
+    DPRINTF(1, "Reregistering function for geek console: '%s'\n", name.c_str());
 }
 
 GCFunc *GeekConsole::getFunctionByName(std::string name)
@@ -328,7 +346,7 @@ void GeekConsole::setInteractive(GCInteractive *Interactive, std::string history
     descriptionStr = descrStr;
 }
 
-void GeekConsole::InteractiveingFinished(std::string value)
+void GeekConsole::InteractFinished(std::string value)
 {
     if(!curFun) return;
     funState++;
@@ -443,7 +461,7 @@ void GCInteractive::charEntered(const wchar_t wc, int modifiers)
 		    history[curHistoryName].erase(history[curHistoryName].begin(),
 						  history[curHistoryName].begin()+1);
 	    }
-	    gc->InteractiveingFinished(buf);
+	    gc->InteractFinished(buf);
 	    return;
 	}
     case '\020':  // Ctrl+P prev history
@@ -1267,7 +1285,25 @@ static int _execFunction(GeekConsole *gc, int state, std::string value)
 
 GCFunc execFunction(_execFunction);
 
-int selectBody(GeekConsole *gc, int state, std::string value)
+static int gotoBody(GeekConsole *gc, int state, std::string value)
+{
+    gc->getCelCore()->getSimulation()->
+	gotoSelection(5.0, Vec3f(0, 1, 0), ObserverFrame::ObserverLocal);
+    gc->finish();
+    return state;
+}
+
+static int gotoBodyGC(GeekConsole *gc, int state, std::string value)
+{
+    gc->getCelCore()->getSimulation()->getObserver().gotoSelectionGC(
+	gc->getCelCore()->getSimulation()->getSelection(),
+	5.0, 0.0, 0.5,
+	Vec3f(0, 1, 0), ObserverFrame::ObserverLocal);
+    gc->finish();
+    return state;
+}
+
+static int selectBody(GeekConsole *gc, int state, std::string value)
 {
     switch (state)
     {
@@ -1302,6 +1338,8 @@ void initGCInteractivesAndFunctions(GeekConsole *gc)
     gc->registerFunction(execFunction, "exec function");
     gc->registerFunction(GCFunc(quitFunction), "quit");
     gc->registerFunction(GCFunc(selectBody), "select object");
+    gc->registerFunction(GCFunc(gotoBody), "goto object");
+    gc->registerFunction(GCFunc(gotoBodyGC), "goto object gc");
 }
 
 void destroyGCInteractivesAndFunctions()
@@ -1380,6 +1418,17 @@ static int finishGConsole(lua_State* l)
     return 0;
 }
 
+
+static int callFun(lua_State* l)
+{
+    CelxLua celx(l);
+    celx.checkArgs(1, 1, "One arguments expected for gc.call(sFunName)");
+    const char *funName = celx.safeGetString(1, AllErrors, "argument 1 to gc.listInteractive must be a string");
+    cout << "callfun:gc:execfun" << "\n";
+    geekConsole->execFunction(funName);
+    return 0;
+}
+
 void LoadLuaGeekConsoleLibrary(lua_State* l)
 {
     CelxLua celx(l);
@@ -1392,6 +1441,7 @@ void LoadLuaGeekConsoleLibrary(lua_State* l)
     celx.registerMethod("passwdInteractive", setPasswdInteractive);
     celx.registerMethod("celBodyInteractive", setCelBodyInteractive);
     celx.registerMethod("finish", finishGConsole);
+    celx.registerMethod("call", callFun);
     lua_settable(l, LUA_GLOBALSINDEX);
 }
 
