@@ -7,6 +7,7 @@
 #include "ui.h"
 #include "videocapture.h"
 #include "geekconsole.h"
+#include "ui_theme.h"
 
 #include <celengine/starbrowser.h>
 #include <celutil/directory.h>
@@ -1163,9 +1164,11 @@ namespace UI
 
     void Init()
     {
+	UI::initThemes();
+	UI::setupThemes(FullTransparent);
         RenderCfgDial::setCelRenderFlagsSets1();
 
-        RenderCfgDial::initDefaultFlags();      
+        RenderCfgDial::initDefaultFlags();
 
         RenderCfgDial::createCelCfgWindow();
 

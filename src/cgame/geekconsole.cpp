@@ -1424,7 +1424,6 @@ static int callFun(lua_State* l)
     CelxLua celx(l);
     celx.checkArgs(1, 1, "One arguments expected for gc.call(sFunName)");
     const char *funName = celx.safeGetString(1, AllErrors, "argument 1 to gc.listInteractive must be a string");
-    cout << "callfun:gc:execfun" << "\n";
     geekConsole->execFunction(funName);
     return 0;
 }

@@ -12,7 +12,7 @@
 
 #include "cgame.h"
 #include "ui.h"
-
+#include "ui_theme.h"
 #include "gkey.h"
 
 #include "geekconsole.h"
@@ -617,10 +617,12 @@ void EventLoop_FixedFPS(void)
 			BG_Draw();
 
 			//draw agar's windows
+			UI::updateGUIalpha(Tr2-Tr1, !bgFocuse);
 			if (UI::showUI)
 			{
 				AG_TAILQ_FOREACH(win, &agView->windows, windows) {
 					AG_ObjectLock(win);
+					UI::precomputeGUIalpha(AG_WindowIsFocused(win));
 					AG_WindowDraw(win);
 					AG_ObjectUnlock(win);
 				}

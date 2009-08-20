@@ -22,7 +22,8 @@ noinst_HEADERS = \
 	gkey.h \
 	ui.h \
 	videocapture.h \
-	geekconsole.h
+	geekconsole.h \
+	ui_theme.h
 
 openspace_client_LDADD = \
 	../celestia/libcelestia.a \
@@ -41,7 +42,8 @@ openspace_client_SOURCES = gkey.c \
 	ui_context.cpp \
 	videocapture.cpp \
 	cgame.cpp \
-	geekconsole.cpp
+	geekconsole.cpp \
+	ui_theme.cpp
 
 noinst_DATA = ../../openspace_client
 CLEANFILES = ../../openspace_client
