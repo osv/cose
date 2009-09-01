@@ -38,8 +38,6 @@ Color32 *clCompletionExpandBrd = &clCompletionExpandBrdD;
 
 GeekConsole *geekConsole = NULL;
 const std::string ctrlZDescr("C-z - Unexpand");
-const std::string strYesNo("yes;no");
-const std::string strYes("yes");
 const std::string strUniqMatchedRET("Unique match, RET - complete and finish");
 
 std::string historyDir("history/");
@@ -148,7 +146,7 @@ static void planetocentricCoords2Sstream(std::stringstream& ss,
 
 GeekConsole::GeekConsole(CelestiaCore *celCore):
     isVisible(false),
-    consoleType(Medium),
+    consoleType(Tiny),
     titleFont(NULL),
     font(NULL),
     celCore(celCore),
@@ -280,6 +278,7 @@ void GeekConsole::render()
 	nb_lines = (height * 0.4 - 2 * titleFontH) / fontH;
 	break;
     case GeekConsole::Big:
+    default:
 	nb_lines = (height * 0.8 - 2 * titleFontH) / fontH;
 	break;
     }
@@ -481,7 +480,7 @@ void GCInteractive::charEntered(const wchar_t wc, int modifiers)
 	if (typedHistoryCompletionIdx > typedHistoryCompletion.size()-1)
 	    typedHistoryCompletionIdx = 0;
 	it = typedHistoryCompletion.begin() + typedHistoryCompletionIdx;
-	typedHistoryCompletionIdx++;
+	typedHistoryCompletionIdx--;
 	buf = *it;
 	gc->descriptionStr = ctrlZDescr;
 	gc->describeCurText(getBufferText());
@@ -1240,28 +1239,6 @@ int GCFunc::call(GeekConsole *gc, int state, std::string value)
     }
 }
 
-int quitFunction(GeekConsole *gc, int state, std::string value)
-{
-    switch (state)
-    {
-    case 1:
-	if (value == strYes)
-	    gameTerminate();
-	else
-	    gc->finish();
-	break;
-    case 0:
-	gc->setInteractive(listInteractive, "quit", "Are You Sure?", "Quit from game");
-	listInteractive->setCompletionFromSemicolonStr(strYesNo);
-	listInteractive->setMatchCompletion(true);
-	break;
-    case -1:
-	gc->descriptionStr = "Wtf is '" + value + "' " + gc->descriptionStr;
-	break;
-    }
-    return state;
-}
-
 static int _execFunction(GeekConsole *gc, int state, std::string value)
 {
     GCFunc *f;
@@ -1336,7 +1313,6 @@ void initGCInteractivesAndFunctions(GeekConsole *gc)
 	isPropmtsInit = true;
     }
     gc->registerFunction(execFunction, "exec function");
-    gc->registerFunction(GCFunc(quitFunction), "quit");
     gc->registerFunction(GCFunc(selectBody), "select object");
     gc->registerFunction(GCFunc(gotoBody), "goto object");
     gc->registerFunction(GCFunc(gotoBodyGC), "goto object gc");

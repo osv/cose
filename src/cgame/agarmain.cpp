@@ -24,6 +24,13 @@ CelestiaCore *celAppCore = NULL;
 static bool fullscreen = false;
 static bool ready = false;
 static bool bgFocuse = false;
+static AG_Timeout toRepeat;		/* Repeat timer */
+static AG_Timeout toDelay;		/* Pre-repeat delay timer */
+
+SDLKey repeatKey;			/* Last keysym */
+SDLMod repeatMod;			/* Last keymod */
+Uint32 repeatUnicode;			/* Last unicode translated key */
+
 float mProjection[16];			/* Projection matrix to load for 'background' */
 float mModelview[16];			/* Modelview matrix to load for 'background' */
 float mTexture[16];			/* Texture matrix to load for 'background' */
@@ -295,6 +302,8 @@ void BG_GainFocus()
 	AG_WindowHide(agAppMenuWin);
     BG_ResizeWithMenu();
     celAppCore->flashFrame();
+    AG_DelTimeout(NULL, &toDelay);
+    AG_DelTimeout(NULL, &toRepeat);
 }
 
 void BG_LostFocus()
@@ -303,6 +312,8 @@ void BG_LostFocus()
     //show menu
     AG_WindowShow(agAppMenuWin);
     BG_ResizeWithMenu();
+    AG_DelTimeout(NULL, &toDelay);
+    AG_DelTimeout(NULL, &toRepeat);
 }
 
 /*
@@ -316,10 +327,12 @@ static int BG_ProcessEvent(SDL_Event *ev)
     case SDL_KEYDOWN:
     {
 		UI::syncRenderFromAgar();
-		SDLKey sym = ev->key.keysym.sym;
-		SDLMod mod = ev->key.keysym.mod;
-		if (!handleSpecialKey(sym, mod, true))
-			celAppCore->charEntered((char) ev->key.keysym.unicode);
+
+		repeatKey = ev->key.keysym.sym;
+		repeatMod = ev->key.keysym.mod;
+		repeatUnicode = ev->key.keysym.unicode;
+		if (!handleSpecialKey(repeatKey, repeatMod, true))
+			celAppCore->charEntered((char) repeatUnicode);
 		UI::syncRenderToAgar();
 		return 1;
     }
@@ -329,6 +342,7 @@ static int BG_ProcessEvent(SDL_Event *ev)
 
 		SDLKey sym = ev->key.keysym.sym;
 		SDLMod mod = ev->key.keysym.mod;
+
 		handleSpecialKey(sym, mod, false);
 		UI::syncRenderToAgar();
 		return 1;
@@ -433,6 +447,34 @@ static int BG_ProcessEvent(SDL_Event *ev)
     return (rv);
 }
 
+/* key repeater */
+static Uint32
+RepeatTimeout(void *obj, Uint32 ival, void *arg)
+{
+	// if (ProcessKey(ed, ed->repeatKey, ed->repeatMod, ed->repeatUnicode)
+	//     == 0) {
+	// 	return (0);
+	// }
+    if (geekConsole && geekConsole->isVisible)
+    {
+	geekConsole->charEntered(repeatUnicode, repeatMod);
+    }
+    else
+	if (!handleSpecialKey(repeatKey, repeatMod, true))
+	    celAppCore->charEntered((char) repeatUnicode);
+	else
+	    return 0;
+    return (agKbdRepeat);
+}
+
+static Uint32
+DelayTimeout(void *obj, Uint32 ival, void *arg)
+{
+    AG_ScheduleTimeout(NULL, &toRepeat, agKbdRepeat);
+    return (0);
+}
+
+
 /**
  * Process an SDL event. Returns 1 if the event was processed in some
  * way, -1 if application is exiting.
@@ -488,12 +530,26 @@ int CL_ProcessEvent(SDL_Event *ev)
 		// after global keys dispatch to geek console if it active
 		if (GK_ProcessGlobalKey(ev))
 			return 1;
+		AG_DelTimeout(NULL, &toRepeat);
+		repeatKey = ev->key.keysym.sym;
+		repeatMod = ev->key.keysym.mod;
+		repeatUnicode = ev->key.keysym.unicode;
 		if (geekConsole && geekConsole->isVisible)
 		{
 		    geekConsole->charEntered(ev->key.keysym.unicode, ev->key.keysym.mod);
+		    AG_ScheduleTimeout(NULL, &toDelay, agKbdDelay);
 		    return 1;
 		}
+		if (bgFocuse || !UI::showUI) // no key repeat if agar focused
+		    AG_ScheduleTimeout(NULL, &toDelay, agKbdDelay);
+		goto def;
+    case SDL_KEYUP:
+		if (repeatKey == ev->key.keysym.sym) {
+		    AG_DelTimeout(NULL, &toRepeat);
+		    AG_DelTimeout(NULL, &toDelay);
+		}
     default:
+    def:
 		if (!bgFocuse && UI::showUI)
 		{
 			rv = AG_ProcessEvent(ev);
@@ -544,12 +600,10 @@ static void BG_Draw()
     }
     else
     {
-		glPushAttrib(GL_ALL_ATTRIB_BITS );
 		glEnable(GL_SCISSOR_TEST);
 		glScissor(0,0, 0,0);
 		celAppCore->initRenderer(); 
 		glDisable(GL_SCISSOR_TEST);
-		glPopAttrib();
 		// Set the simulation starting time to the current system time
 		time_t curtime=time(NULL);
 		celAppCore->start((double) curtime / 86400.0 + (double) astro::Date(1970, 1, 1));
@@ -762,6 +816,13 @@ int main(int argc, char* argv[])
     GK_Init();
     GK_BindGlobalKey(SDLK_q, KMOD_LCTRL, gameTerminate);
     GK_BindGlobalKey(SDLK_RETURN, KMOD_RALT , ToggleFullscreen);
+
+    /* repeat key timeouts init */
+    AG_SetTimeout(&toRepeat, RepeatTimeout, NULL, 0);
+    AG_SetTimeout(&toDelay, DelayTimeout, NULL, 0);
+    repeatKey = (SDLKey) 0;
+    repeatMod = KMOD_NONE;
+    repeatUnicode = 0;
 
     celAppCore = new CelestiaCore();
 

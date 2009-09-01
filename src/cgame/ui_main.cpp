@@ -1162,6 +1162,25 @@ namespace UI
 	showUI = true;
     }
 
+    int quitFunction(GeekConsole *gc, int state, std::string value)
+    {
+	switch (state)
+	{
+	case 1:
+	    if (value == "yes")
+		gameTerminate();
+	    else
+		gc->finish();
+	    break;
+	case 0:
+	    gc->setInteractive(listInteractive, "quit", "Are You Sure?", "Quit from game");
+	    listInteractive->setCompletionFromSemicolonStr("yes;no");
+	    listInteractive->setMatchCompletion(true);
+	    break;
+	}
+	return state;
+    }
+
     void Init()
     {
 	UI::initThemes();
@@ -1187,5 +1206,6 @@ namespace UI
 	geekConsole->registerFunction(CFunc(StarBrowserDialog::GCShowStarBrowser), "show solar browser");
 	geekConsole->registerFunction(GCFunc(SolarSysBrowser::GCBrowseNearestSolarSystem), "show solar system browser");
 	geekConsole->registerFunction(GCFunc(RenderCfgDial::GCShowCelPreference), "show preference");
+	geekConsole->registerFunction(GCFunc(quitFunction), "quit");
     }
 } //namespace UI
