@@ -255,26 +255,6 @@ static void BG_Resize(int w, int h)
     glMatrixMode(GL_TEXTURE);	glPopMatrix();
 }
 
-static void BG_Resize(SDL_Event *ev)
-{
-    glMatrixMode(GL_TEXTURE);	glPushMatrix();	glLoadIdentity();
-    glMatrixMode(GL_MODELVIEW);	glPushMatrix();	glLoadIdentity();
-
-    glMatrixMode(GL_PROJECTION);
-    glPushMatrix();
-    glLoadIdentity();
-
-    celAppCore->resize(ev->resize.w, ev->resize.h);
-
-    glGetFloatv(GL_PROJECTION_MATRIX, mProjection);
-    glGetFloatv(GL_MODELVIEW_MATRIX, mModelview);
-    glGetFloatv(GL_TEXTURE_MATRIX, mTexture);
-	
-    glMatrixMode(GL_PROJECTION);	glPopMatrix();
-    glMatrixMode(GL_MODELVIEW);	glPopMatrix();
-    glMatrixMode(GL_TEXTURE);	glPopMatrix();
-}
-
 // resize with menu,
 // make sure that main menu not over BG
 static void BG_ResizeWithMenu()
@@ -451,10 +431,6 @@ static int BG_ProcessEvent(SDL_Event *ev)
 static Uint32
 RepeatTimeout(void *obj, Uint32 ival, void *arg)
 {
-	// if (ProcessKey(ed, ed->repeatKey, ed->repeatMod, ed->repeatUnicode)
-	//     == 0) {
-	// 	return (0);
-	// }
     if (geekConsole && geekConsole->isVisible)
     {
 	geekConsole->charEntered(repeatUnicode, repeatMod);
@@ -517,7 +493,7 @@ int CL_ProcessEvent(SDL_Event *ev)
 		AG_UnlockVFS(agView);
 		break;
     case SDL_VIDEORESIZE:
-		BG_Resize(ev);
+		BG_Resize(ev->resize.w, ev->resize.h);
 		if (geekConsole)
 		    geekConsole->resize(ev->resize.w, ev->resize.h);
 		rv = AG_ProcessEvent(ev);
