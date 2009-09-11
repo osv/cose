@@ -210,21 +210,21 @@ namespace UI{
 	themeInit = true;
     }
 
-    void setupThemes(PrimitiveStyle themestyle)
+    void setupThemes(PrimitiveStyle primitiveStyle)
     {
 	if (!themeInit)
 	    return;
 	agPrim = defaultPrimitiveOps;
-	switch (themestyle)
+	switch (primitiveStyle)
 	{
-	case Default:
-	    break;
 	case FullTransparent:
 	    agPrim.LineH = _lineHGL;
 	    agPrim.LineV = _lineVGL;
 	case SimpleTransparent:
 	    agPrim.RectFilled = _rectGL;
 	    agPrim.BoxRoundedTop = _boxRoundedTopGL;
+	    break;
+	default:
 	    break;
 	}
     }

@@ -121,10 +121,38 @@ namespace UI
         static void resetCelCfg(AG_Event *event)
         {
             RenderCfg *cfg = (RenderCfg *) AG_PTR(1);
+            int qualy = (int ) AG_INT(2);
+            cfg->ambientLight = 0.08f;
+            cfg->textureRes = 2;
+            cfg->galaxyLight = 15; 
+	    switch (qualy)
+	    {
+	    case 0: // base
             cfg->renderFlagCustom = Renderer::ShowStars          |
                 Renderer::ShowPlanets        |
                 Renderer::ShowGalaxies       |
-                Renderer::ShowGlobulars      |   
+                Renderer::ShowGlobulars      |
+                Renderer::ShowCloudMaps      |
+                Renderer::ShowAtmospheres    |
+                Renderer::ShowEclipseShadows |
+                Renderer::ShowRingShadows    |
+                Renderer::ShowCometTails     |
+                Renderer::ShowNebulae        |
+                Renderer::ShowOpenClusters   |
+                Renderer::ShowAutoMag        |
+                Renderer::ShowSmoothLines    |
+                Renderer::ShowMarkers;
+            cfg->orbitFlagCustom = Body::Planet|
+                Body::Stellar|
+                Body::Moon;
+            cfg->labelFlagCelCustom = 0;
+
+		break;
+	    case 1: // base + label
+            cfg->renderFlagCustom = Renderer::ShowStars          |
+                Renderer::ShowPlanets        |
+                Renderer::ShowGalaxies       |
+                Renderer::ShowGlobulars      |
                 Renderer::ShowCloudMaps      |
                 Renderer::ShowAtmospheres    |
                 Renderer::ShowEclipseShadows |
@@ -136,30 +164,113 @@ namespace UI
                 Renderer::ShowSmoothLines    |
                 Renderer::ShowMarkers;
             cfg->labelFlagCelCustom = Renderer::PlanetLabels|
-                Renderer::MoonLabels|
+                Renderer::MoonLabels |
                 Renderer::DwarfPlanetLabels;
             cfg->orbitFlagCustom = Body::Planet|
                 Body::Stellar|
                 Body::Moon;
-            cfg->ambientLight = 0.1f;
-            cfg->textureRes = 2;
-            cfg->galaxyLight = 15; 
+		break;
+	    case 2: // base + label + orbit
+            cfg->renderFlagCustom = Renderer::ShowStars          |
+                Renderer::ShowPlanets        |
+                Renderer::ShowGalaxies       |
+                Renderer::ShowGlobulars      |
+                Renderer::ShowCloudMaps      |
+                Renderer::ShowAtmospheres    |
+                Renderer::ShowEclipseShadows |
+                Renderer::ShowRingShadows    |
+                Renderer::ShowCometTails     |
+                Renderer::ShowNebulae        |
+                Renderer::ShowOpenClusters   |
+                Renderer::ShowAutoMag        |
+                Renderer::ShowSmoothLines    |
+                Renderer::ShowOrbits         |
+                Renderer::ShowMarkers;
+            cfg->labelFlagCelCustom = Renderer::PlanetLabels|
+                Renderer::MoonLabels |
+                Renderer::DwarfPlanetLabels;
+            cfg->orbitFlagCustom = Body::Planet|
+                Body::Stellar|
+                Body::Moon;
+		break;
+	    case 3: // cinema (no markers no labels)
+            cfg->renderFlagCustom = Renderer::ShowStars          |
+                Renderer::ShowPlanets        |
+                Renderer::ShowGalaxies       |
+                Renderer::ShowGlobulars      |
+                Renderer::ShowCloudMaps      |
+                Renderer::ShowAtmospheres    |
+                Renderer::ShowEclipseShadows |
+                Renderer::ShowRingShadows    |
+                Renderer::ShowCometTails     |
+                Renderer::ShowNebulae        |
+                Renderer::ShowOpenClusters   |
+                Renderer::ShowAutoMag        |
+                Renderer::ShowSmoothLines;
+            cfg->labelFlagCelCustom = 0;
+	    cfg->orbitFlagCustom = Body::Planet|
+                Body::Stellar|
+                Body::Moon;
+		break;
+	    case 4: // minimum
+	    default:
+            cfg->renderFlagCustom = Renderer::ShowStars          |
+                Renderer::ShowPlanets        |
+                Renderer::ShowAtmospheres    |
+                Renderer::ShowCometTails     |
+                Renderer::ShowAutoMag        |
+                Renderer::ShowMarkers;
+            cfg->labelFlagCelCustom = 0;
+	    cfg->orbitFlagCustom = Body::Planet|
+                Body::Stellar|
+                Body::Moon;
+            cfg->textureRes = 0;
+		break;
+	    }
         }
 
         static void initDefaultFlags()
         {
             AG_Event event;
-            AG_EventArgs(&event, "%p", &renderCfgSets[0]);
-            resetCelCfg(&event);
-            AG_EventArgs(&event, "%p", &renderCfgSets[1]);
-            resetCelCfg(&event);
-            AG_EventArgs(&event, "%p", &renderCfgSets[2]);
-            resetCelCfg(&event);
-            AG_EventArgs(&event, "%p", &renderCfgSets[3]);
-            resetCelCfg(&event);
-            AG_EventArgs(&event, "%p", &renderCfgSets[4]);
-            resetCelCfg(&event);
+	    for (int i = 0; i < 5; i++)
+	    {
+            char buff[32];
+#define CFG_BIND(varname, flag, type)                                   \
+            sprintf(buff,varname,i+1);                                  \
+            renderCfgSets[i].flag = AG_Get##type(agConfig, buff);       \
+            AG_Bind##type(agConfig, buff, &renderCfgSets[i].flag); \
 
+            CFG_BIND("cel.flags.ren%d", renderFlagCustom, Uint32);
+            CFG_BIND("cel.flags.lab%d", labelFlagCelCustom, Uint32);
+            CFG_BIND("cel.flags.orb%d", orbitFlagCustom, Uint32);
+            CFG_BIND("cel.flags.amb%d", ambientLight, Float);
+            CFG_BIND("cel.flags.galaxy.amb%d", galaxyLight, Float);
+            CFG_BIND("cel.flags.texres%d", textureRes, Int);
+
+            // sprintf(buff,"cel.flags.ren%d",i+1);
+            // renderCfgSets[i].renderFlagCustom = AG_GetUint32(agConfig, buff);
+            // AG_BindUint32(agConfig, buff, &renderCfgSets[i].renderFlagCustom);
+            // sprintf(buff,"cel.flags.lab%d",i+1);
+            // renderCfgSets[i].labelFlagCelCustom = AG_GetUint32(agConfig, buff);
+            // AG_BindUint32(agConfig, buff, &renderCfgSets[i].labelFlagCelCustom);
+            // sprintf(buff,"cel.flags.orb%d",i+1);
+            // renderCfgSets[i].orbitFlagCustom = AG_GetUint32(agConfig, buff);
+            // AG_BindUint32(agConfig, buff, &renderCfgSets[i].orbitFlagCustom);
+            // sprintf(buff,"cel.flags.amb%d",i+1);
+            // renderCfgSets[i].ambientLight = AG_GetFloat(agConfig, buff);
+            // AG_BindFloat(agConfig, buff, &renderCfgSets[i].ambientLight);
+            // sprintf(buff,"cel.flags.amb%d",i+1);
+            // renderCfgSets[i].ambientLight = AG_GetFloat(agConfig, buff);
+            // AG_BindFloat(agConfig, buff, &renderCfgSets[i].ambientLight);
+            // first run
+            if (!AG_GetBool(agConfig, "cel.flags.init"))
+            {
+                AG_EventArgs(&event, "%p:%i", &renderCfgSets[i], i);
+                resetCelCfg(&event);
+            }
+            Uint32 r = AG_GetUint32(agConfig, buff);
+	    }
+	    AG_SetBool(agConfig, "cel.flags.init", 1);
         }
 
         static void setBodyLabelsCelCfg(AG_Event *event)
@@ -247,7 +358,7 @@ namespace UI
             copyRenderFlag(preset, &renderFlags);
         }
                 
-        static AG_NotebookTab *celCfgWinNewTab(std::string tabName, AG_Notebook *nb, RenderCfg *renderCfg)
+        static AG_NotebookTab *celCfgWinNewTab(std::string tabName, AG_Notebook *nb, RenderCfg *renderCfg, int qualy)
         {
             Uint32 *renderFlag = &renderCfg->renderFlagCustom, 
                 *labelFlagCel = &renderCfg->labelFlagCelCustom, 
@@ -329,7 +440,7 @@ namespace UI
                     hBox2 = AG_BoxNewHoriz(ntab, AG_BOX_HFILL|AG_BOX_HOMOGENOUS);
                     {
                         AG_ButtonNewFn(hBox2, 0, _("Reset"),
-                                       resetCelCfg, "%p", renderCfg);
+                                       resetCelCfg, "%p:%i", renderCfg, qualy);
                         AG_Radio *radTextureRes;
                         const char *radioItems[] = {
                             _("Low Texture resolution"),
@@ -355,7 +466,7 @@ namespace UI
             AG_WindowSetCaption(celCfgWin, _("Celestia's render preference"));
             AG_Notebook *nb = AG_NotebookNew(celCfgWin, AG_NOTEBOOK_EXPAND);
 
-            tab = celCfgWinNewTab(std::string("Current"), nb, &renderFlags);
+            tab = celCfgWinNewTab(std::string("Current"), nb, &renderFlags, 0);
             AG_Box * hBox = AG_BoxNewHoriz(tab, AG_BOX_HFILL|AG_BOX_FRAME);
             {                           
                 AG_LabelNewStaticString(hBox, 0, _("Set current as preset:"));
@@ -372,7 +483,7 @@ namespace UI
                 char buff[32];
                 sprintf(buff,"%d",i+1);
                 tab = celCfgWinNewTab(std::string("preset ") +  buff, nb, 
-                                      &renderCfgSets[i]);
+                                      &renderCfgSets[i], i);
                 std::string str = std::string(_("To set this preference use Ctrl+"))+ buff;
                 AG_SeparatorNew(tab, AG_SEPARATOR_HORIZ);
                 AG_ButtonNewFn(tab, 0, str.c_str(), 
@@ -1203,7 +1314,7 @@ namespace UI
     void Init()
     {
 	UI::initThemes();
-	UI::setupThemes(FullTransparent);
+	UI::setupThemes((PrimitiveStyle)AG_GetUint8(agConfig, "cose.ag.primitive"));
         RenderCfgDial::setCelRenderFlagsSets1();
 
         RenderCfgDial::initDefaultFlags();

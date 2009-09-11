@@ -5,12 +5,12 @@ namespace UI
 {
     enum PrimitiveStyle
     {
-	Default,
+	FullTransparent,
 	SimpleTransparent,
-	FullTransparent
+	Default,
     };
     extern void initThemes();
-    extern void setupThemes(PrimitiveStyle themestyle);
+    extern void setupThemes(PrimitiveStyle primitiveStyle);
 
     extern void updateGUIalpha(Uint32 tickDelta, bool agarUIfocused);
     extern void precomputeGUIalpha(bool isWinFocused);

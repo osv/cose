@@ -728,6 +728,7 @@ void gameTerminate()
 	// memory leak 
 	Core::removeAllSolSys();
 
+	AG_ConfigSave();
 	AG_Quit();
 }
 
@@ -739,8 +740,10 @@ static void usage()
 		  "   -g, --gamedir game_dir    Select a game directory.\n"
 		  "   -f, --startfile filename  Select a startup filename.\n"
 		  "   -m, --mode mode           Set game mode:\n"
-		  "                              game|viewer\n"
+		  "                             [game|viewer]\n"
 		  "   -d, --debug  n            Turn debugging on.\n"
+		  "   --ag-primitive            Set GUI primitive style\n"
+		  "                             [transparent-full|transparent-simple|default]\n"
 		  "\n"
 			));
 }
@@ -758,6 +761,12 @@ int main(int argc, char* argv[])
     ready = false;
 
     GameCore::GameMode gameMode = GameCore::GAME;
+
+    if (AG_InitCore("openspace", 0) == -1) {
+		fprintf(stderr, "%s\n", AG_GetError());
+		return (1);
+    }
+
     // parse command line
     char *s;
     for (i = 1; i < argc; ++i)
@@ -788,6 +797,17 @@ int main(int argc, char* argv[])
 			else if (!strcmp(mode, "game"))
 				gameMode = GameCore::GAME;
 		}
+		else if (strcmp(s, "ag-primitive") == 0)
+		{
+			char *mode=argv[++i];
+			const char *s = "cose.ag.primitive";
+			if (!strcmp(mode, "default"))
+			    AG_SetUint8(agConfig, s, UI::Default);
+			else if (!strcmp(mode, "transparent-full"))
+			    AG_SetUint8(agConfig, s, UI::FullTransparent);
+			else if (!strcmp(mode, "transparent-simple"))
+			    AG_SetUint8(agConfig, s, UI::SimpleTransparent);
+		}
 		else if (strcmp(s, "help") == 0 || strcmp(s, "h") == 0)
 		{
 			usage();
@@ -799,11 +819,6 @@ int main(int argc, char* argv[])
 			usage();
 			exit(0);
 		}
-    }
-
-    if (AG_InitCore("Celestia", 0) == -1) {
-		fprintf(stderr, "%s\n", AG_GetError());
-		return (1);
     }
 
     /* Pass AG_VIDEO_OPENGL flag to require an OpenGL display. */
