@@ -14,12 +14,15 @@
 #include "ui.h"
 #include "ui_theme.h"
 #include "gkey.h"
-
 #include "geekconsole.h"
+
 using namespace std;
 
 GameCore *appGame = NULL;
 CelestiaCore *celAppCore = NULL;
+
+GeekBind *geekBindCel = NULL;
+GeekBind *geekBindGlobal = NULL;
 
 static bool fullscreen = false;
 static bool ready = false;
@@ -213,25 +216,28 @@ static void dirFixup(char *argv0) {
 /*
  * Place focus on a Window following a click at the given coordinates.
  * Returns 1 if the focus state has changed as a result.
+ * Note: AG_WindowFocusAtPos can't be used because it exclude wins with
+ * AG_WINDOW_DENYFOCUS flag.
  */
-static int FocusWindowAt(int x, int y)
+int
+FocusWindowAt(int x, int y)
 {
-    AG_Window *win;
-    
-    AG_TAILQ_FOREACH_REVERSE(win, &agView->windows, ag_windowq, windows) {
+	AG_Window *win;
+
+	AGVIEW_FOREACH_WINDOW_REVERSE(win, agView) {
 		AG_ObjectLock(win);
 		if (!win->visible ||
-			!AG_WidgetArea(win, x,y)) {
+		    !AG_WidgetArea(win, x,y)) {
 			AG_ObjectUnlock(win);
 			continue;
 		}
 		AG_ObjectUnlock(win);
 		return (1);
-    }
-    return (0);
+	}
+	return (0);
 }
 
-static void BG_Resize(int w, int h)
+static void BG_Resize(unsigned int w, unsigned int h)
 {
     glMatrixMode(GL_TEXTURE);	glPushMatrix();	glLoadIdentity();
     glMatrixMode(GL_MODELVIEW);	glPushMatrix();	glLoadIdentity();
@@ -253,6 +259,13 @@ static void BG_Resize(int w, int h)
     glMatrixMode(GL_PROJECTION);	glPopMatrix();
     glMatrixMode(GL_MODELVIEW);	glPopMatrix();
     glMatrixMode(GL_TEXTURE);	glPopMatrix();
+}
+
+static void Resize(unsigned int w, unsigned int h)
+{
+    BG_Resize(w, h);
+    if (geekConsole)
+	geekConsole->resize(w, h);
 }
 
 // resize with menu,
@@ -284,6 +297,9 @@ void BG_GainFocus()
     celAppCore->flashFrame();
     AG_DelTimeout(NULL, &toDelay);
     AG_DelTimeout(NULL, &toRepeat);
+    GeekBind *gb = geekConsole->getGeekBind("Celestia");
+    if (gb)
+        gb->isActive = true;
 }
 
 void BG_LostFocus()
@@ -294,6 +310,9 @@ void BG_LostFocus()
     BG_ResizeWithMenu();
     AG_DelTimeout(NULL, &toDelay);
     AG_DelTimeout(NULL, &toRepeat);
+    GeekBind *gb = geekConsole->getGeekBind("Celestia");
+    if (gb)
+        gb->isActive = false;
 }
 
 /*
@@ -431,16 +450,23 @@ static int BG_ProcessEvent(SDL_Event *ev)
 static Uint32
 RepeatTimeout(void *obj, Uint32 ival, void *arg)
 {
-    if (geekConsole && geekConsole->isVisible)
+    if (geekConsole)
     {
-	geekConsole->charEntered(repeatUnicode, repeatMod);
+        int mod = 0;
+        if (repeatMod & KMOD_CTRL)
+            mod |=  GeekBind::CTRL;
+        if (repeatMod & KMOD_SHIFT)
+            mod |=  GeekBind::SHIFT;
+        if (repeatMod & KMOD_ALT)
+            mod |=  GeekBind::META;
+        if (repeatUnicode && !geekConsole->charEntered(repeatKey, repeatUnicode, mod))
+            if (!handleSpecialKey(repeatKey, repeatMod, true))
+                celAppCore->charEntered((char) repeatUnicode);
+            else
+                return 0;
+        return (agKbdRepeat);
     }
-    else
-	if (!handleSpecialKey(repeatKey, repeatMod, true))
-	    celAppCore->charEntered((char) repeatUnicode);
-	else
-	    return 0;
-    return (agKbdRepeat);
+    return 0;
 }
 
 static Uint32
@@ -449,7 +475,6 @@ DelayTimeout(void *obj, Uint32 ival, void *arg)
     AG_ScheduleTimeout(NULL, &toRepeat, agKbdRepeat);
     return (0);
 }
-
 
 /**
  * Process an SDL event. Returns 1 if the event was processed in some
@@ -464,7 +489,7 @@ int CL_ProcessEvent(SDL_Event *ev)
 {
     int rv = 0;
     int x,y;
-
+    int mod = 0;
     switch (ev->type) {
     case SDL_MOUSEBUTTONDOWN:
 		x = ev->button.x;
@@ -492,29 +517,25 @@ int CL_ProcessEvent(SDL_Event *ev)
 		}
 		AG_UnlockVFS(agView);
 		break;
-    case SDL_VIDEORESIZE:
-		BG_Resize(ev->resize.w, ev->resize.h);
-		if (geekConsole)
-		    geekConsole->resize(ev->resize.w, ev->resize.h);
-		rv = AG_ProcessEvent(ev);
-		break;
     case SDL_KEYDOWN:
-		// First check for global key for agar copat..
-		// We need this because when BG is active agar's keydown event 
-		// not passed
-		// struct ag_global_key *gk    
-		// after global keys dispatch to geek console if it active
-		if (GK_ProcessGlobalKey(ev))
-			return 1;
 		AG_DelTimeout(NULL, &toRepeat);
-		repeatKey = ev->key.keysym.sym;
 		repeatMod = ev->key.keysym.mod;
+		repeatKey = ev->key.keysym.sym;
 		repeatUnicode = ev->key.keysym.unicode;
-		if (geekConsole && geekConsole->isVisible)
+		if (geekConsole)
 		{
-		    geekConsole->charEntered(ev->key.keysym.unicode, ev->key.keysym.mod);
-		    AG_ScheduleTimeout(NULL, &toDelay, agKbdDelay);
-		    return 1;
+            if (ev->key.keysym.mod & KMOD_CTRL)
+                mod |=  GeekBind::CTRL;
+            if (ev->key.keysym.mod & KMOD_SHIFT)
+                mod |=  GeekBind::SHIFT;
+            if (ev->key.keysym.mod & KMOD_ALT)
+                mod |=  GeekBind::META;
+            // SDL specific: if repeatUnicode = 0 then just mod pressed
+		    if (repeatUnicode && geekConsole->charEntered(repeatKey, repeatUnicode, mod))
+            {
+                AG_ScheduleTimeout(NULL, &toDelay, agKbdDelay);
+                return 1;
+            }
 		}
 		if (bgFocuse || !UI::showUI) // no key repeat if agar focused
 		    AG_ScheduleTimeout(NULL, &toDelay, agKbdDelay);
@@ -650,7 +671,7 @@ void EventLoop_FixedFPS(void)
 			UI::updateGUIalpha(Tr2-Tr1, !bgFocuse);
 			if (UI::showUI)
 			{
-				AG_TAILQ_FOREACH(win, &agView->windows, windows) {
+				AGVIEW_FOREACH_WINDOW(win, agView) {
 					AG_ObjectLock(win);
 					UI::precomputeGUIalpha(AG_WindowIsFocused(win));
 					AG_WindowDraw(win);
@@ -667,7 +688,8 @@ void EventLoop_FixedFPS(void)
 			glPushMatrix();
 			glPushAttrib(GL_ALL_ATTRIB_BITS );
     
- 			geekConsole->render();
+ 			if (geekConsole)
+			    geekConsole->render();
 			glPopAttrib();
 			glMatrixMode(GL_MODELVIEW);
 			glPopMatrix();
@@ -675,7 +697,6 @@ void EventLoop_FixedFPS(void)
 			glPopMatrix();
 			glMatrixMode(GL_PROJECTION);
 			glPopMatrix();
-	
 
 			AG_EndRendering();
 			AG_UnlockVFS(agView);
@@ -701,6 +722,8 @@ void gameTerminate()
 {
 	if (fullscreen)
 		ToggleFullscreen();
+    if (geekConsole)
+        delete geekConsole;
 	destroyGCInteractivesAndFunctions();
 	// memory leak 
 	Core::removeAllSolSys();
@@ -789,9 +812,7 @@ int main(int argc, char* argv[])
 		fprintf(stderr, "%s\n", AG_GetError());
 		return (-1);
     }
-    GK_Init();
-    GK_BindGlobalKey(SDLK_q, KMOD_LCTRL, gameTerminate);
-    GK_BindGlobalKey(SDLK_RETURN, KMOD_RALT , ToggleFullscreen);
+    AG_SetVideoResizeCallback(Resize);
 
     /* repeat key timeouts init */
     AG_SetTimeout(&toRepeat, RepeatTimeout, NULL, 0);
@@ -804,6 +825,22 @@ int main(int argc, char* argv[])
 
     // init geek console
     geekConsole = new GeekConsole(celAppCore);
+	geekConsole->registerFunction(GCFunc(ToggleFullscreen), "toggle fullscreen");
+    // key binder
+    geekBindCel = geekConsole->createGeekBind("Celestia");
+    // geekBindGlobal->bind("C-c c", "foo");
+    geekBindGlobal = geekConsole->getGeekBind("Global");
+    geekBindGlobal->bind("C-x C-c", "quit");
+    geekBindCel->bind("C-x C-m", "quit");
+    geekBindGlobal->bind("C-x C-g e @Earth", "select object");
+    geekBindGlobal->bind("C-x s e @select object@Earth@EXEC@goto object gc@"
+                         "EXEC@quit", "exec function");
+    geekBindGlobal->bind("C-x s s @select object@Earth@", "exec function");
+
+    geekBindGlobal->bind("C-x g", "goto object gc");
+    geekBindGlobal->bind("e f @quit@", "exec function");
+    geekBindGlobal->bind("C-RET", "select object");
+    geekBindGlobal->bind("M-RET", "toggle fullscreen");
     initGCInteractivesAndFunctions(geekConsole);
     UI::Init();
 

@@ -157,10 +157,16 @@ GeekConsole::GeekConsole(CelestiaCore *celCore):
     overlay = new Overlay();
     *overlay << setprecision(6);
     *overlay << ios::fixed;
+    // create global key bind space
+//    geekConsole->createGeekBind("Global");
+    GeekBind *gb = new GeekBind("Global", this);
+    geekBinds.push_back(gb);
+
 }
 
 GeekConsole::~GeekConsole()
 {
+    for_each(geekBinds.begin(), geekBinds.end(), deleteFunc<GeekBind*>());;
     delete overlay;
 }
 
@@ -173,7 +179,7 @@ void GeekConsole::execFunction(GCFunc *fun)
     fun->call(this, funState, "");
 }
 
-void GeekConsole::execFunction(std::string funName)
+bool GeekConsole::execFunction(std::string funName)
 {
     GCFunc *f = getFunctionByName(funName);
     curFun = f;
@@ -185,6 +191,77 @@ void GeekConsole::execFunction(std::string funName)
     }
     else
         isVisible = false;
+    return f;
+}
+
+bool GeekConsole::execFunction(std::string funName, std::string param)
+{
+    GCFunc *f = getFunctionByName(funName);
+    curFun = f;
+    funState = 0;
+    if (f)
+    {
+        isVisible = true;
+        std::string val;
+        curFun->call(this, funState, "");
+        if (!param.empty())
+        {
+            if (param[param.size() - 1] == '@')
+                param.resize(param.size() - 1);
+            if (param[0] == '@')
+                param.erase(0, 1);
+        }
+        else
+            return true;
+        vector<string> res;
+        string::size_type next_pos, curr_pos=0;
+
+        for (int i=0; ;i++) {
+            next_pos = param.find_first_of("@", curr_pos);
+            val = (param.substr(curr_pos, next_pos-curr_pos));
+            funState++;
+            if (!isVisible)
+            {
+                if (val == "EXEC")
+                {
+                    GCFunc *f = getFunctionByName(funName);
+                    if (!f)
+                    {
+                        DPRINTF(1, "GFunction not found: '%s'", val.c_str());
+                        return false;
+                    }
+                    isVisible = true;
+                    curFun = f;
+                    funState = 0;
+                    curFun->call(this, funState, "");
+                }
+            }
+            else
+                curFun->call(this, funState, val);
+
+            if (string::npos == next_pos)
+                break;
+            curr_pos = next_pos+1;
+        }
+        // int i = 0;
+        // size_t pos = 0, end;
+        // std::string val;
+        // curFun->call(this, funState, "");
+        // pos = param.find('@');
+        // funState++;
+        // while(pos != std::string::npos && isVisible)
+        // {
+        //     end = param.find('@', pos + 1);
+        //     val = param.substr(pos + 1, end - 1);
+        //     cout << val << "' --- val state: " << funState << " " << param << "\n";
+        //     isVisible = true;
+        //     curFun->call(this, funState, val);
+        //     pos = param.find('@', end);
+        // }
+    }
+    else
+        isVisible = false;
+    return f;
 }
 
 void GeekConsole::describeCurText(std::string text)
@@ -231,10 +308,27 @@ std::vector<std::string> GeekConsole::getFunctionsNames()
     return names;
 }
 
-void GeekConsole::charEntered(wchar_t wc, int modifiers)
+bool GeekConsole::charEntered(const char sym, const wchar_t wc, int modifiers)
 {
+    if (!isVisible)
+        {
+            bool isPrefix = false;
+            for (std::vector<GeekBind *>::iterator it = geekBinds.begin();
+                 it != geekBinds.end(); it++)
+            {
+                GeekBind *gb = *it;
+                if (gb->isActive)
+                {
+                    GeekBind::GBRes r = gb->charEntered(sym, modifiers);
+                    if (r == GeekBind::KEYPREFIX)
+                        isPrefix = true;
+                    else if (r == GeekBind::KEYMATCH)
+                        return true;
+                }
+            }
+            return isPrefix;
+        }
     char C = toupper((char)wc);
-
     switch (C)
     {
     case '\023':  // Ctrl+U
@@ -242,15 +336,16 @@ void GeekConsole::charEntered(wchar_t wc, int modifiers)
 	    consoleType = Tiny;
 	else
 	    consoleType++;
-	return;
+	return true;
     case '\007':  // Ctrl+G
     case '\033':  // ESC
 	finish();
-    return;
+    return true;
     }
 
     if (curInteractive)
 	curInteractive->charEntered(wc, modifiers);
+    return true;
 }
 
 void GeekConsole::render()
@@ -358,6 +453,48 @@ void GeekConsole::finish()
     curFun = NULL;
     if (curInteractive)
 	curInteractive->cancelInteractive();
+}
+
+GeekBind *GeekConsole::createGeekBind(std::string bindspace)
+{
+    GeekBind *gb = new GeekBind(bindspace, this);
+    geekBinds.push_back(gb);
+    return gb;
+}
+
+GeekBind *GeekConsole::getGeekBind(std::string bindspace)
+{
+    for (std::vector<GeekBind *>::iterator it = geekBinds.begin();
+		 it != geekBinds.end(); it++)
+    {
+        GeekBind *gb = *it;
+        if (gb->getName() == bindspace)
+            return gb;
+    }
+    return NULL;
+}
+
+void GeekConsole::registerAndBind(std::string bindspace, const char *bindkey,
+                     GCFunc fun, const char *funname)
+{
+    registerFunction(fun, funname);
+    GeekBind *gb = getGeekBind(bindspace);
+    if (gb)
+        gb->bind(bindkey, funname);
+}
+
+bool GeekConsole::bind(std::string bindspace, std::string bindkey, std::string function)
+{
+    GeekBind *gb = getGeekBind(bindspace);
+    if (gb)
+        gb->bind(bindkey.c_str(), function);
+}
+
+void GeekConsole::unbind(std::string bindspace, std::string bindkey)
+{
+    GeekBind *gb = getGeekBind(bindspace);
+    if (gb)
+        gb->unbind(bindkey.c_str());
 }
 
 /******************************************************************
@@ -497,7 +634,7 @@ void GCInteractive::charEntered(const wchar_t wc, int modifiers)
 	break;
     case '\027':  // Ctrl+W
     case '\b':
-	if ((modifiers & KMOD_CTRL) != 0)
+	if ((modifiers & GeekBind::CTRL) != 0)
 	    while (buf.size() && !strchr(" /:,;", buf[buf.size() - 1])) {
 		setBufferText(string(buf, 0, buf.size() - 1));
 	    }
@@ -598,6 +735,7 @@ void ListInteractive::Interact(GeekConsole *_gc, string historyName)
     typedTextCompletion.clear();
     completionList.clear();
     pageScrollIdx = 0;
+    completedIdx = -1;
 }
 
 void ListInteractive::updateTextCompletion()
@@ -640,7 +778,7 @@ bool ListInteractive::tryComplete()
 		    std::string s1 = *it1;
 		    std::string s2 = *it2;
 		    if (s1.length() < compareIdx ||
-			s2.length() < compareIdx ||
+			s2.length() <= compareIdx ||
 			s1[compareIdx] != s2[compareIdx])
 			match = false;
 		}
@@ -672,13 +810,14 @@ void ListInteractive::charEntered(const wchar_t wc, int modifiers)
 	    sprintf(buff,"%i of %i pages, M-/ next expand, M-? prev expand, C-z unexpand", (pageScrollIdx / scrollSize) + 1,
 		    (typedTextCompletion.size() / scrollSize) + 1);
 	    gc->descriptionStr = buff;
+	    gc->describeCurText(getBufferText());
 	    completedIdx = pageScrollIdx;
 	    return;
 	}
 
     }
     // expand completion on M-/
-    else if (((modifiers & KMOD_ALT) != 0) && C == '/')
+    else if (((modifiers & GeekBind::META) != 0) && C == '/')
     {
 	if (!typedTextCompletion.empty())
 	{
@@ -698,7 +837,7 @@ void ListInteractive::charEntered(const wchar_t wc, int modifiers)
 	}
     }
     // revers expand completion on M-? ( i.e. S-M-/)
-    else if (((modifiers & KMOD_ALT ) != 0) && C == '?')
+    else if (((modifiers & GeekBind::META ) != 0) && C == '?')
     {
 	if (!typedTextCompletion.empty())
 	{
@@ -769,7 +908,10 @@ void ListInteractive::charEntered(const wchar_t wc, int modifiers)
     }
 
     if (typedTextCompletion.size() == 1)
-	gc->descriptionStr = strUniqMatchedRET;
+    {
+        gc->descriptionStr = strUniqMatchedRET;
+	    gc->describeCurText(getBufferText());
+    }
 }
 
 void ListInteractive::renderCompletion(float height, float width)
@@ -800,7 +942,7 @@ void ListInteractive::renderCompletion(float height, float width)
 	    }
 	    // completion item (only text before match char)
 	    glColor4ubv(clCompletionFnt->rgba);
-	    *gc->getOverlay() << buftext;
+	    *gc->getOverlay() << std::string(s, 0, buf_length);
 	    // match char background
 	    // match char background
 	    if (s.size() >= buf_length)
@@ -907,7 +1049,7 @@ void CelBodyInteractive::Interact(GeekConsole *_gc, string historyName)
     GCInteractive::Interact(_gc, historyName);
     updateTextCompletion();
     pageScrollIdx = 0;
-    completedIdx = 0;
+    completedIdx = -1;
     lastCompletionSel = Selection();
 }
 
@@ -935,7 +1077,7 @@ bool CelBodyInteractive::tryComplete()
 		    std::string s1 = *it1;
 		    std::string s2 = *it2;
 		    if (s1.length() < compareIdx ||
-			s2.length() < compareIdx ||
+			s2.length() <= compareIdx ||
 			s1[compareIdx] != s2[compareIdx])
 			match = false;
 		}
@@ -974,7 +1116,7 @@ void CelBodyInteractive::charEntered(const wchar_t wc, int modifiers)
 
     }
     // expand completion on M-/
-    else if (((modifiers & KMOD_ALT) != 0) && C == '/')
+    else if (((modifiers & GeekBind::META) != 0) && C == '/')
     {
 	if (!typedTextCompletion.empty())
 	{
@@ -994,7 +1136,7 @@ void CelBodyInteractive::charEntered(const wchar_t wc, int modifiers)
 	}
     }
     // revers expand completion on M-? ( i.e. S-M-/)
-    else if (((modifiers & KMOD_ALT ) != 0) && C == '?')
+    else if (((modifiers & GeekBind::META ) != 0) && C == '?')
     {
 	if (!typedTextCompletion.empty())
 	{
@@ -1016,7 +1158,7 @@ void CelBodyInteractive::charEntered(const wchar_t wc, int modifiers)
 	}
     }
     // M-c
-    else if (((modifiers & KMOD_ALT ) != 0) && C == 'C')
+    else if (((modifiers & GeekBind::META ) != 0) && C == 'C')
     {
 	celApp->getSimulation()->setSelection(lastCompletionSel);
 	celApp->getSimulation()->centerSelection();
@@ -1184,7 +1326,7 @@ void CelBodyInteractive::renderCompletion(float height, float width)
 	    }
 	    // completion item (only text before match char)
 	    glColor4ubv(clCompletionFnt->rgba);
-	    *gc->getOverlay() << buftext;
+	    *gc->getOverlay() << std::string(s, 0, buf_length);
 	    // match char background
 	    if (s.size() >= buf_length)
 	    {
@@ -1227,19 +1369,22 @@ CelBodyInteractive *celBodyInteractive;
 int GCFunc::call(GeekConsole *gc, int state, std::string value)
 {
     if (!isLuaFunc)
-	return cFun(gc, state, value);
+		if (vFun)
+		{ vFun(); gc->finish(); return 1;}
+		else
+			return cFun(gc, state, value);
     else
     {
-	lua_pcall       ( lua, 0, LUA_MULTRET, 0 );
-	lua_getfield    ( lua, LUA_GLOBALSINDEX, luaFunName.c_str());   // push global function on stack
-	lua_pushinteger ( lua, state );                     // push second argument on stack
-	lua_pushstring  ( lua, value.c_str());              // push first argument on stack
-	lua_pcall       ( lua, 2, 1, 0 );                   // call function taking 2 argsuments and getting one return value
-	return lua_tointeger ( lua, -1 );
+		lua_pcall       ( lua, 0, LUA_MULTRET, 0 );
+		lua_getfield    ( lua, LUA_GLOBALSINDEX, luaFunName.c_str());   // push global function on stack
+		lua_pushinteger ( lua, state );                     // push second argument on stack
+		lua_pushstring  ( lua, value.c_str());              // push first argument on stack
+		lua_pcall       ( lua, 2, 1, 0 );                   // call function taking 2 argsuments and getting one return value
+		return lua_tointeger ( lua, -1 );
     }
 }
 
-static int _execFunction(GeekConsole *gc, int state, std::string value)
+static int execFunction(GeekConsole *gc, int state, std::string value)
 {
     GCFunc *f;
     switch (state)
@@ -1254,13 +1399,26 @@ static int _execFunction(GeekConsole *gc, int state, std::string value)
 	if (f)
 	{
 	    gc->execFunction(f);
+        return 0;
 	}
 	break;
+    case -1: // describe key binds for this function
+        std::vector<GeekBind *>* gbs = gc->getGeekBinds();
+        std::string bindstr;
+        for (std::vector<GeekBind *>::iterator it = gbs->begin();
+             it != gbs->end(); it++)
+        {
+            GeekBind *gb = *it;
+            std::string str = gb->getBinds(value);
+            if (!str.empty())
+                bindstr += ' ' + gb->getName() + ": " + str;
+        }
+        if (!bindstr.empty())
+            gc->descriptionStr += " [Matched;" + bindstr + ']';
+        break;
     }
     return state;
 }
-
-GCFunc execFunction(_execFunction);
 
 static int gotoBody(GeekConsole *gc, int state, std::string value)
 {
@@ -1286,7 +1444,7 @@ static int selectBody(GeekConsole *gc, int state, std::string value)
     {
     case 1:
     {
-	Selection sel = gc->getCelCore()->getSimulation()->findObjectFromPath(celBodyInteractive->getBufferText(), true);
+	Selection sel = gc->getCelCore()->getSimulation()->findObjectFromPath(value, true);
 	if (!sel.empty())
 	{
 	    gc->getCelCore()->getSimulation()->setSelection(sel);
@@ -1297,6 +1455,153 @@ static int selectBody(GeekConsole *gc, int state, std::string value)
     case 0:
 	gc->setInteractive(celBodyInteractive, "select", _("Target name: "), _("Enter target for select"));
 	break;
+    }
+    return state;
+}
+
+static int bindKey(GeekConsole *gc, int state, std::string value)
+{
+    static string bindspace;
+    static string keybind;
+    switch (state)
+    {
+    case 0:
+    {
+        gc->setInteractive(listInteractive, "bindkey-space", "BindSpace", "Bind key: Select bindspace");
+        std::vector<GeekBind *> *gbs = gc->getGeekBinds();
+        std::vector<string> completion;
+        for (std::vector<GeekBind *>::iterator it = gbs->begin();
+             it != gbs->end(); it++)
+        {
+            GeekBind *gb = *it;
+            std::string name = gb->getName();
+            completion.push_back(name);
+        }
+        listInteractive->setCompletion(completion);
+        listInteractive->setMatchCompletion(true);
+        break;
+    }
+    case 1:
+    {
+        bindspace = value;
+        gc->setInteractive(listInteractive, "bindkey-key", "Key bind", "Choose key bind, and parameters. Example: C-c g @param 1@");
+        GeekBind *gb = gc->getGeekBind(value);
+        if (gb)
+        {
+            listInteractive->setCompletion(gb->getAllBinds());
+            listInteractive->setMatchCompletion(false);
+        }
+        break;
+    }
+    case 2:
+        keybind = value;
+        gc->setInteractive(listInteractive, "exec-function", "Function", "Select function to bind " + keybind );
+        listInteractive->setCompletion(gc->getFunctionsNames());
+        listInteractive->setMatchCompletion(true);
+        break;
+    break;
+    case 3:
+        gc->bind(bindspace, keybind, value);
+        gc->finish();
+        break;
+    default:
+        break;
+    }
+    return state;
+}
+
+static int unBindKey(GeekConsole *gc, int state, std::string value)
+{
+    static string bindspace;
+
+    switch (state)
+    {
+    case 0:
+    {
+        gc->setInteractive(listInteractive, "bindkey-space", "BindSpace", "Unbind key: Select bindspace");
+        std::vector<GeekBind *> *gbs = gc->getGeekBinds();
+        std::vector<string> completion;
+        for (std::vector<GeekBind *>::iterator it = gbs->begin();
+             it != gbs->end(); it++)
+        {
+            GeekBind *gb = *it;
+            std::string name = gb->getName();
+            completion.push_back(name);
+        }
+        listInteractive->setCompletion(completion);
+        listInteractive->setMatchCompletion(true);
+        break;
+    }
+    case 1:
+    {
+        bindspace = value;
+        bindspace = value;
+        gc->setInteractive(listInteractive, "bindkey-key", "Un bind key", "Choose key bind");
+        GeekBind *gb = gc->getGeekBind(value);
+        if (gb)
+        {
+            listInteractive->setCompletion(gb->getAllBinds());
+            listInteractive->setMatchCompletion(true);
+        }
+        break;
+    }
+    case 2:
+        gc->unbind(bindspace, value);
+        gc->finish();
+        break;
+    default:
+    break;
+    }
+    return state;
+}
+
+static int describebindKey(GeekConsole *gc, int state, std::string value)
+{
+    static string bindspace;
+
+    switch (state)
+    {
+    case 0:
+    {
+        gc->setInteractive(listInteractive, "bindkey-space", "BindSpace", "Describe bind key: Select bindspace");
+        std::vector<GeekBind *> *gbs = gc->getGeekBinds();
+        std::vector<string> completion;
+        for (std::vector<GeekBind *>::iterator it = gbs->begin();
+             it != gbs->end(); it++)
+        {
+            GeekBind *gb = *it;
+            std::string name = gb->getName();
+            completion.push_back(name);
+        }
+        listInteractive->setCompletion(completion);
+        listInteractive->setMatchCompletion(true);
+        break;
+    }
+    case 1:
+    {
+        bindspace = value;
+        bindspace = value;
+        gc->setInteractive(listInteractive, "bindkey-key", "Key bind for describing", "Choose key bind");
+        GeekBind *gb = gc->getGeekBind(value);
+        if (gb)
+        {
+            listInteractive->setCompletion(gb->getAllBinds());
+            listInteractive->setMatchCompletion(true);
+        }
+        break;
+    }
+    case 2:
+    {
+        GeekBind *gb = gc->getGeekBind(bindspace);
+        if (gb)
+        {
+            gc->getCelCore()->flash(gb->getBindDescr(value), 6);
+            gc->finish();
+        }
+        break;
+    }
+    default:
+    break;
     }
     return state;
 }
@@ -1312,10 +1617,14 @@ void initGCInteractivesAndFunctions(GeekConsole *gc)
 	celBodyInteractive = new CelBodyInteractive("cbody", gc->getCelCore());
 	isPropmtsInit = true;
     }
-    gc->registerFunction(execFunction, "exec function");
+    gc->registerAndBind("Global", "M-x",
+                        GCFunc(execFunction), "exec function");
     gc->registerFunction(GCFunc(selectBody), "select object");
     gc->registerFunction(GCFunc(gotoBody), "goto object");
     gc->registerFunction(GCFunc(gotoBodyGC), "goto object gc");
+    gc->registerFunction(GCFunc(bindKey), "bind");
+    gc->registerFunction(GCFunc(unBindKey), "unbind");
+    gc->registerFunction(GCFunc(describebindKey), "describe key");
 }
 
 void destroyGCInteractivesAndFunctions()

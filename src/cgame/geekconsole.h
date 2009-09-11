@@ -8,6 +8,7 @@
 #include <celestia/celestiacore.h>
 #include <celx.h>
 #include <celx_internal.h>
+#include "geekbind.h"
 
 #define MAX_HISTORY_SYZE 128
 
@@ -24,11 +25,12 @@
 	if (value == "yes")
 	    exit(1);
 	else
-	    gc->finish(); // finish interacting and hide console
+	    gc->finish(); // *finish* interacting and hide console
     case 0:
+    // setup interactive
 	gc->setInteractive(listInteract, "quit", "Are You Sure?", "Quit from game");
 	listInteractive->setCompletionFromSemicolonStr("yes;no");
-	listInteractive->setMatchCompletion(true);
+	listInteractive->setMatchCompletion(true); // default false
     }
     return state;
  }
@@ -36,10 +38,41 @@
  So you can call console's interactive:
 
  GCFunc somefun(_somefun);
- geekConsole->execFunction(&somefun);
+ geekConsole->execFunction(&_somefun);
 
- Function _somefun will be called by geekconsole, and you must call 
+ Function _somefun will be called by geekconsole, and you must call
  some interacter in this.
+
+ You can create simple "void" callback:
+
+ void toggleFullScreen()
+ {
+    // ... just toggle, no need geekconsole.finish() or other.
+ }
+
+ and register this
+ geekConsole->registerFunction(GCFunc(ToggleFullscreen), "toggle fullscreen");
+
+ To set key bind for some func use bind:
+
+ geekConsole->bind("Global", "M-RET",
+                   "toggle fullscreen");
+
+ or register and bind at once:
+
+ geekConsole->registerAndBind("Global", "C-x f",
+      GCFunc(ToggleFullscreen), "toggle fullscreen");
+
+ For key bind there are some emacs's suggestion:
+
+   M- alt (not true meta key)
+   C- Ctrl
+   S- Shift
+   RET enter
+   etc
+
+ Special keys (F1, etc) not processed.
+
  For first exec of fun state is 0.
  State will inc by 1 before GCInteractive finished.
 
@@ -176,6 +209,7 @@ public:
 
 // container for C and lua function
 typedef int (* CFunc)(GeekConsole *gc, int state, std::string value);
+typedef void (* CFuncVoid)();
 
 class GCFunc
 {
@@ -183,7 +217,8 @@ public:
     GCFunc():
 	isNil(true) {};
     // constructor for c function
-    GCFunc(CFunc cfun): isLuaFunc(false), cFun(cfun), isNil(false){};
+    GCFunc(CFunc cfun): isLuaFunc(false), cFun(cfun), vFun(NULL), isNil(false){};
+	GCFunc(CFuncVoid vfun): isLuaFunc(false), cFun(NULL), vFun(vfun), isNil(false){};
     // constructor for name of lua function
     GCFunc(const char *name, lua_State* l): isLuaFunc(true), luaFunName(name),
 					    isNil(false), lua(l){};
@@ -191,6 +226,7 @@ public:
 private:
     bool isLuaFunc;
     CFunc cFun;
+	CFuncVoid vFun; // simple void func()
     string luaFunName;
     bool isNil;
     lua_State* lua;
@@ -213,15 +249,15 @@ public:
     void addPromter(std::string name,
 		    GCInteractive *Interactive);
     void execFunction(GCFunc *fun);
-    void execFunction(std::string funName);
+    bool execFunction(std::string funName);
+    bool execFunction(std::string funName, std::string param);
     // call callback fun for describe interactive text with state -1
     void describeCurText(string text);
     void registerFunction(GCFunc fun, std::string name);
     void reRegisterFunction(GCFunc fun, std::string name);
     GCFunc *getFunctionByName(std::string);
     std::vector<std::string> getFunctionsNames();
-    void charEntered(const wchar_t wc, int modifiers);
-
+    bool charEntered(const char sym, const wchar_t wc, int modifiers);
     void resize(int w, int h)
 	{
 	    overlay->setWindowSize(w, h);
@@ -246,8 +282,17 @@ public:
     void finish();
     CelestiaCore *getCelCore() const
 	{return celCore;}
-
+    GeekBind *createGeekBind(std::string bindspace);
+    GeekBind *getGeekBind(std::string bindspace);
+    void registerAndBind(std::string bindspace, const char *bindkey,
+                         GCFunc fun, const char *funname);
+    std::vector<GeekBind *> *getGeekBinds()
+        { return &geekBinds;}
+    bool bind(std::string bindspace, std::string bindkey, std::string function);
+    void unbind(std::string bindspace, std::string bindkey);
+    // descript. prefix in before interactive prompt
     std::string InteractivePrefixStr;
+    // bottom description str
     std::string descriptionStr;
 private:
     TextureFont* titleFont;
@@ -263,9 +308,9 @@ private:
     int funState;
     typedef std::map<std::string, GCFunc>  Functions;
     Functions functions;
+    std::vector<GeekBind *> geekBinds; // list of key bind spaces
 };
 
-extern GCFunc execFunction;
 extern void initGCInteractivesAndFunctions(GeekConsole *gc);
 extern void destroyGCInteractivesAndFunctions();
 extern void LoadLuaGeekConsoleLibrary(lua_State* l);

@@ -14,6 +14,7 @@
 #include <celutil/filetype.h>
 
 #include "gkey.h"
+#include "geekconsole.h"
 
 #include <stdlib.h>
 
@@ -376,6 +377,9 @@ namespace UI
                 AG_SeparatorNew(tab, AG_SEPARATOR_HORIZ);
                 AG_ButtonNewFn(tab, 0, str.c_str(), 
                                setPreset, "%i", i);
+                sprintf(buff,"C-x r %d @%d", i+1, i+1);
+                geekConsole->bind("Global", buff,
+                                  "set render preset");
             }
 
             GK_BindGlobalKey(SDLK_1, KMOD_LCTRL, setCelRenderFlagsSets1);
@@ -384,6 +388,26 @@ namespace UI
             GK_BindGlobalKey(SDLK_4, KMOD_LCTRL, setCelRenderFlagsSets4);
             GK_BindGlobalKey(SDLK_5, KMOD_LCTRL, setCelRenderFlagsSets5);
         }
+
+	int GCSetPreset(GeekConsole *gc, int state, std::string value)
+	{
+        switch (state)
+        {
+        case 1:
+        {
+            int i = atoi(value.c_str());
+            if (i > 0 && i <= 5 )
+                copyRenderFlag(&renderFlags, &renderCfgSets[i-1]);
+            gc->finish();
+        }
+        case 0:
+            gc->setInteractive(listInteractive, "r.preset", "Preset", "Set current preset");
+            listInteractive->setCompletionFromSemicolonStr("1;2;3;4;5");
+            listInteractive->setMatchCompletion(true);
+            break;
+        }
+        return state;
+	}
 
 	int GCShowCelPreference(GeekConsole *gc, int state, std::string value)
 	{
@@ -1151,11 +1175,6 @@ namespace UI
 	agMainMenuSticky=false;
     }
 
-    void showGeekConsole()
-    {
-	geekConsole->execFunction(&execFunction);
-    }
-
     void riseUI()
     {
 	BG_LostFocus();
@@ -1193,15 +1212,18 @@ namespace UI
 
         Menu::initMenu();
 
-	celAppCore->setContextMenuCallback(ContextMenu::menuContext);
+        celAppCore->setContextMenuCallback(ContextMenu::menuContext);
         agTextAntialiasing = 1;
-        GK_BindGlobalKey(SDLK_ESCAPE, KMOD_LCTRL, closeCurrentFocusedWindow);
-        GK_BindGlobalKey(SDLK_o, KMOD_LCTRL, toggleShowUI);
+        const char *space = "Global";
+        geekConsole->registerAndBind(space, "C-c k",
+                                     GCFunc(closeCurrentFocusedWindow), "close window");
+        geekConsole->registerAndBind(space, "C-o",
+                                     GCFunc(toggleShowUI), "toggle ui");
+        geekConsole->registerAndBind(space, "C-x r r",
+                                     GCFunc(RenderCfgDial::GCSetPreset), "set render preset");
 	// rebind some celestia key
         GK_BindGlobalKey(SDLK_F11, KMOD_NONE, startTogVidRecord);
         GK_BindGlobalKey(SDLK_F12, KMOD_NONE, stopVidRecord);
-        GK_BindGlobalKey(SDLK_x, KMOD_LALT, showGeekConsole);
-
 	// geekconsole
 	geekConsole->registerFunction(CFunc(StarBrowserDialog::GCShowStarBrowser), "show solar browser");
 	geekConsole->registerFunction(GCFunc(SolarSysBrowser::GCBrowseNearestSolarSystem), "show solar system browser");

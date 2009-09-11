@@ -23,6 +23,7 @@ noinst_HEADERS = \
 	ui.h \
 	videocapture.h \
 	geekconsole.h \
+	geekbind.h \
 	ui_theme.h
 
 openspace_client_LDADD = \
@@ -43,6 +44,7 @@ openspace_client_SOURCES = gkey.c \
 	videocapture.cpp \
 	cgame.cpp \
 	geekconsole.cpp \
+	geekbind.cpp \
 	ui_theme.cpp
 
 noinst_DATA = ../../openspace_client
