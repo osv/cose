@@ -265,7 +265,7 @@ static void Resize(unsigned int w, unsigned int h)
 {
     BG_Resize(w, h);
     if (geekConsole)
-	geekConsole->resize(w, h);
+        geekConsole->resize(w, h);
 }
 
 // resize with menu,
@@ -292,7 +292,7 @@ void BG_GainFocus()
     bgFocuse = true;
     // hide menu
     if (!agMainMenuSticky)
-	AG_WindowHide(agAppMenuWin);
+        AG_WindowHide(agAppMenuWin);
     BG_ResizeWithMenu();
     celAppCore->flashFrame();
     AG_DelTimeout(NULL, &toDelay);
@@ -425,7 +425,7 @@ static int BG_ProcessEvent(SDL_Event *ev)
 		    if (!AG_WindowIsVisible(agAppMenuWin))
 		    {
 		        AG_WindowShow(agAppMenuWin);
-			BG_ResizeWithMenu();
+                BG_ResizeWithMenu();
 		    }
 		}
 		else
@@ -433,10 +433,10 @@ static int BG_ProcessEvent(SDL_Event *ev)
 		    // to prevent all time resize
 		    if (AG_WindowIsVisible(agAppMenuWin) && !agMainMenuSticky)
 		    {
-			if (!agMainMenuSticky)
-			    AG_WindowHide(agAppMenuWin);
-			BG_ResizeWithMenu();
-			celAppCore->flashFrame();
+                if (!agMainMenuSticky)
+                    AG_WindowHide(agAppMenuWin);
+                BG_ResizeWithMenu();
+                celAppCore->flashFrame();
 		    }
 		celAppCore->mouseMove(ev->motion.xrel, ev->motion.yrel, buttons);
 		return 1;

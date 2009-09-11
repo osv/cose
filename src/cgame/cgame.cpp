@@ -19,7 +19,7 @@ namespace Core
        before. 
        Full timeLine support not main goal for now.
        TODO: make ~timeline ~FrameTree safely
-     */
+    */
     void removeBody(Body *body)
     {
         PlanetarySystem* planetary;
@@ -52,13 +52,13 @@ namespace Core
      
        Note: It can be sagfault if you use timeline and already
        remove some body refered in timeline's phase. See notes in removeBody       
-     */
+    */
     void clearPlanetarySystem(PlanetarySystem *planetary)
     {
         if (planetary)
             while(planetary->getSystemSize() > 0)
             {
-		// remove reverse to prevent timeline remove bug
+                // remove reverse to prevent timeline remove bug
                 removeBody(planetary->getBody(planetary->getSystemSize()-1));
             }
     }
@@ -100,16 +100,16 @@ namespace Core
              iter != solarSystems->end(); iter++)
         {
             Core::clearPlanetarySystem(iter->second->getPlanets());
-	    delete iter->second->getFrameTree();
-	    delete iter->second->getPlanets();
-	    delete iter->second;
+            delete iter->second->getFrameTree();
+            delete iter->second->getPlanets();
+            delete iter->second;
         }
         solarSystems->clear();
     }
 
     void reloadAllSolSys()
     {
-	removeAllSolSys();
+        removeAllSolSys();
         /***** Reload the solar system catalogs *****/
         // First read the solar system files listed individually in the
         // config file.

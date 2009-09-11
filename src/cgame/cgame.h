@@ -20,15 +20,15 @@ extern bool agMainMenuSticky;
 namespace Core
 {
     /** Remove body from solar system and satellites
-	
-	Also unref celestiacore if body if main refpoint, 
-	sync solarsystem browsers for changes
+
+        Also unref celestiacore if body if main refpoint, 
+        sync solarsystem browsers for changes
     */
     extern void removeBody(Body *body); 
 
     /** Remove all bodys from planetary system
-	but not deleting of planetary system it self
-     */
+        but not deleting of planetary system it self
+    */
     extern void clearPlanetarySystem(PlanetarySystem *planetary);
 
     /** Remove solar systems

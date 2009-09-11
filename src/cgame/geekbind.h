@@ -12,9 +12,9 @@ class GeekBind
 public:
     enum KBMod
     {
-		SHIFT  = 1,
-		CTRL   = 2,
-		META   = 8, // ALT, ESC
+        SHIFT  = 1,
+        CTRL   = 2,
+        META   = 8, // ALT, ESC
     };
     enum GBRes
     {
@@ -24,32 +24,32 @@ public:
     };
     struct KeyBind
     {
-		char c[MAX_KEYBIND_LEN];
-		int  mod[MAX_KEYBIND_LEN];
-		std::string gcFunName;
+        char c[MAX_KEYBIND_LEN];
+        int  mod[MAX_KEYBIND_LEN];
+        std::string gcFunName;
         std::string params;
-		int len;
-		std::string keyToStr();
-		bool set(const char *bind);
+        int len;
+        std::string keyToStr();
+        bool set(const char *bind);
     };
-	GeekBind(std::string name, GeekConsole *gc);
+    GeekBind(std::string name, GeekConsole *gc);
     ~GeekBind() {};
-	GBRes charEntered(char sym, int modifiers);
-	bool isBinded(KeyBind);
+    GBRes charEntered(char sym, int modifiers);
+    bool isBinded(KeyBind);
     // coma sep. list of k. binds for specified fun
-	std::string getBinds(std::string funName);
-	std::string getBindDescr(std::string keybind);
+    std::string getBinds(std::string funName);
+    std::string getBindDescr(std::string keybind);
     std::vector<std::string> getAllBinds();
     const std::string getName()
         { return name;}
-	bool bind(const char *keybind, std::string funName);
+    bool bind(const char *keybind, std::string funName);
     void unbind(const char *keybind);
     // for using in geeckonsole to decide to where dispatch keydown even
     bool isActive;
 private:
-	GeekConsole *gc;
-	std::vector<KeyBind> binds;
-	KeyBind curKey;
+    GeekConsole *gc;
+    std::vector<KeyBind> binds;
+    KeyBind curKey;
     std::string name;
 };
 

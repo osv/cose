@@ -87,11 +87,11 @@ static void distance2Sstream(std::stringstream &ss, double distance)
 }
 
 static void planetocentricCoords2Sstream(std::stringstream& ss,
-                                        const Body& body,
-                                        double longitude,
-                                        double latitude,
-                                        double altitude,
-                                        bool showAltitude)
+                                         const Body& body,
+                                         double longitude,
+                                         double latitude,
+                                         double altitude,
+                                         bool showAltitude)
 {
     char ewHemi = ' ';
     char nsHemi = ' ';
@@ -187,7 +187,7 @@ bool GeekConsole::execFunction(std::string funName)
     if (f)
     {
         isVisible = true;
-	f->call(this, funState, "");
+        f->call(this, funState, "");
     }
     else
         isVisible = false;
@@ -267,7 +267,7 @@ bool GeekConsole::execFunction(std::string funName, std::string param)
 void GeekConsole::describeCurText(std::string text)
 {
     if (curFun)
-	curFun->call(this, -1, text);
+        curFun->call(this, -1, text);
 }
 
 void GeekConsole::registerFunction(GCFunc fun, std::string name)
@@ -275,8 +275,8 @@ void GeekConsole::registerFunction(GCFunc fun, std::string name)
     Functions::iterator it = functions.find(name);
     if (it == functions.end())
     {
-	functions[name] = fun;
-	DPRINTF(1, "Registering function for geek console: '%s'\n", name.c_str());
+        functions[name] = fun;
+        DPRINTF(1, "Registering function for geek console: '%s'\n", name.c_str());
     }
 }
 
@@ -291,7 +291,7 @@ GCFunc *GeekConsole::getFunctionByName(std::string name)
     Functions::iterator it;
     it = functions.find(name);
     if (it != functions.end())
-	return &it->second;
+        return &it->second;
     else return NULL;
 }
 std::vector<std::string> GeekConsole::getFunctionsNames()
@@ -311,53 +311,53 @@ std::vector<std::string> GeekConsole::getFunctionsNames()
 bool GeekConsole::charEntered(const char sym, const wchar_t wc, int modifiers)
 {
     if (!isVisible)
+    {
+        bool isPrefix = false;
+        for (std::vector<GeekBind *>::iterator it = geekBinds.begin();
+             it != geekBinds.end(); it++)
         {
-            bool isPrefix = false;
-            for (std::vector<GeekBind *>::iterator it = geekBinds.begin();
-                 it != geekBinds.end(); it++)
+            GeekBind *gb = *it;
+            if (gb->isActive)
             {
-                GeekBind *gb = *it;
-                if (gb->isActive)
-                {
-                    GeekBind::GBRes r = gb->charEntered(sym, modifiers);
-                    if (r == GeekBind::KEYPREFIX)
-                        isPrefix = true;
-                    else if (r == GeekBind::KEYMATCH)
-                        return true;
-                }
+                GeekBind::GBRes r = gb->charEntered(sym, modifiers);
+                if (r == GeekBind::KEYPREFIX)
+                    isPrefix = true;
+                else if (r == GeekBind::KEYMATCH)
+                    return true;
             }
-            return isPrefix;
         }
+        return isPrefix;
+    }
     char C = toupper((char)wc);
     switch (C)
     {
     case '\023':  // Ctrl+U
-	if (consoleType == Big)
-	    consoleType = Tiny;
-	else
-	    consoleType++;
-	return true;
+        if (consoleType == Big)
+            consoleType = Tiny;
+        else
+            consoleType++;
+        return true;
     case '\007':  // Ctrl+G
     case '\033':  // ESC
-	finish();
+        finish();
     return true;
     }
 
     if (curInteractive)
-	curInteractive->charEntered(wc, modifiers);
+        curInteractive->charEntered(wc, modifiers);
     return true;
 }
 
 void GeekConsole::render()
 {
     if (!isVisible || !curInteractive)
-	return;
+        return;
     if (font == NULL)
-	font = getFont(celCore);
+        font = getFont(celCore);
     if (titleFont == NULL)
-	titleFont = getTitleFont(celCore);
+        titleFont = getTitleFont(celCore);
     if (font == NULL || titleFont == NULL)
-	return;
+        return;
 
     float fontH = font->getHeight();
     float titleFontH = titleFont->getHeight();
@@ -367,15 +367,15 @@ void GeekConsole::render()
     switch(consoleType)
     {
     case GeekConsole::Tiny:
-	nb_lines = 3;
-	break;
+        nb_lines = 3;
+        break;
     case GeekConsole::Medium:
-	nb_lines = (height * 0.4 - 2 * titleFontH) / fontH;
-	break;
+        nb_lines = (height * 0.4 - 2 * titleFontH) / fontH;
+        break;
     case GeekConsole::Big:
     default:
-	nb_lines = (height * 0.8 - 2 * titleFontH) / fontH;
-	break;
+        nb_lines = (height * 0.8 - 2 * titleFontH) / fontH;
+        break;
     }
     complH = (nb_lines+1) * fontH + nb_lines;
     rectH = complH + 2 * titleFontH;
@@ -397,13 +397,13 @@ void GeekConsole::render()
     // render Interactive
     glPushMatrix();
     {
-	overlay->setFont(titleFont);
+        overlay->setFont(titleFont);
     	glTranslatef(2.0f, rectH - titleFontH + 4, 0.0f);
-	overlay->beginText();
-	glColor4ubv(clInteractivePrefixFnt->rgba);
+        overlay->beginText();
+        glColor4ubv(clInteractivePrefixFnt->rgba);
     	*overlay << InteractivePrefixStr << " ";
-	curInteractive->renderInteractive();
-	overlay->endText();
+        curInteractive->renderInteractive();
+        overlay->endText();
     }
     glPopMatrix();
 
@@ -411,8 +411,8 @@ void GeekConsole::render()
     glPushMatrix();
     {
     	glTranslatef(2.0f, rectH - fontH - titleFontH, 0.0f);
-	overlay->setFont(font);
-	curInteractive->renderCompletion(complH - fontH, width-1);
+        overlay->setFont(font);
+        curInteractive->renderCompletion(complH - fontH, width-1);
     }
     glPopMatrix();
 
@@ -420,13 +420,13 @@ void GeekConsole::render()
     glPushMatrix();
     {
     	glTranslatef(2.0f, 4.0f, 0.0f);
-	overlay->setFont(titleFont);
-	overlay->beginText();
+        overlay->setFont(titleFont);
+        overlay->beginText();
 
-	glColor4ubv(clDescrFnt->rgba);
+        glColor4ubv(clDescrFnt->rgba);
 
     	*overlay << descriptionStr;
-	overlay->endText();
+        overlay->endText();
     }
     glPopMatrix();
     overlay->end();
@@ -452,7 +452,7 @@ void GeekConsole::finish()
     isVisible = false;
     curFun = NULL;
     if (curInteractive)
-	curInteractive->cancelInteractive();
+        curInteractive->cancelInteractive();
 }
 
 GeekBind *GeekConsole::createGeekBind(std::string bindspace)
@@ -475,7 +475,7 @@ GeekBind *GeekConsole::getGeekBind(std::string bindspace)
 }
 
 void GeekConsole::registerAndBind(std::string bindspace, const char *bindkey,
-                     GCFunc fun, const char *funname)
+                                  GCFunc fun, const char *funname)
 {
     registerFunction(fun, funname);
     GeekBind *gb = getGeekBind(bindspace);
@@ -506,59 +506,59 @@ GCInteractive::GCInteractive(std::string _InteractiveName, bool _useHistory)
     InteractiveName = _InteractiveName;
     useHistory = _useHistory;
     if (!useHistory)
-	return;
+        return;
     Directory* dir = OpenDirectory(historyDir);
     std::string filename;
     if (dir != NULL)
-	while (dir->nextFile(filename))
-	{
-	    if (filename[0] == '.')
-		continue;
-	    int extPos = filename.rfind('.');
-	    if (extPos == (int)string::npos)
-		continue;
-	    std::string ext = string(filename, extPos, filename.length() - extPos + 1);
-	    if (compareIgnoringCase("." + InteractiveName, ext) == 0)
-	    {
-		std::string line;
-		std::ifstream infile((historyDir + filename).c_str(), ifstream::in);
-		std::string histName = string(filename, 0, extPos);
-		while (getline(infile, line, '\n'))
-		{
-		    history[histName].push_back(line);
-		}
-		infile.close();
-	    }
-	}
+        while (dir->nextFile(filename))
+        {
+            if (filename[0] == '.')
+                continue;
+            int extPos = filename.rfind('.');
+            if (extPos == (int)string::npos)
+                continue;
+            std::string ext = string(filename, extPos, filename.length() - extPos + 1);
+            if (compareIgnoringCase("." + InteractiveName, ext) == 0)
+            {
+                std::string line;
+                std::ifstream infile((historyDir + filename).c_str(), ifstream::in);
+                std::string histName = string(filename, 0, extPos);
+                while (getline(infile, line, '\n'))
+                {
+                    history[histName].push_back(line);
+                }
+                infile.close();
+            }
+        }
 }
 
 GCInteractive::~GCInteractive()
 {
     if (!useHistory)
-	return;
+        return;
     // save history
     Directory* dir = OpenDirectory(historyDir);
     std::string filename;
     if (dir != NULL)
     {
-	History::iterator it1;
-	std::vector<std::string>::iterator it2;
-	for (it1 = history.begin();
-	     it1 != history.end(); it1++)
-	{
-	    std::string name = it1->first;
-	    std::ofstream outfile(string(historyDir + name + "." + InteractiveName).c_str(), ofstream::out);
+        History::iterator it1;
+        std::vector<std::string>::iterator it2;
+        for (it1 = history.begin();
+             it1 != history.end(); it1++)
+        {
+            std::string name = it1->first;
+            std::ofstream outfile(string(historyDir + name + "." + InteractiveName).c_str(), ofstream::out);
 
-	    for (it2 = history[name].begin();
-		 it2 != history[name].end(); it2++)
-	    {
-		outfile << *it2 << "\n";
-	    }
-	    outfile.close();
-	}
+            for (it2 = history[name].begin();
+                 it2 != history[name].end(); it2++)
+            {
+                outfile << *it2 << "\n";
+            }
+            outfile.close();
+        }
     }
     else
-	cout << "Cann't locate '" << historyDir <<"' dir. GeekConsole's history not saved." << "\n";
+        cout << "Cann't locate '" << historyDir <<"' dir. GeekConsole's history not saved." << "\n";
 }
 
 void GCInteractive::Interact(GeekConsole *_gc, string historyName)
@@ -580,79 +580,79 @@ void GCInteractive::charEntered(const wchar_t wc, int modifiers)
     {
     case '\n':
     case '\r':
-	{
-	    if (useHistory && !curHistoryName.empty())
-	    {
-		// append history only if buf not empty and not equal to oprev hist
-		if (!buf.empty())
-		    if (!history[curHistoryName].empty())
-		    {
-			rit = history[curHistoryName].rbegin();
-			if (*rit != buf)
-			    history[curHistoryName].push_back(buf);
-		    }
-		    else
-			history[curHistoryName].push_back(buf);
-		if (history[curHistoryName].size() > MAX_HISTORY_SYZE)
-		    history[curHistoryName].erase(history[curHistoryName].begin(),
-						  history[curHistoryName].begin()+1);
-	    }
-	    gc->InteractFinished(buf);
-	    return;
-	}
+        {
+            if (useHistory && !curHistoryName.empty())
+            {
+                // append history only if buf not empty and not equal to oprev hist
+                if (!buf.empty())
+                    if (!history[curHistoryName].empty())
+                    {
+                        rit = history[curHistoryName].rbegin();
+                        if (*rit != buf)
+                            history[curHistoryName].push_back(buf);
+                    }
+                    else
+                        history[curHistoryName].push_back(buf);
+                if (history[curHistoryName].size() > MAX_HISTORY_SYZE)
+                    history[curHistoryName].erase(history[curHistoryName].begin(),
+                                                  history[curHistoryName].begin()+1);
+            }
+            gc->InteractFinished(buf);
+            return;
+        }
     case '\020':  // Ctrl+P prev history
-	if (typedHistoryCompletion.empty())
-	    return;
-	if (typedHistoryCompletionIdx > typedHistoryCompletion.size()-1)
-	    typedHistoryCompletionIdx = 0;
-	rit = typedHistoryCompletion.rbegin() + typedHistoryCompletionIdx;
-	typedHistoryCompletionIdx++;
-	buf = *rit;
-	gc->descriptionStr = ctrlZDescr;
-	gc->describeCurText(getBufferText());
-	return;
+        if (typedHistoryCompletion.empty())
+            return;
+        if (typedHistoryCompletionIdx > typedHistoryCompletion.size()-1)
+            typedHistoryCompletionIdx = 0;
+        rit = typedHistoryCompletion.rbegin() + typedHistoryCompletionIdx;
+        typedHistoryCompletionIdx++;
+        buf = *rit;
+        gc->descriptionStr = ctrlZDescr;
+        gc->describeCurText(getBufferText());
+        return;
     case '\016':  // Ctrl+N forw history
-	if (typedHistoryCompletion.empty())
-	    return;
-	if (typedHistoryCompletionIdx > typedHistoryCompletion.size()-1)
-	    typedHistoryCompletionIdx = 0;
-	it = typedHistoryCompletion.begin() + typedHistoryCompletionIdx;
-	typedHistoryCompletionIdx--;
-	buf = *it;
-	gc->descriptionStr = ctrlZDescr;
-	gc->describeCurText(getBufferText());
-	return;
+        if (typedHistoryCompletion.empty())
+            return;
+        if (typedHistoryCompletionIdx > typedHistoryCompletion.size()-1)
+            typedHistoryCompletionIdx = 0;
+        it = typedHistoryCompletion.begin() + typedHistoryCompletionIdx;
+        typedHistoryCompletionIdx--;
+        buf = *it;
+        gc->descriptionStr = ctrlZDescr;
+        gc->describeCurText(getBufferText());
+        return;
     case '\032':  // Ctrl+Z
-	if (bufSizeBeforeHystory == buf.size())
-	    return;
-	setBufferText(string(buf, 0, bufSizeBeforeHystory));
-	prepareHistoryCompletion();
-	return;
+        if (bufSizeBeforeHystory == buf.size())
+            return;
+        setBufferText(string(buf, 0, bufSizeBeforeHystory));
+        prepareHistoryCompletion();
+        return;
     case '\025': // Ctrl+U
-	setBufferText("");
-	prepareHistoryCompletion();
-	break;
+        setBufferText("");
+        prepareHistoryCompletion();
+        break;
     case '\027':  // Ctrl+W
     case '\b':
-	if ((modifiers & GeekBind::CTRL) != 0)
-	    while (buf.size() && !strchr(" /:,;", buf[buf.size() - 1])) {
-		setBufferText(string(buf, 0, buf.size() - 1));
-	    }
+        if ((modifiers & GeekBind::CTRL) != 0)
+            while (buf.size() && !strchr(" /:,;", buf[buf.size() - 1])) {
+                setBufferText(string(buf, 0, buf.size() - 1));
+            }
     setBufferText(string(buf, 0, buf.size() - 1));
     prepareHistoryCompletion();
     default:
-	break;
+        break;
     }
 #ifdef TARGET_OS_MAC
     if ( wc && (!iscntrl(wc)) )
 #else
-    if ( wc && (!iswcntrl(wc)) )
+        if ( wc && (!iswcntrl(wc)) )
 #endif
-    {
-	buf += wc;
-	prepareHistoryCompletion();
-	bufSizeBeforeHystory = buf.size();
-    }
+        {
+            buf += wc;
+            prepareHistoryCompletion();
+            bufSizeBeforeHystory = buf.size();
+        }
     gc->descriptionStr.clear();
 }
 
@@ -672,11 +672,11 @@ void GCInteractive::renderInteractive()
     *gc->getOverlay() << string(buf, 0, bufSizeBeforeHystory);
     if (bufSizeBeforeHystory <= buf.size())
     {
-	glColor4ubv(clInteractiveExpand->rgba);
+        glColor4ubv(clInteractiveExpand->rgba);
     	std::string s = string(buf, bufSizeBeforeHystory, buf.size() - bufSizeBeforeHystory);
     	*gc->getOverlay() << s;
-	glColor4ubv(clInteractiveFnt->rgba);
-	*gc->getOverlay() << "|";
+        glColor4ubv(clInteractiveFnt->rgba);
+        *gc->getOverlay() << "|";
     }
 }
 
@@ -687,11 +687,11 @@ void GCInteractive::prepareHistoryCompletion()
     int buf_length = UTF8Length(buf);
     // Search through all string in history
     for (it = history[curHistoryName].begin();
-	 it != history[curHistoryName].end(); it++)
+         it != history[curHistoryName].end(); it++)
     {
-	if (buf_length == 0 ||
-	    (UTF8StringCompare(*it, buf, buf_length) == 0))
-	    typedHistoryCompletion.push_back(*it);
+        if (buf_length == 0 ||
+            (UTF8StringCompare(*it, buf, buf_length) == 0))
+            typedHistoryCompletion.push_back(*it);
     }
     typedHistoryCompletionIdx = 0;
 }
@@ -706,24 +706,24 @@ class StringInteractive: public GCInteractive
 {
 public:
     StringInteractive(std::string name):GCInteractive(name)
-	{};
+        {};
     ~StringInteractive()
-	{};
+        {};
     void charEntered(const wchar_t wc, int modifiers)
-	{
-	    GCInteractive::charEntered(wc, modifiers);
-	}
+        {
+            GCInteractive::charEntered(wc, modifiers);
+        }
     void renderCompletion(float, float)
-	{
+        {
 
-	}
+        }
 };
 
 void PasswordInteractive::renderInteractive()
 {
     glColor4ubv(clInteractiveFnt->rgba);
     for (uint i = 0; i < getBufferText().length(); i++)
-	*gc->getOverlay() << "*";
+        *gc->getOverlay() << "*";
     *gc->getOverlay() << "|";
 }
 // ListInteractive
@@ -746,11 +746,11 @@ void ListInteractive::updateTextCompletion()
     int buf_length = UTF8Length(buftext);
     // Search through all string in base completion list
     for (it = completionList.begin();
-	 it != completionList.end(); it++)
+         it != completionList.end(); it++)
     {
-	if (buf_length == 0 ||
-	    (UTF8StringCompare(*it, buftext, buf_length) == 0))
-	    typedTextCompletion.push_back(*it);
+        if (buf_length == 0 ||
+            (UTF8StringCompare(*it, buftext, buf_length) == 0))
+            typedTextCompletion.push_back(*it);
     }
 }
 
@@ -761,36 +761,36 @@ bool ListInteractive::tryComplete()
     int buf_length = UTF8Length(getBufferText());
     vector<std::string>::const_iterator it1, it2;
     if (!typedTextCompletion.empty())
-	if (typedTextCompletion.size() == 1) // only 1 item to expand
-	{
-	    vector<std::string>::const_iterator it = typedTextCompletion.begin();
-	    setBufferText(*it);
-	}
-	else
-	{
-	    while(match) // find size of matched chars to expand
-	    {
-		uint compareIdx = buf_length + i;
-		it1 = typedTextCompletion.begin();
-		for (it2 = typedTextCompletion.begin()+1;
-		     it2 != typedTextCompletion.end() && match; it2++)
-		{
-		    std::string s1 = *it1;
-		    std::string s2 = *it2;
-		    if (s1.length() < compareIdx ||
-			s2.length() <= compareIdx ||
-			s1[compareIdx] != s2[compareIdx])
-			match = false;
-		}
-		if (match)
-		    i++;
-	    }
-	}
+        if (typedTextCompletion.size() == 1) // only 1 item to expand
+        {
+            vector<std::string>::const_iterator it = typedTextCompletion.begin();
+            setBufferText(*it);
+        }
+        else
+        {
+            while(match) // find size of matched chars to expand
+            {
+                uint compareIdx = buf_length + i;
+                it1 = typedTextCompletion.begin();
+                for (it2 = typedTextCompletion.begin()+1;
+                     it2 != typedTextCompletion.end() && match; it2++)
+                {
+                    std::string s1 = *it1;
+                    std::string s2 = *it2;
+                    if (s1.length() < compareIdx ||
+                        s2.length() <= compareIdx ||
+                        s1[compareIdx] != s2[compareIdx])
+                        match = false;
+                }
+                if (match)
+                    i++;
+            }
+        }
     if (i > 0)
     {
-	vector<std::string>::const_iterator it = typedTextCompletion.begin();
-	setBufferText(string(*it, 0, buf_length + i));
-	return true;
+        vector<std::string>::const_iterator it = typedTextCompletion.begin();
+        setBufferText(string(*it, 0, buf_length + i));
+        return true;
     }
     return false;
 }
@@ -800,82 +800,82 @@ void ListInteractive::charEntered(const wchar_t wc, int modifiers)
     char C = toupper((char)wc);
     if  (C == '\t') // TAB - expand and scroll if many items to expand found
     {
-	if (!tryComplete())
-	{
-	    // scroll
-	    pageScrollIdx += scrollSize;
-	    if (pageScrollIdx > typedTextCompletion.size())
-		pageScrollIdx = 0;
-	    char buff[32];
-	    sprintf(buff,"%i of %i pages, M-/ next expand, M-? prev expand, C-z unexpand", (pageScrollIdx / scrollSize) + 1,
-		    (typedTextCompletion.size() / scrollSize) + 1);
-	    gc->descriptionStr = buff;
-	    gc->describeCurText(getBufferText());
-	    completedIdx = pageScrollIdx;
-	    return;
-	}
+        if (!tryComplete())
+        {
+            // scroll
+            pageScrollIdx += scrollSize;
+            if (pageScrollIdx > typedTextCompletion.size())
+                pageScrollIdx = 0;
+            char buff[32];
+            sprintf(buff,"%i of %i pages, M-/ next expand, M-? prev expand, C-z unexpand", (pageScrollIdx / scrollSize) + 1,
+                    (typedTextCompletion.size() / scrollSize) + 1);
+            gc->descriptionStr = buff;
+            gc->describeCurText(getBufferText());
+            completedIdx = pageScrollIdx;
+            return;
+        }
 
     }
     // expand completion on M-/
     else if (((modifiers & GeekBind::META) != 0) && C == '/')
     {
-	if (!typedTextCompletion.empty())
-	{
-	    vector<std::string>::const_iterator it = typedTextCompletion.begin();
-	    completedIdx++;
-	    if (completedIdx >= typedTextCompletion.size())
-		completedIdx = pageScrollIdx;
-	    if (completedIdx > pageScrollIdx + scrollSize - 1)
-		completedIdx = pageScrollIdx;
-	    it += completedIdx;
-	    uint oldBufSizeBeforeHystory = bufSizeBeforeHystory;
-	    setBufferText(*it);
-	    bufSizeBeforeHystory = oldBufSizeBeforeHystory;
-	    gc->descriptionStr = ctrlZDescr;
-	    gc->describeCurText(getBufferText());
-	    return;
-	}
+        if (!typedTextCompletion.empty())
+        {
+            vector<std::string>::const_iterator it = typedTextCompletion.begin();
+            completedIdx++;
+            if (completedIdx >= typedTextCompletion.size())
+                completedIdx = pageScrollIdx;
+            if (completedIdx > pageScrollIdx + scrollSize - 1)
+                completedIdx = pageScrollIdx;
+            it += completedIdx;
+            uint oldBufSizeBeforeHystory = bufSizeBeforeHystory;
+            setBufferText(*it);
+            bufSizeBeforeHystory = oldBufSizeBeforeHystory;
+            gc->descriptionStr = ctrlZDescr;
+            gc->describeCurText(getBufferText());
+            return;
+        }
     }
     // revers expand completion on M-? ( i.e. S-M-/)
     else if (((modifiers & GeekBind::META ) != 0) && C == '?')
     {
-	if (!typedTextCompletion.empty())
-	{
-	    vector<std::string>::const_iterator it = typedTextCompletion.begin();
-	    if (completedIdx == 0)
-		completedIdx = pageScrollIdx + scrollSize;
-	    completedIdx--;
-	    if (completedIdx < pageScrollIdx)
-		completedIdx = pageScrollIdx + scrollSize;
-	    if (completedIdx > typedTextCompletion.size())
-		completedIdx = typedTextCompletion.size() - 1;
-	    it += completedIdx;
-	    uint oldBufSizeBeforeHystory = bufSizeBeforeHystory;
-	    setBufferText(*it);
-	    bufSizeBeforeHystory = oldBufSizeBeforeHystory;
-	    gc->descriptionStr = ctrlZDescr;
-	    gc->describeCurText(getBufferText());
-	    return;
-	}
+        if (!typedTextCompletion.empty())
+        {
+            vector<std::string>::const_iterator it = typedTextCompletion.begin();
+            if (completedIdx == 0)
+                completedIdx = pageScrollIdx + scrollSize;
+            completedIdx--;
+            if (completedIdx < pageScrollIdx)
+                completedIdx = pageScrollIdx + scrollSize;
+            if (completedIdx > typedTextCompletion.size())
+                completedIdx = typedTextCompletion.size() - 1;
+            it += completedIdx;
+            uint oldBufSizeBeforeHystory = bufSizeBeforeHystory;
+            setBufferText(*it);
+            bufSizeBeforeHystory = oldBufSizeBeforeHystory;
+            gc->descriptionStr = ctrlZDescr;
+            gc->describeCurText(getBufferText());
+            return;
+        }
     }
     else if ((C == '\n' || C == '\r'))
     {
-	tryComplete();
-	if(mustMatch)
-	{
-	    std::string buftext = getBufferText();
-	    std::vector<std::string>::iterator it;
-	    for (it = typedTextCompletion.begin();
-		 it != typedTextCompletion.end(); it++)
-	    {
-		if (*it == buftext)
-		{
-		    GCInteractive::charEntered(wc, modifiers);
-		    return;
-		}
-	    }
-	    return;
-	}
+        tryComplete();
+        if(mustMatch)
+        {
+            std::string buftext = getBufferText();
+            std::vector<std::string>::iterator it;
+            for (it = typedTextCompletion.begin();
+                 it != typedTextCompletion.end(); it++)
+            {
+                if (*it == buftext)
+                {
+                    GCInteractive::charEntered(wc, modifiers);
+                    return;
+                }
+            }
+            return;
+        }
     }
     std::string oldBufText = getBufferText();
 
@@ -884,12 +884,12 @@ void ListInteractive::charEntered(const wchar_t wc, int modifiers)
     std::string buftext = getBufferText();
     // reset page scroll only if text changed
     if (oldBufText != buftext)
-	pageScrollIdx = 0;
+        pageScrollIdx = 0;
 
     // if must_always_match with completion items - try complete
 
     if(mustMatch && buftext.length() > oldBufText.length())
-	tryComplete();
+        tryComplete();
 
     // Refresh completion (text to complete is only first bufSizeBeforeHystory chars
     // of buf text)
@@ -899,12 +899,12 @@ void ListInteractive::charEntered(const wchar_t wc, int modifiers)
     // and if no any item to expand than revert to old text when text increased
     if(mustMatch && buftext.length() > oldBufText.length())
     {
-	tryComplete();
-	if (typedTextCompletion.empty())
-	{
-	    setBufferText(oldBufText);
-	    updateTextCompletion();
-	}
+        tryComplete();
+        if (typedTextCompletion.empty())
+        {
+            setBufferText(oldBufText);
+            updateTextCompletion();
+        }
     }
 
     if (typedTextCompletion.size() == 1)
@@ -927,43 +927,43 @@ void ListInteractive::renderCompletion(float height, float width)
     it += pageScrollIdx;
     for (uint i=0; it < typedTextCompletion.end() && i < nb_cols; i++)
     {
-	glPushMatrix();
-	gc->getOverlay()->beginText();
-	for (uint j = 0; it < typedTextCompletion.end() && j < nb_lines; it++, j++)
-	{
-	    std::string s = *it;
-	    glColor4ubv(clCompletionFnt->rgba);
-	    if (i * nb_lines + j == completedIdx - pageScrollIdx)
-	    {
-		// border of current completopn
-		glColor4ubv(clCompletionExpandBrd->rgba);
-		gc->getOverlay()->rect(0.0f, 0.0f - 2,
-				       font->getWidth(s), font->getHeight(), false);
-	    }
-	    // completion item (only text before match char)
-	    glColor4ubv(clCompletionFnt->rgba);
-	    *gc->getOverlay() << std::string(s, 0, buf_length);
-	    // match char background
-	    // match char background
-	    if (s.size() >= buf_length)
-	    {
-		std::string text(s, buf_length, 1);
-		glColor4ubv(clCompletionMatchCharBg->rgba);
-		gc->getOverlay()->rect(0.0f, 0.0f - 2,
-				       font->getWidth(text), font->getHeight());
-		glColor4ubv(clCompletionMatchCharFnt->rgba);
-		*gc->getOverlay() << text;
-		// rest text of item from match char
-		glColor4ubv(clCompletionAfterMatch->rgba);
-		if (s.size() > buf_length)
-		    *gc->getOverlay() << string(s, buf_length + 1, 255);
-		*gc->getOverlay() << "\n";
-	    }
-	}
-	gc->getOverlay()->endText();
-	glPopMatrix();
-	int shiftx = width/nb_cols;
-	glTranslatef((float) (shiftx), 0.0f, 0.0f);
+        glPushMatrix();
+        gc->getOverlay()->beginText();
+        for (uint j = 0; it < typedTextCompletion.end() && j < nb_lines; it++, j++)
+        {
+            std::string s = *it;
+            glColor4ubv(clCompletionFnt->rgba);
+            if (i * nb_lines + j == completedIdx - pageScrollIdx)
+            {
+                // border of current completopn
+                glColor4ubv(clCompletionExpandBrd->rgba);
+                gc->getOverlay()->rect(0.0f, 0.0f - 2,
+                                       font->getWidth(s), font->getHeight(), false);
+            }
+            // completion item (only text before match char)
+            glColor4ubv(clCompletionFnt->rgba);
+            *gc->getOverlay() << std::string(s, 0, buf_length);
+            // match char background
+            // match char background
+            if (s.size() >= buf_length)
+            {
+                std::string text(s, buf_length, 1);
+                glColor4ubv(clCompletionMatchCharBg->rgba);
+                gc->getOverlay()->rect(0.0f, 0.0f - 2,
+                                       font->getWidth(text), font->getHeight());
+                glColor4ubv(clCompletionMatchCharFnt->rgba);
+                *gc->getOverlay() << text;
+                // rest text of item from match char
+                glColor4ubv(clCompletionAfterMatch->rgba);
+                if (s.size() > buf_length)
+                    *gc->getOverlay() << string(s, buf_length + 1, 255);
+                *gc->getOverlay() << "\n";
+            }
+        }
+        gc->getOverlay()->endText();
+        glPopMatrix();
+        int shiftx = width/nb_cols;
+        glTranslatef((float) (shiftx), 0.0f, 0.0f);
     }
 }
 
@@ -986,19 +986,19 @@ void ListInteractive::setCompletionFromSemicolonStr(std::string str)
     uint f;
     while(1)
     {
-	f = str.find(';', begin);
-	if (f != string::npos)
-	{
-	    std::string item(str, begin, f - begin);
-	    completionList.push_back(item);
-	    begin = f + 1;
-	}
-	else
-	{
-	    if (str.size() > begin)
-		completionList.push_back(std::string(str, begin, str.size() - begin));
-	    break;
-	}
+        f = str.find(';', begin);
+        if (f != string::npos)
+        {
+            std::string item(str, begin, f - begin);
+            completionList.push_back(item);
+            begin = f + 1;
+        }
+        else
+        {
+            if (str.size() > begin)
+                completionList.push_back(std::string(str, begin, str.size() - begin));
+            break;
+        }
     }
     pageScrollIdx = 0;
     typedTextCompletion = completionList;
@@ -1016,10 +1016,10 @@ void CelBodyInteractive::updateTextCompletion()
 
     //skip update for some history and expand action
     if (str.length() != bufSizeBeforeHystory)
-	return;
+        return;
     typedTextCompletion = celApp->getSimulation()->
-	getObjectCompletion(str,
-			    (celApp->getRenderer()->getLabelMode() & Renderer::LocationLabels) != 0);
+        getObjectCompletion(str,
+                            (celApp->getRenderer()->getLabelMode() & Renderer::LocationLabels) != 0);
 }
 
 std::string CelBodyInteractive::getRightText() const
@@ -1027,9 +1027,9 @@ std::string CelBodyInteractive::getRightText() const
     string str = GCInteractive::getBufferText();
     string::size_type pos = str.rfind('/', str.length());
     if (pos != string::npos)
-	return string(str, pos + 1);
+        return string(str, pos + 1);
     else
-	return str;
+        return str;
 }
 
 void CelBodyInteractive::setRightText(std::string text)
@@ -1038,10 +1038,10 @@ void CelBodyInteractive::setRightText(std::string text)
     string::size_type pos = str.rfind('/', str.length());
     if (pos != string::npos)
     {
-	GCInteractive::setBufferText(string(str, 0, pos + 1) + text);
+        GCInteractive::setBufferText(string(str, 0, pos + 1) + text);
     }
     else
-	GCInteractive::setBufferText(text);
+        GCInteractive::setBufferText(text);
 }
 
 void CelBodyInteractive::Interact(GeekConsole *_gc, string historyName)
@@ -1060,36 +1060,36 @@ bool CelBodyInteractive::tryComplete()
     int buf_length = UTF8Length(getRightText());
     vector<std::string>::const_iterator it1, it2;
     if (!typedTextCompletion.empty())
-	if (typedTextCompletion.size() == 1) // only 1 item to expand
-	{
-	    vector<std::string>::const_iterator it = typedTextCompletion.begin();
-	    setRightText(*it);
-	}
-	else
-	{
-	    while(match) // find size of matched chars to expand
-	    {
-		uint compareIdx = buf_length + i;
-		it1 = typedTextCompletion.begin();
-		for (it2 = typedTextCompletion.begin()+1;
-		     it2 != typedTextCompletion.end() && match; it2++)
-		{
-		    std::string s1 = *it1;
-		    std::string s2 = *it2;
-		    if (s1.length() < compareIdx ||
-			s2.length() <= compareIdx ||
-			s1[compareIdx] != s2[compareIdx])
-			match = false;
-		}
-		if (match)
-		    i++;
-	    }
-	}
+        if (typedTextCompletion.size() == 1) // only 1 item to expand
+        {
+            vector<std::string>::const_iterator it = typedTextCompletion.begin();
+            setRightText(*it);
+        }
+        else
+        {
+            while(match) // find size of matched chars to expand
+            {
+                uint compareIdx = buf_length + i;
+                it1 = typedTextCompletion.begin();
+                for (it2 = typedTextCompletion.begin()+1;
+                     it2 != typedTextCompletion.end() && match; it2++)
+                {
+                    std::string s1 = *it1;
+                    std::string s2 = *it2;
+                    if (s1.length() < compareIdx ||
+                        s2.length() <= compareIdx ||
+                        s1[compareIdx] != s2[compareIdx])
+                        match = false;
+                }
+                if (match)
+                    i++;
+            }
+        }
     if (i > 0)
     {
-	vector<std::string>::const_iterator it = typedTextCompletion.begin();
-	setRightText(string(*it, 0, buf_length + i));
-	return true;
+        vector<std::string>::const_iterator it = typedTextCompletion.begin();
+        setRightText(string(*it, 0, buf_length + i));
+        return true;
     }
     return false;
 }
@@ -1099,78 +1099,78 @@ void CelBodyInteractive::charEntered(const wchar_t wc, int modifiers)
     char C = toupper((char)wc);
     if  (C == '\t') // TAB - expand and scroll if many items to expand found
     {
-	if (!tryComplete())
-	{
-	    // scroll
-	    pageScrollIdx += scrollSize;
-	    if (pageScrollIdx > typedTextCompletion.size())
-		pageScrollIdx = 0;
-	    char buff[32];
-	    sprintf(buff,"%i of %i pages, M-/ next expand, M-? prev expand, C-z unexpand", (pageScrollIdx / scrollSize) + 1,
-		    (typedTextCompletion.size() / scrollSize) + 1);
-	    gc->descriptionStr = buff;
-	    completedIdx = pageScrollIdx;
-	    updateDescrStr();
-	    return;
-	}
+        if (!tryComplete())
+        {
+            // scroll
+            pageScrollIdx += scrollSize;
+            if (pageScrollIdx > typedTextCompletion.size())
+                pageScrollIdx = 0;
+            char buff[32];
+            sprintf(buff,"%i of %i pages, M-/ next expand, M-? prev expand, C-z unexpand", (pageScrollIdx / scrollSize) + 1,
+                    (typedTextCompletion.size() / scrollSize) + 1);
+            gc->descriptionStr = buff;
+            completedIdx = pageScrollIdx;
+            updateDescrStr();
+            return;
+        }
 
     }
     // expand completion on M-/
     else if (((modifiers & GeekBind::META) != 0) && C == '/')
     {
-	if (!typedTextCompletion.empty())
-	{
-	    vector<std::string>::const_iterator it = typedTextCompletion.begin();
-	    completedIdx++;
-	    if (completedIdx >= typedTextCompletion.size())
-		completedIdx = pageScrollIdx;
-	    if (completedIdx > pageScrollIdx + scrollSize - 1)
-		completedIdx = pageScrollIdx;
-	    it += completedIdx;
-	    uint oldBufSizeBeforeHystory = bufSizeBeforeHystory;
-	    setRightText(*it);
-	    bufSizeBeforeHystory = oldBufSizeBeforeHystory;
-	    updateDescrStr();
-	    gc->describeCurText(getRightText());
-	    return;
-	}
+        if (!typedTextCompletion.empty())
+        {
+            vector<std::string>::const_iterator it = typedTextCompletion.begin();
+            completedIdx++;
+            if (completedIdx >= typedTextCompletion.size())
+                completedIdx = pageScrollIdx;
+            if (completedIdx > pageScrollIdx + scrollSize - 1)
+                completedIdx = pageScrollIdx;
+            it += completedIdx;
+            uint oldBufSizeBeforeHystory = bufSizeBeforeHystory;
+            setRightText(*it);
+            bufSizeBeforeHystory = oldBufSizeBeforeHystory;
+            updateDescrStr();
+            gc->describeCurText(getRightText());
+            return;
+        }
     }
     // revers expand completion on M-? ( i.e. S-M-/)
     else if (((modifiers & GeekBind::META ) != 0) && C == '?')
     {
-	if (!typedTextCompletion.empty())
-	{
-	    vector<std::string>::const_iterator it = typedTextCompletion.begin();
-	    if (completedIdx == 0)
-		completedIdx = pageScrollIdx + scrollSize;
-	    completedIdx--;
-	    if (completedIdx < pageScrollIdx)
-		completedIdx = pageScrollIdx + scrollSize;
-	    if (completedIdx > typedTextCompletion.size())
-		completedIdx = typedTextCompletion.size() - 1;
-	    it += completedIdx;
-	    uint oldBufSizeBeforeHystory = bufSizeBeforeHystory;
-	    setRightText(*it);
-	    bufSizeBeforeHystory = oldBufSizeBeforeHystory;
-	    updateDescrStr();
-	    gc->describeCurText(getRightText());
-	    return;
-	}
+        if (!typedTextCompletion.empty())
+        {
+            vector<std::string>::const_iterator it = typedTextCompletion.begin();
+            if (completedIdx == 0)
+                completedIdx = pageScrollIdx + scrollSize;
+            completedIdx--;
+            if (completedIdx < pageScrollIdx)
+                completedIdx = pageScrollIdx + scrollSize;
+            if (completedIdx > typedTextCompletion.size())
+                completedIdx = typedTextCompletion.size() - 1;
+            it += completedIdx;
+            uint oldBufSizeBeforeHystory = bufSizeBeforeHystory;
+            setRightText(*it);
+            bufSizeBeforeHystory = oldBufSizeBeforeHystory;
+            updateDescrStr();
+            gc->describeCurText(getRightText());
+            return;
+        }
     }
     // M-c
     else if (((modifiers & GeekBind::META ) != 0) && C == 'C')
     {
-	celApp->getSimulation()->setSelection(lastCompletionSel);
-	celApp->getSimulation()->centerSelection();
-	return;
+        celApp->getSimulation()->setSelection(lastCompletionSel);
+        celApp->getSimulation()->centerSelection();
+        return;
     }
     else if ((C == '\n' || C == '\r'))
     {
-	Selection sel = celApp->getSimulation()->findObjectFromPath(GCInteractive::getBufferText(), true);
-	if (sel.empty()) // dont continue if not match any obj
-	    return;
-	GCInteractive::charEntered(wc, modifiers);
-	return;
+        Selection sel = celApp->getSimulation()->findObjectFromPath(GCInteractive::getBufferText(), true);
+        if (sel.empty()) // dont continue if not match any obj
+            return;
+        GCInteractive::charEntered(wc, modifiers);
+        return;
     }
 
     std::string oldBufText = GCInteractive::getBufferText();
@@ -1181,7 +1181,7 @@ void CelBodyInteractive::charEntered(const wchar_t wc, int modifiers)
 
     // reset page scroll only if text changed
     if (oldBufText != buftext)
-	pageScrollIdx = 0;
+        pageScrollIdx = 0;
 
     updateTextCompletion();
 
@@ -1195,107 +1195,107 @@ void CelBodyInteractive::updateDescrStr()
     {
         Vec3d v = sel.getPosition(celApp->getSimulation()->getTime()) -
             celApp->getSimulation()->getObserver().getPosition();
-	double distance;
-	std::stringstream ss;
-	Star *star;
-	SolarSystem* sys;
-	double kmDistance;
-	Body *body;
-	DeepSkyObject *dso;
-	Location *location;
-	Vec3d lonLatAlt;
-	Vec3f locPos;
-	switch (sel.getType())
-	{
-	case Selection::Type_Star:
-	    distance = v.length() * 1e-6;
-	    star = sel.star();
-	    ss << "[Star] Dist: ";
-	    distance2Sstream(ss, distance);
-	    ss << CEL_DESCR_SEP << _("Radius: ")
-	       << SigDigitNum(star->getRadius() / 696000.0f, 2)
-	       << " " << _("Rsun")
-	       << "  (" << SigDigitNum(star->getRadius(), 3) << " km" << ")"
-	       << CEL_DESCR_SEP "class ";
-	    if (star->getSpectralType()[0] == 'Q')
-		ss <<  _("Neutron star");
-	    else if (star->getSpectralType()[0] == 'X')
-		ss <<  _("Black hole");
-	    else
-		ss << star->getSpectralType();
-	    sys = celApp->getSimulation()->
-		getUniverse()->getSolarSystem(star);
-	    if (sys != NULL && sys->getPlanets()->getSystemSize() != 0)
-		ss << CEL_DESCR_SEP << _("Planetary companions present\n");
-	    break;
-	case Selection::Type_Body:
-	    distance = v.length() * 1e-6,
-		v * astro::microLightYearsToKilometers(1.0);
-	    body = sel.body();
-	    kmDistance = astro::lightYearsToKilometers(distance);
-	    ss << "[Body] Dist: ";
-	    distance = astro::kilometersToLightYears(kmDistance - body->getRadius());
-	    distance2Sstream(ss, distance);
-	    ss << CEL_DESCR_SEP << _("Radius: ");
-	    distance = astro::kilometersToLightYears(body->getRadius());
-	    distance2Sstream(ss, distance);
-	    break;
-	case Selection::Type_DeepSky:
-	{
-	    dso = sel.deepsky();
-	    distance = v.length() * 1e-6 - dso->getRadius();
-	    char descBuf[128];
-	    dso->getDescription(descBuf, sizeof(descBuf));
-	    ss << "[DSO, "
-	       << descBuf
-	       << "] ";
-	    if (distance >= 0)
-	    {
-		ss << _("Distance: ");
-		distance2Sstream(ss, distance);
-	    }
-	    else
-	    {
-		ss << _("Distance from center: ");
-		distance2Sstream(ss, distance + dso->getRadius());
-	    }
-	    ss << CEL_DESCR_SEP << _("Radius: ");
-	    distance2Sstream(ss, dso->getRadius());
-	    break;
-	}
-	case Selection::Type_Location:
-	    location = sel.location();
-	    body = location->getParentBody();
-	    ss << "[Location] "
-	       << _("Distance: ");
-	    distance2Sstream(ss, v.length() * 1e-6);
-	    ss << CEL_DESCR_SEP;
-	    locPos = location->getPosition();
-	    lonLatAlt = body->cartesianToPlanetocentric(Vec3d(locPos.x, locPos.y, locPos.z));
-	    planetocentricCoords2Sstream(ss, *body,
-					lonLatAlt.x, lonLatAlt.y, lonLatAlt.z, false);
-	    break;
-	default:
-	    break;
-	}
-	gc->descriptionStr = ss.str() + _(", M-c - Select");
+        double distance;
+        std::stringstream ss;
+        Star *star;
+        SolarSystem* sys;
+        double kmDistance;
+        Body *body;
+        DeepSkyObject *dso;
+        Location *location;
+        Vec3d lonLatAlt;
+        Vec3f locPos;
+        switch (sel.getType())
+        {
+        case Selection::Type_Star:
+            distance = v.length() * 1e-6;
+            star = sel.star();
+            ss << "[Star] Dist: ";
+            distance2Sstream(ss, distance);
+            ss << CEL_DESCR_SEP << _("Radius: ")
+               << SigDigitNum(star->getRadius() / 696000.0f, 2)
+               << " " << _("Rsun")
+               << "  (" << SigDigitNum(star->getRadius(), 3) << " km" << ")"
+               << CEL_DESCR_SEP "class ";
+            if (star->getSpectralType()[0] == 'Q')
+                ss <<  _("Neutron star");
+            else if (star->getSpectralType()[0] == 'X')
+                ss <<  _("Black hole");
+            else
+                ss << star->getSpectralType();
+            sys = celApp->getSimulation()->
+                getUniverse()->getSolarSystem(star);
+            if (sys != NULL && sys->getPlanets()->getSystemSize() != 0)
+                ss << CEL_DESCR_SEP << _("Planetary companions present\n");
+            break;
+        case Selection::Type_Body:
+            distance = v.length() * 1e-6,
+                v * astro::microLightYearsToKilometers(1.0);
+            body = sel.body();
+            kmDistance = astro::lightYearsToKilometers(distance);
+            ss << "[Body] Dist: ";
+            distance = astro::kilometersToLightYears(kmDistance - body->getRadius());
+            distance2Sstream(ss, distance);
+            ss << CEL_DESCR_SEP << _("Radius: ");
+            distance = astro::kilometersToLightYears(body->getRadius());
+            distance2Sstream(ss, distance);
+            break;
+        case Selection::Type_DeepSky:
+        {
+            dso = sel.deepsky();
+            distance = v.length() * 1e-6 - dso->getRadius();
+            char descBuf[128];
+            dso->getDescription(descBuf, sizeof(descBuf));
+            ss << "[DSO, "
+               << descBuf
+               << "] ";
+            if (distance >= 0)
+            {
+                ss << _("Distance: ");
+                distance2Sstream(ss, distance);
+            }
+            else
+            {
+                ss << _("Distance from center: ");
+                distance2Sstream(ss, distance + dso->getRadius());
+            }
+            ss << CEL_DESCR_SEP << _("Radius: ");
+            distance2Sstream(ss, dso->getRadius());
+            break;
+        }
+        case Selection::Type_Location:
+            location = sel.location();
+            body = location->getParentBody();
+            ss << "[Location] "
+               << _("Distance: ");
+            distance2Sstream(ss, v.length() * 1e-6);
+            ss << CEL_DESCR_SEP;
+            locPos = location->getPosition();
+            lonLatAlt = body->cartesianToPlanetocentric(Vec3d(locPos.x, locPos.y, locPos.z));
+            planetocentricCoords2Sstream(ss, *body,
+                                         lonLatAlt.x, lonLatAlt.y, lonLatAlt.z, false);
+            break;
+        default:
+            break;
+        }
+        gc->descriptionStr = ss.str() + _(", M-c - Select");
 
-	// mark selected
-	MarkerRepresentation markerRep(MarkerRepresentation::Crosshair);
-	markerRep.setSize(10.0f);
-	markerRep.setColor(Color(0.0f, 1.0f, 0.0f, 0.9f));
-	celApp->getSimulation()->
-	    getUniverse()->unmarkObject(lastCompletionSel, 3);
-	celApp->getSimulation()->
-	    getUniverse()->markObject(sel, markerRep, 3);
-	lastCompletionSel = sel;
+        // mark selected
+        MarkerRepresentation markerRep(MarkerRepresentation::Crosshair);
+        markerRep.setSize(10.0f);
+        markerRep.setColor(Color(0.0f, 1.0f, 0.0f, 0.9f));
+        celApp->getSimulation()->
+            getUniverse()->unmarkObject(lastCompletionSel, 3);
+        celApp->getSimulation()->
+            getUniverse()->markObject(sel, markerRep, 3);
+        lastCompletionSel = sel;
     }
 }
 
 void CelBodyInteractive::renderCompletion(float height, float width)
 {
     if (typedTextCompletion.empty())
-	return;
+        return;
     TextureFont *font = gc->getCompletionFont();
     float fh = font->getHeight();
     uint nb_lines = height / (fh + 1); // +1 because overlay margin be-twin '\n' is 1 pixel
@@ -1304,56 +1304,56 @@ void CelBodyInteractive::renderCompletion(float height, float width)
     std::string buftext(GCInteractive::getBufferText(), 0, bufSizeBeforeHystory);
     string::size_type pos = buftext.rfind('/', buftext.length());
     if (pos != string::npos)
-	buftext = string(buftext, pos + 1);
+        buftext = string(buftext, pos + 1);
 
     uint buf_length = buftext.size();
     vector<std::string>::const_iterator it = typedTextCompletion.begin();
     it += pageScrollIdx;
     for (uint i=0; it < typedTextCompletion.end() && i < nb_cols; i++)
     {
-	glPushMatrix();
-	gc->getOverlay()->beginText();
-	for (uint j = 0; it < typedTextCompletion.end() && j < nb_lines; it++, j++)
-	{
-	    std::string s = *it;
-	    glColor4ubv(clCompletionFnt->rgba);
-	    if (i * nb_lines + j == completedIdx - pageScrollIdx)
-	    {
-		// border of current completopn
-		glColor4ubv(clCompletionExpandBrd->rgba);
-		gc->getOverlay()->rect(0.0f, 0.0f - 2,
-				       font->getWidth(s), font->getHeight(), false);
-	    }
-	    // completion item (only text before match char)
-	    glColor4ubv(clCompletionFnt->rgba);
-	    *gc->getOverlay() << std::string(s, 0, buf_length);
-	    // match char background
-	    if (s.size() >= buf_length)
-	    {
-		std::string text(s, buf_length, 1);
-		glColor4ubv(clCompletionMatchCharBg->rgba);
-		gc->getOverlay()->rect(0.0f, 0.0f - 2,
-				       font->getWidth(text), font->getHeight());
-		glColor4ubv(clCompletionMatchCharFnt->rgba);
-		*gc->getOverlay() << text;
-		// rest text of item from match char
-		glColor4ubv(clCompletionAfterMatch->rgba);
-		if (s.size() > buf_length)
-		    *gc->getOverlay() << string(s, buf_length + 1, 255);
-		*gc->getOverlay() << "\n";
-	    }
-	}
-	gc->getOverlay()->endText();
-	glPopMatrix();
-	int shiftx = width/nb_cols;
-	glTranslatef((float) (shiftx), 0.0f, 0.0f);
+        glPushMatrix();
+        gc->getOverlay()->beginText();
+        for (uint j = 0; it < typedTextCompletion.end() && j < nb_lines; it++, j++)
+        {
+            std::string s = *it;
+            glColor4ubv(clCompletionFnt->rgba);
+            if (i * nb_lines + j == completedIdx - pageScrollIdx)
+            {
+                // border of current completopn
+                glColor4ubv(clCompletionExpandBrd->rgba);
+                gc->getOverlay()->rect(0.0f, 0.0f - 2,
+                                       font->getWidth(s), font->getHeight(), false);
+            }
+            // completion item (only text before match char)
+            glColor4ubv(clCompletionFnt->rgba);
+            *gc->getOverlay() << std::string(s, 0, buf_length);
+            // match char background
+            if (s.size() >= buf_length)
+            {
+                std::string text(s, buf_length, 1);
+                glColor4ubv(clCompletionMatchCharBg->rgba);
+                gc->getOverlay()->rect(0.0f, 0.0f - 2,
+                                       font->getWidth(text), font->getHeight());
+                glColor4ubv(clCompletionMatchCharFnt->rgba);
+                *gc->getOverlay() << text;
+                // rest text of item from match char
+                glColor4ubv(clCompletionAfterMatch->rgba);
+                if (s.size() > buf_length)
+                    *gc->getOverlay() << string(s, buf_length + 1, 255);
+                *gc->getOverlay() << "\n";
+            }
+        }
+        gc->getOverlay()->endText();
+        glPopMatrix();
+        int shiftx = width/nb_cols;
+        glTranslatef((float) (shiftx), 0.0f, 0.0f);
     }
 }
 
 void CelBodyInteractive::cancelInteractive()
 {
     celApp->getSimulation()->
-		getUniverse()->unmarkObject(lastCompletionSel, 3);
+        getUniverse()->unmarkObject(lastCompletionSel, 3);
     lastCompletionSel = Selection();
 }
 
@@ -1369,18 +1369,18 @@ CelBodyInteractive *celBodyInteractive;
 int GCFunc::call(GeekConsole *gc, int state, std::string value)
 {
     if (!isLuaFunc)
-		if (vFun)
-		{ vFun(); gc->finish(); return 1;}
-		else
-			return cFun(gc, state, value);
+        if (vFun)
+        { vFun(); gc->finish(); return 1;}
+        else
+            return cFun(gc, state, value);
     else
     {
-		lua_pcall       ( lua, 0, LUA_MULTRET, 0 );
-		lua_getfield    ( lua, LUA_GLOBALSINDEX, luaFunName.c_str());   // push global function on stack
-		lua_pushinteger ( lua, state );                     // push second argument on stack
-		lua_pushstring  ( lua, value.c_str());              // push first argument on stack
-		lua_pcall       ( lua, 2, 1, 0 );                   // call function taking 2 argsuments and getting one return value
-		return lua_tointeger ( lua, -1 );
+        lua_pcall       ( lua, 0, LUA_MULTRET, 0 );
+        lua_getfield    ( lua, LUA_GLOBALSINDEX, luaFunName.c_str());   // push global function on stack
+        lua_pushinteger ( lua, state );                     // push second argument on stack
+        lua_pushstring  ( lua, value.c_str());              // push first argument on stack
+        lua_pcall       ( lua, 2, 1, 0 );                   // call function taking 2 argsuments and getting one return value
+        return lua_tointeger ( lua, -1 );
     }
 }
 
@@ -1390,18 +1390,18 @@ static int execFunction(GeekConsole *gc, int state, std::string value)
     switch (state)
     {
     case 0:
-	gc->setInteractive(listInteractive, "exec-function", "M-x", "Exec function");
-	listInteractive->setCompletion(gc->getFunctionsNames());
-	listInteractive->setMatchCompletion(true);
-	break;
+        gc->setInteractive(listInteractive, "exec-function", "M-x", "Exec function");
+        listInteractive->setCompletion(gc->getFunctionsNames());
+        listInteractive->setMatchCompletion(true);
+        break;
     case 1:
-	f = gc->getFunctionByName(value);
-	if (f)
-	{
-	    gc->execFunction(f);
-        return 0;
-	}
-	break;
+        f = gc->getFunctionByName(value);
+        if (f)
+        {
+            gc->execFunction(f);
+            return 0;
+        }
+        break;
     case -1: // describe key binds for this function
         std::vector<GeekBind *>* gbs = gc->getGeekBinds();
         std::string bindstr;
@@ -1423,7 +1423,7 @@ static int execFunction(GeekConsole *gc, int state, std::string value)
 static int gotoBody(GeekConsole *gc, int state, std::string value)
 {
     gc->getCelCore()->getSimulation()->
-	gotoSelection(5.0, Vec3f(0, 1, 0), ObserverFrame::ObserverLocal);
+        gotoSelection(5.0, Vec3f(0, 1, 0), ObserverFrame::ObserverLocal);
     gc->finish();
     return state;
 }
@@ -1431,9 +1431,9 @@ static int gotoBody(GeekConsole *gc, int state, std::string value)
 static int gotoBodyGC(GeekConsole *gc, int state, std::string value)
 {
     gc->getCelCore()->getSimulation()->getObserver().gotoSelectionGC(
-	gc->getCelCore()->getSimulation()->getSelection(),
-	5.0, 0.0, 0.5,
-	Vec3f(0, 1, 0), ObserverFrame::ObserverLocal);
+        gc->getCelCore()->getSimulation()->getSelection(),
+        5.0, 0.0, 0.5,
+        Vec3f(0, 1, 0), ObserverFrame::ObserverLocal);
     gc->finish();
     return state;
 }
@@ -1444,17 +1444,17 @@ static int selectBody(GeekConsole *gc, int state, std::string value)
     {
     case 1:
     {
-	Selection sel = gc->getCelCore()->getSimulation()->findObjectFromPath(value, true);
-	if (!sel.empty())
-	{
-	    gc->getCelCore()->getSimulation()->setSelection(sel);
-	}
+        Selection sel = gc->getCelCore()->getSimulation()->findObjectFromPath(value, true);
+        if (!sel.empty())
+        {
+            gc->getCelCore()->getSimulation()->setSelection(sel);
+        }
     }
     gc->finish();
     break;
     case 0:
-	gc->setInteractive(celBodyInteractive, "select", _("Target name: "), _("Enter target for select"));
-	break;
+        gc->setInteractive(celBodyInteractive, "select", _("Target name: "), _("Enter target for select"));
+        break;
     }
     return state;
 }
@@ -1499,7 +1499,7 @@ static int bindKey(GeekConsole *gc, int state, std::string value)
         listInteractive->setCompletion(gc->getFunctionsNames());
         listInteractive->setMatchCompletion(true);
         break;
-    break;
+        break;
     case 3:
         gc->bind(bindspace, keybind, value);
         gc->finish();
@@ -1550,7 +1550,7 @@ static int unBindKey(GeekConsole *gc, int state, std::string value)
         gc->finish();
         break;
     default:
-    break;
+        break;
     }
     return state;
 }
@@ -1601,7 +1601,7 @@ static int describebindKey(GeekConsole *gc, int state, std::string value)
         break;
     }
     default:
-    break;
+        break;
     }
     return state;
 }
@@ -1611,11 +1611,11 @@ void initGCInteractivesAndFunctions(GeekConsole *gc)
 {
     if (!isPropmtsInit)
     {
-	stringInteractive = new StringInteractive("str");
-	listInteractive = new ListInteractive("list");
-	passwordInteractive = new PasswordInteractive("passwd");
-	celBodyInteractive = new CelBodyInteractive("cbody", gc->getCelCore());
-	isPropmtsInit = true;
+        stringInteractive = new StringInteractive("str");
+        listInteractive = new ListInteractive("list");
+        passwordInteractive = new PasswordInteractive("passwd");
+        celBodyInteractive = new CelBodyInteractive("cbody", gc->getCelCore());
+        isPropmtsInit = true;
     }
     gc->registerAndBind("Global", "M-x",
                         GCFunc(execFunction), "exec function");

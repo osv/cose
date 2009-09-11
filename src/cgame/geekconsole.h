@@ -13,82 +13,82 @@
 #define MAX_HISTORY_SYZE 128
 
 /*
-                   GeekConsole
+  GeekConsole
 
- GeekConsole used for interacting using callback function:
+  GeekConsole used for interacting using callback function:
 
- int _somefun(GeekConsole *gc, int state, std::string value)
- {
-    switch (state)
-    {
-    case 1:
-	if (value == "yes")
-	    exit(1);
-	else
-	    gc->finish(); // *finish* interacting and hide console
-    case 0:
-    // setup interactive
-	gc->setInteractive(listInteract, "quit", "Are You Sure?", "Quit from game");
-	listInteractive->setCompletionFromSemicolonStr("yes;no");
-	listInteractive->setMatchCompletion(true); // default false
-    }
-    return state;
- }
+  int _somefun(GeekConsole *gc, int state, std::string value)
+  {
+  switch (state)
+  {
+  case 1:
+  if (value == "yes")
+  exit(1);
+  else
+  gc->finish(); // *finish* interacting and hide console
+  case 0:
+  // setup interactive
+  gc->setInteractive(listInteract, "quit", "Are You Sure?", "Quit from game");
+  listInteractive->setCompletionFromSemicolonStr("yes;no");
+  listInteractive->setMatchCompletion(true); // default false
+  }
+  return state;
+  }
 
- So you can call console's interactive:
+  So you can call console's interactive:
 
- GCFunc somefun(_somefun);
- geekConsole->execFunction(&_somefun);
+  GCFunc somefun(_somefun);
+  geekConsole->execFunction(&_somefun);
 
- Function _somefun will be called by geekconsole, and you must call
- some interacter in this.
+  Function _somefun will be called by geekconsole, and you must call
+  some interacter in this.
 
- You can create simple "void" callback:
+  You can create simple "void" callback:
 
- void toggleFullScreen()
- {
-    // ... just toggle, no need geekconsole.finish() or other.
- }
+  void toggleFullScreen()
+  {
+  // ... just toggle, no need geekconsole.finish() or other.
+  }
 
- and register this
- geekConsole->registerFunction(GCFunc(ToggleFullscreen), "toggle fullscreen");
+  and register this
+  geekConsole->registerFunction(GCFunc(ToggleFullscreen), "toggle fullscreen");
 
- To set key bind for some func use bind:
+  To set key bind for some func use bind:
 
- geekConsole->bind("Global", "M-RET",
-                   "toggle fullscreen");
+  geekConsole->bind("Global", "M-RET",
+  "toggle fullscreen");
 
- or register and bind at once:
+  or register and bind at once:
 
- geekConsole->registerAndBind("Global", "C-x f",
-      GCFunc(ToggleFullscreen), "toggle fullscreen");
+  geekConsole->registerAndBind("Global", "C-x f",
+  GCFunc(ToggleFullscreen), "toggle fullscreen");
 
- For key bind there are some emacs's suggestion:
+  For key bind there are some emacs's suggestion:
 
-   M- alt (not true meta key)
-   C- Ctrl
-   S- Shift
-   RET enter
-   etc
+  M- alt (not true meta key)
+  C- Ctrl
+  S- Shift
+  RET enter
+  etc
 
- Special keys (F1, etc) not processed.
+  Special keys (F1, etc) not processed.
 
- For first exec of fun state is 0.
- State will inc by 1 before GCInteractive finished.
+  For first exec of fun state is 0.
+  State will inc by 1 before GCInteractive finished.
 
- Key binds:
-C-s............... Change size of console
-C-g............... Cancel interactive
-Esc............... Cancel interactive
-Ctrl+p............ Prev in history
-Ctrl+n............ Next in history
-Ctrl+z............ Remove expanded part from input
-Ctrl+w............ Kill backword
-Ctrl+u............ Kill whole line
-TAB............... Try complete or scroll completion
-Alt+/............. Expand next
-Alt+?............. Expand prev
-Alt+c............. cel object promt: select & center view
+  Key binds:
+  C-s............... Change size of console
+  C-g............... Cancel interactive
+  Esc............... Cancel interactive
+  Ctrl+p............ Prev in history
+  Ctrl+n............ Next in history
+  Ctrl+z............ Remove expanded part from input
+  Ctrl+w............ Kill backword
+  Ctrl+u............ Kill whole line
+  TAB............... Try complete or scroll completion
+  Alt+/............. Expand next
+  Alt+?............. Expand prev
+  Alt+c............. cel object promt: select & center view
 */
 
 class GeekConsole;
@@ -99,16 +99,16 @@ class GCInteractive;
 struct Color32
 {
     Color32(GLubyte r, GLubyte g, GLubyte b, GLubyte a)
-	{
-	    rgba[0]= r;
-	    rgba[1]= g;
-	    rgba[2]= b;
-	    rgba[3]= a;
-	}
+        {
+            rgba[0]= r;
+            rgba[1]= g;
+            rgba[2]= b;
+            rgba[3]= a;
+        }
     union
     {
-	GLubyte rgba[4];
-	uint32 i;
+        GLubyte rgba[4];
+        uint32 i;
     };
 };
 
@@ -140,7 +140,7 @@ public:
     uint bufSizeBeforeHystory; //size of buf befor apply mathed str from hist. need for restore prev buf
     void setBufferText(std::string str);
     std::string getBufferText()const
-	{return buf;}
+        {return buf;}
 private:
     std::string buf;
     std::string InteractiveName;
@@ -153,7 +153,7 @@ class ListInteractive: public GCInteractive
 {
 public:
     ListInteractive(std::string name):GCInteractive(name, true)
-	{};
+        {};
     void Interact(GeekConsole *_gc, string historyName);
     bool tryComplete();
     void charEntered(const wchar_t wc, int modifiers);
@@ -201,9 +201,9 @@ class PasswordInteractive: public GCInteractive
 {
 public:
     PasswordInteractive(std::string name):GCInteractive(name, true)
-	{};
+        {};
     ~PasswordInteractive()
-	{};
+        {};
     void renderInteractive();
 };
 
@@ -215,13 +215,13 @@ class GCFunc
 {
 public:
     GCFunc():
-	isNil(true) {};
+        isNil(true) {};
     // constructor for c function
     GCFunc(CFunc cfun): isLuaFunc(false), cFun(cfun), vFun(NULL), isNil(false){};
 	GCFunc(CFuncVoid vfun): isLuaFunc(false), cFun(NULL), vFun(vfun), isNil(false){};
     // constructor for name of lua function
     GCFunc(const char *name, lua_State* l): isLuaFunc(true), luaFunName(name),
-					    isNil(false), lua(l){};
+                                            isNil(false), lua(l){};
     int call(GeekConsole *gc, int state, std::string value);
 private:
     bool isLuaFunc;
@@ -238,16 +238,16 @@ class GeekConsole
 public:
     enum ConsoleType
     {
-	Tiny = 1,
-	Medium = 2,
-	Big = 3
+        Tiny = 1,
+        Medium = 2,
+        Big = 3
     };
 
     GeekConsole(CelestiaCore *celCore);
     ~GeekConsole();
 
     void addPromter(std::string name,
-		    GCInteractive *Interactive);
+                    GCInteractive *Interactive);
     void execFunction(GCFunc *fun);
     bool execFunction(std::string funName);
     bool execFunction(std::string funName, std::string param);
@@ -259,29 +259,29 @@ public:
     std::vector<std::string> getFunctionsNames();
     bool charEntered(const char sym, const wchar_t wc, int modifiers);
     void resize(int w, int h)
-	{
-	    overlay->setWindowSize(w, h);
-	    width = w; height = h;
-	};
+        {
+            overlay->setWindowSize(w, h);
+            width = w; height = h;
+        };
     void render();
     bool isVisible;
     int consoleType;
 
     TextureFont* getInteractiveFont() const
-	{return titleFont;}
+        {return titleFont;}
     TextureFont* getCompletionFont() const
-	{return font;}
+        {return font;}
     Overlay* getOverlay() const
-	{return overlay;}
+        {return overlay;}
     void setInteractive(GCInteractive *Interactive,
-			std::string historyName,  // if empty - dont use history
-			std::string InteractiveStr, // str before prompt
-			std::string descrStr); // describe str (bottom)
+                        std::string historyName,  // if empty - dont use history
+                        std::string InteractiveStr, // str before prompt
+                        std::string descrStr); // describe str (bottom)
 
     void InteractFinished(std::string value);
     void finish();
     CelestiaCore *getCelCore() const
-	{return celCore;}
+        {return celCore;}
     GeekBind *createGeekBind(std::string bindspace);
     GeekBind *getGeekBind(std::string bindspace);
     void registerAndBind(std::string bindspace, const char *bindkey,

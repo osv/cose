@@ -5,9 +5,9 @@ namespace UI
 {
     enum PrimitiveStyle
     {
-	FullTransparent,
-	SimpleTransparent,
-	Default,
+        FullTransparent,
+        SimpleTransparent,
+        Default,
     };
     extern void initThemes();
     extern void setupThemes(PrimitiveStyle primitiveStyle);
