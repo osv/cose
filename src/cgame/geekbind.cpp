@@ -186,7 +186,7 @@ GeekBind::GBRes GeekBind::charEntered(char sym, int modifiers)
 				if (gc->execFunction(it->gcFunName, it->params))
 				{
                     if (curKey.len > 1)
-                        gc->getCelCore()->flash(curKey.keyToStr() + " (" + it->gcFunName + ")", 1.5);
+                        gc->getCelCore()->flash(curKey.keyToStr() + " (" + it->gcFunName + ") " + it->params, 2.5);
 					curKey.len = 0;
 				}
 				else
