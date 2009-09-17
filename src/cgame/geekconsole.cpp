@@ -478,6 +478,8 @@ void GeekConsole::registerAndBind(std::string bindspace, const char *bindkey,
                                   GCFunc fun, const char *funname)
 {
     registerFunction(fun, funname);
+    if (bindspace.empty())
+        bindspace = "Global";
     GeekBind *gb = getGeekBind(bindspace);
     if (gb)
         gb->bind(bindkey, funname);
@@ -485,13 +487,18 @@ void GeekConsole::registerAndBind(std::string bindspace, const char *bindkey,
 
 bool GeekConsole::bind(std::string bindspace, std::string bindkey, std::string function)
 {
+    if (bindspace.empty())
+        bindspace = "Global";
     GeekBind *gb = getGeekBind(bindspace);
     if (gb)
-        gb->bind(bindkey.c_str(), function);
+        return gb->bind(bindkey.c_str(), function);
+    return false;
 }
 
 void GeekConsole::unbind(std::string bindspace, std::string bindkey)
 {
+    if (bindspace.empty())
+        bindspace = "Global";
     GeekBind *gb = getGeekBind(bindspace);
     if (gb)
         gb->unbind(bindkey.c_str());
@@ -700,24 +707,6 @@ void GCInteractive::renderCompletion(float height, float width)
 {
 
 }
-
-// simple string enter with history
-class StringInteractive: public GCInteractive
-{
-public:
-    StringInteractive(std::string name):GCInteractive(name)
-        {};
-    ~StringInteractive()
-        {};
-    void charEntered(const wchar_t wc, int modifiers)
-        {
-            GCInteractive::charEntered(wc, modifiers);
-        }
-    void renderCompletion(float, float)
-        {
-
-        }
-};
 
 void PasswordInteractive::renderInteractive()
 {
@@ -1357,7 +1346,6 @@ void CelBodyInteractive::cancelInteractive()
     lastCompletionSel = Selection();
 }
 
-StringInteractive *stringInteractive;
 ListInteractive *listInteractive;
 PasswordInteractive *passwordInteractive;
 CelBodyInteractive *celBodyInteractive;
@@ -1467,7 +1455,7 @@ static int bindKey(GeekConsole *gc, int state, std::string value)
     {
     case 0:
     {
-        gc->setInteractive(listInteractive, "bindkey-space", "BindSpace", "Bind key: Select bindspace");
+        gc->setInteractive(listInteractive, "bindkey-space", _("BindSpace"), _("Bind key: Select bindspace"));
         std::vector<GeekBind *> *gbs = gc->getGeekBinds();
         std::vector<string> completion;
         for (std::vector<GeekBind *>::iterator it = gbs->begin();
@@ -1484,7 +1472,7 @@ static int bindKey(GeekConsole *gc, int state, std::string value)
     case 1:
     {
         bindspace = value;
-        gc->setInteractive(listInteractive, "bindkey-key", "Key bind", "Choose key bind, and parameters. Example: C-c g @param 1@");
+        gc->setInteractive(listInteractive, "bindkey-key", _("Key bind"), _("Choose key bind, and parameters. Example: C-c g @param 1@"));
         GeekBind *gb = gc->getGeekBind(value);
         if (gb)
         {
@@ -1495,7 +1483,7 @@ static int bindKey(GeekConsole *gc, int state, std::string value)
     }
     case 2:
         keybind = value;
-        gc->setInteractive(listInteractive, "exec-function", "Function", "Select function to bind " + keybind );
+        gc->setInteractive(listInteractive, "exec-function", _("Function"), _("Select function to bind ") + keybind );
         listInteractive->setCompletion(gc->getFunctionsNames());
         listInteractive->setMatchCompletion(true);
         break;
@@ -1518,7 +1506,7 @@ static int unBindKey(GeekConsole *gc, int state, std::string value)
     {
     case 0:
     {
-        gc->setInteractive(listInteractive, "bindkey-space", "BindSpace", "Unbind key: Select bindspace");
+        gc->setInteractive(listInteractive, "bindkey-space", _("BindSpace"), _("Unbind key: Select bindspace"));
         std::vector<GeekBind *> *gbs = gc->getGeekBinds();
         std::vector<string> completion;
         for (std::vector<GeekBind *>::iterator it = gbs->begin();
@@ -1536,7 +1524,7 @@ static int unBindKey(GeekConsole *gc, int state, std::string value)
     {
         bindspace = value;
         bindspace = value;
-        gc->setInteractive(listInteractive, "bindkey-key", "Un bind key", "Choose key bind");
+        gc->setInteractive(listInteractive, "bindkey-key", _("Un bind key"), _("Choose key bind"));
         GeekBind *gb = gc->getGeekBind(value);
         if (gb)
         {
@@ -1563,7 +1551,7 @@ static int describebindKey(GeekConsole *gc, int state, std::string value)
     {
     case 0:
     {
-        gc->setInteractive(listInteractive, "bindkey-space", "BindSpace", "Describe bind key: Select bindspace");
+        gc->setInteractive(listInteractive, "bindkey-space", _("BindSpace"), _("Describe bind key: Select bindspace"));
         std::vector<GeekBind *> *gbs = gc->getGeekBinds();
         std::vector<string> completion;
         for (std::vector<GeekBind *>::iterator it = gbs->begin();
@@ -1581,7 +1569,7 @@ static int describebindKey(GeekConsole *gc, int state, std::string value)
     {
         bindspace = value;
         bindspace = value;
-        gc->setInteractive(listInteractive, "bindkey-key", "Key bind for describing", "Choose key bind");
+        gc->setInteractive(listInteractive, "bindkey-key", _("Key bind for describing"), _("Choose key bind"));
         GeekBind *gb = gc->getGeekBind(value);
         if (gb)
         {
@@ -1606,22 +1594,24 @@ static int describebindKey(GeekConsole *gc, int state, std::string value)
     return state;
 }
 
-static bool isPropmtsInit = false;
+static bool isInteractsInit = false;
+
 void initGCInteractivesAndFunctions(GeekConsole *gc)
 {
-    if (!isPropmtsInit)
+    if (!isInteractsInit)
     {
-        stringInteractive = new StringInteractive("str");
         listInteractive = new ListInteractive("list");
         passwordInteractive = new PasswordInteractive("passwd");
         celBodyInteractive = new CelBodyInteractive("cbody", gc->getCelCore());
-        isPropmtsInit = true;
+        isInteractsInit = true;
     }
-    gc->registerAndBind("Global", "M-x",
+    gc->registerAndBind("", "M-x",
                         GCFunc(execFunction), "exec function");
-    gc->registerFunction(GCFunc(selectBody), "select object");
+    gc->registerAndBind("", "C-RET",
+                        GCFunc(selectBody), "select object");
     gc->registerFunction(GCFunc(gotoBody), "goto object");
-    gc->registerFunction(GCFunc(gotoBodyGC), "goto object gc");
+    gc->registerAndBind("", "C-c g",
+                        GCFunc(gotoBodyGC), "goto object gc");
     gc->registerFunction(GCFunc(bindKey), "bind");
     gc->registerFunction(GCFunc(unBindKey), "unbind");
     gc->registerFunction(GCFunc(describebindKey), "describe key");
@@ -1629,7 +1619,6 @@ void initGCInteractivesAndFunctions(GeekConsole *gc)
 
 void destroyGCInteractivesAndFunctions()
 {
-    delete stringInteractive;
     delete listInteractive;
     delete passwordInteractive;
     delete celBodyInteractive;

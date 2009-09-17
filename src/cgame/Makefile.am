@@ -19,7 +19,6 @@ bin_PROGRAMS = openspace_client
 noinst_HEADERS = \
 	cgame.h\
 	gamecore.h\
-	gkey.h \
 	ui.h \
 	videocapture.h \
 	geekconsole.h \
@@ -36,7 +35,7 @@ openspace_client_LDADD = \
 	$(SPICELIB) \
 	$(INTLLIBS) 
 
-openspace_client_SOURCES = gkey.c \
+openspace_client_SOURCES = \
 	agarmain.cpp \
 	gamecore.cpp \
 	ui_main.cpp \

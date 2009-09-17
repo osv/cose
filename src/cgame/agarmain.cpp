@@ -13,16 +13,12 @@
 #include "cgame.h"
 #include "ui.h"
 #include "ui_theme.h"
-#include "gkey.h"
 #include "geekconsole.h"
 
 using namespace std;
 
 GameCore *appGame = NULL;
 CelestiaCore *celAppCore = NULL;
-
-GeekBind *geekBindCel = NULL;
-GeekBind *geekBindGlobal = NULL;
 
 static bool fullscreen = false;
 static bool ready = false;
@@ -58,6 +54,30 @@ static void ToggleFullscreen();
 static bool handleSpecialKey(int key, int state, bool down);
 static void BG_Display(void);
 
+static void startTogVidRecord()
+{
+    if (celAppCore->isCaptureActive())
+    {
+        if (celAppCore->isRecording())
+        {
+            celAppCore->recordPause();
+            agMainMenuSticky=false;
+        }
+        else
+        {
+            celAppCore->recordBegin();
+            agMainMenuSticky=true;
+        }
+    }
+}
+
+static void stopVidRecord()
+{
+    if (celAppCore->isCaptureActive())
+        celAppCore->recordEnd();
+    agMainMenuSticky=false;
+}
+
 
 static void ToggleFullscreen()
 {
@@ -74,6 +94,16 @@ static void ToggleFullscreen()
     }
 }
 
+static void registerAndbindKeys()
+{
+    geekConsole->registerFunction(GCFunc(startTogVidRecord), "toggle video record");
+    geekConsole->registerFunction(GCFunc(stopVidRecord), "stop video record");
+    geekConsole->registerAndBind("", "M-RET", GCFunc(ToggleFullscreen), "toggle fullscreen");
+    geekConsole->bind("", "C-x C-g e @Earth", "select object");
+
+    GeekBind *geekBindCel = geekConsole->createGeekBind("Celestia");
+    geekBindCel->bind("C-x C-m", "quit");
+}
 
 static void BG_Display(void)
 {
@@ -840,23 +870,11 @@ int main(int argc, char* argv[])
 
     // init geek console
     geekConsole = new GeekConsole(celAppCore);
-	geekConsole->registerFunction(GCFunc(ToggleFullscreen), "toggle fullscreen");
-    // key binder
-    geekBindCel = geekConsole->createGeekBind("Celestia");
-    // geekBindGlobal->bind("C-c c", "foo");
-    geekBindGlobal = geekConsole->getGeekBind("Global");
-    geekBindGlobal->bind("C-x C-c", "quit");
-    geekBindCel->bind("C-x C-m", "quit");
-    geekBindGlobal->bind("C-x C-g e @Earth", "select object");
-    geekBindGlobal->bind("C-x s e @select object@Earth@EXEC@goto object gc@"
-                         "EXEC@quit", "exec function");
-    geekBindGlobal->bind("C-x s s @select object@Earth@", "exec function");
 
-    geekBindGlobal->bind("C-x g", "goto object gc");
-    geekBindGlobal->bind("e f @quit@", "exec function");
-    geekBindGlobal->bind("C-RET", "select object");
-    geekBindGlobal->bind("M-RET", "toggle fullscreen");
     initGCInteractivesAndFunctions(geekConsole);
+
+    registerAndbindKeys();
+
     UI::Init();
 
     if (celAppCore == NULL)

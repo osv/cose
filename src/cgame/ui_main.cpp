@@ -13,7 +13,6 @@
 #include <celutil/directory.h>
 #include <celutil/filetype.h>
 
-#include "gkey.h"
 #include "geekconsole.h"
 
 #include <stdlib.h>
@@ -247,28 +246,11 @@ namespace UI
                 CFG_BIND("cel.flags.galaxy.amb%d", galaxyLight, Float);
                 CFG_BIND("cel.flags.texres%d", textureRes, Int);
 
-                // sprintf(buff,"cel.flags.ren%d",i+1);
-                // renderCfgSets[i].renderFlagCustom = AG_GetUint32(agConfig, buff);
-                // AG_BindUint32(agConfig, buff, &renderCfgSets[i].renderFlagCustom);
-                // sprintf(buff,"cel.flags.lab%d",i+1);
-                // renderCfgSets[i].labelFlagCelCustom = AG_GetUint32(agConfig, buff);
-                // AG_BindUint32(agConfig, buff, &renderCfgSets[i].labelFlagCelCustom);
-                // sprintf(buff,"cel.flags.orb%d",i+1);
-                // renderCfgSets[i].orbitFlagCustom = AG_GetUint32(agConfig, buff);
-                // AG_BindUint32(agConfig, buff, &renderCfgSets[i].orbitFlagCustom);
-                // sprintf(buff,"cel.flags.amb%d",i+1);
-                // renderCfgSets[i].ambientLight = AG_GetFloat(agConfig, buff);
-                // AG_BindFloat(agConfig, buff, &renderCfgSets[i].ambientLight);
-                // sprintf(buff,"cel.flags.amb%d",i+1);
-                // renderCfgSets[i].ambientLight = AG_GetFloat(agConfig, buff);
-                // AG_BindFloat(agConfig, buff, &renderCfgSets[i].ambientLight);
-                // first run
                 if (!AG_GetBool(agConfig, "cel.flags.init"))
                 {
                     AG_EventArgs(&event, "%p:%i", &renderCfgSets[i], i);
                     resetCelCfg(&event);
                 }
-                Uint32 r = AG_GetUint32(agConfig, buff);
             }
             AG_SetBool(agConfig, "cel.flags.init", 1);
         }
@@ -492,12 +474,6 @@ namespace UI
                 geekConsole->bind("Global", buff,
                                   "set render preset");
             }
-
-            GK_BindGlobalKey(SDLK_1, KMOD_LCTRL, setCelRenderFlagsSets1);
-            GK_BindGlobalKey(SDLK_2, KMOD_LCTRL, setCelRenderFlagsSets2);
-            GK_BindGlobalKey(SDLK_3, KMOD_LCTRL, setCelRenderFlagsSets3);
-            GK_BindGlobalKey(SDLK_4, KMOD_LCTRL, setCelRenderFlagsSets4);
-            GK_BindGlobalKey(SDLK_5, KMOD_LCTRL, setCelRenderFlagsSets5);
         }
 
         int GCSetPreset(GeekConsole *gc, int state, std::string value)
@@ -1262,30 +1238,6 @@ namespace UI
         showUI = !showUI;
     }
 
-    void startTogVidRecord()
-    {
-        if (celAppCore->isCaptureActive())
-        {
-            if (celAppCore->isRecording())
-            {
-                celAppCore->recordPause();
-                agMainMenuSticky=false;
-            }
-            else
-            {
-                celAppCore->recordBegin();
-                agMainMenuSticky=true;
-            }
-        }
-    }
-
-    void stopVidRecord()
-    {
-        if (celAppCore->isCaptureActive())
-            celAppCore->recordEnd();
-        agMainMenuSticky=false;
-    }
-
     void riseUI()
     {
         BG_LostFocus();
@@ -1325,20 +1277,17 @@ namespace UI
 
         celAppCore->setContextMenuCallback(ContextMenu::menuContext);
         agTextAntialiasing = 1;
-        const char *space = "Global";
-        geekConsole->registerAndBind(space, "C-c k",
+        geekConsole->registerAndBind("", "C-x k",
                                      GCFunc(closeCurrentFocusedWindow), "close window");
-        geekConsole->registerAndBind(space, "C-o",
+        geekConsole->registerAndBind("", "C-o",
                                      GCFunc(toggleShowUI), "toggle ui");
-        geekConsole->registerAndBind(space, "C-x r r",
+        geekConsole->registerAndBind("", "C-x r r",
                                      GCFunc(RenderCfgDial::GCSetPreset), "set render preset");
-        // rebind some celestia key
-        GK_BindGlobalKey(SDLK_F11, KMOD_NONE, startTogVidRecord);
-        GK_BindGlobalKey(SDLK_F12, KMOD_NONE, stopVidRecord);
         // geekconsole
         geekConsole->registerFunction(CFunc(StarBrowserDialog::GCShowStarBrowser), "show solar browser");
         geekConsole->registerFunction(GCFunc(SolarSysBrowser::GCBrowseNearestSolarSystem), "show solar system browser");
         geekConsole->registerFunction(GCFunc(RenderCfgDial::GCShowCelPreference), "show preference");
-        geekConsole->registerFunction(GCFunc(quitFunction), "quit");
+        geekConsole->registerAndBind("", "C-x C-c",
+                                     GCFunc(quitFunction), "quit");
     }
 } //namespace UI

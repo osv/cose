@@ -63,6 +63,11 @@
   geekConsole->registerAndBind("Global", "C-x f",
   GCFunc(ToggleFullscreen), "toggle fullscreen");
 
+  you can use void bindspace that's mean "Global":
+
+  geekConsole->bind("", "M-RET",
+  "toggle fullscreen");
+
   For key bind there are some emacs's suggestion:
 
   M- alt (not true meta key)
