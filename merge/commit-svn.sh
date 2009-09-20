@@ -41,6 +41,8 @@ find src/  -depth 1 -name "*.h" -exec cp {}  ../../src \;
 
 cp -rf  src/tools ../../src/
 
+cp -rf thirdparty ../../
+
 echo $svn_new_rev > ../${svn_revision_file}
 echo "Done."
 

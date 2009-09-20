@@ -20,7 +20,9 @@
 #include <celutil/util.h>
 #include <celutil/debug.h>
 #include <celmath/intersect.h>
+#include "eigenport.h"
 
+using namespace Eigen;
 using namespace std;
 
 
@@ -30,7 +32,7 @@ const float DSO_DEFAULT_ABS_MAGNITUDE = -1000.0f;
 DeepSkyObject::DeepSkyObject() :
     catalogNumber(InvalidCatalogNumber),
     position(0, 0, 0),
-    orientation(1),
+    orientation(Quaternionf::Identity()),
     radius(1),
     absMag(DSO_DEFAULT_ABS_MAGNITUDE),
     infoURL(NULL),
@@ -48,22 +50,22 @@ void DeepSkyObject::setCatalogNumber(uint32 n)
     catalogNumber = n;
 }
 
-Point3d DeepSkyObject::getPosition() const
+Vector3d DeepSkyObject::getPosition() const
 {
     return position;
 }
 
-void DeepSkyObject::setPosition(const Point3d& p)
+void DeepSkyObject::setPosition(const Vector3d& p)
 {
     position = p;
 }
 
-Quatf DeepSkyObject::getOrientation() const
+Quaternionf DeepSkyObject::getOrientation() const
 {
     return orientation;
 }
 
-void DeepSkyObject::setOrientation(const Quatf& q)
+void DeepSkyObject::setOrientation(const Quaternionf& q)
 {
     orientation = q;
 }
@@ -178,10 +180,10 @@ void DeepSkyObject::hsv2rgb( float *r, float *g, float *b, float h, float s, flo
 bool DeepSkyObject::load(AssociativeArray* params, const string& resPath)
 {
     // Get position
-    Vec3d position(0.0, 0.0, 0.0);
+    Vector3d position(Vector3d::Zero());
     if (params->getVector("Position", position))
     {
-        setPosition(Point3d(position.x, position.y, position.z));
+        setPosition(position);
     }
     else
     {
@@ -191,19 +193,23 @@ bool DeepSkyObject::load(AssociativeArray* params, const string& resPath)
         params->getNumber("Distance", distance);
         params->getNumber("RA", RA);
         params->getNumber("Dec", dec);
-        Point3d p = astro::equatorialToCelestialCart(RA, dec, distance);
+        Vector3d p = astro::equatorialToCelestialCart(RA, dec, distance);
         setPosition(p);
     }
 
     // Get orientation
-    Vec3d axis(1.0, 0.0, 0.0);
+    Vector3d axis(Vector3d::UnitX());
     double angle = 0.0;
     params->getVector("Axis", axis);
     params->getNumber("Angle", angle);
+
+    setOrientation(Quaternionf(AngleAxisf((float) degToRad(angle), axis.cast<float>().normalized())));
+#if CELVEC
     Quatf q(1);
     q.setAxisAngle(Vec3f((float) axis.x, (float) axis.y, (float) axis.z),
                    (float) degToRad(angle));
-    setOrientation(q);
+    setOrientation(toEigen(q));
+#endif
 
     double radius = 1.0;
     params->getNumber("Radius", radius);

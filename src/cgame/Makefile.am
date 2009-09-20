@@ -1,9 +1,9 @@
 DEFS = -DCONFIG_DATA_DIR='"$(PKGDATADIR)"' -DLOCALEDIR='"$(datadir)/locale"' @DEFS@
-INCLUDES = -I.. -I../celestia
-
 AM_CXXFLAGS = @CXXFLAGS@ \
 	@CGAME_CXXFLAGS@ \
 	@AGAR_CXXFLAGS@ 
+
+INCLUDES = -I.. -I../celestia -I$(top_srcdir)/thirdparty/Eigen
 
 AM_CFLAGS = @CFLAGS@ \
 	@AGAR_CXXFLAGS@ 

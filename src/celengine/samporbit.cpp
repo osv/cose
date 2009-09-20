@@ -22,6 +22,7 @@
 #include <celengine/orbit.h>
 #include <celengine/samporbit.h>
 
+using namespace Eigen;
 using namespace std;
 
 // Trajectories are sampled adaptively for rendering.  MaxSampleInterval
@@ -42,8 +43,8 @@ template <typename T> struct Sample
 template <typename T> struct SampleXYZV
 {
     double t;
-    Vector3<T> position;
-    Vector3<T> velocity;
+    Eigen::Matrix<T, 3, 1> position;
+    Eigen::Matrix<T, 3, 1> velocity;
 };
 
 
@@ -69,8 +70,8 @@ public:
 
     double getPeriod() const;
     double getBoundingRadius() const;
-    Point3d computePosition(double jd) const;
-    Vec3d computeVelocity(double jd) const;
+    Vector3d computePosition(double jd) const;
+    Vector3d computeVelocity(double jd) const;
 
     bool isPeriodic() const;
     void getValidRange(double& begin, double& end) const;
@@ -140,9 +141,9 @@ template <typename T> double SampledOrbit<T>::getBoundingRadius() const
 }
 
 
-static Vec3d cubicInterpolate(const Vec3d& p0, const Vec3d& v0,
-                              const Vec3d& p1, const Vec3d& v1,
-                              double t)
+static Vector3d cubicInterpolate(const Vector3d& p0, const Vector3d& v0,
+                                 const Vector3d& p1, const Vector3d& v1,
+                                 double t)
 {
     return p0 + (((2.0 * (p0 - p1) + v1 + v0) * (t * t * t)) +
                  ((3.0 * (p1 - p0) - 2.0 * v0 - v1) * (t * t)) +
@@ -150,9 +151,9 @@ static Vec3d cubicInterpolate(const Vec3d& p0, const Vec3d& v0,
 }
 
 
-static Vec3d cubicInterpolateVelocity(const Vec3d& p0, const Vec3d& v0,
-                                      const Vec3d& p1, const Vec3d& v1,
-                                      double t)
+static Vector3d cubicInterpolateVelocity(const Vector3d& p0, const Vector3d& v0,
+                                         const Vector3d& p1, const Vector3d& v1,
+                                         double t)
 {
     return ((2.0 * (p0 - p1) + v1 + v0) * (3.0 * t * t)) +
            ((3.0 * (p1 - p0) - 2.0 * v0 - v1) * (2.0 * t)) +
@@ -160,16 +161,16 @@ static Vec3d cubicInterpolateVelocity(const Vec3d& p0, const Vec3d& v0,
 }
 
 
-template <typename T> Point3d SampledOrbit<T>::computePosition(double jd) const
+template <typename T> Vector3d SampledOrbit<T>::computePosition(double jd) const
 {
-    Vec3d pos;
+    Vector3d pos;
     if (samples.size() == 0)
     {
-        pos = Vec3d(0.0, 0.0, 0.0);
+        pos = Vector3d::Zero();
     }
     else if (samples.size() == 1)
     {
-        pos = Vec3d(samples[0].x, samples[1].y, samples[2].z);
+        pos = Vector3d(samples[0].x, samples[0].y, samples[0].z);
     }
     else
     {
@@ -192,7 +193,7 @@ template <typename T> Point3d SampledOrbit<T>::computePosition(double jd) const
 
         if (n == 0)
         {
-            pos = Vec3d(samples[n].x, samples[n].y, samples[n].z);
+            pos = Vector3d(samples[n].x, samples[n].y, samples[n].z);
         }
         else if (n < (int) samples.size())
         {
@@ -202,9 +203,9 @@ template <typename T> Point3d SampledOrbit<T>::computePosition(double jd) const
                 Sample<T> s1 = samples[n];
 
                 double t = (jd - s0.t) / (s1.t - s0.t);
-                pos = Vec3d(Mathd::lerp(t, (double) s0.x, (double) s1.x),
-                            Mathd::lerp(t, (double) s0.y, (double) s1.y),
-                            Mathd::lerp(t, (double) s0.z, (double) s1.z));
+                pos = Vector3d(Mathd::lerp(t, (double) s0.x, (double) s1.x),
+                               Mathd::lerp(t, (double) s0.y, (double) s1.y),
+                               Mathd::lerp(t, (double) s0.z, (double) s1.z));
             }
             else if (interpolation == TrajectoryInterpolationCubic)
             {
@@ -223,22 +224,22 @@ template <typename T> Point3d SampledOrbit<T>::computePosition(double jd) const
                 double h = s2.t - s1.t;
                 double ih = 1.0 / h;
                 double t = (jd - s1.t) * ih;
-                Vec3d p0(s1.x, s1.y, s1.z);
-                Vec3d p1(s2.x, s2.y, s2.z);
+                Vector3d p0(s1.x, s1.y, s1.z);
+                Vector3d p1(s2.x, s2.y, s2.z);
 
-                Vec3d v10((double) s1.x - (double) s0.x,
-                          (double) s1.y - (double) s0.y,
-                          (double) s1.z - (double) s0.z);
-                Vec3d v21((double) s2.x - (double) s1.x,
-                          (double) s2.y - (double) s1.y,
-                          (double) s2.z - (double) s1.z);
-                Vec3d v32((double) s3.x - (double) s2.x,
-                          (double) s3.y - (double) s2.y,
-                          (double) s3.z - (double) s2.z);
+                Vector3d v10((double) s1.x - (double) s0.x,
+                             (double) s1.y - (double) s0.y,
+                             (double) s1.z - (double) s0.z);
+                Vector3d v21((double) s2.x - (double) s1.x,
+                             (double) s2.y - (double) s1.y,
+                             (double) s2.z - (double) s1.z);
+                Vector3d v32((double) s3.x - (double) s2.x,
+                             (double) s3.y - (double) s2.y,
+                             (double) s3.z - (double) s2.z);
                 
                 // Estimate velocities by averaging the differences at adjacent spans
                 // (except at the end spans, where we just use a single velocity.)
-                Vec3d v0;
+                Vector3d v0;
                 if (n > 1)
                 {
                     v0 = v10 * (0.5 / (s1.t - s0.t)) + v21 * (0.5 * ih);
@@ -249,7 +250,7 @@ template <typename T> Point3d SampledOrbit<T>::computePosition(double jd) const
                     v0 = v21;
                 }
                 
-                Vec3d v1;
+                Vector3d v1;
                 if (n < (int) samples.size() - 1)
                 {
                     v1 = v21 * (0.5 * ih) + v32 * (0.5 / (s3.t - s2.t));
@@ -265,26 +266,26 @@ template <typename T> Point3d SampledOrbit<T>::computePosition(double jd) const
             else
             {
                 // Unknown interpolation type
-                pos = Vec3d(0.0, 0.0, 0.0);
+                pos = Vector3d::Zero();
             }
         }
         else
         {
-            pos = Vec3d(samples[n - 1].x, samples[n - 1].y, samples[n - 1].z);
+            pos = Vector3d(samples[n - 1].x, samples[n - 1].y, samples[n - 1].z);
         }
     }
 
     // Add correction for Celestia's coordinate system
-    return Point3d(pos.x, pos.z, -pos.y);
+    return Vector3d(pos.x(), pos.z(), -pos.y());
 }
 
 
-template <typename T> Vec3d SampledOrbit<T>::computeVelocity(double jd) const
+template <typename T> Vector3d SampledOrbit<T>::computeVelocity(double jd) const
 {
-    Vec3d vel;
+    Vector3d vel;
     if (samples.size() < 2)
     {
-        vel = Vec3d(0.0, 0.0, 0.0);
+        vel = Vector3d::Zero();
     }
     else
     {
@@ -306,7 +307,7 @@ template <typename T> Vec3d SampledOrbit<T>::computeVelocity(double jd) const
 
         if (n == 0)
         {
-            vel = Vec3d(0.0, 0.0, 0.0);
+            vel = Vector3d::Zero();
         }
         else if (n < (int) samples.size())
         {
@@ -316,7 +317,7 @@ template <typename T> Vec3d SampledOrbit<T>::computeVelocity(double jd) const
                 Sample<T> s1 = samples[n];
 
                 double dt = (s1.t - s0.t);
-                return (Vec3d(s1.x, s1.y, s1.z) - Vec3d(s0.x, s0.y, s0.z)) * (1.0 / dt);
+                return (Vector3d(s1.x, s1.y, s1.z) - Vector3d(s0.x, s0.y, s0.z)) * (1.0 / dt);
             }
             else if (interpolation == TrajectoryInterpolationCubic)
             {
@@ -335,22 +336,22 @@ template <typename T> Vec3d SampledOrbit<T>::computeVelocity(double jd) const
                 double h = s2.t - s1.t;
                 double ih = 1.0 / h;
                 double t = (jd - s1.t) * ih;
-                Vec3d p0(s1.x, s1.y, s1.z);
-                Vec3d p1(s2.x, s2.y, s2.z);
+                Vector3d p0(s1.x, s1.y, s1.z);
+                Vector3d p1(s2.x, s2.y, s2.z);
 
-                Vec3d v10((double) s1.x - (double) s0.x,
-                          (double) s1.y - (double) s0.y,
-                          (double) s1.z - (double) s0.z);
-                Vec3d v21((double) s2.x - (double) s1.x,
-                          (double) s2.y - (double) s1.y,
-                          (double) s2.z - (double) s1.z);
-                Vec3d v32((double) s3.x - (double) s2.x,
-                          (double) s3.y - (double) s2.y,
-                          (double) s3.z - (double) s2.z);
+                Vector3d v10((double) s1.x - (double) s0.x,
+                             (double) s1.y - (double) s0.y,
+                             (double) s1.z - (double) s0.z);
+                Vector3d v21((double) s2.x - (double) s1.x,
+                             (double) s2.y - (double) s1.y,
+                             (double) s2.z - (double) s1.z);
+                Vector3d v32((double) s3.x - (double) s2.x,
+                             (double) s3.y - (double) s2.y,
+                             (double) s3.z - (double) s2.z);
                 
                 // Estimate velocities by averaging the differences at adjacent spans
                 // (except at the end spans, where we just use a single velocity.)
-                Vec3d v0;
+                Vector3d v0;
                 if (n > 1)
                 {
                     v0 = v10 * (0.5 / (s1.t - s0.t)) + v21 * (0.5 * ih);
@@ -361,7 +362,7 @@ template <typename T> Vec3d SampledOrbit<T>::computeVelocity(double jd) const
                     v0 = v21;
                 }
                 
-                Vec3d v1;
+                Vector3d v1;
                 if (n < (int) samples.size() - 1)
                 {
                     v1 = v21 * (0.5 * ih) + v32 * (0.5 / (s3.t - s2.t));
@@ -378,61 +379,51 @@ template <typename T> Vec3d SampledOrbit<T>::computeVelocity(double jd) const
             else
             {
                 // Unknown interpolation type
-                vel = Vec3d(0.0, 0.0, 0.0);
+                vel = Vector3d::Zero();
             }
         }
         else
         {
-            vel = Vec3d(0.0, 0.0, 0.0);
+            vel = Vector3d::Zero();
         }
     }
 
-    return Vec3d(vel.x, vel.z, -vel.y);
+    return Vector3d(vel.x(), vel.z(), -vel.y());
 }
 
 
-template <typename T> void SampledOrbit<T>::sample(double start, double t, int,
+template <typename T> void SampledOrbit<T>::sample(double /* start */, double /* t */, int,
                                                    OrbitSampleProc& proc) const
 {
-    double cosThresholdAngle = cos(degToRad(SampleThresholdAngle));
-    double dt = MinSampleInterval;
-    double end = start + t;
-    double current = start;
-
-    proc.sample(current, positionAtTime(current));
-
-    while (current < end)
+    for (unsigned int i = 0; i < samples.size(); i++)
     {
-        double dt2 = dt;
+        Vector3d v;
+        Vector3d p(samples[i].x, samples[i].y, samples[i].z);
 
-        Point3d goodpt;
-        double gooddt = dt;
-        Point3d pos0 = positionAtTime(current);
-        goodpt = positionAtTime(current + dt2);
-        while (1)
+        if (samples.size() == 1)
         {
-            Point3d pos1 = positionAtTime(current + dt2);
-            Point3d pos2 = positionAtTime(current + dt2 * 2.0);
-            Vec3d vec1 = pos1 - pos0;
-            Vec3d vec2 = pos2 - pos0;
-
-            vec1.normalize();
-            vec2.normalize();
-            double dot = vec1 * vec2;
-
-            if (dot > cosThresholdAngle && dt2 < MaxSampleInterval)
-            {
-                gooddt = dt2;
-                goodpt = pos1;
-                dt2 *= 2.0;
-            }
-            else
-            {
-                proc.sample(current + gooddt, goodpt);
-                break;
-            }
+            v = Vector3d::Zero();
         }
-        current += gooddt;
+        else if (i == 0)
+        {
+            double dt = samples[i + 1].t - samples[i].t;
+            v = (Vector3d(samples[i + 1].x, samples[i + 1].y, samples[i + 1].z) - p) / dt;
+        }
+        else if (i == samples.size() - 1)
+        {
+            double dt = samples[i].t - samples[i - 1].t;
+            v = (p - Vector3d(samples[i - 1].x, samples[i - 1].y, samples[i - 1].z)) / dt;
+        }
+        else
+        {
+            double dt0 = samples[i + 1].t - samples[i].t;
+            Vector3d v0 = (Vector3d(samples[i + 1].x, samples[i + 1].y, samples[i + 1].z) - p) / dt0;
+            double dt1 = samples[i].t - samples[i - 1].t;
+            Vector3d v1 = (p - Vector3d(samples[i - 1].x, samples[i - 1].y, samples[i - 1].z)) / dt1;
+            v = (v0 + v1) * 0.5;
+        }
+
+        proc.sample(samples[i].t, Vector3d(p.x(), p.z(), -p.y()), Vector3d(v.x(), v.z(), -v.y()));
     }
 }
 
@@ -444,13 +435,13 @@ public:
     SampledOrbitXYZV(TrajectoryInterpolation);
     virtual ~SampledOrbitXYZV();
 
-    void addSample(double t, const Vec3d& position, const Vec3d& velocity);
+    void addSample(double t, const Vector3d& position, const Vector3d& velocity);
     void setPeriod();
 
     double getPeriod() const;
     double getBoundingRadius() const;
-    Point3d computePosition(double jd) const;
-    Vec3d computeVelocity(double jd) const;
+    Vector3d computePosition(double jd) const;
+    Vector3d computeVelocity(double jd) const;
 
     bool isPeriodic() const;
     void getValidRange(double& begin, double& end) const;
@@ -484,16 +475,18 @@ template <typename T> SampledOrbitXYZV<T>::~SampledOrbitXYZV()
 // Add a new sample to the trajectory:
 //    Position in km
 //    Velocity in km/Julian day
-template <typename T> void SampledOrbitXYZV<T>::addSample(double t, const Vec3d& position, const Vec3d& velocity)
+template <typename T> void SampledOrbitXYZV<T>::addSample(double t, const Vector3d& position, const Vector3d& velocity)
 {
-    double r = position.length();
+    double r = position.norm();
     if (r > boundingRadius)
         boundingRadius = r;
 
     SampleXYZV<T> samp;
     samp.t = t;
-    samp.position = Vector3<T>((T) position.x, (T) position.y, (T) position.z);
-    samp.velocity = Vector3<T>((T) velocity.x, (T) velocity.y, (T) velocity.z);
+    //samp.position = Matrix<T, 3, 1>((T) position.x, (T) position.y, (T) position.z);
+    //samp.velocity = Matrix<T, 3, 1>((T) velocity.x, (T) velocity.y, (T) velocity.z);
+    samp.position = position.cast<T>();
+    samp.velocity = velocity.cast<T>();
     samples.push_back(samp);
 }
 
@@ -522,16 +515,16 @@ template <typename T> double SampledOrbitXYZV<T>::getBoundingRadius() const
 }
 
 
-template <typename T> Point3d SampledOrbitXYZV<T>::computePosition(double jd) const
+template <typename T> Vector3d SampledOrbitXYZV<T>::computePosition(double jd) const
 {
-    Vec3d pos;
+    Vector3d pos;
     if (samples.size() == 0)
     {
-        pos = Vec3d(0.0, 0.0, 0.0);
+        pos = Vector3d::Zero();
     }
     else if (samples.size() == 1)
     {
-        pos = Vec3d(samples[0].position.x, samples[1].position.y, samples[2].position.z);
+        pos = Vector3d(samples[0].position.x(), samples[1].position.y(), samples[2].position.z());
     }
     else
     {
@@ -554,7 +547,7 @@ template <typename T> Point3d SampledOrbitXYZV<T>::computePosition(double jd) co
 
         if (n == 0)
         {
-            pos = Vec3d(samples[n].position.x, samples[n].position.y, samples[n].position.z);
+            pos = Vector3d(samples[n].position.x(), samples[n].position.y(), samples[n].position.z());
         }
         else if (n < (int) samples.size())
         {
@@ -565,9 +558,9 @@ template <typename T> Point3d SampledOrbitXYZV<T>::computePosition(double jd) co
             {
                 double t = (jd - s0.t) / (s1.t - s0.t);
 
-                pos = Vec3d(Mathd::lerp(t, (double) s0.position.x, (double) s1.position.x),
-                            Mathd::lerp(t, (double) s0.position.y, (double) s1.position.y),
-                            Mathd::lerp(t, (double) s0.position.z, (double) s1.position.z));
+                Vector3d p0(s0.position.x(), s0.position.y(), s0.position.z());
+                Vector3d p1(s1.position.x(), s1.position.y(), s1.position.z());
+                pos = p0 + t * (p1 - p0);
             }
             else if (interpolation == TrajectoryInterpolationCubic)
             {
@@ -575,35 +568,34 @@ template <typename T> Point3d SampledOrbitXYZV<T>::computePosition(double jd) co
                 double ih = 1.0 / h;
                 double t = (jd - s0.t) * ih;
 
-                Vec3d p0(s0.position.x, s0.position.y, s0.position.z);
-                Vec3d v0(s0.velocity.x, s0.velocity.y, s0.velocity.z);
-                Vec3d p1(s1.position.x, s1.position.y, s1.position.z);
-                Vec3d v1(s1.velocity.x, s1.velocity.y, s1.velocity.z);
-
+                Vector3d p0(s0.position.x(), s0.position.y(), s0.position.z());
+                Vector3d v0(s0.velocity.x(), s0.velocity.y(), s0.velocity.z());
+                Vector3d p1(s1.position.x(), s1.position.y(), s1.position.z());
+                Vector3d v1(s1.velocity.x(), s1.velocity.y(), s1.velocity.z());
                 pos = cubicInterpolate(p0, v0 * h, p1, v1 * h, t);
             }
             else
             {
                 // Unknown interpolation type
-                pos = Vec3d(0.0, 0.0, 0.0);
+                pos = Vector3d::Zero();
             }
         }
         else
         {
-            pos = Vec3d(samples[n - 1].position.x, samples[n - 1].position.y, samples[n - 1].position.z);
+            pos = Vector3d(samples[n - 1].position.x(), samples[n - 1].position.y(), samples[n - 1].position.z());
         }
     }
 
     // Add correction for Celestia's coordinate system
-    return Point3d(pos.x, pos.z, -pos.y);
+    return Vector3d(pos.x(), pos.z(), -pos.y());
 }
 
 
 // Velocity is computed as the derivative of the interpolating function
 // for position.
-template <typename T> Vec3d SampledOrbitXYZV<T>::computeVelocity(double jd) const
+template <typename T> Vector3d SampledOrbitXYZV<T>::computeVelocity(double jd) const
 {
-    Vec3d vel(0.0, 0.0, 0.0);
+    Vector3d vel(Vector3d::Zero());
 
     if (samples.size() >= 2)
     {
@@ -632,9 +624,9 @@ template <typename T> Vec3d SampledOrbitXYZV<T>::computeVelocity(double jd) cons
             if (interpolation == TrajectoryInterpolationLinear)
             {
                 double h = s1.t - s0.t;
-                vel = Vec3d(s1.position.x - s0.position.x,
-                            s1.position.y - s0.position.y,
-                            s1.position.z - s0.position.z) * (1.0 / h) * astro::daysToSecs(1.0);
+                vel = Vector3d(s1.position.x() - s0.position.x(),
+                               s1.position.y() - s0.position.y(),
+                               s1.position.z() - s0.position.z()) * (1.0 / h) * astro::daysToSecs(1.0);
             }
             else if (interpolation == TrajectoryInterpolationCubic)
             {
@@ -642,73 +634,35 @@ template <typename T> Vec3d SampledOrbitXYZV<T>::computeVelocity(double jd) cons
                 double ih = 1.0 / h;
                 double t = (jd - s0.t) * ih;
 
-                Vec3d p0(s0.position.x, s0.position.y, s0.position.z);
-                Vec3d p1(s1.position.x, s1.position.y, s1.position.z);
-                Vec3d v0(s0.velocity.x, s0.velocity.y, s0.velocity.z);
-                Vec3d v1(s1.velocity.x, s1.velocity.y, s1.velocity.z);
+                Vector3d p0(s0.position.x(), s0.position.y(), s0.position.z());
+                Vector3d p1(s1.position.x(), s1.position.y(), s1.position.z());
+                Vector3d v0(s0.velocity.x(), s0.velocity.y(), s0.velocity.z());
+                Vector3d v1(s1.velocity.x(), s1.velocity.y(), s1.velocity.z());
 
                 vel = cubicInterpolateVelocity(p0, v0 * h, p1, v1 * h, t) * ih;
             }
             else
             {
                 // Unknown interpolation type
-                vel = Vec3d(0.0, 0.0, 0.0);
+                vel = Vector3d::Zero();
             }
         }
     }
 
     // Add correction for Celestia's coordinate system
-    return Vec3d(vel.x, vel.z, -vel.y);
+    return Vector3d(vel.x(), vel.z(), -vel.y());
 }
 
 
-template <typename T> void SampledOrbitXYZV<T>::sample(double start, double t, int,
+template <typename T> void SampledOrbitXYZV<T>::sample(double /* start */, double /* t */, int,
                                                        OrbitSampleProc& proc) const
 {
-    double cosThresholdAngle = cos(degToRad(SampleThresholdAngle));
-    double dt = MinSampleInterval;
-    double end = start + t;
-    double current = start;
-
-    proc.sample(current, positionAtTime(current));
-
-    while (current < end)
+    for (typename vector<SampleXYZV<T> >::const_iterator iter = samples.begin();
+         iter != samples.end(); iter++)
     {
-        double dt2 = dt;
-
-        Point3d goodpt;
-        double gooddt = dt;
-        Point3d pos0 = positionAtTime(current);
-        goodpt = positionAtTime(current + dt2);
-        while (1)
-        {
-            Point3d pos1 = positionAtTime(current + dt2);
-            Point3d pos2 = positionAtTime(current + dt2 * 2.0);
-            Vec3d vec1 = pos1 - pos0;
-            Vec3d vec2 = pos2 - pos0;
-
-            vec1.normalize();
-            vec2.normalize();
-            double dot = vec1 * vec2;
-
-            if (dot > 1.0)
-                dot = 1.0;
-            else if (dot < -1.0)
-                dot = -1.0;
-
-            if (dot > cosThresholdAngle && dt2 < MaxSampleInterval)
-            {
-                gooddt = dt2;
-                goodpt = pos1;
-                dt2 *= 2.0;
-            }
-            else
-            {
-                proc.sample(current + gooddt, goodpt);
-                break;
-            }
-        }
-        current += gooddt;
+        proc.sample(iter->t,
+                    Vector3d(iter->position.x(), iter->position.z(), -iter->position.y()),
+                    Vector3d(iter->velocity.x(), iter->velocity.z(), -iter->velocity.y()));
     }
 }
 
@@ -843,16 +797,16 @@ template <typename T> SampledOrbitXYZV<T>* LoadSampledOrbitXYZV(const string& fi
     while (in.good())
     {
         double tdb = 0.0;
-        Vec3d position;
-        Vec3d velocity;
+        Vector3d position;
+        Vector3d velocity;
 
         in >> tdb;
-        in >> position.x;
-        in >> position.y;
-        in >> position.z;
-        in >> velocity.x;
-        in >> velocity.y;
-        in >> velocity.z;
+        in >> position.x();
+        in >> position.y();
+        in >> position.z();
+        in >> velocity.x();
+        in >> velocity.y();
+        in >> velocity.z();
 
         // Convert velocities from km/sec to km/Julian day
         velocity = velocity * astro::daysToSecs(1.0);

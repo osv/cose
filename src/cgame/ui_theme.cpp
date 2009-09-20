@@ -1,9 +1,10 @@
 #include <agar/core.h>
 #include <agar/gui.h>
-#include <agar/gui/opengl.h>
 
 #include "ui_theme.h"
 #include "ui.h"
+
+#include <agar/gui/opengl.h>
 
 namespace UI{
 

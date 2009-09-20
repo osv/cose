@@ -11,7 +11,7 @@
 #include <cstdarg>
 #include <cstdio>
 #include <celutil/utf8.h>
-#include "gl.h"
+#include <GL/glew.h>
 #include "vecgl.h"
 #include "overlay.h"
 
@@ -25,7 +25,9 @@ Overlay::Overlay() :
     font(NULL),
     useTexture(false),
     fontChanged(false),
-    textBlock(0)
+    textBlock(0),
+    xoffset(0.0f),
+    yoffset(0.0f)
 {
     sbuf.setOverlay(this);
 }
@@ -90,6 +92,7 @@ void Overlay::endText()
     if (textBlock > 0)
     {
         textBlock--;
+		xoffset = 0.0f;
         glPopMatrix();
     }
 }
@@ -114,11 +117,13 @@ void Overlay::print(wchar_t c)
             {
                 glPopMatrix();
                 glTranslatef(0.0f, (float) -(1 + font->getHeight()), 0.0f);
+                xoffset = 0.0f;
                 glPushMatrix();
             }
             break;
         default:
-            font->render(c);
+            font->render(c, xoffset, yoffset);
+            xoffset += font->getAdvance(c);
             break;
         }
     }
@@ -144,11 +149,13 @@ void Overlay::print(char c)
             {
                 glPopMatrix();
                 glTranslatef(0.0f, (float) -(1 + font->getHeight()), 0.0f);
+                xoffset = 0.0f;
                 glPushMatrix();
             }
             break;
         default:
-            font->render(c);
+            font->render(c, xoffset, yoffset);
+            xoffset += font->getAdvance(c);
             break;
         }
     }
@@ -156,10 +163,6 @@ void Overlay::print(char c)
 
 void Overlay::print(const char* s)
 {
-#if 0
-    while (*s != '\0')
-        print(*s++);
-#else
     int length = strlen(s);
     bool validChar = true;
     int i = 0;
@@ -170,7 +173,6 @@ void Overlay::print(const char* s)
         i += UTF8EncodedSize(ch);
         print(ch);
     }
-#endif    
 }
 
 

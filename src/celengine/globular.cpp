@@ -23,11 +23,14 @@
 #include "globular.h"
 #include <celutil/util.h>
 #include <celutil/debug.h>
-#include "gl.h"
+#include <GL/glew.h>
 #include "vecgl.h"
 #include "render.h"
 #include "texture.h"
 #include <math.h>
+#include "eigenport.h"
+
+using namespace Eigen;
 using namespace std;
 
 static int cntrTexWidth = 512, cntrTexHeight = 512; 
@@ -230,7 +233,7 @@ float Globular::getHalfMassRadius() const
 	// Aproximation to the half-mass radius r_h [ly]
 	// (~ 20% accuracy) 
     
-	return std::tan(degToRad(r_c / 60.0f)) * (float) getPosition().distanceFromOrigin() *                                 pow(10.0f, 0.6f * c - 0.4f); 	  
+	return std::tan(degToRad(r_c / 60.0f)) * (float) getPosition().norm() * pow(10.0f, 0.6f * c - 0.4f); 	  
 }
 
 float Globular::getConcentration() const
@@ -283,14 +286,14 @@ bool Globular::pick(const Ray3d& ray,
                         getRadius() * (form->scale.y + RADIUS_CORRECTION),
                         getRadius() * (form->scale.z + RADIUS_CORRECTION));
 
-    Quatf qf= getOrientation();
-    Quatd qd(qf.w, qf.x, qf.y, qf.z);
-
-    return testIntersection(Ray3d(Point3d() + (ray.origin - getPosition()), ray.direction) * conjugate(qd).toMatrix3(),
+    Eigen::Vector3d p = getPosition();
+    return testIntersection(Ray3d(ray.origin - p, ray.direction).transform(getOrientation().cast<double>().toRotationMatrix()),
                             Ellipsoidd(ellipsoidAxes),
                             distanceToPicker,
                             cosAngleToBoundCenter);
 }
+
+
 bool Globular::load(AssociativeArray* params, const string& resPath)
 {
     // Load the basic DSO parameters first
@@ -317,12 +320,12 @@ bool Globular::load(AssociativeArray* params, const string& resPath)
 
 
 void Globular::render(const GLContext& context,
-                    const Vec3f& offset,
-                    const Quatf& viewerOrientation,
+                    const Vector3f& offset,
+                    const Quaternionf& viewerOrientation,
                     float brightness,
                     float pixelSize)
 {					        
-	renderGlobularPointSprites(context, offset, viewerOrientation, brightness, pixelSize);
+    renderGlobularPointSprites(context, fromEigen(offset), fromEigen(viewerOrientation), brightness, pixelSize);
 }
 
 
@@ -345,8 +348,8 @@ void Globular::renderGlobularPointSprites(const GLContext&,
 	
 	/*
      * Is the globular's apparent size big enough to
-     * be noticeable on screen? If it's not, break right here to
-     * avoid all the overhead of the matrix transformations and
+     * be noticeable on screen? If it's not, break right here to
+     * avoid all the overhead of the matrix transformations and
 	 * GL state changes: 
 	 */
 	
@@ -394,7 +397,7 @@ void Globular::renderGlobularPointSprites(const GLContext&,
 	
 	float tidalSize = 2 * tidalRadius;
 	Mat3f m =
-        Mat3f::scaling(form->scale) * getOrientation().toMatrix3() * 
+        Mat3f::scaling(form->scale) * fromEigen(getOrientation()).toMatrix3() * 
 		Mat3f::scaling(tidalSize);
 				     
     vector<GBlob>* points = form->gblobs;
@@ -510,7 +513,7 @@ void Globular::recomputeTidalRadius()
 	// Convert the core radius from arcminutes to light years
 	// Compute the tidal radius in light years
         
-	float coreRadiusLy = std::tan(degToRad(r_c / 60.0f)) * (float) getPosition().distanceFromOrigin();
+	float coreRadiusLy = std::tan(degToRad(r_c / 60.0f)) * (float) getPosition().norm();
     tidalRadius = coreRadiusLy * std::pow(10.0f, c);     
 }
 

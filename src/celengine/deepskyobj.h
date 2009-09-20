@@ -14,10 +14,11 @@
 #include <string>
 #include <iostream>
 #include <celutil/basictypes.h>
-#include <celmath/quaternion.h>
 #include <celmath/ray.h>
 #include <celengine/glcontext.h>
 #include <celengine/parser.h>
+#include <Eigen/Core>
+#include <Eigen/Geometry>
 
 extern const float DSO_DEFAULT_ABS_MAGNITUDE;
 
@@ -29,6 +30,8 @@ class OpenCluster;
 class DeepSkyObject
 {
  public:
+    EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+
     DeepSkyObject();
     virtual ~DeepSkyObject();
 
@@ -38,8 +41,8 @@ class DeepSkyObject
     }
     void setCatalogNumber(uint32);
 
-    Point3d getPosition() const;
-    void setPosition(const Point3d&);
+    Eigen::Vector3d getPosition() const;
+    void setPosition(const Eigen::Vector3d&);
     
 	static void hsv2rgb( float*, float*, float*, float, float, float);
     
@@ -47,8 +50,8 @@ class DeepSkyObject
     virtual void setType(const std::string&) = 0;
     virtual size_t getDescription(char* buf, size_t bufLength) const;
 
-    Quatf getOrientation() const;
-    void setOrientation(const Quatf&);
+    Eigen::Quaternionf getOrientation() const;
+    void setOrientation(const Eigen::Quaternionf&);
 
     /*! Return the radius of a bounding sphere large enough to contain the object.
      *  For correct rendering, all of the geometry must fit within this sphere radius.
@@ -83,8 +86,8 @@ class DeepSkyObject
                       double& cosAngleToBoundCenter) const = 0;
     virtual bool load(AssociativeArray*, const std::string& resPath);
     virtual void render(const GLContext& context,
-                        const Vec3f& offset,
-                        const Quatf& viewerOrientation,
+                        const Eigen::Vector3f& offset,
+                        const Eigen::Quaternionf& viewerOrientation,
                         float brightness,
                         float pixelSize) = 0;
 
@@ -98,8 +101,8 @@ class DeepSkyObject
 
  private:
     uint32       catalogNumber;
-    Point3d      position;
-    Quatf        orientation;
+    Eigen::Vector3d position;
+    Eigen::Quaternionf orientation;
     float        radius;
     float        absMag;
     std::string* infoURL;

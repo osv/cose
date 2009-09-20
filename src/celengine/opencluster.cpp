@@ -16,10 +16,11 @@
 #include "astro.h"
 #include "opencluster.h"
 #include "meshmanager.h"
-#include "gl.h"
+#include <GL/glew.h>
 #include "vecgl.h"
 #include "render.h"
 
+using namespace Eigen;
 using namespace std;
 
 
@@ -68,8 +69,8 @@ bool OpenCluster::load(AssociativeArray* params, const string& resPath)
 
 
 void OpenCluster::render(const GLContext&,
-                         const Vec3f&,
-                         const Quatf&,
+                         const Vector3f&,
+                         const Quaternionf&,
                          float,
                          float)
 {

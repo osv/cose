@@ -1,5 +1,6 @@
 noinst_LIBRARIES = libcelmath.a
 noinst_HEADERS = \
+	geomutil.h \
 	perlin.h \
 	aabox.h \
 	ray.h \
@@ -20,14 +21,14 @@ noinst_DATA = $(dosstuff)
 
 EXTRA_DIST = $(noinst_DATA)
 
-INCLUDES = -I..
+AM_CXXFLAGS = @CXXFLAGS@\
+	@CELESTIA_CXXFLAGS@
+
+INCLUDES = -I.. -I$(top_srcdir)/thirdparty/Eigen
 
 libcelmath_a_SOURCES = \
 	frustum.cpp \
 	perlin.cpp
-
-AM_CXXFLAGS = @CXXFLAGS@\
-	@CELESTIA_CXXFLAGS@
 
 LIBS = @LIBS@ \
 	@CELESTIA_LIBS@

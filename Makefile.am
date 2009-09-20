@@ -36,4 +36,16 @@ SUBDIRS = src po locale merge
 
 MAINTAINERCLEANFILES = subdirs configure.in 
 
+NONAUTO = thirdparty
+
+dist-hook:
+	( \
+	  cd $(srcdir) && \
+	  ( \
+	    for dir in $(NONAUTO) ; do \
+		find $$dir -depth -print | egrep -v '(~$$)|(/CVS)|(/\.svn)|(/\.#)|(/\.deps)' \
+	        | cpio -pdum $(distdir) 2>/dev/null ; \
+	    done \
+	  ) \
+	)
 

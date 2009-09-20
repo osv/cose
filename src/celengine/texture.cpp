@@ -35,20 +35,14 @@
 #endif /* ! TARGET_OS_MAC */
 #endif /* ! _WIN32 */
 
-#include <celmath/vecmath.h>
 #include <celutil/filetype.h>
 #include <celutil/debug.h>
 #include <celutil/util.h>
 
-#include "gl.h"
-#include "glext.h"
+#include <GL/glew.h>
 #include "celestia.h"
 
-// OpenGL 1.2 stuff missing from Windows headers . . . probably should be
-// moved into glext.h
-#ifndef GL_TEXTURE_MAX_LEVEL
-#define GL_TEXTURE_MAX_LEVEL 0x813D
-#endif
+#include <Eigen/Core>
 
 #ifdef JPEG_SUPPORT
 
@@ -90,6 +84,7 @@ extern "C" {
 #include "texture.h"
 #include "virtualtex.h"
 
+using namespace Eigen;
 using namespace std;
 
 static bool texCapsInitialized = false;
@@ -103,6 +98,7 @@ struct TextureCaps
     bool maxLevelSupported;
     GLint maxTextureSize;
     bool nonPow2Supported;
+    GLint preferredAnisotropy;
 };
 
 static TextureCaps texCaps;
@@ -136,20 +132,29 @@ static const TextureCaps& GetTextureCaps()
     if (!texCapsInitialized)
     {
         texCapsInitialized = true;
-        texCaps.compressionSupported = ExtensionSupported("GL_ARB_texture_compression");
-        if (texCaps.compressionSupported)
-            InitExtension("GL_ARB_texture_compression");
+        texCaps.compressionSupported = (GLEW_ARB_texture_compression == GL_TRUE);
 
 #ifdef GL_VERSION_1_2
         texCaps.clampToEdgeSupported = true;
 #else
         texCaps.clampToEdgeSupported = ExtensionSupported("GL_EXT_texture_edge_clamp");
 #endif // GL_VERSION_1_2
-        texCaps.clampToBorderSupported = ExtensionSupported("GL_ARB_texture_border_clamp");
-        texCaps.autoMipMapSupported = ExtensionSupported("GL_SGIS_generate_mipmap");
+        texCaps.clampToBorderSupported = (GLEW_ARB_texture_border_clamp == GL_TRUE);
+        texCaps.autoMipMapSupported = (GLEW_SGIS_generate_mipmap == GL_TRUE);
         texCaps.maxLevelSupported = testMaxLevel();
         glGetIntegerv(GL_MAX_TEXTURE_SIZE, &texCaps.maxTextureSize);
-        texCaps.nonPow2Supported = ExtensionSupported("GL_ARB_texture_non_power_of_two");
+        texCaps.nonPow2Supported = (GLEW_ARB_texture_non_power_of_two == GL_TRUE);
+
+        texCaps.preferredAnisotropy = 1;
+        if (GLEW_EXT_texture_filter_anisotropic)
+        {
+            GLint maxAnisotropy = 1;
+            glGetIntegerv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &maxAnisotropy);
+
+            // Cap the preferred level texture anisotropy to 8; eventually, we should allow
+            // the user to control this.
+            texCaps.preferredAnisotropy = min(8, maxAnisotropy);
+        }
     }
 
     return texCaps;
@@ -270,7 +275,7 @@ static void LoadMipmapSet(Image& img, GLenum target)
 
         if (img.isCompressed())
         {
-            glx::glCompressedTexImage2DARB(target,
+            glCompressedTexImage2DARB(target,
                                            mip,
                                            internalFormat,
                                            mipWidth, mipHeight,
@@ -300,7 +305,7 @@ static void LoadMiplessTexture(Image& img, GLenum target)
 
     if (img.isCompressed())
     {
-        glx::glCompressedTexImage2DARB(target,
+        glCompressedTexImage2DARB(target,
                                        0,
                                        internalFormat,
                                        img.getWidth(), img.getHeight(),
@@ -451,6 +456,11 @@ ImageTexture::ImageTexture(Image& img,
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
                     mipmap ? GL_LINEAR_MIPMAP_LINEAR : GL_LINEAR);
 
+    if (GLEW_EXT_texture_filter_anisotropic && texCaps.preferredAnisotropy > 1)
+    {
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, texCaps.preferredAnisotropy);
+    }
+    
     if (mipMapMode == AutoMipMaps)
         glTexParameteri(GL_TEXTURE_2D, GL_GENERATE_MIPMAP_SGIS, GL_TRUE);
 
@@ -583,6 +593,10 @@ TiledTexture::TiledTexture(Image& img,
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
                             mipmap ? GL_LINEAR_MIPMAP_LINEAR : GL_LINEAR);
+            if (GLEW_EXT_texture_filter_anisotropic && texCaps.preferredAnisotropy > 1)
+            {
+                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, texCaps.preferredAnisotropy);
+            }
 
             // Copy texels from the subtexture area to the pixel buffer.  This
             // is straightforward for normal textures, but an immense headache
@@ -891,28 +905,28 @@ Texture* CreateProceduralTexture(int width, int height,
 
 // Helper function for CreateProceduralCubeMap; return the normalized
 // vector pointing to (s, t) on the specified face.
-static Vec3f cubeVector(int face, float s, float t)
+static Vector3f cubeVector(int face, float s, float t)
 {
-    Vec3f v;
+    Vector3f v;
     switch (face)
     {
     case 0:
-        v = Vec3f(1.0f, -t, -s);
+        v = Vector3f(1.0f, -t, -s);
         break;
     case 1:
-        v = Vec3f(-1.0f, -t, s);
+        v = Vector3f(-1.0f, -t, s);
         break;
     case 2:
-        v = Vec3f(s, 1.0f, t);
+        v = Vector3f(s, 1.0f, t);
         break;
     case 3:
-        v = Vec3f(s, -1.0f, -t);
+        v = Vector3f(s, -1.0f, -t);
         break;
     case 4:
-        v = Vec3f(s, -t, 1.0f);
+        v = Vector3f(s, -t, 1.0f);
         break;
     case 5:
-        v = Vec3f(-s, -t, -1.0f);
+        v = Vector3f(-s, -t, -1.0f);
         break;
     default:
         // assert(false);
@@ -951,8 +965,8 @@ extern Texture* CreateProceduralCubeMap(int size, int format,
                 {
                     float s = ((float) x + 0.5f) / (float) size * 2 - 1;
                     float t = ((float) y + 0.5f) / (float) size * 2 - 1;
-                    Vec3f v = cubeVector(i, s, t);
-                    func(v.x, v.y, v.z,
+                    Vector3f v = cubeVector(i, s, t);
+                    func(v.x(), v.y(), v.z(),
                          face->getPixelRow(y) + x * face->getComponents());
                 }
             }

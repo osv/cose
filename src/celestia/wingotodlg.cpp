@@ -15,6 +15,7 @@
 
 #include "res/resource.h"
 
+using namespace Eigen;
 using namespace std;
 
 
@@ -115,7 +116,6 @@ static BOOL APIENTRY GotoObjectProc(HWND hDlg,
                     
                     distance += (float) sel.radius();
                 }
-                distance = astro::kilometersToLightYears(distance);
 
                 float longitude, latitude;
                 if (GetDialogFloat(hDlg, IDC_EDIT_LONGITUDE, longitude) &&
@@ -125,13 +125,13 @@ static BOOL APIENTRY GotoObjectProc(HWND hDlg,
                                               distance,
                                               degToRad(longitude),
                                               degToRad(latitude),
-                                              Vec3f(0, 1, 0));
+                                              Vector3f::UnitY());
                 }
                 else
                 {
                     sim->gotoSelection(5.0,
                                        distance,
-                                       Vec3f(0, 1, 0),
+                                       Vector3f::UnitY(),
                                        ObserverFrame::ObserverLocal);
                 }
             }

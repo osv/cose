@@ -7,14 +7,14 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
+#include "vertexprog.h"
+#include <celutil/util.h>
+#include <GL/glew.h>
 #include <iostream>
 #include <fstream>
 #include <string>
-#include <celutil/util.h>
-#include "gl.h"
-#include "glext.h"
-#include "vertexprog.h"
 
+using namespace Eigen;
 using namespace std;
 
 
@@ -120,8 +120,8 @@ static bool LoadNvVertexProgram(const string& filename, unsigned int& id)
         return false;
     }
 
-    glx::glGenProgramsNV(1, (GLuint*) &id);
-    glx::glLoadProgramNV(GL_VERTEX_PROGRAM_NV,
+    glGenProgramsNV(1, (GLuint*) &id);
+    glLoadProgramNV(GL_VERTEX_PROGRAM_NV,
                          id,
                          source->length(),
                          reinterpret_cast<const GLubyte*>(source->c_str()));
@@ -169,15 +169,15 @@ static bool LoadARBVertexProgram(const string& filename, unsigned int& id)
         return false;
     }
 
-    glx::glGenProgramsARB(1, (GLuint*) &id);
+    glGenProgramsARB(1, (GLuint*) &id);
     if (glGetError() != GL_NO_ERROR)
     {
         delete source;
         return false;
     }
 
-    glx::glBindProgramARB(GL_VERTEX_PROGRAM_ARB, id);
-    glx::glProgramStringARB(GL_VERTEX_PROGRAM_ARB,
+    glBindProgramARB(GL_VERTEX_PROGRAM_ARB, id);
+    glProgramStringARB(GL_VERTEX_PROGRAM_ARB,
                             GL_PROGRAM_FORMAT_ASCII_ARB,
                             source->length(),
                             reinterpret_cast<const GLubyte*>(source->c_str()));
@@ -239,9 +239,9 @@ VertexProcessor* vp::initNV()
     everything = 0;
     cout << _("All NV vertex programs loaded successfully.\n");
 
-    glx::glTrackMatrixNV(GL_VERTEX_PROGRAM_NV,
+    glTrackMatrixNV(GL_VERTEX_PROGRAM_NV,
                          0, GL_MODELVIEW_PROJECTION_NV, GL_IDENTITY_NV);
-    glx::glTrackMatrixNV(GL_VERTEX_PROGRAM_NV,
+    glTrackMatrixNV(GL_VERTEX_PROGRAM_NV,
                          4, GL_MODELVIEW_PROJECTION_NV, GL_INVERSE_TRANSPOSE_NV);
 
     return new VertexProcessorNV();
@@ -297,8 +297,7 @@ VertexProcessor* vp::initARB()
 #endif
 
     // Load vertex programs that are only required with fragment programs
-    if (ExtensionSupported("GL_NV_fragment_program") ||
-        ExtensionSupported("GL_ARB_fragment_program"))
+    if (GLEW_NV_fragment_program || GLEW_ARB_fragment_program)
     {
         if (!LoadARBVertexProgram("shaders/multishadow_arb.vp", multiShadow))
             return NULL;
@@ -331,59 +330,36 @@ void vp::enable()
 
 void vp::use(unsigned int prog)
 {
-    glx::glBindProgramNV(GL_VERTEX_PROGRAM_NV, prog);
+    glBindProgramNV(GL_VERTEX_PROGRAM_NV, prog);
 }
 
-
-void vp::parameter(unsigned int param, const Vec3f& v)
-{
-    glx::glProgramParameter4fNV(GL_VERTEX_PROGRAM_NV, param, v.x, v.y, v.z, 0.0f);
-}
-                            
-void vp::parameter(unsigned int param, const Point3f& p)
-{
-    glx::glProgramParameter4fNV(GL_VERTEX_PROGRAM_NV, param, p.x, p.y, p.z, 0.0f);
-}
 
 void vp::parameter(unsigned int param, const Color& c)
 {
-    glx::glProgramParameter4fNV(GL_VERTEX_PROGRAM_NV, param,
+    glProgramParameter4fNV(GL_VERTEX_PROGRAM_NV, param,
                                 c.red(), c.green(), c.blue(), c.alpha());
 }
 
 void vp::parameter(unsigned int param, float x, float y, float z, float w)
 {
-    glx::glProgramParameter4fNV(GL_VERTEX_PROGRAM_NV, param, x, y, z, w);
+    glProgramParameter4fNV(GL_VERTEX_PROGRAM_NV, param, x, y, z, w);
 }
 
-
-
-void arbvp::parameter(unsigned int param, const Vec3f& v)
-{
-    glx::glProgramEnvParameter4fARB(GL_VERTEX_PROGRAM_ARB, param,
-                                    v.x, v.y, v.z, 0.0f);
-}
-                            
-void arbvp::parameter(unsigned int param, const Point3f& p)
-{
-    glx::glProgramEnvParameter4fARB(GL_VERTEX_PROGRAM_ARB, param,
-                                    p.x, p.y, p.z, 0.0f);
-}
 
 void arbvp::parameter(unsigned int param, const Color& c)
 {
-    glx::glProgramEnvParameter4fARB(GL_VERTEX_PROGRAM_ARB, param,
+    glProgramEnvParameter4fARB(GL_VERTEX_PROGRAM_ARB, param,
                                    c.red(), c.green(), c.blue(), c.alpha());
 }
 
 void arbvp::parameter(unsigned int param, float x, float y, float z, float w)
 {
-    glx::glProgramEnvParameter4fARB(GL_VERTEX_PROGRAM_ARB, param, x, y, z, w);
+    glProgramEnvParameter4fARB(GL_VERTEX_PROGRAM_ARB, param, x, y, z, w);
 }
 
 void arbvp::parameter(unsigned int param, const float* fv)
 {
-    glx::glProgramEnvParameter4fvARB(GL_VERTEX_PROGRAM_ARB, param, fv);
+    glProgramEnvParameter4fvARB(GL_VERTEX_PROGRAM_ARB, param, fv);
 }
 
 
@@ -395,14 +371,14 @@ VertexProcessor::~VertexProcessor()
 {
 }
 
-void VertexProcessor::parameter(vp::Parameter param, const Vec3f& v)
+void VertexProcessor::parameter(vp::Parameter param, const Eigen::Vector3f& v)
 {
-    parameter(param, v.x, v.y, v.z, 0.0f);
+    parameter(param, v.x(), v.y(), v.z(), 0.0f);
 }
-                            
-void VertexProcessor::parameter(vp::Parameter param, const Point3f& p)
+
+void VertexProcessor::parameter(vp::Parameter param, const Eigen::Vector4f& v)
 {
-    parameter(param, p.x, p.y, p.z, 0.0f);
+    parameter(param, v.x(), v.y(), v.z(), v.w());
 }
 
 void VertexProcessor::parameter(vp::Parameter param, const Color& c)
@@ -459,19 +435,19 @@ void VertexProcessorNV::disable()
 
 void VertexProcessorNV::use(unsigned int prog)
 {
-    glx::glBindProgramNV(GL_VERTEX_PROGRAM_NV, prog);
+    glBindProgramNV(GL_VERTEX_PROGRAM_NV, prog);
 }
 
 void VertexProcessorNV::parameter(vp::Parameter param,
                                   float x, float y, float z, float w)
 {
-    glx::glProgramParameter4fNV(GL_VERTEX_PROGRAM_NV, 
+    glProgramParameter4fNV(GL_VERTEX_PROGRAM_NV, 
                                 parameterMappings[param], x, y, z, w);
 }
 
 void VertexProcessorNV::parameter(vp::Parameter param, const float* fv)
 {
-    glx::glProgramParameter4fvNV(GL_VERTEX_PROGRAM_NV,
+    glProgramParameter4fvNV(GL_VERTEX_PROGRAM_NV,
                                  parameterMappings[param], fv);
 }
 
@@ -491,7 +467,7 @@ void VertexProcessorNV::attribArray(unsigned int index,
                                      unsigned int stride,
                                      const void* ptr)
 {
-    glx::glVertexAttribPointerNV(index, size, type, stride, ptr);
+    glVertexAttribPointerNV(index, size, type, stride, ptr);
 }
 
 
@@ -518,28 +494,28 @@ void VertexProcessorARB::disable()
 
 void VertexProcessorARB::use(unsigned int prog)
 {
-    glx::glBindProgramARB(GL_VERTEX_PROGRAM_ARB, prog);
+    glBindProgramARB(GL_VERTEX_PROGRAM_ARB, prog);
 }
 
 void VertexProcessorARB::parameter(vp::Parameter param,
                                    float x, float y, float z, float w)
 {
-    glx::glProgramEnvParameter4fARB(GL_VERTEX_PROGRAM_ARB, param, x, y, z, w);
+    glProgramEnvParameter4fARB(GL_VERTEX_PROGRAM_ARB, param, x, y, z, w);
 }
 
 void VertexProcessorARB::parameter(vp::Parameter param, const float* fv)
 {
-    glx::glProgramEnvParameter4fvARB(GL_VERTEX_PROGRAM_ARB, param, fv);
+    glProgramEnvParameter4fvARB(GL_VERTEX_PROGRAM_ARB, param, fv);
 }
 
 void VertexProcessorARB::enableAttribArray(unsigned int index)
 {
-    glx::glEnableVertexAttribArrayARB(index);
+    glEnableVertexAttribArrayARB(index);
 }
 
 void VertexProcessorARB::disableAttribArray(unsigned int index)
 {
-    glx::glDisableVertexAttribArrayARB(index);
+    glDisableVertexAttribArrayARB(index);
 }
 
 void VertexProcessorARB::attribArray(unsigned int index,
@@ -548,6 +524,6 @@ void VertexProcessorARB::attribArray(unsigned int index,
                                      unsigned int stride,
                                      const void* ptr)
 {
-    glx::glVertexAttribPointerARB(index, size, type, GL_FALSE, stride, ptr);
+    glVertexAttribPointerARB(index, size, type, GL_FALSE, stride, ptr);
 }
 

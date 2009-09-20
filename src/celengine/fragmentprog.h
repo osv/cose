@@ -10,10 +10,10 @@
 #ifndef _CELENGINE_FRAGMENTPROG_H_
 #define _CELENGINE_FRAGMENTPROG_H_
 
-#include <celmath/vecmath.h>
 #include <celutil/color.h>
 #include <celutil/util.h>
-#include <celengine/gl.h>
+#include <GL/glew.h>
+#include <Eigen/Core>
 
 class FragmentProcessor;
 
@@ -25,8 +25,8 @@ namespace fp
     void disable();
     void use(unsigned int);
 
-    void parameter(unsigned int, const Vec3f&);
-    void parameter(unsigned int, const Point3f&);
+    void parameter(unsigned int, const Eigen::Vector3f&);
+    void parameter(unsigned int, const Eigen::Vector4f&);
     void parameter(unsigned int, const Color&);
     void parameter(unsigned int, float, float, float, float);
 
@@ -64,8 +64,8 @@ class FragmentProcessor
     virtual void enable() = 0;
     virtual void disable() = 0;
     virtual void use(unsigned int) = 0;
-    virtual void parameter(fp::Parameter, const Vec3f&);
-    virtual void parameter(fp::Parameter, const Point3f&);
+    virtual void parameter(fp::Parameter, const Eigen::Vector3f&);
+    virtual void parameter(fp::Parameter, const Eigen::Vector4f&);
     virtual void parameter(fp::Parameter, const Color&);
     virtual void parameter(fp::Parameter, float, float, float, float) = 0;
     virtual void parameter(fp::Parameter, const float*) = 0;

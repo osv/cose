@@ -881,11 +881,7 @@ namespace UI
             for (unsigned int i = 0; i < currentLength; i++)
             {
                 const Star *star=(*stars)[i];
-                Point3f pStar = star->getPosition();
-                Vec3d v(pStar.x * 1e6 - (float)ucPos.x, 
-                        pStar.y * 1e6 - (float)ucPos.y, 
-                        pStar.z * 1e6 - (float)ucPos.z);
-                float d = v.length() * 1e-6;
+                float d = ucPos.offsetFromLy(star->getPosition()).norm();
                 AG_TableAddRow(t, "%s:%.03f:%s:%.03f:%.03f:%p", 
                                bGreekNames  ? ReplaceGreekLetterAbbr(stardb->getStarName(*star)).c_str()
                                :stardb->getStarName(*star).c_str(),

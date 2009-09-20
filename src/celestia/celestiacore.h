@@ -10,7 +10,6 @@
 #ifndef _CELESTIACORE_H_
 #define _CELESTIACORE_H_
 
-// #include "gl.h"
 #include <celutil/timer.h>
 #include <celutil/watcher.h>
 // #include <celutil/watchable.h>
@@ -22,7 +21,7 @@
 #include <celengine/universe.h>
 #include <celengine/render.h>
 #include <celengine/simulation.h>
-#include <celengine/gl.h>
+#include <GL/glew.h>
 #include "configfile.h"
 #include "favorites.h"
 #include "destination.h"
@@ -218,9 +217,9 @@ class CelestiaCore // : public Watchable<CelestiaCore>
     void addToHistory();
     void back();
     void forward();
-    const std::vector<Url>& getHistory() const;
-    std::vector<Url>::size_type getHistoryCurrent() const;
-    void setHistoryCurrent(std::vector<Url>::size_type curr);
+    const std::vector<Url*>& getHistory() const;
+    std::vector<Url*>::size_type getHistoryCurrent() const;
+    void setHistoryCurrent(std::vector<Url*>::size_type curr);
 
     // event processing methods
     void charEntered(const char*, int modifiers = 0);
@@ -434,7 +433,7 @@ class CelestiaCore // : public Watchable<CelestiaCore>
 
     bool viewChanged;
 
-    Vec3f joystickRotation;
+    Eigen::Vector3f joystickRotation;
     bool joyButtonsPressed[JoyButtonCount];
     bool keysPressed[KeyCount];
     bool shiftKeysPressed[KeyCount];
@@ -452,8 +451,8 @@ class CelestiaCore // : public Watchable<CelestiaCore>
     CursorHandler* cursorHandler;
     CursorShape defaultCursorShape;
     
-    std::vector<Url> history;
-    std::vector<Url>::size_type historyCurrent;
+    std::vector<Url*> history;
+    std::vector<Url*>::size_type historyCurrent;
     std::string startURL;
 
     std::list<View*> views;

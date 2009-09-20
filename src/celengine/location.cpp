@@ -12,7 +12,9 @@
 #include <celengine/body.h>
 #include <celutil/util.h>
 
+using namespace Eigen;
 using namespace std;
+
 
 static map<string, uint32> FeatureNameToFlag;
 static bool featureTableInitialized = false;
@@ -64,7 +66,7 @@ FeatureNameEntry FeatureNames[] =
 
 Location::Location() :
     parent(NULL),
-    position(0.0f, 0.0f, 0.0f),
+    position(Vector3f::Zero()),
     size(0.0f),
     importance(-1.0f),
     featureType(Other),
@@ -96,13 +98,13 @@ void Location::setName(const string& _name)
 }
 
 
-Vec3f Location::getPosition() const
+Vector3f Location::getPosition() const
 {
     return position;
 }
 
 
-void Location::setPosition(const Vec3f& _position)
+void Location::setPosition(const Vector3f& _position)
 {
     position = _position;
 }
@@ -191,21 +193,29 @@ void Location::setParentBody(Body* _parent)
 /*! Get the position of the location relative to its body in 
  *  the J2000 ecliptic coordinate system.
  */
-Point3d Location::getPlanetocentricPosition(double t) const
+Vector3d Location::getPlanetocentricPosition(double t) const
 {
     if (parent == NULL)
-        return Point3d(position.x, position.y, position.z);
-
-    Quatd q = parent->getEclipticToBodyFixed(t);
-    return Point3d(position.x, position.y, position.z) * q.toMatrix3();
+    {
+        return position.cast<double>();
+    }
+    else
+    {
+        Quaterniond q = parent->getEclipticToBodyFixed(t);
+        return q.conjugate() * position.cast<double>();
+    }
 }
 
 
-Point3d Location::getHeliocentricPosition(double t) const
+Vector3d Location::getHeliocentricPosition(double t) const
 {
     if (parent == NULL)
-        return Point3d(position.x, position.y, position.z);
+    {
+        return position.cast<double>();
+    }
+    else
+    {
+        return parent->getAstrocentricPosition(t) + getPlanetocentricPosition(t);
+    }
 
-    return parent->getAstrocentricPosition(t) +
-        (getPlanetocentricPosition(t) - Point3d(0.0, 0.0, 0.0));
 }

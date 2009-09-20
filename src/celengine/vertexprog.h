@@ -10,9 +10,9 @@
 #ifndef _VERTEXPROG_H_
 #define _VERTEXPROG_H_
 
-#include <celmath/vecmath.h>
 #include <celutil/color.h>
-#include <celengine/gl.h>
+#include <GL/glew.h>
+#include <Eigen/Core>
 
 class VertexProcessor;
 
@@ -24,8 +24,8 @@ namespace vp
     void disable();
     void use(unsigned int);
 
-    void parameter(unsigned int, const Vec3f&);
-    void parameter(unsigned int, const Point3f&);
+    void parameter(unsigned int, const Eigen::Vector4f&);
+    void parameter(unsigned int, const Eigen::Vector3f&);
     void parameter(unsigned int, const Color&);
     void parameter(unsigned int, float, float, float, float);
 
@@ -88,8 +88,8 @@ namespace vp
 
 namespace arbvp
 {
-    void parameter(unsigned int, const Vec3f&);
-    void parameter(unsigned int, const Point3f&);
+    void parameter(unsigned int, const Eigen::Vector4f&);
+    void parameter(unsigned int, const Eigen::Vector3f&);
     void parameter(unsigned int, const Color&);
     void parameter(unsigned int, float, float, float, float);
     void parameter(unsigned int, const float*);
@@ -105,8 +105,8 @@ class VertexProcessor
     virtual void enable() = 0;
     virtual void disable() = 0;
     virtual void use(unsigned int) = 0;
-    virtual void parameter(vp::Parameter, const Vec3f&);
-    virtual void parameter(vp::Parameter, const Point3f&);
+    virtual void parameter(vp::Parameter, const Eigen::Vector4f&);
+    virtual void parameter(vp::Parameter, const Eigen::Vector3f&);
     virtual void parameter(vp::Parameter, const Color&);
     virtual void parameter(vp::Parameter, float, float, float, float) = 0;
     virtual void parameter(vp::Parameter, const float*) = 0;

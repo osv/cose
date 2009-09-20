@@ -1,6 +1,7 @@
 // galaxy.h
 //
-// Copyright (C) 2001, Chris Laurel <claurel@shatters.net>
+// Copyright (C) 2001-2009, the Celestia Development Team
+// Original version by Chris Laurel, Fridger Schrempp, and Toti
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -15,20 +16,20 @@
 
 struct Blob
 {
-    Point3f        position;
+    EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+
+    Eigen::Vector4f        position;
     unsigned int   colorIndex;
     float          brightness;
 };
 
-struct GalacticForm
-{
-    std::vector<Blob>* blobs;
-    Vec3f scale;
-};
+class GalacticForm;
 
 class Galaxy : public DeepSkyObject
 {
  public:
+    EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+
     Galaxy();
     virtual const char* getType() const;
     virtual void setType(const std::string&);
@@ -46,20 +47,22 @@ class Galaxy : public DeepSkyObject
                       double& cosAngleToBoundCenter) const;
     virtual bool load(AssociativeArray*, const std::string&);
     virtual void render(const GLContext& context,
-                        const Vec3f& offset,
-                        const Quatf& viewerOrientation,
+                        const Eigen::Vector3f& offset,
+                        const Eigen::Quaternionf& viewerOrientation,
                         float brightness,
                         float pixelSize);
     virtual void renderGalaxyPointSprites(const GLContext& context,
-                                          const Vec3f& offset,
-                                          const Quatf& viewerOrientation,
+                                          const Eigen::Vector3f& offset,
+                                          const Eigen::Quaternionf& viewerOrientation,
                                           float brightness,
                                           float pixelSize);
+#if 0
     virtual void renderGalaxyEllipsoid(const GLContext& context,
-                                       const Vec3f& offset,
-                                       const Quatf& viewerOrientation,
+                                       const Eigen::Vector3f& offset,
+                                       const Eigen::Quaternionf& viewerOrientation,
                                        float brightness,
                                        float pixelSize);
+#endif
 
     GalacticForm* getForm() const;
 

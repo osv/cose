@@ -12,6 +12,7 @@
 
 #include <string>
 #include <iostream>
+#include <cstdio>
 #include <celtxf/texturefont.h>
 
 
@@ -78,6 +79,9 @@ class Overlay : public std::ostream
     bool useTexture;
     bool fontChanged;
     int textBlock;
+
+    float xoffset;
+    float yoffset;
 
     OverlayStreamBuf sbuf;
 };

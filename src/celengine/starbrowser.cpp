@@ -14,6 +14,7 @@
 #include <set>
 #include "starbrowser.h"
 
+using namespace Eigen;
 using namespace std;
 
 
@@ -22,31 +23,36 @@ using namespace std;
 
 struct CloserStarPredicate
 {
-    Point3f pos;
+    Vector3f pos;
     bool operator()(const Star* star0, const Star* star1) const
     {
-        Point3f p0 = star0->getPosition();
-        Point3f p1 = star1->getPosition();
-        Vec3f v0(p0.x * 1e6 - pos.x, p0.y * 1e6 - pos.y, p0.z * 1e6 - pos.z);
-        Vec3f v1(p1.x * 1e6 - pos.x, p1.y * 1e6 - pos.y, p1.z * 1e6 - pos.z);
-        
-        return (v0.lengthSquared() < v1.lengthSquared());                               
+        Vector3f p0 = star0->getPosition();
+        Vector3f p1 = star1->getPosition();
+
+#if 0
+        Vector3f v0(p0.x * 1e6 - pos.x, p0.y * 1e6 - pos.y, p0.z * 1e6 - pos.z);
+        Vector3f v1(p1.x * 1e6 - pos.x, p1.y * 1e6 - pos.y, p1.z * 1e6 - pos.z);
+#endif
+        Vector3f v0 = p0 * 1.0e6f - pos;
+        Vector3f v1 = p1 * 1.0e6f - pos;
+
+        return (v0.squaredNorm() < v1.squaredNorm());                               
     }
 };
 
 
 struct BrighterStarPredicate
 {
-    Point3f pos;
+    Vector3f pos;
     UniversalCoord ucPos;
     bool operator()(const Star* star0, const Star* star1) const
     {
-        Point3f p0 = star0->getPosition();
-        Point3f p1 = star1->getPosition();
-        Vec3f v0(p0.x * 1e6 - pos.x, p0.y * 1e6 - pos.y, p0.z * 1e6 - pos.z);
-        Vec3f v1(p1.x * 1e6 - pos.x, p1.y * 1e6 - pos.y, p1.z * 1e6 - pos.z);
-        float d0 = v0.length();
-        float d1 = v1.length();
+        Vector3f p0 = star0->getPosition();
+        Vector3f p1 = star1->getPosition();
+        Vector3f v0 = p0 * 1.0e6f - pos;
+        Vector3f v1 = p1 * 1.0e6f - pos;
+        float d0 = v0.norm();
+        float d1 = v1.norm();
 
         return (star0->getApparentMagnitude(d0) <
                 star1->getApparentMagnitude(d1));
@@ -66,7 +72,7 @@ struct BrightestStarPredicate
 
 struct SolarSystemPredicate
 {
-    Point3f pos;
+    Vector3f pos;
     SolarSystemCatalog* solarSystems;
 
     bool operator()(const Star* star0, const Star* star1) const
@@ -79,11 +85,11 @@ struct SolarSystemPredicate
         bool hasPlanets1 = (iter != solarSystems->end());
         if (hasPlanets1 == hasPlanets0)
         {
-            Point3f p0 = star0->getPosition();
-            Point3f p1 = star1->getPosition();
-            Vec3f v0(p0.x * 1e6 - pos.x, p0.y * 1e6 - pos.y, p0.z * 1e6 - pos.z);
-            Vec3f v1(p1.x * 1e6 - pos.x, p1.y * 1e6 - pos.y, p1.z * 1e6 - pos.z);
-            return (v0.lengthSquared() < v1.lengthSquared());
+            Vector3f p0 = star0->getPosition();
+            Vector3f p1 = star1->getPosition();
+            Vector3f v0 = p0 * 1.0e6f - pos;
+            Vector3f v1 = p1 * 1.0e6f - pos;
+            return (v0.squaredNorm() < v1.squaredNorm());
         }
         else
         {
@@ -187,7 +193,7 @@ StarBrowser::listStars(unsigned int nStars)
             solarSysPred.pos = pos;
             solarSysPred.solarSystems = solarSystems;
             return findStars(*(univ->getStarCatalog()), solarSysPred,
-                             MIN(nStars, solarSystems->size()));
+                             min((size_t) nStars, solarSystems->size()));
         }
         break;
 
@@ -217,7 +223,7 @@ bool StarBrowser::setPredicate(int pred)
 void StarBrowser::refresh()
 {
     ucPos = appSim->getObserver().getPosition();
-    pos = (Point3f) ucPos;
+    pos = ucPos.toLy().cast<float>();
 }
 
 
@@ -232,15 +238,15 @@ StarBrowser::StarBrowser(Simulation* _appSim, int pred) :
     appSim(_appSim)
 {
     ucPos = appSim->getObserver().getPosition();
-    pos = (Point3f) ucPos;
+    pos = ucPos.toLy().cast<float>();
 
     predicate = pred;
 }
 
 
 StarBrowser::StarBrowser() :
-    pos(0.0, 0.0, 0.0),
-    ucPos(0.0, 0.0, 0.0),
+    pos(Vector3f::Zero()),
+    ucPos(UniversalCoord::Zero()),
     appSim(NULL),
     predicate(NearestStars)
 {

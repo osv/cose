@@ -37,8 +37,7 @@
 #include <celengine/axisarrow.h>
 #include <celengine/planetgrid.h>
 
-#include "../celengine/gl.h"
-#include "../celengine/glext.h"
+#include <GL/glew.h>
 #include "celestiacore.h"
 #include "imagecapture.h"
 #include "avicapture.h"
@@ -637,7 +636,7 @@ BOOL APIENTRY GLInfoProc(HWND hDlg,
                 s += version;
             s += "\r\r\n";
 
-            if (ExtensionSupported("GL_ARB_shading_language_100"))
+            if (GLEW_ARB_shading_language_100)
             {
                 const char* versionString = (const char*) glGetString(GL_SHADING_LANGUAGE_VERSION_ARB);
                 if (versionString != NULL)
@@ -650,7 +649,7 @@ BOOL APIENTRY GLInfoProc(HWND hDlg,
 
             char buf[1024];
             GLint simTextures = 1;
-            if (ExtensionSupported("GL_ARB_multitexture"))
+            if (GLEW_ARB_multitexture)
                 glGetIntegerv(GL_MAX_TEXTURE_UNITS_ARB, &simTextures);
             sprintf(buf, "%s%d\r\r\n",
                     UTF8ToCurrentCP(_("Max simultaneous textures: ")).c_str(),
@@ -664,7 +663,7 @@ BOOL APIENTRY GLInfoProc(HWND hDlg,
                     maxTextureSize);
             s += buf;
 
-            if (ExtensionSupported("GL_EXT_texture_cube_map"))
+            if (GLEW_EXT_texture_cube_map)
             {
                 GLint maxCubeMapSize = 0;
                 glGetIntegerv(GL_MAX_CUBE_MAP_TEXTURE_SIZE_ARB, &maxCubeMapSize);
@@ -2004,12 +2003,27 @@ HWND CreateOpenGLWindow(int x, int y, int width, int height,
         MessageBox(NULL,
                    "Could not get appropriate pixel format for OpenGL rendering.", "Fatal Error",
                    MB_OK | MB_ICONERROR);
-    return NULL;
+		return NULL;
     }
 
+	bool firstContext = false;
     if (glContext == NULL)
+	{
         glContext = wglCreateContext(deviceContext);
+		firstContext = true;
+	}
     wglMakeCurrent(deviceContext, glContext);
+
+	if (firstContext)
+	{
+		GLenum glewErr = glewInit();
+		if (glewErr != GLEW_OK)
+		{
+			MessageBox(NULL, "Could not set up OpenGL extensions.", "Fatal Error",
+					   MB_OK | MB_ICONERROR);
+			return NULL;
+		}
+	}
 
     if (newMode == 0)
         SetMenu(hwnd, menuBar);
@@ -2658,6 +2672,9 @@ static void HandleCaptureImage(HWND hWnd)
             }
         }
 
+        // Redraw to make sure that the back buffer is up to date
+        appCore->draw();
+
         if (nFileType == 1)
         {
             success = CaptureGLBufferToJPEG(string(Ofn.lpstrFile),
@@ -2907,7 +2924,7 @@ vector<DEVMODE>* EnumerateDisplayModes(unsigned int minBPP)
     sort(modes->begin(), modes->end());
 
     // Bail out early if EnumDisplaySettings fails for some messed up reason
-    if (i == 0)
+    if (modes->empty())
         return modes;
 
     // Go through the sorted list and eliminate modes that differ only
@@ -3850,7 +3867,7 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd,
             char utf8CharCode[7];
             memset(utf8CharCode, 0, sizeof(utf8CharCode));
             WCHAR wCharCode;
-            MultiByteToWideChar(CP_THREAD_ACP, 0, (char*)&charCode, 1, &wCharCode, 1);
+            MultiByteToWideChar(CP_ACP, 0, (char*)&charCode, 1, &wCharCode, 1);
             WideCharToMultiByte(CP_UTF8, 0, &wCharCode, 1, utf8CharCode, 7, 0, 0);
 
             /*cerr << "Char input: (ANSI) " << (int)(unsigned char)charCode << " - UTF8 -> ";

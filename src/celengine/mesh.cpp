@@ -1,6 +1,7 @@
 // mesh.cpp
 //
-// Copyright (C) 2004-2006, Chris Laurel <claurel@shatters.net>
+// Copyright (C) 2004-2009, the Celestia Development Team
+// Original version by Chris Laurel <claurel@gmail.com>
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -9,12 +10,14 @@
 
 #include "mesh.h"
 #include "rendcontext.h"
-#include "gl.h"
-#include "glext.h"
 #include <cassert>
 #include <iostream>
 #include <algorithm>
+#include <Eigen/Core>
+#include <Eigen/Geometry>
+#include <GL/glew.h>
 
+using namespace Eigen;
 using namespace std;
 
 
@@ -40,7 +43,7 @@ static bool isVBOSupported()
     if (!VBOSupportTested)
     {
         VBOSupportTested = true;
-        VBOSupported = ExtensionSupported("GL_ARB_vertex_buffer_object");
+        VBOSupported = (GLEW_ARB_vertex_buffer_object == GL_TRUE);
     }
 
     return VBOSupported;
@@ -222,7 +225,7 @@ Mesh::~Mesh()
 
     if (vbObject != 0)
     {
-        glx::glDeleteBuffersARB(1, &vbObject);
+        glDeleteBuffersARB(1, &vbObject);
     }
 }
 
@@ -406,40 +409,37 @@ Mesh::pick(const Ray3d& ray, double& distance) const
             do
             {
                 // Get the triangle vertices v0, v1, and v2
-                float* f0 = reinterpret_cast<float*>(vdata + i0 * vertexDesc.stride + posOffset);
-                float* f1 = reinterpret_cast<float*>(vdata + i1 * vertexDesc.stride + posOffset);
-                float* f2 = reinterpret_cast<float*>(vdata + i2 * vertexDesc.stride + posOffset);
-                Point3d v0(f0[0], f0[1], f0[2]);
-                Point3d v1(f1[0], f1[1], f1[2]);
-                Point3d v2(f2[0], f2[1], f2[2]);
+                Vector3d v0 = Map<Vector3f>(reinterpret_cast<float*>(vdata + i0 * vertexDesc.stride + posOffset)).cast<double>();
+                Vector3d v1 = Map<Vector3f>(reinterpret_cast<float*>(vdata + i1 * vertexDesc.stride + posOffset)).cast<double>();
+                Vector3d v2 = Map<Vector3f>(reinterpret_cast<float*>(vdata + i2 * vertexDesc.stride + posOffset)).cast<double>();
 
                 // Compute the edge vectors e0 and e1, and the normal n
-                Vec3d e0 = v1 - v0;
-                Vec3d e1 = v2 - v0;
-                Vec3d n = e0 ^ e1;
+                Vector3d e0 = v1 - v0;
+                Vector3d e1 = v2 - v0;
+                Vector3d n = e0.cross(e1);
 
                 // c is the cosine of the angle between the ray and triangle normal
-                double c = n * ray.direction;
+                double c = n.dot(ray.direction);
 
                 // If the ray is parallel to the triangle, it either misses the
                 // triangle completely, or is contained in the triangle's plane.
                 // If it's contained in the plane, we'll still call it a miss.
                 if (c != 0.0)
                 {
-                    double t = (n * (v0 - ray.origin)) / c;
+                    double t = (n.dot(v0 - ray.origin)) / c;
                     if (t < closest && t > 0.0)
                     {
-                        double m00 = e0 * e0;
-                        double m01 = e0 * e1;
-                        double m10 = e1 * e0;
-                        double m11 = e1 * e1;
+                        double m00 = e0.dot(e0);
+                        double m01 = e0.dot(e1);
+                        double m10 = e1.dot(e0);
+                        double m11 = e1.dot(e1);
                         double det = m00 * m11 - m01 * m10;
                         if (det != 0.0)
                         {
-                            Point3d p = ray.point(t);
-                            Vec3d q = p - v0;
-                            double q0 = e0 * q;
-                            double q1 = e1 * q;
+                            Vector3d p = ray.point(t);
+                            Vector3d q = p - v0;
+                            double q0 = e0.dot(q);
+                            double q1 = e1.dot(q);
                             double d = 1.0 / det;
                             double s0 = (m11 * q0 - m01 * q1) * d;
                             double s1 = (m00 * q1 - m10 * q0) * d;
@@ -515,11 +515,11 @@ Mesh::render(const std::vector<const Material*>& materials,
 
         if (nVertices * vertexDesc.stride > MinVBOSize)
         {
-            glx::glGenBuffersARB(1, &vbObject);
+            glGenBuffersARB(1, &vbObject);
             if (vbObject != 0)
             {
-                glx::glBindBufferARB(GL_ARRAY_BUFFER_ARB, vbObject);
-                glx::glBufferDataARB(GL_ARRAY_BUFFER_ARB,
+                glBindBufferARB(GL_ARRAY_BUFFER_ARB, vbObject);
+                glBufferDataARB(GL_ARRAY_BUFFER_ARB,
                                      nVertices * vertexDesc.stride,
                                      vertices,
                                      GL_STATIC_DRAW_ARB);
@@ -529,7 +529,7 @@ Mesh::render(const std::vector<const Material*>& materials,
 
     if (vbObject != 0)
     {
-        glx::glBindBufferARB(GL_ARRAY_BUFFER_ARB, vbObject);
+        glBindBufferARB(GL_ARRAY_BUFFER_ARB, vbObject);
         rc.setVertexArrays(vertexDesc, NULL);
     }
     else
@@ -554,14 +554,14 @@ Mesh::render(const std::vector<const Material*>& materials,
     }
 
     if (vbObject != 0)
-        glx::glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
+        glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
 }
 
 
-AxisAlignedBox
+AlignedBox<float, 3>
 Mesh::getBoundingBox() const
 {
-    AxisAlignedBox bbox;
+    AlignedBox<float, 3> bbox;
 
     // Return an empty box if there's no position info
     if (vertexDesc.getAttribute(Position).format != Float3)
@@ -578,18 +578,18 @@ Mesh::getBoundingBox() const
         
         for (uint32 i = 0; i < nVertices; i++, vdata += vertexDesc.stride)
         {
-            Point3f center = Point3f(reinterpret_cast<float*>(vdata));
+            Vector3f center = Map<Vector3f>(reinterpret_cast<float*>(vdata));
             float pointSize = (reinterpret_cast<float*>(vdata + pointSizeOffset))[0];
-            Vec3f offsetVec(pointSize, pointSize, pointSize);
+            Vector3f offsetVec = Vector3f::Constant(pointSize);
 
-            AxisAlignedBox pointbox(center - offsetVec, center + offsetVec);
-            bbox.include(pointbox);
+            AlignedBox<float, 3> pointbox(center - offsetVec, center + offsetVec);
+            bbox.extend(pointbox);
         }
     }
     else
     {
         for (uint32 i = 0; i < nVertices; i++, vdata += vertexDesc.stride)
-            bbox.include(Point3f(reinterpret_cast<float*>(vdata)));
+            bbox.extend(Map<Vector3f>(reinterpret_cast<float*>(vdata)));
     }
 
     return bbox;
@@ -597,7 +597,7 @@ Mesh::getBoundingBox() const
 
 
 void
-Mesh::transform(Vec3f translation, float scale)
+Mesh::transform(const Vector3f& translation, float scale)
 {
     if (vertexDesc.getAttribute(Position).format != Float3)
         return;
@@ -608,10 +608,13 @@ Mesh::transform(Vec3f translation, float scale)
     // Scale and translate the vertex positions
     for (i = 0; i < nVertices; i++, vdata += vertexDesc.stride)
     {
-        Vec3f tv = (Vec3f(reinterpret_cast<float*>(vdata)) + translation) * scale;
-        reinterpret_cast<float*>(vdata)[0] = tv.x;
-        reinterpret_cast<float*>(vdata)[1] = tv.y;
-        reinterpret_cast<float*>(vdata)[2] = tv.z;
+        const Vector3f tv = (Map<Vector3f>(reinterpret_cast<float*>(vdata)) + translation) * scale;
+        Map<Vector3f>(reinterpret_cast<float*>(vdata)) = tv;
+#if CELVEC
+        reinterpret_cast<float*>(vdata)[0] = tv.x();
+        reinterpret_cast<float*>(vdata)[1] = tv.y();
+        reinterpret_cast<float*>(vdata)[2] = tv.z();
+#endif
     }
 
     // Point sizes need to be scaled as well

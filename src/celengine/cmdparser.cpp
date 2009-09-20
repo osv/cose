@@ -9,10 +9,19 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
+#include "celestia.h"
+
+#include "astro.h"
+#include "cmdparser.h"
+#include "glcontext.h"
+#include <celutil/util.h>
+#include <celutil/debug.h>
+#include <celmath/mathlib.h>
+#include <celengine/astro.h>
+#include <celestia/celx.h>
+#include <celestia/celx_internal.h>
 #include <algorithm>
 #include <cstdio>
-
-#include "celestia.h"
 
 // Older gcc versions used <strstream> instead of <sstream>.
 // This has been corrected in GCC 3.2, but name clashing must
@@ -22,16 +31,6 @@
 #undef max
 #endif
 #include <sstream>
-
-#include <celutil/util.h>
-#include <celutil/debug.h>
-#include <celmath/mathlib.h>
-#include <celengine/astro.h>
-#include <celestia/celx.h>
-#include <celestia/celx_internal.h>
-#include "astro.h"
-#include "cmdparser.h"
-#include "glcontext.h"
 
 using namespace std;
 
@@ -470,12 +469,18 @@ Command* CommandParser::parseCommand()
     }
     else if (commandName == "setposition")
     {
-        Vec3d base, offset;
+        // Base position in light years, offset in kilometers
+        Eigen::Vector3d base, offset;
         if (paramList->getVector("base", base))
         {
             paramList->getVector("offset", offset);
+            Eigen::Vector3f basef = base.cast<float>();
+            UniversalCoord basePosition = UniversalCoord::CreateLy(basef.cast<double>());
+            cmd = new CommandSetPosition(basePosition.offsetKm(offset));
+#if CELVEC
             cmd = new CommandSetPosition(astro::universalPosition(Point3d(offset.x, offset.y, offset.z),
                                                                   Point3f((float) base.x, (float) base.y, (float) base.z)));
+#endif
         }
         else
         {
@@ -670,7 +675,10 @@ Command* CommandParser::parseCommand()
         rep.setColor(color);
         rep.setLabel(label);        
 
-        cmd = new CommandMark(object, rep);
+        bool occludable = true;
+        paramList->getBoolean("occludable", occludable);
+
+        cmd = new CommandMark(object, rep, occludable);
     }
     else if (commandName == "unmark")
     {

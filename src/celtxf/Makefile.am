@@ -7,13 +7,13 @@ noinst_DATA = $(dosstuff)
 
 EXTRA_DIST = $(noinst_DATA)
 
-INCLUDES = -I..
-
 libceltxf_a_SOURCES = \
 	texturefont.cpp
 
 AM_CXXFLAGS = @CXXFLAGS@\
 	@CELESTIA_CXXFLAGS@
+
+INCLUDES = -I.. -I$(top_srcdir)/thirdparty/glew/include
 
 LIBS = @LIBS@ \
 	@CELESTIA_LIBS@

@@ -11,26 +11,28 @@
 #ifndef _CELENGINE_RENDER_H_
 #define _CELENGINE_RENDER_H_
 
-#include <vector>
-#include <list>
-#include <string>
 #include <celmath/frustum.h>
-#include <celengine/observer.h>
 #include <celengine/universe.h>
+#include <celengine/observer.h>
 #include <celengine/selection.h>
 #include <celengine/glcontext.h>
 #include <celengine/starcolors.h>
 #include <celengine/rendcontext.h>
 #include <celtxf/texturefont.h>
+#include <Eigen/Core>
+#include <vector>
+#include <list>
+#include <string>
 
 
 class RendererWatcher;
 class FrameTree;
 class ReferenceMark;
+class CurvePlot;
 
 struct LightSource
 {
-    Vec3d position;
+    Eigen::Vector3d position;
     Color color;
     float luminosity;
     float radius;
@@ -39,6 +41,8 @@ struct LightSource
 
 struct RenderListEntry
 {
+    EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+
     enum RenderableType
     {
         RenderableStar,
@@ -54,8 +58,8 @@ struct RenderListEntry
         const ReferenceMark* refMark;
     };
 
-    Point3f position;
-    Vec3f sun;
+    Eigen::Vector3f position;
+    Eigen::Vector3f sun;
     float distance;
     float radius;
     float centerZ;
@@ -65,22 +69,26 @@ struct RenderListEntry
     float appMag;
     RenderableType renderableType;
     bool isOpaque;
-    //std::vector<LightSource>* lightSourceList;
 };
 
 
 struct SecondaryIlluminator
 {
-    const Body* body;
-    Vec3d position_v;       // viewer relative position
-    float radius;           // radius in km
-    float reflectedIrradiance;  // albedo times total irradiance from direct sources
+    const Body*     body;
+    Eigen::Vector3d position_v;       // viewer relative position
+    float           radius;           // radius in km
+    float           reflectedIrradiance;  // albedo times total irradiance from direct sources
 };
 
+
+class StarVertexBuffer;
+class PointStarVertexBuffer;
 
 class Renderer
 {
  public:
+    EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+
     Renderer();
     ~Renderer();
 
@@ -251,7 +259,7 @@ class Renderer
         char labelText[MaxLabelLength];
         const MarkerRepresentation* markerRep;
         Color color;
-        Point3f position;
+        Eigen::Vector3f position;
         LabelAlignment halign : 3;
         LabelVerticalAlignment valign : 3;
         float size;
@@ -262,21 +270,21 @@ class Renderer
     void addForegroundAnnotation(const MarkerRepresentation* markerRep,
                                  const std::string& labelText,
                                  Color color,
-                                 const Point3f& position,
+                                 const Eigen::Vector3f& position,
                                  LabelAlignment halign = AlignLeft,
                                  LabelVerticalAlignment valign = VerticalAlignBottom,
                                  float size = 0.0f);
     void addBackgroundAnnotation(const MarkerRepresentation* markerRep,
                                  const std::string& labelText,
                                  Color color,
-                                 const Point3f& position,
+                                 const Eigen::Vector3f& position,
                                  LabelAlignment halign = AlignLeft,
                                  LabelVerticalAlignment valign = VerticalAlignBottom,
                                  float size = 0.0f);
     void addSortedAnnotation(const MarkerRepresentation* markerRep,
                              const std::string& labelText,
                              Color color,
-                             const Point3f& position,
+                             const Eigen::Vector3f& position,
                              LabelAlignment halign = AlignLeft,
                              LabelVerticalAlignment valign = VerticalAlignBottom,
                              float size = 0.0f);
@@ -284,9 +292,9 @@ class Renderer
     // Callbacks for renderables; these belong in a special renderer interface
     // only visible in object's render methods.
     void beginObjectAnnotations();
-    void addObjectAnnotation(const MarkerRepresentation* markerRep, const std::string& labelText, Color, const Point3f&);
+    void addObjectAnnotation(const MarkerRepresentation* markerRep, const std::string& labelText, Color, const Eigen::Vector3f&);
     void endObjectAnnotations();
-    Quatf getCameraOrientation() const;
+    Eigen::Quaternionf getCameraOrientation() const;
     float getNearPlaneDistance() const;
     
     void clearAnnotations(std::vector<Annotation>&);
@@ -300,7 +308,7 @@ class Renderer
         float radius;
         Body* body;
         const Star* star;
-        Point3f origin;
+        Eigen::Vector3d origin;
         float opacity;
 
         bool operator<(const OrbitPathListEntry&) const;
@@ -329,7 +337,7 @@ class Renderer
     // 
     struct Particle
     {
-        Point3f center;
+        Eigen::Vector3f center;
         float size;
         Color color;
         float pad0, pad1, pad2;
@@ -337,6 +345,8 @@ class Renderer
 
     struct RenderProperties
     {
+        EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+
         RenderProperties() :
             surface(NULL),
             atmosphere(NULL),
@@ -345,7 +355,7 @@ class Renderer
             geometryScale(1.0f),
             semiAxes(1.0f, 1.0f, 1.0f),
             geometry(InvalidResource),
-            orientation(1.0f)
+            orientation(Eigen::Quaternionf::Identity())
         {};
 
         Surface* surface;
@@ -353,60 +363,10 @@ class Renderer
         RingSystem* rings;
         float radius;
         float geometryScale;
-        Vec3f semiAxes;
+        Eigen::Vector3f semiAxes;
         ResourceHandle geometry;
-        Quatf orientation;
+        Eigen::Quaternionf orientation;
         std::vector<EclipseShadow>* eclipseShadows;
-    };
-
-    class StarVertexBuffer
-    {
-    public:
-        StarVertexBuffer(unsigned int _capacity);
-        ~StarVertexBuffer();
-        void start();
-        void render();
-        void finish();
-        void addStar(const Vec3f&, const Color&, float);
-        void setBillboardOrientation(const Quatf&);
-
-    private:
-        unsigned int capacity;
-        unsigned int nStars;
-        float* vertices;
-        float* texCoords;
-        unsigned char* colors;
-        Vec3f v0, v1, v2, v3;
-    };
-
-
-    class PointStarVertexBuffer
-    {
-    public:
-        PointStarVertexBuffer(unsigned int _capacity);
-        ~PointStarVertexBuffer();
-        void startPoints(const GLContext&);
-        void startSprites(const GLContext&);
-        void render();
-        void finish();
-        void addStar(const Vec3f& f, const Color&, float);
-		void setTexture(Texture*);
-
-    private:
-        struct StarVertex
-        {
-            Vec3f position;
-            float size;
-            unsigned char color[4];
-            float pad;
-        };
-
-        unsigned int capacity;
-        unsigned int nStars;
-        StarVertex* vertices;
-        const GLContext* context;
-        bool useSprites;
-		Texture* texture;
     };
 
  private:
@@ -418,8 +378,8 @@ class Renderer
 
     struct SkyContourPoint
     {
-        Vec3f v;
-        Vec3f eyeDir;
+        Eigen::Vector3f v;
+        Eigen::Vector3f eyeDir;
         float centerDist;
         float eyeDist;
         float cosSkyCapAltitude;
@@ -480,15 +440,15 @@ class Renderer
                                 const Frustum& viewFrustum,
                                 const Selection& sel);
 
-    void buildRenderLists(const Point3d& astrocentricObserverPos,
+    void buildRenderLists(const Eigen::Vector3d& astrocentricObserverPos,
                           const Frustum& viewFrustum,
-                          const Vec3d& viewPlaneNormal,
-                          const Vec3d& frameCenter,
+                          const Eigen::Vector3d& viewPlaneNormal,
+                          const Eigen::Vector3d& frameCenter,
                           const FrameTree* tree,
                           const Observer& observer,
                           double now);
-    void buildOrbitLists(const Point3d& astrocentricObserverPos,
-                         const Quatf& observerOrientation,
+    void buildOrbitLists(const Eigen::Vector3d& astrocentricObserverPos,
+                         const Eigen::Quaterniond& observerOrientation,
                          const Frustum& viewFrustum,
                          const FrameTree* tree,
                          double now);
@@ -503,77 +463,77 @@ class Renderer
                                   const Observer& observer,
                                   double now);
 
-    void renderObject(Point3f pos,
+    void renderObject(const Eigen::Vector3f& pos,
                       float distance,
                       double now,
-                      Quatf cameraOrientation,
+                      const Eigen::Quaternionf& cameraOrientation,
                       float nearPlaneDistance,
                       float farPlaneDistance,
                       RenderProperties& obj,
                       const LightingState&);
 
     void renderPlanet(Body& body,
-                      Point3f pos,
+                      const Eigen::Vector3f& pos,
                       float distance,
                       float appMag,
                       const Observer& observer,
-                      const Quatf& cameraOrientation,
+                      const Eigen::Quaternionf& cameraOrientation,
                       float, float);
 
     void renderStar(const Star& star,
-                    Point3f pos,
+                    const Eigen::Vector3f& pos,
                     float distance,
                     float appMag,
-                    Quatf orientation,
+                    const Eigen::Quaternionf& orientation,
                     double now,
                     float, float);
     
     void renderReferenceMark(const ReferenceMark& refMark,
-                             Point3f pos,
+                             const Eigen::Vector3f& pos,
                              float distance,
                              double now,
                              float nearPlaneDistance);
 
     void renderCometTail(const Body& body,
-                         Point3f pos,
+                         const Eigen::Vector3f& pos,
                          double now,
                          float discSizeInPixels);
 
-    void renderObjectAsPoint_nosprite(Point3f center,
+    void renderObjectAsPoint_nosprite(const Eigen::Vector3f& center,
                                       float radius,
                                       float appMag,
                                       float _faintestMag,
                                       float discSizeInPixels,
                                       Color color,
-                                      const Quatf& cameraOrientation,
+                                      const Eigen::Quaternionf& cameraOrientation,
                                       bool useHalos);
-    void renderObjectAsPoint(Point3f center,
+    void renderObjectAsPoint(const Eigen::Vector3f& center,
                              float radius,
                              float appMag,
                              float _faintestMag,
                              float discSizeInPixels,
                              Color color,
-                             const Quatf& cameraOrientation,
+                             const Eigen::Quaternionf& cameraOrientation,
                              bool useHalos,
                              bool emissive);
 
     void renderEllipsoidAtmosphere(const Atmosphere& atmosphere,
-                                   Point3f center,
-                                   const Quatf& orientation,
-                                   Vec3f semiAxes,
-                                   const Vec3f& sunDirection,
+                                   const Eigen::Vector3f& center,
+                                   const Eigen::Quaternionf& orientation,
+                                   const Eigen::Vector3f& semiAxes,
+                                   const Eigen::Vector3f& sunDirection,
                                    const LightingState& ls,
                                    float fade,
                                    bool lit);
 
     void renderLocations(const Body& body,
-                         const Vec3d& bodyPosition,
-                         const Quatd& bodyOrientation);
+                         const Eigen::Vector3d& bodyPosition,
+                         const Eigen::Quaterniond& bodyOrientation);
                    
     // Render an item from the render list                   
     void renderItem(const RenderListEntry& rle,
                     const Observer& observer,
-                    const Quatf& cameraOrientation,
+                    const Eigen::Quaternionf& cameraOrientation,
                     float nearPlaneDistance,
                     float farPlaneDistance);
 
@@ -583,17 +543,17 @@ class Renderer
                      double now,
                      vector<EclipseShadow>& shadows);
 
-    void labelConstellations(const AsterismList& asterisms,
+    void labelConstellations(const std::vector<Asterism*>& asterisms,
                              const Observer& observer);
     void renderParticles(const std::vector<Particle>& particles,
-                         Quatf orientation);
+                         const Eigen::Quaternionf& orientation);
     
     
     void addAnnotation(std::vector<Annotation>&,
                        const MarkerRepresentation*,
                        const std::string& labelText,
                        Color color,
-                       const Point3f& position,
+                       const Eigen::Vector3f& position,
                        LabelAlignment halign = AlignLeft,
                        LabelVerticalAlignment = VerticalAlignBottom,
                        float size = 0.0f);
@@ -612,12 +572,12 @@ class Renderer
 
     void renderMarkers(const MarkerList&,
                        const UniversalCoord& cameraPosition,
-                       const Quatd& cameraOrientation,
+                       const Eigen::Quaterniond& cameraOrientation,
                        double jd);
 
     void renderOrbit(const OrbitPathListEntry&,
                      double now,
-                     const Quatf& cameraOrientation,
+                     const Eigen::Quaterniond& cameraOrientation,
                      const Frustum& frustum,
                      float nearDist,
                      float farDist);
@@ -687,7 +647,7 @@ class Renderer
     Color ambientColor;
     std::string displayedSurface;
 
-    Quatf m_cameraOrientation;
+    Eigen::Quaternionf m_cameraOrientation;
     StarVertexBuffer* starVertexBuffer;
     PointStarVertexBuffer* pointStarVertexBuffer;
 	PointStarVertexBuffer* glareVertexBuffer;
@@ -724,12 +684,13 @@ class Renderer
 
 
  public:
+#if 0
     struct OrbitSample 
     {
         double t;
         Point3d pos;
         
-        OrbitSample(const Point3d& _pos, double _t) : t(_t), pos(_pos) { }
+        OrbitSample(const Eigen::Vector3d& _pos, double _t) : t(_t), pos(_pos.x(), _pos.y(), _pos.z()) { }
         OrbitSample() { }
     };
 
@@ -745,9 +706,10 @@ class Renderer
         std::vector<OrbitSection> sections;
         uint32 lastUsed;
     };
+#endif
 
  private:
-    typedef std::map<const Orbit*, CachedOrbit*> OrbitCache;
+    typedef std::map<const Orbit*, CurvePlot*> OrbitCache;
     OrbitCache orbitCache;
     uint32 lastOrbitCacheFlush;
 

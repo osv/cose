@@ -1,6 +1,7 @@
 // stardb.cpp
 //
-// Copyright (C) 2001-2008, Chris Laurel <claurel@shatters.net>
+// Copyright (C) 2001-2009, the Celestia Development Team
+// Original version by Chris Laurel <claurel@gmail.com>
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -26,6 +27,7 @@
 #include "meshmanager.h"
 #include <celutil/debug.h>
 
+using namespace Eigen;
 using namespace std;
 
 
@@ -506,28 +508,27 @@ string StarDatabase::getStarNameList(const Star& star, const unsigned int maxNam
 
 
 void StarDatabase::findVisibleStars(StarHandler& starHandler,
-                                    const Point3f& position,
-                                    const Quatf& orientation,
+                                    const Vector3f& position,
+                                    const Quaternionf& orientation,
                                     float fovY,
                                     float aspectRatio,
                                     float limitingMag) const
 {
     // Compute the bounding planes of an infinite view frustum
-    Planef frustumPlanes[5];
-    Vec3f planeNormals[5];
-    Mat3f rot = orientation.toMatrix3();
+    Hyperplane<float, 3> frustumPlanes[5];
+    Vector3f planeNormals[5];
+    Eigen::Matrix3f rot = orientation.toRotationMatrix();
     float h = (float) tan(fovY / 2);
     float w = h * aspectRatio;
-    planeNormals[0] = Vec3f(0, 1, -h);
-    planeNormals[1] = Vec3f(0, -1, -h);
-    planeNormals[2] = Vec3f(1, 0, -w);
-    planeNormals[3] = Vec3f(-1, 0, -w);
-    planeNormals[4] = Vec3f(0, 0, -1);
+    planeNormals[0] = Vector3f(0.0f, 1.0f, -h);
+    planeNormals[1] = Vector3f(0.0f, -1.0f, -h);
+    planeNormals[2] = Vector3f(1.0f, 0.0f, -w);
+    planeNormals[3] = Vector3f(-1.0f, 0.0f, -w);
+    planeNormals[4] = Vector3f(0.0f, 0.0f, -1.0f);
     for (int i = 0; i < 5; i++)
     {
-        planeNormals[i].normalize();
-        planeNormals[i] = planeNormals[i] * rot;
-        frustumPlanes[i] = Planef(planeNormals[i], position);
+        planeNormals[i] = rot.transpose() * planeNormals[i].normalized();
+        frustumPlanes[i] = Hyperplane<float, 3>(planeNormals[i], position);
     }
 
     octreeRoot->processVisibleObjects(starHandler,
@@ -539,7 +540,7 @@ void StarDatabase::findVisibleStars(StarHandler& starHandler,
 
 
 void StarDatabase::findCloseStars(StarHandler& starHandler,
-                                  const Point3f& position,
+                                  const Vector3f& position,
                                   float radius) const
 {
     octreeRoot->processCloseObjects(starHandler,
@@ -858,10 +859,10 @@ bool StarDatabase::createStar(Star* star,
     RotationModel* rm = CreateRotationModel(starData, path, 1.0);
     bool hasRotationModel = (rm != NULL);
 
-    Vec3d semiAxes;
+    Vector3d semiAxes = Vector3d::Ones();
     bool hasSemiAxes = starData->getVector("SemiAxes", semiAxes);
     bool hasBarycenter = false;
-    Point3f barycenterPosition;
+    Eigen::Vector3f barycenterPosition;
 
     double radius;
     bool hasRadius = starData->getNumber("Radius", radius);
@@ -893,15 +894,13 @@ bool StarDatabase::createStar(Star* star,
 
         if (hasModel)
         {
-            ResourceHandle geometryHandle = GetGeometryManager()->getHandle(GeometryInfo(modelName, path, Vec3f(0.0f, 0.0f, 0.0f), 1.0f, true));
+            ResourceHandle geometryHandle = GetGeometryManager()->getHandle(GeometryInfo(modelName, path, Vector3f::Zero(), 1.0f, true));
             details->setGeometry(geometryHandle);
         }
 
         if (hasSemiAxes)
         {
-            details->setEllipsoidSemiAxes(Vec3f((float) semiAxes.x,
-                                                (float) semiAxes.y,
-                                                (float) semiAxes.z));
+            details->setEllipsoidSemiAxes(semiAxes.cast<float>());
         }
 
         if (hasRadius)
@@ -987,16 +986,18 @@ bool StarDatabase::createStar(Star* star,
         double distance = 0.0;
         if (disposition == ModifyStar)
         {
-            Point3f pos = star->getPosition();
+            Vector3f pos = star->getPosition();
+
             // Convert from Celestia's coordinate system
-            Vec3f v = Vec3f(pos.x, -pos.z, pos.y);
-            v = v * Mat3f::xrotation((float) -astro::J2000Obliquity);
-            distance = v.length();
+            Vector3f v(pos.x(), -pos.z(), pos.y());
+            v = Quaternionf(AngleAxis<float>((float) astro::J2000Obliquity, Vector3f::UnitX())) * v;
+
+            distance = v.norm();
             if (distance > 0.0)
             {
                 v.normalize();
-                ra = radToDeg(std::atan2(v.y, v.x));
-                dec = radToDeg(std::asin(v.z));
+                ra = radToDeg(std::atan2(v.y(), v.x()));
+                dec = radToDeg(std::asin(v.z()));
             }
         }
         
@@ -1048,8 +1049,8 @@ bool StarDatabase::createStar(Star* star,
             float raf = ((float) (ra * 24.0 / 360.0));
             float decf = ((float) dec);
             float distancef = ((float) distance);
-            Point3d pos = astro::equatorialToCelestialCart((double) raf, (double) decf, (double) distancef);
-            star->setPosition(Point3f((float) pos.x, (float) pos.y, (float) pos.z));
+            Vector3d pos = astro::equatorialToCelestialCart((double) raf, (double) decf, (double) distancef);
+            star->setPosition(pos.cast<float>());
         }
     }
 
@@ -1077,7 +1078,7 @@ bool StarDatabase::createStar(Star* star,
             }
             else
             {
-                float distance = star->getPosition().distanceFromOrigin();
+                float distance = star->getPosition().norm();
 
                 // We can't compute the intrinsic brightness of the star from
                 // the apparent magnitude if the star is within a few AU of the
@@ -1348,7 +1349,7 @@ void StarDatabase::buildOctree()
     DPRINTF(1, "Sorting stars into octree . . .\n");
     float absMag = astro::appToAbsMag(STAR_OCTREE_MAGNITUDE,
                                       STAR_OCTREE_ROOT_SIZE * (float) sqrt(3.0));
-    DynamicStarOctree* root = new DynamicStarOctree(Point3f(1000, 1000, 1000),
+    DynamicStarOctree* root = new DynamicStarOctree(Vector3f(1000.0f, 1000.0f, 1000.0f),
                                                     absMag);
     for (unsigned int i = 0; i < unsortedStars.size(); ++i)
     {

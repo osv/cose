@@ -23,15 +23,14 @@
 #include <cstring>
 #include <cassert>
 #include <ctime>
-#include <celengine/gl.h>
-#include <celmath/vecmath.h>
-#include <celmath/quaternion.h>
-#include <celmath/mathlib.h>
+#include <GL/glew.h>
 #include <celutil/util.h>
 #include <celutil/filetype.h>
 #include <celutil/directory.h>
 #include <celutil/formatnum.h>
 #include <celengine/astro.h>
+#include <celengine/asterism.h>
+#include <celengine/boundaries.h>
 #include <celengine/overlay.h>
 #include <celengine/console.h>
 #include <celengine/execution.h>
@@ -43,9 +42,11 @@
 #include <celengine/visibleregion.h>
 #include "favorites.h"
 #include "celestiacore.h"
+#include <celmath/geomutil.h>
 #include <celutil/debug.h>
 #include <celutil/utf8.h>
 #include "url.h"
+#include <celengine/eigenport.h>
 
 #ifdef CELX
 #include <celengine/scriptobject.h>
@@ -57,6 +58,7 @@
 #define TIMERATE_PRINTF_FORMAT "%'.12g"
 #endif
 
+using namespace Eigen;
 using namespace std;
 
 static const int DragThreshold = 3;
@@ -151,7 +153,7 @@ float ComputeRotationCoarseness(Simulation& sim)
         double t = sim.getTime();
         UniversalCoord observerPosition = sim.getActiveObserver()->getPosition();
         UniversalCoord selectionPosition = selection.getPosition(t);
-        double distance = astro::microLightYearsToKilometers(observerPosition.distanceTo(selectionPosition));
+        double distance = observerPosition.distanceFromKm(selectionPosition);
         double altitude = distance - radius;
         if (altitude > 0.0 && altitude < radius)
         {
@@ -499,16 +501,16 @@ const DestinationList* CelestiaCore::getDestinations()
 // Used in the super-secret edit mode
 void showSelectionInfo(const Selection& sel)
 {
-    Vec3f axis(0.0f, 1.0, 0.0f);
-    float angle = 0.0f;
-
+    Quaternionf orientation;
     if (sel.deepsky() != NULL)
-        sel.deepsky()->getOrientation().getAxisAngle(axis, angle);
+        orientation = sel.deepsky()->getOrientation();
     else if (sel.body() != NULL)
-        sel.body()->getOrientation().getAxisAngle(axis, angle);
+        orientation = sel.body()->getGeometryOrientation();
+
+    AngleAxisf aa(orientation);
 
     cout << sel.getName() << '\n';
-    cout << _("Orientation: ") << '[' << axis.x << ',' << axis.y << ',' << axis.z << "], " << radToDeg(angle) << '\n';
+    cout << _("Orientation: ") << '[' << aa.axis().x() << ',' << aa.axis().y() << ',' << aa.axis().z() << "], " << radToDeg(aa.angle()) << '\n';
 }
 
 
@@ -753,7 +755,7 @@ void CelestiaCore::mouseButtonUp(float x, float y, int button)
             (*activeView)->mapWindowToView((float) x / (float) width,
                                         (float) y / (float) height,
                                         pickX, pickY);
-            Vec3f pickRay =
+            Vector3f pickRay =
                 sim->getActiveObserver()->getPickRay(pickX * aspectRatio, pickY);
 
             Selection oldSel = sim->getSelection();
@@ -770,7 +772,7 @@ void CelestiaCore::mouseButtonUp(float x, float y, int button)
             (*activeView)->mapWindowToView((float) x / (float) width,
                                         (float) y / (float) height,
                                         pickX, pickY);
-            Vec3f pickRay =
+            Vector3f pickRay =
                 sim->getActiveObserver()->getPickRay(pickX * aspectRatio, pickY);
 
             Selection sel = sim->pickObject(pickRay, renderer->getRenderFlags(), pickTolerance);
@@ -904,19 +906,18 @@ void CelestiaCore::mouseMove(float dx, float dy, int modifiers)
         {
             // Rotate the selected object
             Selection sel = sim->getSelection();
-            Quatf q(1);
+            Quaternionf q = Quaternionf::Identity();
             if (sel.getType() == Selection::Type_DeepSky)
                 q = sel.deepsky()->getOrientation();
             else if (sel.getType() == Selection::Type_Body)
-                q = sel.body()->getOrientation();
+                q = sel.body()->getGeometryOrientation();
 
-            q.yrotate(dx / width);
-            q.xrotate(dy / height);
+            q = XRotation(dy / height) * YRotation(dx / width) * q;
 
             if (sel.getType() == Selection::Type_DeepSky)
                 sel.deepsky()->setOrientation(q);
             else if (sel.getType() == Selection::Type_Body)
-                sel.body()->setOrientation(q);
+                sel.body()->setGeometryOrientation(q);
         }
         else if (editMode && checkMask(modifiers, RightButton | ShiftKey | ControlKey))
         {
@@ -926,14 +927,12 @@ void CelestiaCore::mouseMove(float dx, float dy, int modifiers)
             if (sel.deepsky() != NULL)
             {
                 double t = sim->getTime();
-                Vec3d v = sel.getPosition(t) - sim->getObserver().getPosition();
-                Vec3f axis((float) v.x, (float) v.y, (float) v.z);
-                axis.normalize();
+                Vector3d v = sel.getPosition(t).offsetFromKm(sim->getObserver().getPosition());
+                Vector3f axis = v.cast<float>().normalized();
 
-                Quatf r;
-                r.setAxisAngle(axis, dx / width);
+                Quaternionf r(AngleAxisf(dx / width, axis));
 
-                Quatf q = sel.deepsky()->getOrientation();
+                Quaternionf q = sel.deepsky()->getOrientation();
                 sel.deepsky()->setOrientation(r * q);
             }
         }
@@ -947,11 +946,12 @@ void CelestiaCore::mouseMove(float dx, float dy, int modifiers)
             if (dx * dx > dy * dy)
             {
                 Observer& observer = sim->getObserver();
-                Vec3d v = Vec3d(0, 0, dx * -MouseRotationSensitivity);
+                Vector3d v(0, 0, dx * -MouseRotationSensitivity);
+                v *= 0.5;
 
-                Quatd obsOrientation = observer.getOrientation();
-                Quatd dr = 0.5 * (v * obsOrientation);
-                obsOrientation += dr;
+                Quaterniond obsOrientation = observer.getOrientation();
+                Quaterniond dr = Quaterniond(0.0, v.x(), v.y(), v.z()) * obsOrientation;
+                obsOrientation = Quaterniond(dr.coeffs() + obsOrientation.coeffs());
                 obsOrientation.normalize();
                 observer.setOrientation(obsOrientation);
             }
@@ -985,7 +985,6 @@ void CelestiaCore::mouseMove(float dx, float dy, int modifiers)
         }
         else
         {
-            Quatf q(1);
             // For a small field of view, rotate the camera more finely
             float coarseness = 1.5f;
             if ((modifiers & RightButton) == 0)
@@ -998,12 +997,12 @@ void CelestiaCore::mouseMove(float dx, float dy, int modifiers)
                 // based on the distance from the reference object.
                 coarseness = ComputeRotationCoarseness(*sim);
             }
-            q.yrotate(dx / width * coarseness);
-            q.xrotate(dy / height * coarseness);
+
+            Quaternionf q = XRotation(dy / height * coarseness) * YRotation(dx / width * coarseness);
             if ((modifiers & RightButton) != 0)
                 sim->orbit(q);
             else
-                sim->rotate(~q);
+                sim->rotate(q.conjugate());
         }
 
         mouseMotion += abs(dy) + abs(dx);
@@ -1055,9 +1054,9 @@ void CelestiaCore::joystickAxis(int axis, float amount)
     amount = sign(amount) * square(amount);
 
     if (axis == Joy_XAxis)
-        joystickRotation.y = amount;
+        joystickRotation.y() = amount;
     else if (axis == Joy_YAxis)
-        joystickRotation.x = -amount;
+        joystickRotation.x() = -amount;
 }
 
 
@@ -1111,22 +1110,22 @@ void CelestiaCore::keyDown(int key, int modifiers)
         sim->setTargetSpeed(0);
         break;
     case Key_F2:
-        sim->setTargetSpeed(astro::kilometersToMicroLightYears(1.0f));
+        sim->setTargetSpeed(1.0f);
         break;
     case Key_F3:
-        sim->setTargetSpeed(astro::kilometersToMicroLightYears(1000.0f));
+        sim->setTargetSpeed(1000.0f);
         break;
     case Key_F4:
-        sim->setTargetSpeed((float) astro::kilometersToMicroLightYears(astro::speedOfLight));
+        sim->setTargetSpeed((float) astro::speedOfLight);
         break;
     case Key_F5:
-        sim->setTargetSpeed((float) astro::kilometersToMicroLightYears(astro::speedOfLight * 10.0));
+        sim->setTargetSpeed((float) astro::speedOfLight * 10.0f);
         break;
     case Key_F6:
-        sim->setTargetSpeed(astro::AUtoMicroLightYears(1.0f));
+        sim->setTargetSpeed(astro::AUtoKilometers(1.0f));
         break;
     case Key_F7:
-        sim->setTargetSpeed(1e6);
+        sim->setTargetSpeed(astro::lightYearsToKilometers(1.0f));
         break;
     case Key_F11:
         if (movieCapture != NULL)
@@ -1429,10 +1428,8 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
     case '\007':  // Ctrl+G
         flash(_("Goto surface"));
         addToHistory();
-        //if (sim->getFrame().coordSys == astro::Universal)
-            sim->geosynchronousFollow();
+        sim->geosynchronousFollow();
         sim->gotoSurface(5.0);
-        // sim->gotoSelection(0.0001, Vec3f(0, 1, 0), astro::ObserverLocal);
         break;
 
     case '\006': // Ctrl+F
@@ -1718,31 +1715,30 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
         addToHistory();
         if (!sim->getSelection().empty())
         {
-            Vec3d v = sim->getSelection().getPosition(sim->getTime()) -
-            sim->getObserver().getPosition();
+            Vector3d v = sim->getSelection().getPosition(sim->getTime()).offsetFromKm(sim->getObserver().getPosition());
             int hours, mins;
             float secs;
             char buf[128];
-	    if (astro::microLightYearsToKilometers(v.length()) >=
-                86400.0 * astro::speedOfLight)
-	    {
-	        // Light travel time in years, if >= 1day
-	        sprintf(buf, _("Light travel time:  %.4f yr "),
-                        v.length() * 1.0e-6);
+            if (v.norm() >= 86400.0 * astro::speedOfLight)
+            {
+                // Light travel time in years, if >= 1day
+                sprintf(buf, _("Light travel time:  %.4f yr "), astro::kilometersToLightYears(v.norm()));
                 flash(buf, 2.0);
-	    }
-	    else
-	    {
-	        // If Light travel delay < 1 day, display in [ hr : min : sec ]
-                getLightTravelDelay(v.length(), hours, mins, secs);
+            }
+            else
+            {
+                // If Light travel delay < 1 day, display in [ hr : min : sec ]
+                getLightTravelDelay(v.norm(), hours, mins, secs);
                 if (hours == 0)
-                    sprintf(buf, _("Light travel time:  %d min  %.1f s"),
-                            mins, secs);
+                {
+                    sprintf(buf, _("Light travel time:  %d min  %.1f s"), mins, secs);
+                }
                 else
-		    sprintf(buf, _("Light travel time:  %d h  %d min  %.1f s")
-                            ,hours, mins, secs);
+                {
+                    sprintf(buf, _("Light travel time:  %d h  %d min  %.1f s"), hours, mins, secs);
+                }
                 flash(buf, 2.0);
-	    }
+            }
         }
         break;
 
@@ -1750,21 +1746,19 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
         addToHistory();
 
         if (sim->getSelection().body() &&
-            (sim->getTargetSpeed() < 0.99 *
-            astro::kilometersToMicroLightYears(astro::speedOfLight)))
+            (sim->getTargetSpeed() < 0.99 * astro::speedOfLight))
         {
-            Vec3d v = sim->getSelection().getPosition(sim->getTime()) -
-                      sim->getObserver().getPosition();
+            Vector3d v = sim->getSelection().getPosition(sim->getTime()).offsetFromKm(sim->getObserver().getPosition());
             lightTravelFlag = !lightTravelFlag;
             if (lightTravelFlag)
             {
                 flash(_("Light travel delay included"),2.0);
-                setLightTravelDelay(v.length());
+                setLightTravelDelay(v.norm());
             }
             else
             {
                 flash(_("Light travel delay switched off"),2.0);
-                setLightTravelDelay(-v.length());
+                setLightTravelDelay(-v.norm());
             }
         }
         else
@@ -1894,7 +1888,7 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
         addToHistory();
         if (sim->getFrame()->getCoordinateSystem() == ObserverFrame::Universal)
             sim->follow();
-        sim->gotoSelection(5.0, Vec3f(0, 1, 0), ObserverFrame::ObserverLocal);
+        sim->gotoSelection(5.0, Vector3f::UnitY(), ObserverFrame::ObserverLocal);
         break;
 
     case 'H':
@@ -2187,25 +2181,24 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
 }
 
 
-void CelestiaCore::getLightTravelDelay(double distance, int& hours, int& mins,
-                                    float& secs)
+void CelestiaCore::getLightTravelDelay(double distanceKm, int& hours, int& mins, float& secs)
 {
     // light travel time in hours
-    double lt = astro::microLightYearsToKilometers(distance)/
-	        (3600.0 * astro::speedOfLight);
+    double lt = distanceKm / (3600.0 * astro::speedOfLight);
     hours = (int) lt;
     double mm    = (lt - hours) * 60;
     mins = (int) mm;
     secs = (float) ((mm  - mins) * 60);
 }
 
-void CelestiaCore::setLightTravelDelay(double distance)
+
+void CelestiaCore::setLightTravelDelay(double distanceKm)
 {
     // light travel time in days
-    double lt = astro::microLightYearsToKilometers(distance)/
-	        (86400.0 * astro::speedOfLight);
+    double lt = distanceKm / (86400.0 * astro::speedOfLight);
     sim->setTime(sim->getTime() - lt);
 }
+
 
 bool CelestiaCore::getAltAzimuthMode() const
 {
@@ -2314,7 +2307,7 @@ void CelestiaCore::tick()
         sim->changeOrbitDistance((float) (dt * 2));
 
     // Keyboard rotate
-    Vec3d av = sim->getObserver().getAngularVelocity();
+    Vector3d av = sim->getObserver().getAngularVelocity();
 
     av = av * exp(-dt * RotationDecay);
 
@@ -2328,57 +2321,57 @@ void CelestiaCore::tick()
         if (!altAzimuthMode)
         {
             if (keysPressed[Key_Left])
-                av += Vec3d(0.0, 0.0, dt * -KeyRotationAccel);
+                av += Vector3d::UnitZ() * (dt * -KeyRotationAccel);
             if (keysPressed[Key_Right])
-                av += Vec3d(0.0, 0.0, dt * KeyRotationAccel);
+                av += Vector3d::UnitZ() * (dt * KeyRotationAccel);
             if (keysPressed[Key_Down])
-                av += Vec3d(dt * fov * -KeyRotationAccel, 0.0, 0.0);
+                av += Vector3d::UnitX() * (dt * fov * -KeyRotationAccel);
             if (keysPressed[Key_Up])
-                av += Vec3d(dt * fov * KeyRotationAccel, 0.0, 0.0);
+                av += Vector3d::UnitX() * (dt * fov * KeyRotationAccel);
         }
         else
         {
             if (!refObject.empty())
             {
-                Quatd orientation = sim->getObserver().getOrientation();
-                Vec3d up = sim->getObserver().getPosition() - refObject.getPosition(sim->getTime());
+                Quaterniond orientation = sim->getObserver().getOrientation();
+                Vector3d up = sim->getObserver().getPosition().offsetFromKm(refObject.getPosition(sim->getTime()));
                 up.normalize();
 
-                Vec3d v = up * (KeyRotationAccel * dt);
-                v = v * (~orientation).toMatrix3();
+                Vector3d v = up * (KeyRotationAccel * dt);
+                v = orientation * v;
 
                 if (keysPressed[Key_Left])
                     av -= v;
                 if (keysPressed[Key_Right])
                     av += v;
                 if (keysPressed[Key_Down])
-                    av += Vec3d(dt * fov * -KeyRotationAccel, 0.0, 0.0);
+                    av += Vector3d::UnitX() * (dt * fov * -KeyRotationAccel);
                 if (keysPressed[Key_Up])
-                    av += Vec3d(dt * fov * KeyRotationAccel, 0.0, 0.0);
+                    av += Vector3d::UnitX() * (dt * fov * KeyRotationAccel);
             }
         }
     }
 
     if (keysPressed[Key_NumPad4])
-        av += Vec3d(0.0, dt * fov * -KeyRotationAccel, 0.0);
+        av += Vector3d(0.0, dt * fov * -KeyRotationAccel, 0.0);
     if (keysPressed[Key_NumPad6])
-        av += Vec3d(0.0, dt * fov * KeyRotationAccel, 0.0);
+        av += Vector3d(0.0, dt * fov * KeyRotationAccel, 0.0);
     if (keysPressed[Key_NumPad2])
-        av += Vec3d(dt * fov * -KeyRotationAccel, 0.0, 0.0);
+        av += Vector3d(dt * fov * -KeyRotationAccel, 0.0, 0.0);
     if (keysPressed[Key_NumPad8])
-        av += Vec3d(dt * fov * KeyRotationAccel, 0.0, 0.0);
+        av += Vector3d(dt * fov * KeyRotationAccel, 0.0, 0.0);
     if (keysPressed[Key_NumPad7] || joyButtonsPressed[JoyButton7])
-        av += Vec3d(0.0, 0.0, dt * -KeyRotationAccel);
+        av += Vector3d(0.0, 0.0, dt * -KeyRotationAccel);
     if (keysPressed[Key_NumPad9] || joyButtonsPressed[JoyButton8])
-        av += Vec3d(0.0, 0.0, dt * KeyRotationAccel);
+        av += Vector3d(0.0, 0.0, dt * KeyRotationAccel);
 
     //Use Boolean to indicate if sim->setTargetSpeed() is called
     bool bSetTargetSpeed = false;
-    if (joystickRotation != Vec3f(0.0f, 0.0f, 0.0f))
+    if (joystickRotation != Vector3f::Zero())
     {
         bSetTargetSpeed = true;
 
-        av += (dt * KeyRotationAccel) * Vec3d(joystickRotation.x, joystickRotation.y, joystickRotation.z);
+        av += (dt * KeyRotationAccel) * joystickRotation.cast<double>();
         sim->setTargetSpeed(sim->getTargetSpeed());
     }
 
@@ -2392,7 +2385,7 @@ void CelestiaCore::tick()
         bSetTargetSpeed = true;
 
         if (sim->getTargetSpeed() == 0.0f)
-            sim->setTargetSpeed(astro::kilometersToMicroLightYears(0.1f));
+            sim->setTargetSpeed(0.1f);
         else
             sim->setTargetSpeed(sim->getTargetSpeed() * (float) exp(dt * 3));
     }
@@ -2402,26 +2395,26 @@ void CelestiaCore::tick()
 
         sim->setTargetSpeed(sim->getTargetSpeed() / (float) exp(dt * 3));
     }
-    if (!bSetTargetSpeed && av.length() > 0.0f)
+    if (!bSetTargetSpeed && av.norm() > 0.0f)
     {
-        //Force observer velocity vector to align with observer direction if an observer
-        //angular velocity still exists.
+        // Force observer velocity vector to align with observer direction if an observer
+        // angular velocity still exists.
         sim->setTargetSpeed(sim->getTargetSpeed());
     }
 
     if (!refObject.empty())
     {
-        Quatf q(1.0f);
+        Quaternionf q = Quaternionf::Identity();
         float coarseness = ComputeRotationCoarseness(*sim);
 
         if (shiftKeysPressed[Key_Left])
-            q = q * Quatf::yrotation((float) (dt * -KeyRotationAccel * coarseness));
+            q = q * YRotation((float) (dt * -KeyRotationAccel * coarseness));
         if (shiftKeysPressed[Key_Right])
-            q = q * Quatf::yrotation((float) (dt *  KeyRotationAccel * coarseness));
+            q = q * YRotation((float) (dt *  KeyRotationAccel * coarseness));
         if (shiftKeysPressed[Key_Up])
-            q = q * Quatf::xrotation((float) (dt * -KeyRotationAccel * coarseness));
+            q = q * XRotation((float) (dt * -KeyRotationAccel * coarseness));
         if (shiftKeysPressed[Key_Down])
-            q = q * Quatf::xrotation((float) (dt *  KeyRotationAccel * coarseness));
+            q = q * XRotation((float) (dt *  KeyRotationAccel * coarseness));
         sim->orbit(q);
     }
 
@@ -2501,6 +2494,10 @@ void CelestiaCore::draw()
         glViewport(x, y, width, height);
     }
 
+    GLboolean toggleAA = glIsEnabled(GL_MULTISAMPLE_ARB);
+    if (toggleAA && (renderer->getRenderFlags() & Renderer::ShowCloudMaps))
+        glDisable(GL_MULTISAMPLE_ARB);
+
     renderOverlay();
 	if (showConsole)
     {
@@ -2512,6 +2509,8 @@ void CelestiaCore::draw()
         console.end();
     }
 
+    if (toggleAA)
+        glEnable(GL_MULTISAMPLE_ARB);
 
     if (movieCapture != NULL && recording)
         movieCapture->captureFrame();
@@ -2899,7 +2898,7 @@ static FormattedNumber SigDigitNum(double v, int digits)
 }
 
 
-static void displayDistance(Overlay& overlay, double distance)
+static void displayDistanceLy(Overlay& overlay, double distance)
 {
     const char* units = "";
 
@@ -2934,6 +2933,12 @@ static void displayDistance(Overlay& overlay, double distance)
     }
 
     overlay << SigDigitNum(distance, 5) << ' ' << units;
+}
+
+
+static void displayDistanceKm(Overlay& overlay, double distance)
+{
+    displayDistanceLy(overlay, astro::kilometersToLightYears(distance));
 }
 
 
@@ -3037,13 +3042,13 @@ static void displayApparentMagnitude(Overlay& overlay,
 }
 
 
-static void displayRADec(Overlay& overlay, Vec3d v)
+static void displayRADec(Overlay& overlay, const Vector3d& v)
 {
-    double phi = atan2(v.x, v.z) - PI / 2;
+    double phi = atan2(v.x(), v.z()) - PI / 2;
     if (phi < 0)
         phi = phi + 2 * PI;
 
-    double theta = atan2(sqrt(v.x * v.x + v.z * v.z), v.y);
+    double theta = atan2(sqrt(v.x() * v.x() + v.z() * v.z()), v.y());
     if (theta > 0)
         theta = PI / 2 - theta;
     else
@@ -3097,8 +3102,8 @@ static void displayPlanetocentricCoords(Overlay& overlay,
     else
     {
         // Swap hemispheres if the object is a retrograde rotator
-        Quatd q = ~body.getEclipticToEquatorial(astro::J2000);
-        bool retrograde = (Vec3d(0.0, 1.0, 0.0) * q.toMatrix3()).y < 0.0;
+        Quaterniond q = body.getEclipticToEquatorial(astro::J2000);
+        bool retrograde = (q * Vector3d::UnitY()).y() < 0.0;
 
         if ((latitude < 0.0) ^ retrograde)
             nsHemi = 'S';
@@ -3133,12 +3138,10 @@ static void displayObserverPlanetocentricCoords(Overlay& overlay,
                                                 const UniversalCoord& observerPos,
                                                 double tdb)
 {
-    // Get the observer position in body-centered ecliptical coordinates
-    Vec3d ecl = observerPos - Selection(&body).getPosition(tdb);
-    ecl *= astro::microLightYearsToKilometers(1.0);
-    Vec3d pc = body.eclipticToPlanetocentric(ecl, tdb);
+    Vector3d ecl = observerPos.offsetFromKm(Selection(&body).getPosition(tdb));
+    Vector3d pc = body.eclipticToPlanetocentric(ecl, tdb);
 
-    displayPlanetocentricCoords(overlay, body, pc.x, pc.y, pc.z, true);
+    displayPlanetocentricCoords(overlay, body, pc.x(), pc.y(), pc.z(), true);
 }
 #endif
 
@@ -3150,7 +3153,7 @@ static void displayStarInfo(Overlay& overlay,
                             double distance)
 {
     overlay << _("Distance: ");
-    displayDistance(overlay, distance);
+    displayDistanceLy(overlay, distance);
     overlay << '\n';
 
     if (!star.getVisibility())
@@ -3224,16 +3227,16 @@ static void displayDSOinfo(Overlay& overlay, const DeepSkyObject& dso, double di
     if (distance >= 0)
     {
     	overlay << _("Distance: ");
-    	displayDistance(overlay, distance);
+    	displayDistanceLy(overlay, distance);
     }
     else
     {
         overlay << _("Distance from center: ");
-        displayDistance(overlay, distance + dso.getRadius());
+        displayDistanceLy(overlay, distance + dso.getRadius());
      }
     overlay << '\n';
     overlay << _("Radius: ");
-    displayDistance(overlay, dso.getRadius());
+    displayDistanceLy(overlay, dso.getRadius());
     overlay << '\n';
 
     displayApparentDiameter(overlay, dso.getRadius(), distance);
@@ -3250,14 +3253,12 @@ static void displayPlanetInfo(Overlay& overlay,
                               int detail,
                               Body& body,
                               double t,
-                              double distance,
-                              Vec3d viewVec)
+                              double distanceKm,
+                              const Vector3d& viewVec)
 {
-    double kmDistance = astro::lightYearsToKilometers(distance);
-
     overlay << _("Distance: ");
-    distance = astro::kilometersToLightYears(kmDistance - body.getRadius());
-    displayDistance(overlay, distance);
+    double distance = distanceKm - body.getRadius();
+    displayDistanceKm(overlay, distance);
     overlay << '\n';
 
     if (body.getClassification() == Body::Invisible)
@@ -3266,11 +3267,10 @@ static void displayPlanetInfo(Overlay& overlay,
     }
 
     overlay << _("Radius: ");
-    distance = astro::kilometersToLightYears(body.getRadius());
-    displayDistance(overlay, distance);
+    displayDistanceKm(overlay, body.getRadius());
     overlay << '\n';
 
-    displayApparentDiameter(overlay, body.getRadius(), kmDistance);
+    displayApparentDiameter(overlay, body.getRadius(), distanceKm);
 
 	// Display the phase angle
 
@@ -3305,9 +3305,9 @@ static void displayPlanetInfo(Overlay& overlay,
 
 		if (showPhaseAngle)
 		{
-			Vec3d sunVec = Selection(&body).getPosition(t) - Selection(sun).getPosition(t);
+			Vector3d sunVec = Selection(&body).getPosition(t).offsetFromKm(Selection(sun).getPosition(t));
 			sunVec.normalize();
-			double cosPhaseAngle = sunVec * ((1.0 / viewVec.length()) * viewVec);
+			double cosPhaseAngle = sunVec.dot(viewVec.normalized());
 			double phaseAngle = acos(cosPhaseAngle);
 			overlay.oprintf("Phase angle: %.1f%s\n", radToDeg(phaseAngle), UTF8_DEGREE_SIGN);
 		}
@@ -3322,13 +3322,17 @@ static void displayPlanetInfo(Overlay& overlay,
             overlay << '\n';
         }
 
+/*
+ * Equilibrium temperature calculation disabled; it's too simplistic to be very useful,
+ * it's not a fundamental piece of information like distance or size.
+ *
         PlanetarySystem* system = body.getSystem();
         if (system != NULL)
         {
             const Star* sun = system->getStar();
             if (sun != NULL)
             {
-                double distFromSun = body.getAstrocentricPosition(t).distanceFromOrigin();
+                double distFromSun = body.getAstrocentricPosition(t).norm();
                 float planetTemp = sun->getTemperature() *
                     (float) (::pow(1.0 - body.getAlbedo(), 0.25) *
                              sqrt(sun->getRadius() / (2.0 * distFromSun)));
@@ -3336,37 +3340,28 @@ static void displayPlanetInfo(Overlay& overlay,
                 overlay << _("Temperature: ") << planetTemp << " K\n";
                 overlay << setprecision(3);
             }
-
-#if 0
-            // Code to display apparent magnitude.  Disabled because it's not very
-            // accurate.  Too many simplifications are used when computing the amount
-            // of light reflected from a body.
-            Point3d bodyPos = body.getAstrocentricPosition(t);
-            float appMag = body.getApparentMagnitude(*sun,
-                                                     bodyPos - Point3d(0, 0, 0),
-                                                     viewVec);
-            overlay.oprintf(_("Apparent mag: %.2f\n"), appMag);
-#endif
         }
+*/
     }
+
 }
 
 
 static void displayLocationInfo(Overlay& overlay,
                                 Location& location,
-                                double distance)
+                                double distanceKm)
 {
     overlay << _("Distance: ");
-    displayDistance(overlay, distance);
+    displayDistanceKm(overlay, distanceKm);
     overlay << '\n';
 
     Body* body = location.getParentBody();
     if (body != NULL)
     {
-        Vec3f locPos = location.getPosition();
-        Vec3d lonLatAlt = body->cartesianToPlanetocentric(Vec3d(locPos.x, locPos.y, locPos.z));
+        Vector3f locPos = location.getPosition();
+        Vector3d lonLatAlt = body->cartesianToPlanetocentric(locPos.cast<double>());
         displayPlanetocentricCoords(overlay, *body,
-                                    lonLatAlt.x, lonLatAlt.y, lonLatAlt.z, false);
+                                    lonLatAlt.x(), lonLatAlt.y(), lonLatAlt.z(), false);
     }
 }
 
@@ -3478,15 +3473,13 @@ void CelestiaCore::renderOverlay()
         double lt = 0.0;
  
         if (sim->getSelection().getType() == Selection::Type_Body &&
-            (sim->getTargetSpeed() < 0.99 *
-             astro::kilometersToMicroLightYears(astro::speedOfLight)))
+            (sim->getTargetSpeed() < 0.99 * astro::speedOfLight))
         {
     	    if (lightTravelFlag)
     	    {
-    	        Vec3d v = sim->getSelection().getPosition(sim->getTime()) -
-                              sim->getObserver().getPosition();
+    	        Vector3d v = sim->getSelection().getPosition(sim->getTime()).offsetFromKm(sim->getObserver().getPosition());
     	        // light travel time in days
-                lt = astro::microLightYearsToKilometers(v.length()) / (86400.0 * astro::speedOfLight);
+                lt = v.norm() / (86400.0 * astro::speedOfLight);
     	    }
     	}
         else
@@ -3566,17 +3559,17 @@ void CelestiaCore::renderOverlay()
         overlay->setf(ios::fixed);
         *overlay << _("\nSpeed: ");
 
-        double speed = sim->getObserver().getVelocity().length();
-        if (speed < astro::kilometersToMicroLightYears(1.0f))
-            *overlay << SigDigitNum(astro::microLightYearsToKilometers(speed) * 1000.0f, 3) << _(" m/s");
-        else if (speed < astro::kilometersToMicroLightYears(10000.0f))
-            *overlay << SigDigitNum(astro::microLightYearsToKilometers(speed), 3) << _(" km/s");
-        else if (speed < astro::kilometersToMicroLightYears((float) astro::speedOfLight * 100.0f))
-            *overlay << SigDigitNum(astro::microLightYearsToKilometers(speed) / astro::speedOfLight, 3) << 'c';
-        else if (speed < astro::AUtoMicroLightYears(1000.0f))
-            *overlay << SigDigitNum(astro::microLightYearsToAU(speed), 3) << _(" AU/s");
+        double speed = sim->getObserver().getVelocity().norm();
+        if (speed < 1.0f)
+            *overlay << SigDigitNum(speed * 1000.0f, 3) << _(" m/s");
+        else if (speed < 10000.0f)
+            *overlay << SigDigitNum(speed, 3) << _(" km/s");
+        else if (speed < (float) astro::speedOfLight * 100.0f)
+            *overlay << SigDigitNum(speed / astro::speedOfLight, 3) << 'c';
+        else if (speed < astro::AUtoKilometers(1000.0f))
+            *overlay << SigDigitNum(astro::kilometersToAU(speed), 3) << _(" AU/s");
         else
-            *overlay << SigDigitNum(speed * 1e-6, 3) << _(" ly/s");
+            *overlay << SigDigitNum(astro::kilometersToLightYears(speed), 3) << _(" ly/s");
 
         overlay->endText();
         glPopMatrix();
@@ -3672,8 +3665,8 @@ void CelestiaCore::renderOverlay()
         glTranslatef(0.0f, (float) (height - titleFont->getHeight()), 0.0f);
 
         overlay->beginText();
-        Vec3d v = sel.getPosition(sim->getTime()) -
-            sim->getObserver().getPosition();
+        Vector3d v = sel.getPosition(sim->getTime()).offsetFromKm(sim->getObserver().getPosition());
+
         switch (sel.getType())
         {
         case Selection::Type_Star:
@@ -3706,7 +3699,7 @@ void CelestiaCore::renderOverlay()
                                 hudDetail,
                                 *(sel.star()),
                                 *(sim->getUniverse()),
-                                v.length() * 1e-6);
+                                astro::kilometersToLightYears(v.norm()));
             }
             break;
 
@@ -3730,8 +3723,9 @@ void CelestiaCore::renderOverlay()
                 *overlay << selectionNames;
                 overlay->setFont(font);
                 *overlay << '\n';
-                displayDSOinfo(*overlay, *sel.deepsky(),
-                               v.length() * 1e-6 - sel.deepsky()->getRadius());
+                displayDSOinfo(*overlay,
+                               *sel.deepsky(),
+                               astro::kilometersToLightYears(v.norm()) - sel.deepsky()->getRadius());
             }
             break;
 
@@ -3779,8 +3773,8 @@ void CelestiaCore::renderOverlay()
                                   hudDetail,
                                   *(sel.body()),
                                   sim->getTime(),
-                                  v.length() * 1e-6,
-                                  v * astro::microLightYearsToKilometers(1.0));
+                                  v.norm(),
+                                  v);
             }
             break;
 
@@ -3791,7 +3785,7 @@ void CelestiaCore::renderOverlay()
             *overlay << '\n';
             displayLocationInfo(*overlay,
                                 *(sel.location()),
-                                v.length() * 1e-6);
+                                v.norm());
             break;
 
 	      default:
@@ -3807,9 +3801,9 @@ void CelestiaCore::renderOverlay()
             Body* earth = refObject.body();
 
             UniversalCoord observerPos = sim->getObserver().getPosition();
-            double distToEarth = (observerPos - refObject.getPosition(sim->getTime())).length();
-            distToEarth = astro::microLightYearsToKilometers(distToEarth) - earth->getRadius();
-            if (distToEarth < 1000.0)
+            double distToEarthCenter = observerPos.offsetFromKm(refObject.getPosition(sim->getTime())).norm();
+            double altitude = distToEarthCenter - earth->getRadius();
+            if (altitude < 1000.0)
             {
 #if 1
                 // Code to show the geocentric RA/Dec
@@ -3819,8 +3813,8 @@ void CelestiaCore::renderOverlay()
                 // near the Earth.
                 if (sel.star() != NULL || sel.deepsky() != NULL)
                 {
-                    Vec3d v = sel.getPosition(sim->getTime()) - Selection(earth).getPosition(sim->getTime());
-                    v = v * Mat3d::xrotation(-astro::J2000Obliquity);
+                    Vector3d v = sel.getPosition(sim->getTime()).offsetFromKm(Selection(earth).getPosition(sim->getTime()));
+                    v = XRotation(astro::J2000Obliquity) * v;
                     displayRADec(*overlay, v);
                 }
 #else
@@ -3829,8 +3823,8 @@ void CelestiaCore::renderOverlay()
                 // Don't show RA/Dec for the Earth itself
                 if (sel.body() != earth)
                 {
-                    Vec3d vect = sel.getPosition(sim->getTime()) - observerPos;
-                    vect = vect * Mat3d::xrotation(-astro::J2000Obliquity);
+                    Vector3d vect = sel.getPosition(sim->getTime()).offsetFromKm(observerPos);
+                    vect = XRotation(astro::J2000Obliquity) * vect;
                     displayRADec(*overlay, vect);
                 }
 
@@ -3944,6 +3938,7 @@ void CelestiaCore::renderOverlay()
                       (float) (movieHeight + 1), false);
         glTranslatef((float) ((width - movieWidth) / 2),
                      (float) ((height + movieHeight) / 2 + 2), 0.0f);
+        overlay->beginText();
         *overlay << movieWidth << 'x' << movieHeight << _(" at ") <<
             movieCapture->getFrameRate() << _(" fps");
         if (recording)
@@ -3951,6 +3946,7 @@ void CelestiaCore::renderOverlay()
         else
             *overlay << _("  Paused");
 
+        overlay->endText();
         glPopMatrix();
 
         glPushMatrix();
@@ -3961,14 +3957,18 @@ void CelestiaCore::renderOverlay()
             movieCapture->getFrameRate();
         int min = (int) (sec / 60);
         sec -= min * 60.0f;
+        overlay->beginText();
         overlay->oprintf("%3d:%05.2f", min, sec);
+        overlay->endText();
         glPopMatrix();
 
         glPushMatrix();
         glTranslatef((float) ((width - movieWidth) / 2),
                      (float) ((height - movieHeight) / 2 - fontHeight - 2),
                      0.0f);
+        overlay->beginText();
         *overlay << _("F11 Start/Pause    F12 Stop");
+        overlay->endText();
         glPopMatrix();
 
         glPopMatrix();
@@ -4823,12 +4823,13 @@ void CelestiaCore::goToUrl(const string& urlStr)
 
 void CelestiaCore::addToHistory()
 {
-    Url url(this);
+    Url* url = new Url(this);
     if (!history.empty() && historyCurrent < history.size() - 1)
     {
         // truncating history to current position
         while (historyCurrent != history.size() - 1)
         {
+            delete history.back();
             history.pop_back();
         }
     }
@@ -4840,14 +4841,16 @@ void CelestiaCore::addToHistory()
 
 void CelestiaCore::back()
 {
-    if (historyCurrent == 0) return;
+    if (historyCurrent == 0)
+        return;
+
     if (historyCurrent == history.size() - 1)
     {
         addToHistory();
         historyCurrent = history.size()-1;
     }
     historyCurrent--;
-    history[historyCurrent].goTo();
+    history[historyCurrent]->goTo();
     notifyWatchers(HistoryChanged|RenderFlagsChanged|LabelFlagsChanged);
 }
 
@@ -4857,29 +4860,29 @@ void CelestiaCore::forward()
     if (history.size() == 0) return;
     if (historyCurrent == history.size()-1) return;
     historyCurrent++;
-    history[historyCurrent].goTo();
+    history[historyCurrent]->goTo();
     notifyWatchers(HistoryChanged|RenderFlagsChanged|LabelFlagsChanged);
 }
 
 
-const vector<Url>& CelestiaCore::getHistory() const
+const vector<Url*>& CelestiaCore::getHistory() const
 {
     return history;
 }
 
-vector<Url>::size_type CelestiaCore::getHistoryCurrent() const
+vector<Url*>::size_type CelestiaCore::getHistoryCurrent() const
 {
     return historyCurrent;
 }
 
-void CelestiaCore::setHistoryCurrent(vector<Url>::size_type curr)
+void CelestiaCore::setHistoryCurrent(vector<Url*>::size_type curr)
 {
     if (curr >= history.size()) return;
     if (historyCurrent == history.size()) {
         addToHistory();
     }
     historyCurrent = curr;
-    history[curr].goTo();
+    history[curr]->goTo();
     notifyWatchers(HistoryChanged|RenderFlagsChanged|LabelFlagsChanged);
 }
 

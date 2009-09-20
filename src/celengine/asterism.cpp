@@ -17,8 +17,8 @@
 
 #include <celutil/util.h>
 #include <celutil/debug.h>
-#include "parser.h"
 #include "asterism.h"
+#include "parser.h"
 
 using namespace std;
 
@@ -154,7 +154,7 @@ AsterismList* ReadAsterismList(istream& in, const StarDatabase& stardb)
                     {
                         Star* star = stardb.find((*iter)->getString());
                         if (star != NULL)
-                            chain->insert(chain->end(), star->getPosition());
+                            chain->push_back(star->getPosition());
                     }
                 }
 

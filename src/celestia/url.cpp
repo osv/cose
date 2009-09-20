@@ -26,6 +26,7 @@
 #include "celengine/astro.h"
 #include "url.h"
 
+using namespace Eigen;
 using namespace std;
 
 const unsigned int Url::CurrentVersion = 3;
@@ -36,7 +37,7 @@ const string getEncodedObjectName(const Selection& sel, const CelestiaCore* appC
 CelestiaState::CelestiaState() :
     coordSys(ObserverFrame::Universal),
     observerPosition(0.0, 0.0, 0.0),
-    observerOrientation(1.0f),
+    observerOrientation(Quaternionf::Identity()),
     fieldOfView(45.0f),
     tdb(0.0),
     timeScale(1.0f),
@@ -73,9 +74,9 @@ CelestiaState::captureState(CelestiaCore* appCore)
     observerPosition = sim->getObserver().getPosition();
     observerPosition = frame->convertFromUniversal(observerPosition, tdb);
         
-    Quatd q = sim->getObserver().getOrientation();
+    Quaterniond q = sim->getObserver().getOrientation();
     q = frame->convertFromUniversal(q, tdb);
-    observerOrientation = Quatf((float) q.w, (float) q.x, (float) q.y, (float) q.z);
+    observerOrientation = q.cast<float>();
         
     Selection tracked = sim->getTrackedObject();
     trackedBodyName = getEncodedObjectName(tracked, appCore);
@@ -340,7 +341,7 @@ Url::Url(CelestiaCore* core, UrlType type)
         urlStr += "&z=" +  coord.z.toString();
 
         orientation = sim->getObserver().getOrientationf();
-        sprintf(buff, "&ow=%f&ox=%f&oy=%f&oz=%f", orientation.w, orientation.x, orientation.y, orientation.z);
+        sprintf(buff, "&ow=%f&ox=%f&oy=%f&oz=%f", orientation.w(), orientation.x(), orientation.y(), orientation.z());
         urlStr += buff;
         break;
     case Relative:
@@ -451,10 +452,10 @@ Url::Url(const CelestiaState& appState, unsigned int _version, TimeSource _timeS
     u << "?x=" << coord.x.toString() << "&y=" << coord.y.toString() << "&z=" << coord.z.toString();
     
     // observer orientation
-    u << "&ow=" << orientation.w
-      << "&ox=" << orientation.x
-      << "&oy=" << orientation.y
-      << "&oz=" << orientation.z;
+    u << "&ow=" << orientation.w()
+      << "&ox=" << orientation.x()
+      << "&oy=" << orientation.y()
+      << "&oz=" << orientation.z();
     
     if (trackedStr != "") 
         u << "&track=" << trackedStr;
@@ -507,7 +508,7 @@ void Url::initVersion2(std::map<std::string, std::string>& params,
             sscanf(params["oy"].c_str(), "%f", &oy);
             sscanf(params["oz"].c_str(), "%f", &oz);
             
-            orientation = Quatf(ow, ox, oy, oz);
+            orientation = Quaternionf(ow, ox, oy, oz);
             
             // Intentional Fall-Through
         case Relative:
@@ -579,7 +580,7 @@ void Url::initVersion3(std::map<std::string, std::string>& params,
     sscanf(params["oy"].c_str(), "%f", &oy);
     sscanf(params["oz"].c_str(), "%f", &oz);
     
-    orientation = Quatf(ow, ox, oy, oz);
+    orientation = Quaternionf(ow, ox, oy, oz);
     
     if (params["select"] != "")
         selectedStr = params["select"];
@@ -829,10 +830,9 @@ void Url::goTo()
         // to universal and set the observer position.
         double tdb = sim->getTime();
         coord = sim->getObserver().getFrame()->convertToUniversal(coord, tdb);
-        Quatd q(orientation.w, orientation.x, orientation.y, orientation.z);
-        q = sim->getObserver().getFrame()->convertToUniversal(q, tdb);
+        Quaterniond q = sim->getObserver().getFrame()->convertToUniversal(orientation.cast<double>(), tdb);
         sim->setObserverPosition(coord);
-        sim->setObserverOrientation(Quatf((float) q.w, (float) q.x, (float) q.y, (float) q.z));
+        sim->setObserverOrientation(q.cast<float>());
     }
     else
     {
@@ -843,7 +843,7 @@ void Url::goTo()
             sim->setObserverOrientation(orientation);
             break;
         case Relative:
-            sim->gotoSelectionLongLat(0, astro::kilometersToLightYears(distance), (float) (longitude * PI / 180), (float) (latitude * PI / 180), Vec3f(0, 1, 0));
+            sim->gotoSelectionLongLat(0, distance, (float) (longitude * PI / 180), (float) (latitude * PI / 180), Vector3f::UnitY());
             break;
         case Settings:
             break;

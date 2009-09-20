@@ -2,7 +2,8 @@
 // 
 // Reference frame base class.
 //
-// Copyright (C) 2003-2008, Chris Laurel <claurel@shatters.net>
+// Copyright (C) 2003-2009, the Celestia Development Team
+// Original version by Chris Laurel <claurel@gmail.com>
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -12,6 +13,7 @@
 #include <cassert>
 #include <celengine/frame.h>
 
+using namespace Eigen;
 using namespace std;
 
 
@@ -50,14 +52,14 @@ ReferenceFrame::release() const
 
 // High-precision rotation using 64.64 fixed point path. Rotate uc by
 // the rotation specified by unit quaternion q.
-static UniversalCoord rotate(const UniversalCoord& uc, const Quatd& q)
+static UniversalCoord rotate(const UniversalCoord& uc, const Quaterniond& q)
 {
-    Mat3d r = q.toMatrix3();
+    Matrix3d r = q.toRotationMatrix();
     UniversalCoord uc1;
     
-    uc1.x = uc.x * BigFix(r[0].x) + uc.y * BigFix(r[1].x) + uc.z * BigFix(r[2].x);
-    uc1.y = uc.x * BigFix(r[0].y) + uc.y * BigFix(r[1].y) + uc.z * BigFix(r[2].y);
-    uc1.z = uc.x * BigFix(r[0].z) + uc.y * BigFix(r[1].z) + uc.z * BigFix(r[2].z);
+    uc1.x = uc.x * BigFix(r(0, 0)) + uc.y * BigFix(r(1, 0)) + uc.z * BigFix(r(2, 0));
+    uc1.y = uc.x * BigFix(r(0, 1)) + uc.y * BigFix(r(1, 1)) + uc.z * BigFix(r(2, 1));
+    uc1.z = uc.x * BigFix(r(0, 2)) + uc.y * BigFix(r(1, 2)) + uc.z * BigFix(r(2, 2));
     
     return uc1;
 }
@@ -73,14 +75,14 @@ UniversalCoord
 ReferenceFrame::convertFromUniversal(const UniversalCoord& uc, double tjd) const
 {
     UniversalCoord uc1 = uc.difference(centerObject.getPosition(tjd));
-    return rotate(uc1, conjugate(getOrientation(tjd)));
+    return rotate(uc1, getOrientation(tjd).conjugate());
 }
 
 
-Quatd
-ReferenceFrame::convertFromUniversal(const Quatd& q, double tjd) const
+Quaterniond
+ReferenceFrame::convertFromUniversal(const Quaterniond& q, double tjd) const
 {
-    return q * conjugate(getOrientation(tjd));
+    return q * getOrientation(tjd).conjugate();
 }
 
 
@@ -102,53 +104,53 @@ ReferenceFrame::convertToUniversal(const UniversalCoord& uc, double tjd) const
 }
 
 
-Quatd
-ReferenceFrame::convertToUniversal(const Quatd& q, double tjd) const
+Quaterniond
+ReferenceFrame::convertToUniversal(const Quaterniond& q, double tjd) const
 {
     return q * getOrientation(tjd);
 }
 
 
-Point3d
-ReferenceFrame::convertFromAstrocentric(const Point3d& p, double tjd) const
+Vector3d
+ReferenceFrame::convertFromAstrocentric(const Vector3d& p, double tjd) const
 {
     if (centerObject.getType() == Selection::Type_Body)
     {
-        Point3d center = centerObject.body()->getAstrocentricPosition(tjd);
-        return Point3d(0.0, 0.0, 0.0) + (p - center) * conjugate(getOrientation(tjd)).toMatrix3();
+        Vector3d center = centerObject.body()->getAstrocentricPosition(tjd);
+        return getOrientation(tjd) * (p - center);
     }
     else if (centerObject.getType() == Selection::Type_Star)
     {
-        return p * conjugate(getOrientation(tjd)).toMatrix3();
+        return getOrientation(tjd) * p;
     }
     else
     {
         // TODO:
         // bad if the center object is a galaxy
         // what about locations?
-        return Point3d(0.0, 0.0, 0.0);
+        return Vector3d::Zero();
     }
 }
 
 
-Point3d
-ReferenceFrame::convertToAstrocentric(const Point3d& p, double tjd) const
+Vector3d
+ReferenceFrame::convertToAstrocentric(const Vector3d& p, double tjd) const
 {
     if (centerObject.getType() == Selection::Type_Body)
     {
-        Point3d center = centerObject.body()->getAstrocentricPosition(tjd);
-        return center + p * getOrientation(tjd).toMatrix3();
+        Vector3d center = centerObject.body()->getAstrocentricPosition(tjd);
+        return center + getOrientation(tjd).conjugate() * p;
     }
     else if (centerObject.getType() == Selection::Type_Star)
     {
-        return p * getOrientation(tjd).toMatrix3();
+        return getOrientation(tjd).conjugate() * p;
     }
     else
     {
         // TODO:
         // bad if the center object is a galaxy
         // what about locations?
-        return Point3d(0.0, 0.0, 0.0);
+        return Vector3d::Zero();
     }    
 }
 
@@ -162,19 +164,22 @@ ReferenceFrame::getCenter() const
 }
 
 
-Vec3d
+Vector3d
 ReferenceFrame::getAngularVelocity(double tjd) const
 {
-	Quatd q0 = getOrientation(tjd);
-	Quatd q1 = getOrientation(tjd + ANGULAR_VELOCITY_DIFF_DELTA);
-	Quatd dq = ~q0 * q1;
+    Quaterniond q0 = getOrientation(tjd);
+    Quaterniond q1 = getOrientation(tjd + ANGULAR_VELOCITY_DIFF_DELTA);
+    Quaterniond dq = q0.conjugate() * q1;
 
-	if (fabs(dq.w) > 0.99999999)
-		return Vec3d(0.0, 0.0, 0.0);
-
-	Vec3d v(dq.x, dq.y, dq.z);
+    if (std::abs(dq.w()) > 0.99999999)
+        return Vector3d::Zero();
+    else
+        return dq.vec().normalized() * 	(2.0 * acos(dq.w()) / ANGULAR_VELOCITY_DIFF_DELTA);
+#if CELVEC
+    Vector3d v(dq.x, dq.y, dq.z);
 	v.normalize();
 	return v * (2.0 * acos(dq.w) / ANGULAR_VELOCITY_DIFF_DELTA);
+#endif
 }
 
 
@@ -253,10 +258,10 @@ J2000EquatorFrame::J2000EquatorFrame(Selection center) :
 }
 
 
-Quatd
+Quaterniond
 J2000EquatorFrame::getOrientation(double /* tjd */) const
 {
-    return Quatd::xrotation(astro::J2000Obliquity);
+    return Quaterniond(AngleAxis<double>(astro::J2000Obliquity, Vector3d::UnitX()));
 }
 
 
@@ -285,12 +290,12 @@ BodyFixedFrame::BodyFixedFrame(Selection center, Selection obj) :
 }
 
 
-Quatd
+Quaterniond
 BodyFixedFrame::getOrientation(double tjd) const
 {
     // Rotation of 180 degrees about the y axis is required
     // TODO: this rotation could go in getEclipticalToBodyFixed()
-    Quatd yrot180 = Quatd(0.0, 0.0, 1.0, 0.0);
+    Quaterniond yrot180(0.0, 0.0, 1.0, 0.0);
 
     switch (fixObject.getType())
     {
@@ -298,23 +303,33 @@ BodyFixedFrame::getOrientation(double tjd) const
         return yrot180 * fixObject.body()->getEclipticToBodyFixed(tjd);
     case Selection::Type_Star:
         return yrot180 * fixObject.star()->getRotationModel()->orientationAtTime(tjd);
+    case Selection::Type_Location:
+        if (fixObject.location()->getParentBody())
+            return yrot180 * fixObject.location()->getParentBody()->getEclipticToBodyFixed(tjd);
+        else
+            return yrot180;
     default:
         return yrot180;
     }
 }
 
 
-Vec3d
+Vector3d
 BodyFixedFrame::getAngularVelocity(double tjd) const
 {
 	switch (fixObject.getType())
 	{
 	case Selection::Type_Body:
-		return fixObject.body()->getAngularVelocity(tjd);
+        return fixObject.body()->getAngularVelocity(tjd);
 	case Selection::Type_Star:
-		return fixObject.star()->getRotationModel()->angularVelocityAtTime(tjd);
-	default:
-		return Vec3d(0.0, 0.0, 0.0);
+        return fixObject.star()->getRotationModel()->angularVelocityAtTime(tjd);
+    case Selection::Type_Location:
+        if (fixObject.location()->getParentBody())
+            return fixObject.location()->getParentBody()->getAngularVelocity(tjd);
+        else
+            return Vector3d::Zero();
+    default:
+        return Vector3d::Zero();
 	}
 }
 
@@ -367,7 +382,7 @@ BodyMeanEquatorFrame::BodyMeanEquatorFrame(Selection center,
 }
 
 
-Quatd
+Quaterniond
 BodyMeanEquatorFrame::getOrientation(double tjd) const
 {
     double t = isFrozen ? freezeEpoch : tjd;
@@ -379,17 +394,17 @@ BodyMeanEquatorFrame::getOrientation(double tjd) const
     case Selection::Type_Star:
         return equatorObject.star()->getRotationModel()->equatorOrientationAtTime(t);
     default:
-        return Quatd(1.0);
+        return Quaterniond::Identity();
     }
 }
 
 
-Vec3d
+Vector3d
 BodyMeanEquatorFrame::getAngularVelocity(double tjd) const
 {
 	if (isFrozen)
 	{
-		return Vec3d(0.0, 0.0, 0.0);
+        return Vector3d::Zero();
 	}
 	else
 	{
@@ -399,7 +414,7 @@ BodyMeanEquatorFrame::getAngularVelocity(double tjd) const
         }
         else
         {
-            return Vec3d(0.0, 0.0, 0.0);
+            return Vector3d::Zero();
         }
 	}
 }
@@ -454,7 +469,7 @@ BodyMeanEquatorFrame::nestingDepth(unsigned int depth,
 CachingFrame::CachingFrame(Selection _center) :
     ReferenceFrame(_center),
     lastTime(-1.0e50),
-    lastOrientation(1.0),
+    lastOrientation(Quaterniond::Identity()),
 	lastAngularVelocity(0.0, 0.0, 0.0),
 	orientationCacheValid(false),
 	angularVelocityCacheValid(false)
@@ -462,7 +477,7 @@ CachingFrame::CachingFrame(Selection _center) :
 }
 
 
-Quatd
+Quaterniond
 CachingFrame::getOrientation(double tjd) const
 {
 	if (tjd != lastTime)
@@ -482,7 +497,7 @@ CachingFrame::getOrientation(double tjd) const
 }
 
 
-Vec3d CachingFrame::getAngularVelocity(double tjd) const
+Vector3d CachingFrame::getAngularVelocity(double tjd) const
 {
 	if (tjd != lastTime)
 	{
@@ -505,24 +520,26 @@ Vec3d CachingFrame::getAngularVelocity(double tjd) const
  *  radians / Julian day.) The default implementation just
  *  differentiates the orientation.
  */
-Vec3d CachingFrame::computeAngularVelocity(double tjd) const
+Vector3d CachingFrame::computeAngularVelocity(double tjd) const
 {
-	Quatd q0 = getOrientation(tjd);
+    Quaterniond q0 = getOrientation(tjd);
 
 	// Call computeOrientation() instead of getOrientation() so that we
 	// don't affect the cached value. 
 	// TODO: check the valid ranges of the frame to make sure that
 	// jd+dt is still in range.
-	Quatd q1 = computeOrientation(tjd + ANGULAR_VELOCITY_DIFF_DELTA);
+    Quaterniond q1 = computeOrientation(tjd + ANGULAR_VELOCITY_DIFF_DELTA);
 
-	Quatd dq = ~q0 * q1;
+    Quaterniond dq = q0.conjugate() * q1;
 
-	if (fabs(dq.w) > 0.99999999)
-		return Vec3d(0.0, 0.0, 0.0);
-
-	Vec3d v(dq.x, dq.y, dq.z);
-	v.normalize();
-	return v * (2.0 * acos(dq.w) / ANGULAR_VELOCITY_DIFF_DELTA);
+    if (std::abs(dq.w()) > 0.99999999)
+    {
+        return Vector3d::Zero();
+    }
+    else
+    {
+        return dq.vec().normalized() * (2.0 * acos(dq.w()) / ANGULAR_VELOCITY_DIFF_DELTA);
+    }
 }
 
 
@@ -565,11 +582,11 @@ TwoVectorFrame::TwoVectorFrame(Selection center,
 }
 
 
-Quatd
+Quaterniond
 TwoVectorFrame::computeOrientation(double tjd) const
 {
-    Vec3d v0 = primaryVector.direction(tjd);
-    Vec3d v1 = secondaryVector.direction(tjd);
+    Vector3d v0 = primaryVector.direction(tjd);
+    Vector3d v1 = secondaryVector.direction(tjd);
 
     // TODO: verify that v0 and v1 aren't zero length
     v0.normalize();
@@ -580,16 +597,16 @@ TwoVectorFrame::computeOrientation(double tjd) const
     if (secondaryAxis < 0)
         v1 = -v1;
 
-    Vec3d v2 = v0 ^ v1;
+    Vector3d v2 = v0.cross(v1);
 
     // Check for degenerate case when the primary and secondary vectors
     // are collinear. A well-chosen two vector frame should never have this
     // problem.
-    double length = v2.length();
+    double length = v2.norm();
     if (length < Tolerance)
     {
         // Just return identity . . .
-        return Quatd(1.0);
+        return Quaterniond::Identity();
     }
     else
     {
@@ -602,20 +619,21 @@ TwoVectorFrame::computeOrientation(double tjd) const
             rhAxis = 1;
         bool rhOrder = rhAxis == abs(secondaryAxis);
 
+#if CELVEC
         // Set the rotation matrix axes
-        Vec3d v[3];
+        Vector3d v[3];
         v[abs(primaryAxis) - 1] = v0;
 
         // Reverse the cross products if the axes are not in right
         // hand order.
         if (rhOrder)
         {
-            v[abs(secondaryAxis) - 1] = v2 ^ v0;
+            v[abs(secondaryAxis) - 1] = v2.cross(v0);
             v[abs(tertiaryAxis) - 1] = v2;
         }
         else
         {
-            v[abs(secondaryAxis) - 1] = v0 ^ -v2;
+            v[abs(secondaryAxis) - 1] = v0.cross(-v2);
             v[abs(tertiaryAxis) - 1] = -v2;
         }
 
@@ -623,6 +641,28 @@ TwoVectorFrame::computeOrientation(double tjd) const
         // method must return the quaternion representation of the 
         // orientation, so convert the rotation matrix to a quaternion now.
         Quatd q = Quatd::matrixToQuaternion(Mat3d(v[0], v[1], v[2]));
+#endif
+        // Set the rotation matrix axes
+        Matrix3d m;
+        m.row(abs(primaryAxis) - 1) = v0;
+
+        // Reverse the cross products if the axes are not in right
+        // hand order.
+        if (rhOrder)
+        {
+            m.row(abs(secondaryAxis) - 1) = v2.cross(v0);
+            m.row(abs(tertiaryAxis) - 1)  = v2;
+        }
+        else
+        {
+            m.row(abs(secondaryAxis) - 1) = v0.cross(-v2);
+            m.row(abs(tertiaryAxis) - 1)  = -v2;
+        }
+
+        // The axes are the rows of a rotation matrix. The getOrientation
+        // method must return the quaternion representation of the
+        // orientation, so convert the rotation matrix to a quaternion now.
+        Quaterniond q(m);
 
         // A rotation matrix will have a determinant of 1; if the matrix also
         // includes a reflection, the determinant will be -1, indicating that
@@ -742,7 +782,7 @@ FrameVector::createRelativeVelocityVector(const Selection& _observer,
 
 
 FrameVector
-FrameVector::createConstantVector(const Vec3d& _vec,
+FrameVector::createConstantVector(const Vector3d& _vec,
                                   const ReferenceFrame* _frame)
 {
     FrameVector fv(ConstantVector);
@@ -754,21 +794,21 @@ FrameVector::createConstantVector(const Vec3d& _vec,
 }
 
 
-Vec3d
+Vector3d
 FrameVector::direction(double tjd) const
 {
-    Vec3d v;
+    Vector3d v;
 
     switch (vecType)
     {
     case RelativePosition:
-        v = target.getPosition(tjd) - observer.getPosition(tjd);
+        v = target.getPosition(tjd).offsetFromKm(observer.getPosition(tjd));
         break;
 
     case RelativeVelocity:
         {
-			Vec3d v0 = observer.getVelocity(tjd);
-			Vec3d v1 = target.getVelocity(tjd);
+            Vector3d v0 = observer.getVelocity(tjd);
+            Vector3d v1 = target.getVelocity(tjd);
             v = v1 - v0;
         }
         break;
@@ -777,12 +817,12 @@ FrameVector::direction(double tjd) const
         if (frame == NULL)
             v = vec;
         else
-            v = vec * frame->getOrientation(tjd).toMatrix3();
+            v = frame->getOrientation(tjd).conjugate() * vec;
         break;
 
     default:
         // unhandled vector type
-        v = Vec3d(0.0, 0.0, 0.0);
+        v = Vector3d::Zero();
         break;
     }
 

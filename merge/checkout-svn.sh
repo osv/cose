@@ -4,20 +4,30 @@
 
 SEPAR="============================================================"
 svn_revision_file="celestia-svn-revision"
-rm -rf ./work
+#rm -rf ./work
 mkdir ./work
 
 echo $SEPAR
-echo " Checkout celestia/src/"
-echo $SEPAR
+
 cd work
 
 svn_rev=`cat ../${svn_revision_file}`
 echo Checkout last revision - $svn_rev
+# checkout
+# src/
+echo " Checkout celestia/src/"
+echo $SEPAR
 svn co http://celestia.svn.sourceforge.net/svnroot/celestia/trunk/celestia/src -r $svn_rev
+echo $SEPAR
+echo " Checkout celestia/thirdparty/"
+echo $SEPAR
+# thirdparty/
+#svn co http://celestia.svn.sourceforge.net/svnroot/celestia/trunk/celestia/thirdparty -r $svn_rev
 
 # Copy celestia sources to work dir and replace
 # If this list are changed plz change in commit-svn.sh too 
+
+# src/
 find ../../src/cel3ds/ -name "*.cpp" -exec cp {} src/cel3ds \;
 find ../../src/cel3ds/ -name "*.h" -exec cp {} src/cel3ds \;
 
@@ -41,33 +51,63 @@ find ../../src/ -depth 1 -name "*.h" -exec cp {} src/celutil \;
 
 cp -rf ../../src/tools src/ 
 
+# thirdparty/
+mkdir thirdparty
+cp -rf ../../thirdparty/* thirdparty/
+
 # write diff file before updating
-cd src
-your_diff="r${svn_rev}-diff.diff"
-svn diff > ../../${your_diff}
+your_diff_src="r${svn_rev}-src-diff.diff"
+your_diff_thirdparty="r${svn_rev}-thirdparty-diff.diff"
+(cd src; svn diff > ../../${your_diff_src})
+(cd thirdparty; svn diff > ../../${your_diff_thirdparty})
 
 echo $SEPAR
-echo " Your diff from last $svn_rev revision are stored into $your_diff"
-echo $SEPAR
-echo " Updating and merging..."
+echo " Your diff from last $svn_rev revision are stored into:"
+echo " $your_diff_src"
+echo " $your_diff_thirdparty"
 
-# update 
-update_file="svn-update.log"
-script ../../$update_file svn up
+# update src/
+echo $SEPAR
+update_src_file="svn-src-update.log"
+echo " Updating and merging src/ ..."
+(cd src; script ../$update_src_file svn up)
+
+echo $SEPAR
+# update thirdparty/
+update_thirdparty_file="svn-thirdparty-update.log"
+echo " Updating and merging src/ ..."
+(cd  thirdparty; script ../$update_file svn up)
+
 # print info
 echo $SEPAR
-updated=`cat ../../$update_file| grep "^U " | wc -l`
-conflicts=`cat ../../$update_file| grep "^C "| wc -l`
-merged=`cat ../../$update_file| grep "^G " | wc -l`
-added=`cat ../../$update_file| grep "^A " | wc -l`
-deleted=`cat ../../$update_file| grep "^D " | wc -l`
+echo " thirdparty/"
+updated=`cat $update_src_file| grep "^U " | wc -l`
+conflicts=`cat $update_src_file| grep "^C "| wc -l`
+merged=`cat $update_src_file| grep "^G " | wc -l`
+added=`cat $update_src_file| grep "^A " | wc -l`
+deleted=`cat $update_src_file| grep "^D " | wc -l`
 echo " New files: $added"
 echo " Deleted:   $deleted"
 echo " Updated:   $updated"
 echo " Merged:    $merged"
 echo " Conflicts: $conflicts"
+echo "  * See $update_src_file for conflicts in work/ dir."
 echo $SEPAR
-echo " * See $update_file for conflicts in work/ dir."
+echo " thirdparty/"
+updated=`cat $update_thirdparty_file| grep "^U " | wc -l`
+conflicts=`cat $update_thirdparty_file| grep "^C "| wc -l`
+merged=`cat $update_thirdparty_file| grep "^G " | wc -l`
+added=`cat $update_thirdparty_file| grep "^A " | wc -l`
+deleted=`cat $update_thirdparty_file| grep "^D " | wc -l`
+echo " New files: $added"
+echo " Deleted:   $deleted"
+echo " Updated:   $updated"
+echo " Merged:    $merged"
+echo " Conflicts: $conflicts"
+echo "  * See $update_thirdparty_file for conflicts in work/ dir."
+echo $SEPAR
+
+# end
 echo " * Run ./commit-svn.sh to apply updates."
 new_rev=`cat ../../$update_file | grep "Updated to revision" | awk '{print $4}'| sed 's/\.//`
 echo " * You can use command 'cd work/src/ && svn diff -r${svn_rev}:${new_rev}' to take celestia's diff from last revision"

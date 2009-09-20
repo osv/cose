@@ -1,6 +1,7 @@
 // vertexlist.h
 //
-// Copyright (C) 2001, Chris Laurel
+// Copyright (C) 2001-2009, the Celestia Development Team
+// Original version by Chris Laurel <claurel@gmail.com>
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -13,9 +14,9 @@
 #include <celutil/basictypes.h>
 #include <celutil/color.h>
 #include <celutil/reshandle.h>
-#include <celmath/vecmath.h>
-#include <celmath/aabox.h>
 #include <celmath/ray.h>
+#include <Eigen/Core>
+#include <Eigen/Geometry>
 
 
 class VertexList
@@ -33,10 +34,10 @@ class VertexList
     class Vertex
     {
     public:
-        Point3f point;
-        Vec3f normal;
+        Eigen::Vector3f point;
+        Eigen::Vector3f normal;
         Color color;
-        Point2f texCoords[2];
+        Eigen::Vector2f texCoords[2];
     };
 
     union VertexPart
@@ -60,11 +61,8 @@ class VertexList
     ResourceHandle getTexture() const;
     void setTexture(ResourceHandle);
 
-    void render();
-    bool pick(const Ray3d& ray, double& distance);
-
-    AxisAlignedBox getBoundingBox() const;
-    void transform(Vec3f translation, float scale);
+    Eigen::AlignedBox<float, 3> getBoundingBox() const;
+    void transform(const Eigen::Vector3f& translation, float scale);
 
     uint32 getVertexParts() const;
     void* getVertexData() const;
@@ -83,7 +81,7 @@ class VertexList
     float shininess;
     ResourceHandle texture;
 
-    AxisAlignedBox bbox;
+    Eigen::AlignedBox<float, 3> bbox;
 };
 
 #endif // _CELENGINE_VERTEXLIST_H_

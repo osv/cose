@@ -1,6 +1,7 @@
 // astro.cpp
 //
 // Copyright (C) 2001-2009, the Celestia Development Team
+// Original version by Chris Laurel <claurel@gmail.com>
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -16,8 +17,11 @@
 #include <celmath/mathlib.h>
 #include "celestia.h"
 #include "astro.h"
+#include "univcoord.h"
 #include <celutil/util.h>
+#include <celmath/geomutil.h>
 
+using namespace Eigen;
 using namespace std;
 
 const double astro::speedOfLight = 299792.458; // km/s
@@ -39,9 +43,13 @@ const double astro::SOLAR_POWER       =    3.8462e26;  // Watts
 // Astronomical Almanac_ (1992), eqn 3.222-1.
 const double astro::J2000Obliquity = degToRad(23.4392911);
 
-static const Quatd ECLIPTIC_TO_EQUATORIAL_ROTATION =
-    Quatd::xrotation(-astro::J2000Obliquity);
-static const Mat3d ECLIPTIC_TO_EQUATORIAL_MATRIX = ECLIPTIC_TO_EQUATORIAL_ROTATION.toMatrix3();
+static const Quaterniond ECLIPTIC_TO_EQUATORIAL_ROTATION = XRotation(-astro::J2000Obliquity);
+static const Matrix3d ECLIPTIC_TO_EQUATORIAL_MATRIX = ECLIPTIC_TO_EQUATORIAL_ROTATION.toRotationMatrix();
+
+static const Quaterniond EQUATORIAL_TO_ECLIPTIC_ROTATION =
+    Quaterniond(AngleAxis<double>(-astro::J2000Obliquity, Vector3d::UnitX()));
+static const Matrix3d EQUATORIAL_TO_ECLIPTIC_MATRIX = EQUATORIAL_TO_ECLIPTIC_ROTATION.toRotationMatrix();
+static const Matrix3f EQUATORIAL_TO_ECLIPTIC_MATRIX_F = EQUATORIAL_TO_ECLIPTIC_MATRIX.cast<float>();
 
 // Equatorial to galactic coordinate transformation
 // North galactic pole at:
@@ -53,11 +61,11 @@ static const double GALACTIC_NODE = 282.85958;
 static const double GALACTIC_INCLINATION = 90.0 - 27.1283361;
 static const double GALACTIC_LONGITUDE_AT_NODE = 32.932;
 
-static const Quatd EQUATORIAL_TO_GALACTIC_ROTATION =
-    Quatd::zrotation(degToRad(GALACTIC_NODE)) *
-    Quatd::xrotation(degToRad(GALACTIC_INCLINATION)) *
-    Quatd::zrotation(degToRad(-GALACTIC_LONGITUDE_AT_NODE));
-static const Mat3d EQUATORIAL_TO_GALACTIC_MATRIX = EQUATORIAL_TO_GALACTIC_ROTATION.toMatrix3();
+static const Quaterniond EQUATORIAL_TO_GALACTIC_ROTATION =
+    ZRotation(degToRad(GALACTIC_NODE)) *
+    XRotation(degToRad(GALACTIC_INCLINATION)) *
+    ZRotation(degToRad(-GALACTIC_LONGITUDE_AT_NODE));
+static const Matrix3d EQUATORIAL_TO_GALACTIC_MATRIX = EQUATORIAL_TO_GALACTIC_ROTATION.toRotationMatrix();
     
 // epoch B1950: 22:09 UT on 21 Dec 1949
 #define B1950         2433282.423
@@ -110,10 +118,6 @@ static const LeapSecondRecord LeapSeconds[] =
 static const char* MonthAbbrList[12] =
 { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
 #endif
-
-
-static Mat3d equatorialToCelestiald = Mat3d::xrotation(astro::J2000Obliquity);
-static Mat3f equatorialToCelestial = Mat3f::xrotation((float) astro::J2000Obliquity);
 
 
 float astro::lumToAbsMag(float lum)
@@ -296,51 +300,10 @@ double astro::AUtoMicroLightYears(double au)
 }
 
 
-// Convert the position in univeral coordinates to a star-centric
-// coordinates in units of kilometers.  Note that there are three different
-// precisions used here:  star coordinates are stored as floats in units of
-// light years, position within a solar system are doubles in units of
-// kilometers, and p is highest-precision in units of light years.
-Point3d astro::heliocentricPosition(const UniversalCoord& universal,
-                                    const Point3f& starPosition)
-{
-    // Get the offset vector
-    Vec3d v = universal - Point3d(starPosition.x * 1e6,
-                                  starPosition.y * 1e6,
-                                  starPosition.z * 1e6);
-
-    // . . . and convert it to kilometers
-    return Point3d(microLightYearsToKilometers(v.x),
-                   microLightYearsToKilometers(v.y),
-                   microLightYearsToKilometers(v.z));
-}
-
-// universalPosition is the inverse operation of heliocentricPosition
-UniversalCoord astro::universalPosition(const Point3d& heliocentric,
-                                        const Point3f& starPosition)
-{
-    return UniversalCoord(Point3d(starPosition.x * 1e6,
-                                  starPosition.y * 1e6,
-                                  starPosition.z * 1e6)) +
-        Vec3d(kilometersToMicroLightYears(heliocentric.x),
-              kilometersToMicroLightYears(heliocentric.y),
-              kilometersToMicroLightYears(heliocentric.z));
-}
-
-// universalPosition is the inverse operation of heliocentricPosition
-UniversalCoord astro::universalPosition(const Point3d& heliocentric,
-                                        const UniversalCoord& starPosition)
-{
-    return starPosition +
-        Vec3d(kilometersToMicroLightYears(heliocentric.x),
-              kilometersToMicroLightYears(heliocentric.y),
-              kilometersToMicroLightYears(heliocentric.z));
-}
-
-
 // Convert equatorial coordinates to Cartesian celestial (or ecliptical)
 // coordinates.
-Point3f astro::equatorialToCelestialCart(float ra, float dec, float distance)
+Eigen::Vector3f
+astro::equatorialToCelestialCart(float ra, float dec, float distance)
 {
     double theta = ra / 24.0 * PI * 2 + PI;
     double phi = (dec / 90.0 - 1.0) * PI / 2;
@@ -348,13 +311,14 @@ Point3f astro::equatorialToCelestialCart(float ra, float dec, float distance)
     double y = cos(phi) * distance;
     double z = -sin(theta) * sin(phi) * distance;
 
-    return (Point3f((float) x, (float) y, (float) z) * equatorialToCelestial);
+    return EQUATORIAL_TO_ECLIPTIC_MATRIX_F * Vector3f((float) x, (float) y, (float) z);
 }
 
 
 // Convert equatorial coordinates to Cartesian celestial (or ecliptical)
 // coordinates.
-Point3d astro::equatorialToCelestialCart(double ra, double dec, double distance)
+Eigen::Vector3d
+astro::equatorialToCelestialCart(double ra, double dec, double distance)
 {
     double theta = ra / 24.0 * PI * 2 + PI;
     double phi = (dec / 90.0 - 1.0) * PI / 2;
@@ -362,7 +326,23 @@ Point3d astro::equatorialToCelestialCart(double ra, double dec, double distance)
     double y = cos(phi) * distance;
     double z = -sin(theta) * sin(phi) * distance;
 
-    return (Point3d(x, y, z) * equatorialToCelestiald);
+    return EQUATORIAL_TO_ECLIPTIC_MATRIX * Vector3d(x, y, z);
+}
+
+
+/** Convert spherical coordinates in the J2000 equatorial frame to cartesian
+  * coordinates in the J2000 ecliptic frame. RA in hours, dec in degrees.
+  */
+Eigen::Vector3f
+astro::equatorialToEclipticCartesian(float ra, float dec, float distance)
+{
+    double theta = ra / 24.0 * PI * 2 + PI;
+    double phi = (dec / 90.0 - 1.0) * PI / 2;
+    double x = cos(theta) * sin(phi) * distance;
+    double y = cos(phi) * distance;
+    double z = -sin(theta) * sin(phi) * distance;
+
+    return EQUATORIAL_TO_ECLIPTIC_MATRIX_F * Eigen::Vector3f((float) x, (float) y, (float) z);
 }
 
 
@@ -407,7 +387,7 @@ double astro::meanEclipticObliquity(double jd)
 /*! Return a quaternion giving the transformation from the J2000 ecliptic
  *  coordinate system to the J2000 Earth equatorial coordinate system.
  */
-Quatd astro::eclipticToEquatorial()
+Quaterniond astro::eclipticToEquatorial()
 {
     return ECLIPTIC_TO_EQUATORIAL_ROTATION;
 }
@@ -416,16 +396,16 @@ Quatd astro::eclipticToEquatorial()
 /*! Rotate a vector in the J2000 ecliptic coordinate system to
  *  the J2000 Earth equatorial coordinate system.
  */
-Vec3d astro::eclipticToEquatorial(const Vec3d& v)
+Vector3d astro::eclipticToEquatorial(const Vector3d& v)
 {
-    return v * ECLIPTIC_TO_EQUATORIAL_MATRIX;
+    return ECLIPTIC_TO_EQUATORIAL_MATRIX.transpose() * v;
 }
 
 
 /*! Return a quaternion giving the transformation from the J2000 Earth
  *  equatorial coordinate system to the galactic coordinate system.
  */
-Quatd astro::equatorialToGalactic()
+Quaterniond astro::equatorialToGalactic()
 {
     return EQUATORIAL_TO_GALACTIC_ROTATION;
 }
@@ -434,9 +414,9 @@ Quatd astro::equatorialToGalactic()
 /*! Rotate a vector int the J2000 Earth equatorial coordinate system to
  *  the galactic coordinate system.
  */
-Vec3d astro::equatorialToGalactic(const Vec3d& v)
+Vector3d astro::equatorialToGalactic(const Vector3d& v)
 {
-    return v * EQUATORIAL_TO_GALACTIC_MATRIX;
+    return EQUATORIAL_TO_GALACTIC_MATRIX.transpose() * v;
 }
 
 

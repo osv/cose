@@ -23,7 +23,10 @@
 #include "trajmanager.h"
 #include "rotationmanager.h"
 #include "universe.h"
+#include "eigenport.h"
+#include <celmath/geomutil.h>
 
+using namespace Eigen;
 using namespace std;
 
 
@@ -226,15 +229,15 @@ CreateSampledTrajectory(Hash* trajData, const string& path)
 static Orbit*
 CreateFixedPosition(Hash* trajData, const Selection& centralObject, bool usePlanetUnits)
 {
-    Vec3d position(0.0, 0.0, 0.0);
+    Vector3d position = Vector3d::Zero();
 
-    Vec3d v(0.0, 0.0, 0.0);
+    Vector3d v = Vector3d::Zero();
     if (trajData->getVector("Rectangular", v))
     {       
         if (usePlanetUnits)
-            v = v * astro::AUtoKilometers(1.0);
+            v *= astro::AUtoKilometers(1.0);
         // Convert to Celestia's coordinate system
-        position = Vec3d(v.x, v.z, -v.y);
+        position = Vector3d(v.x(), v.z(), -v.y());
     }
     else if (trajData->getVector("Planetographic", v))
     {
@@ -246,7 +249,7 @@ CreateFixedPosition(Hash* trajData, const Selection& centralObject, bool usePlan
 
         // TODO: Need function to calculate planetographic coordinates
         // TODO: Change planetocentricToCartesian so that 180 degree offset isn't required
-        position = centralObject.body()->planetocentricToCartesian(180.0 + v.x, v.y, v.z);
+        position = centralObject.body()->planetocentricToCartesian(180.0 + v.x(), v.y(), v.z());
     }
     else if (trajData->getVector("Planetocentric", v))
     {
@@ -257,7 +260,7 @@ CreateFixedPosition(Hash* trajData, const Selection& centralObject, bool usePlan
         }
 
         // TODO: Change planetocentricToCartesian so that 180 degree offset isn't required
-        position = centralObject.body()->planetocentricToCartesian(180.0 + v.x, v.y, v.z);
+        position = centralObject.body()->planetocentricToCartesian(180.0 + v.x(), v.y(), v.z());
     }
     else
     {
@@ -265,7 +268,7 @@ CreateFixedPosition(Hash* trajData, const Selection& centralObject, bool usePlan
         return NULL;
     }
 
-    return new FixedOrbit(Point3d(position.x, position.y, position.z));
+    return new FixedOrbit(position);
 }
 
 
@@ -742,18 +745,18 @@ CreateOrbit(const Selection& centralObject,
     Value* fixedPositionValue = planetData->getValue("FixedPosition");
     if (fixedPositionValue != NULL)
     {
-        Vec3d fixedPosition(0.0, 0.0, 0.0);
+        Vector3d fixedPosition = Vector3d::Zero();
         if (planetData->getVector("FixedPosition", fixedPosition))
         {
             // Convert to Celestia's coordinate system
-            fixedPosition = Vec3d(fixedPosition.x,
-                                  fixedPosition.z,
-                                  -fixedPosition.y);
+            fixedPosition = Vector3d(fixedPosition.x(),
+                                     fixedPosition.z(),
+                                     -fixedPosition.y());
 
             if (usePlanetUnits)
-                fixedPosition = fixedPosition * astro::AUtoKilometers(1.0);
+                fixedPosition *= astro::AUtoKilometers(1.0);
 
-            return new FixedOrbit(Point3d(0.0, 0.0, 0.0) + fixedPosition);
+            return new FixedOrbit(fixedPosition);
         }
         else if (fixedPositionValue->getType() == Value::HashType)
         {
@@ -769,14 +772,14 @@ CreateOrbit(const Selection& centralObject,
     // object. This is done by creating an orbit with a period equal to the
     // rotation rate of the parent object. A body-fixed reference frame is a
     // much better way to accomplish this.
-    Vec3d longlat(0.0, 0.0, 0.0);
+    Vector3d longlat = Vector3d::Zero();
     if (planetData->getVector("LongLat", longlat))
     {
         Body* centralBody = centralObject.body();
         if (centralBody != NULL)
         {
-            Vec3d pos = centralBody->planetocentricToCartesian(longlat.x, longlat.y, longlat.z);
-            return new SynchronousOrbit(*centralBody, Point3d(pos.x, pos.y, pos.z));
+            Vector3d pos = centralBody->planetocentricToCartesian(longlat.x(), longlat.y(), longlat.z());
+            return new SynchronousOrbit(*centralBody, pos);
         }
         else
         {
@@ -794,9 +797,9 @@ CreateFixedRotationModel(double offset,
                          double inclination,
                          double ascendingNode)
 {
-    Quatd q = Quatd::yrotation(-PI - offset) *
-              Quatd::xrotation(-inclination) *
-              Quatd::yrotation(-ascendingNode);
+    Quaterniond q = YRotation(-PI - offset) *
+                    XRotation(-inclination) *
+                    YRotation(-ascendingNode);
 
     return new ConstantOrientation(q);
 }
@@ -874,9 +877,9 @@ CreateFixedRotationModel(Hash* rotationData)
         ascendingNode = degToRad(ascendingNode);
     }
 
-    Quatd q = Quatd::yrotation(-PI - offset) *
-              Quatd::xrotation(-inclination) *
-              Quatd::yrotation(-ascendingNode);
+    Quaterniond q = YRotation(-PI - offset) *
+                    XRotation(-inclination) *
+                    YRotation(-ascendingNode);
 
     return new ConstantOrientation(q);
 }
@@ -903,10 +906,10 @@ CreateFixedAttitudeRotationModel(Hash* rotationData)
         roll = degToRad(roll);
     }
     
-    Quatd q = Quatd::yrotation(-PI - heading) *
-              Quatd::xrotation(-tilt) *
-              Quatd::zrotation(-roll);
-    
+    Quaterniond q = YRotation(-PI - heading) *
+                    XRotation(-tilt) *
+                    ZRotation(-roll);
+
     return new ConstantOrientation(q);
 }
 
@@ -1247,7 +1250,7 @@ RotationModel* CreateDefaultRotationModel(double syncRotationPeriod)
     {
         // If syncRotationPeriod is 0, the orbit of the object is
         // aperiodic and we'll just return a FixedRotation.
-        return new ConstantOrientation(Quatd(1.0));
+        return new ConstantOrientation(Quaterniond::Identity());
     }
     else
     {
@@ -1505,15 +1508,15 @@ CreateFrameVector(const Universe& universe,
     if (value != NULL && value->getHash() != NULL)
     {
         Hash* constVecData = value->getHash();
-        Vec3d vec(0.0, 0.0, 1.0);
+        Vector3d vec = Vector3d::UnitZ();
         constVecData->getVector("Vector", vec);
-        if (vec.length() == 0.0)
+        if (vec.norm() == 0.0)
         {
             clog << "Bad two-vector frame: constant vector has length zero\n";
             return NULL;
         }
         vec.normalize();
-        vec = Vec3d(vec.x, vec.z, -vec.y);
+        vec = Vector3d(vec.x(), vec.z(), -vec.y());
 
         // The frame for the vector is optional; a NULL frame indicates
         // J2000 ecliptic.
@@ -1650,7 +1653,7 @@ CreateTopocentricFrame(const Selection& center,
                        const Selection& observer)
 {
     BodyMeanEquatorFrame* eqFrame = new BodyMeanEquatorFrame(target, target);
-    FrameVector north = FrameVector::createConstantVector(Vec3d(0.0, 1.0, 0.0), eqFrame);
+    FrameVector north = FrameVector::createConstantVector(Vector3d::UnitY(), eqFrame);
     FrameVector up = FrameVector::createRelativePositionVector(observer, target);
     
     return new TwoVectorFrame(center, up, -2, north, -3);    

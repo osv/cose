@@ -6,6 +6,9 @@
 #include <sstream>
 #include <iomanip>
 #include <celutil/formatnum.h>
+#include <celengine/eigenport.h>
+
+using namespace Eigen;
 
 #ifndef CEL_DESCR_SEP
 #define CEL_DESCR_SEP " | "
@@ -118,8 +121,8 @@ static void planetocentricCoords2Sstream(std::stringstream& ss,
     else
     {
         // Swap hemispheres if the object is a retrograde rotator
-        Quatd q = ~body.getEclipticToEquatorial(astro::J2000);
-        bool retrograde = (Vec3d(0.0, 1.0, 0.0) * q.toMatrix3()).y < 0.0;
+        Quaterniond q = body.getEclipticToEquatorial(astro::J2000);
+        bool retrograde = (q * Vector3d::UnitY()).y() < 0.0;
 
         if ((latitude < 0.0) ^ retrograde)
             nsHemi = 'S';
@@ -1192,8 +1195,6 @@ void CelBodyInteractive::updateDescrStr()
         Body *body;
         DeepSkyObject *dso;
         Location *location;
-        Vec3d lonLatAlt;
-        Vec3f locPos;
         switch (sel.getType())
         {
         case Selection::Type_Star:
@@ -1253,17 +1254,19 @@ void CelBodyInteractive::updateDescrStr()
             break;
         }
         case Selection::Type_Location:
+        {
             location = sel.location();
             body = location->getParentBody();
             ss << "[Location] "
                << _("Distance: ");
             distance2Sstream(ss, v.length() * 1e-6);
             ss << CEL_DESCR_SEP;
-            locPos = location->getPosition();
-            lonLatAlt = body->cartesianToPlanetocentric(Vec3d(locPos.x, locPos.y, locPos.z));
+            Vector3f locPos = location->getPosition();
+            Vector3d lonLatAlt = body->cartesianToPlanetocentric(locPos.cast<double>());
             planetocentricCoords2Sstream(ss, *body,
-                                         lonLatAlt.x, lonLatAlt.y, lonLatAlt.z, false);
+                                         lonLatAlt.x(), lonLatAlt.y(), lonLatAlt.z(), false);
             break;
+        }
         default:
             break;
         }
@@ -1411,7 +1414,7 @@ static int execFunction(GeekConsole *gc, int state, std::string value)
 static int gotoBody(GeekConsole *gc, int state, std::string value)
 {
     gc->getCelCore()->getSimulation()->
-        gotoSelection(5.0, Vec3f(0, 1, 0), ObserverFrame::ObserverLocal);
+        gotoSelection(5.0, Vector3f::UnitY(), ObserverFrame::ObserverLocal);
     gc->finish();
     return state;
 }
@@ -1421,7 +1424,7 @@ static int gotoBodyGC(GeekConsole *gc, int state, std::string value)
     gc->getCelCore()->getSimulation()->getObserver().gotoSelectionGC(
         gc->getCelCore()->getSimulation()->getSelection(),
         5.0, 0.0, 0.5,
-        Vec3f(0, 1, 0), ObserverFrame::ObserverLocal);
+        Vector3f::UnitY(), ObserverFrame::ObserverLocal);
     gc->finish();
     return state;
 }

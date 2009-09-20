@@ -18,12 +18,13 @@
 #include "eclipsefinder.h"
 #include "wineclipses.h"
 #include "res/resource.h"
-#include "celmath/mathlib.h"
-#include "celmath/ray.h"
-#include "celmath/distance.h"
+#include "celmath/geomutil.h"
 #include "celutil/util.h"
 #include "celutil/winutil.h"
+#include <Eigen/Core>
+#include <Eigen/Geometry>
 
+using namespace Eigen;
 using namespace std;
 
 WNDPROC oldListViewProc;
@@ -397,8 +398,10 @@ BOOL APIENTRY EclipseFinderProc(HWND hDlg,
                 sim->setFrame(ObserverFrame::PhaseLock, target, ref);
                 sim->update(0.0);
 
-                double distance = astro::kilometersToMicroLightYears(target.radius() * 4.0);
-                sim->gotoLocation(Point3d(distance, 0, 0), Quatd::yrotation(-PI / 2) * Quatd::xrotation(-PI / 2), 2.5);
+                double distance = target.radius() * 4.0;
+                sim->gotoLocation(UniversalCoord::Zero().offsetKm(Vector3d::UnitX() * distance), 
+                                  YRotation(-PI / 2) * XRotation(-PI / 2),
+                                  2.5);
             }
             break;
         case IDC_SOLARECLIPSE:

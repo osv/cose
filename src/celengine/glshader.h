@@ -10,12 +10,11 @@
 #ifndef _CELENGINE_GLSHADER_H_
 #define _CELENGINE_GLSHADER_H_
 
+#include <Eigen/Core>
 #include <string>
 #include <vector>
 #include <iostream>
-#include <celmath/vecmath.h>
-#include "gl.h"
-#include "glext.h"
+#include <GL/glew.h>
 
 class GLShaderLoader;
 
@@ -105,8 +104,7 @@ class Vec3ShaderParameter
     Vec3ShaderParameter();
     Vec3ShaderParameter(GLhandleARB _obj, const char* name);
 
-    Vec3ShaderParameter& operator=(const Vec3f&);
-    Vec3ShaderParameter& operator=(const Point3f&);
+    Vec3ShaderParameter& operator=(const Eigen::Vector3f&);
 
  private:
     int slot;
@@ -119,7 +117,7 @@ class Vec4ShaderParameter
     Vec4ShaderParameter();
     Vec4ShaderParameter(GLhandleARB _obj, const char* name);
 
-    Vec4ShaderParameter& operator=(const Vec4f&);
+    Vec4ShaderParameter& operator=(const Eigen::Vector4f&);
 
  private:
     int slot;

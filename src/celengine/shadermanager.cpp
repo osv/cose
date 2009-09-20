@@ -1,6 +1,7 @@
 // shadermanager.cpp
 //
-// Copyright (C) 2001-2007, Chris Laurel <claurel@shatters.net>
+// Copyright (C) 2001-2009, the Celestia Development Team
+// Original version by Chris Laurel <claurel@gmail.com>
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -8,9 +9,8 @@
 // of the License, or (at your option) any later version.
 
 #include "celutil/util.h"
-#include "gl.h"
-#include "glext.h"
 #include "shadermanager.h"
+#include <GL/glew.h>
 #include <cmath>
 #include <iostream>
 #include <fstream>
@@ -18,7 +18,9 @@
 #include <iomanip>
 #include <cstdio>
 #include <cassert>
+#include <Eigen/Geometry>
 
+using namespace Eigen;
 using namespace std;
 
 // GLSL on Mac OS X appears to have a bug that precludes us from using structs
@@ -2235,13 +2237,13 @@ ShaderManager::buildProgram(const ShaderProperties& props)
             {
                 // Tangents always in attribute 6 (should be a constant
                 // someplace)
-                glx::glBindAttribLocationARB(prog->getID(), 6, "tangent");
+                glBindAttribLocationARB(prog->getID(), 6, "tangent");
             }
 
             if (props.texUsage & ShaderProperties::PointSprite)
             {
                 // Point size is always in attribute 7
-                glx::glBindAttribLocationARB(prog->getID(), 7, "pointSize");
+                glBindAttribLocationARB(prog->getID(), 7, "pointSize");
             }
 
             status = prog->link();
@@ -2411,58 +2413,58 @@ CelestiaGLProgram::initSamplers()
 
     if (props.texUsage & ShaderProperties::DiffuseTexture)
     {
-        int slot = glx::glGetUniformLocationARB(program->getID(), "diffTex");
+        int slot = glGetUniformLocationARB(program->getID(), "diffTex");
         if (slot != -1)
-            glx::glUniform1iARB(slot, nSamplers++);
+            glUniform1iARB(slot, nSamplers++);
     }
 
     if (props.texUsage & ShaderProperties::NormalTexture)
     {
-        int slot = glx::glGetUniformLocationARB(program->getID(), "normTex");
+        int slot = glGetUniformLocationARB(program->getID(), "normTex");
         if (slot != -1)
-            glx::glUniform1iARB(slot, nSamplers++);
+            glUniform1iARB(slot, nSamplers++);
     }
 
     if (props.texUsage & ShaderProperties::SpecularTexture)
     {
-        int slot = glx::glGetUniformLocationARB(program->getID(), "specTex");
+        int slot = glGetUniformLocationARB(program->getID(), "specTex");
         if (slot != -1)
-            glx::glUniform1iARB(slot, nSamplers++);
+            glUniform1iARB(slot, nSamplers++);
     }
 
     if (props.texUsage & ShaderProperties::NightTexture)
     {
-        int slot = glx::glGetUniformLocationARB(program->getID(), "nightTex");
+        int slot = glGetUniformLocationARB(program->getID(), "nightTex");
         if (slot != -1)
-            glx::glUniform1iARB(slot, nSamplers++);
+            glUniform1iARB(slot, nSamplers++);
     }
 
     if (props.texUsage & ShaderProperties::EmissiveTexture)
     {
-        int slot = glx::glGetUniformLocationARB(program->getID(), "emissiveTex");
+        int slot = glGetUniformLocationARB(program->getID(), "emissiveTex");
         if (slot != -1)
-            glx::glUniform1iARB(slot, nSamplers++);
+            glUniform1iARB(slot, nSamplers++);
     }
 
     if (props.texUsage & ShaderProperties::OverlayTexture)
     {
-        int slot = glx::glGetUniformLocationARB(program->getID(), "overlayTex");
+        int slot = glGetUniformLocationARB(program->getID(), "overlayTex");
         if (slot != -1)
-            glx::glUniform1iARB(slot, nSamplers++);
+            glUniform1iARB(slot, nSamplers++);
     }
 
     if (props.texUsage & ShaderProperties::RingShadowTexture)
     {
-        int slot = glx::glGetUniformLocationARB(program->getID(), "ringTex");
+        int slot = glGetUniformLocationARB(program->getID(), "ringTex");
         if (slot != -1)
-            glx::glUniform1iARB(slot, nSamplers++);
+            glUniform1iARB(slot, nSamplers++);
     }
 
     if (props.texUsage & ShaderProperties::CloudShadowTexture)
     {
-        int slot = glx::glGetUniformLocationARB(program->getID(), "cloudShadowTex");
+        int slot = glGetUniformLocationARB(program->getID(), "cloudShadowTex");
         if (slot != -1)
-            glx::glUniform1iARB(slot, nSamplers++);
+            glUniform1iARB(slot, nSamplers++);
     }
 }
 
@@ -2479,59 +2481,50 @@ CelestiaGLProgram::setLightParameters(const LightingState& ls,
 {
     unsigned int nLights = min(MaxShaderLights, ls.nLights);
 
-    Vec3f diffuseColor(materialDiffuse.red(),
-                       materialDiffuse.green(),
-                       materialDiffuse.blue());
-    Vec3f specularColor(materialSpecular.red(),
-                        materialSpecular.green(),
-                        materialSpecular.blue());
+    Vector3f diffuseColor(materialDiffuse.red(),
+                          materialDiffuse.green(),
+                          materialDiffuse.blue());
+    Vector3f specularColor(materialSpecular.red(),
+                           materialSpecular.green(),
+                           materialSpecular.blue());
 
     for (unsigned int i = 0; i < nLights; i++)
     {
         const DirectionalLight& light = ls.lights[i];
 
-        Vec3f lightColor = Vec3f(light.color.red(),
-                                 light.color.green(),
-                                 light.color.blue()) * light.irradiance;
+        Vector3f lightColor = Vector3f(light.color.red(),
+                                       light.color.green(),
+                                       light.color.blue()) * light.irradiance;
         lights[i].direction = light.direction_obj;
 
         if (props.usesShadows() ||
             props.usesFragmentLighting() ||
             props.lightModel == ShaderProperties::RingIllumModel)
         {
-            fragLightColor[i] = Vec3f(lightColor.x * diffuseColor.x,
-                                      lightColor.y * diffuseColor.y,
-                                      lightColor.z * diffuseColor.z);
+            fragLightColor[i] = lightColor.cwise() * diffuseColor;
             if (props.hasSpecular())
             {
-                fragLightSpecColor[i] = Vec3f(lightColor.x * specularColor.x,
-                                              lightColor.y * specularColor.y,
-                                              lightColor.z * specularColor.z);
+                fragLightSpecColor[i] = lightColor.cwise() * specularColor;
             }
-            fragLightBrightness[i] = max(lightColor.x, max(lightColor.y, lightColor.z));
+            fragLightBrightness[i] = lightColor.maxCoeff();
         }
         else
         {
-            lights[i].diffuse = Vec3f(lightColor.x * diffuseColor.x,
-                                      lightColor.y * diffuseColor.y,
-                                      lightColor.z * diffuseColor.z);
+            lights[i].diffuse = lightColor.cwise() * diffuseColor;
         }
 
-        lights[i].brightness = max(lightColor.x, max(lightColor.y, lightColor.z));
-        lights[i].specular = Vec3f(lightColor.x * specularColor.x,
-                                   lightColor.y * specularColor.y,
-                                   lightColor.z * specularColor.z);
+        lights[i].brightness = lightColor.maxCoeff();
+        lights[i].specular = lightColor.cwise() * specularColor;
 
-        Vec3f halfAngle_obj = ls.eyeDir_obj + light.direction_obj;
-        if (halfAngle_obj.length() != 0.0f)
+        Vector3f halfAngle_obj = ls.eyeDir_obj + light.direction_obj;
+        if (halfAngle_obj.norm() != 0.0f)
             halfAngle_obj.normalize();
         lights[i].halfVector = halfAngle_obj;
     }
 
     eyePosition = ls.eyePos_obj;
-    ambientColor = Vec3f(ls.ambientColor.x * diffuseColor.x + materialEmissive.red(),
-                         ls.ambientColor.y * diffuseColor.y + materialEmissive.green(),
-                         ls.ambientColor.z * diffuseColor.z + materialEmissive.blue());
+    ambientColor = ls.ambientColor.cwise() * diffuseColor + 
+        Vector3f(materialEmissive.red(), materialEmissive.green(), materialEmissive.blue());
     opacity = materialDiffuse.alpha();
 #ifdef USE_HDR
     nightLightScale = _nightLightScale;
@@ -2544,8 +2537,10 @@ CelestiaGLProgram::setLightParameters(const LightingState& ls,
 void
 CelestiaGLProgram::setEclipseShadowParameters(const LightingState& ls,
                                               float planetRadius,
-                                              const Mat4f& planetMat)
+                                              const Eigen::Quaternionf& planetOrientation)
 {
+    Matrix3f planetTransform = planetOrientation.toRotationMatrix();
+
     for (unsigned int li = 0;
          li < min(ls.nLights, MaxShaderLights);
          li++)
@@ -2568,27 +2563,31 @@ CelestiaGLProgram::setEclipseShadowParameters(const LightingState& ls,
 
                 // Compute the transformation to use for generating texture
                 // coordinates from the object vertices.
-                Point3f origin = shadow.origin * planetMat;
-                Vec3f dir = shadow.direction * planetMat;
+                Vector3f origin = planetTransform * shadow.origin;
+                Vector3f dir    = planetTransform * shadow.direction;
                 float scale = planetRadius / shadow.penumbraRadius;
-                Vec3f axis = Vec3f(0, 1, 0) ^ dir;
-                float angle = (float) acos(Vec3f(0, 1, 0) * dir);
-                axis.normalize();
-                Mat4f mat = Mat4f::rotation(axis, -angle);
-                Vec3f sAxis = Vec3f(0.5f * scale, 0, 0) * mat;
-                Vec3f tAxis = Vec3f(0, 0, 0.5f * scale) * mat;
+                
+                Quaternionf shadowRotation;
+                shadowRotation.setFromTwoVectors(Vector3f::UnitY(), dir);
+                Matrix3f m = shadowRotation.toRotationMatrix();
+                Vector3f sAxis = m * Vector3f::UnitX() * (0.5f * scale);
+                Vector3f tAxis = m * Vector3f::UnitZ() * (0.5f * scale);
 
-                float sw = (Point3f(0, 0, 0) - origin) * sAxis / planetRadius + 0.5f;
-                float tw = (Point3f(0, 0, 0) - origin) * tAxis / planetRadius + 0.5f;
-                shadowParams.texGenS = Vec4f(sAxis.x, sAxis.y, sAxis.z, sw);
-                shadowParams.texGenT = Vec4f(tAxis.x, tAxis.y, tAxis.z, tw);
+                Vector4f texGenS;
+                Vector4f texGenT;
+                texGenS.start<3>() = sAxis;
+                texGenT.start<3>() = tAxis;
+                texGenS[3] = -origin.dot(sAxis) / planetRadius + 0.5f;
+                texGenT[3] = -origin.dot(tAxis) / planetRadius + 0.5f;
+                shadowParams.texGenS = texGenS;
+                shadowParams.texGenT = texGenT;
             }
         }
     }
 }
 
 
-// Set the scattering and absoroption shader parameters for atmosphere simulation.
+// Set the scattering and absorption shader parameters for atmosphere simulation.
 // They are from standard units to the normalized system used by the shaders.
 // atmPlanetRadius - the radius in km of the planet with the atmosphere
 // objRadius - the radius in km of the object we're rendering
@@ -2604,11 +2603,11 @@ CelestiaGLProgram::setAtmosphereParameters(const Atmosphere& atmosphere,
     float skySphereRadius = atmPlanetRadius + -atmosphere.mieScaleHeight * (float) log(AtmosphereExtinctionThreshold);
 
     float tMieCoeff        = atmosphere.mieCoeff * objRadius;
-    Vec3f tRayleighCoeff   = atmosphere.rayleighCoeff * objRadius;
-    Vec3f tAbsorptionCoeff = atmosphere.absorptionCoeff * objRadius;
+    Vector3f tRayleighCoeff   = atmosphere.rayleighCoeff * objRadius;
+    Vector3f tAbsorptionCoeff = atmosphere.absorptionCoeff * objRadius;
 
     float r = skySphereRadius / objRadius;
-    atmosphereRadius = Vec3f(r, r * r, atmPlanetRadius / objRadius);
+    atmosphereRadius = Vector3f(r, r * r, atmPlanetRadius / objRadius);
 
     mieCoeff = tMieCoeff;
     mieScaleHeight = objRadius / atmosphere.mieScaleHeight;
@@ -2625,10 +2624,8 @@ CelestiaGLProgram::setAtmosphereParameters(const Atmosphere& atmosphere,
 
     // Precompute sum and inverse sum of scattering coefficients to save work
     // in the vertex shader.
-    Vec3f tScatterCoeffSum = Vec3f(tRayleighCoeff.x + tMieCoeff,
-                                   tRayleighCoeff.y + tMieCoeff,
-                                   tRayleighCoeff.z + tMieCoeff);
+    Vector3f tScatterCoeffSum = tRayleighCoeff.cwise() + tMieCoeff;
     scatterCoeffSum = tScatterCoeffSum;
-    invScatterCoeffSum = Vec3f(1.0f / tScatterCoeffSum.x, 1.0f / tScatterCoeffSum.y, 1.0f / tScatterCoeffSum.z);
+    invScatterCoeffSum = tScatterCoeffSum.cwise().inverse();
     extinctionCoeff = tScatterCoeffSum + tAbsorptionCoeff;
 }

@@ -13,21 +13,12 @@
 #define _CELUTIL_UTIL_H_
 
 #include <string>
-#include <vector>
 #include <iostream>
 #include <functional>
 
 // A little trickery to get something like a compile time assert in C++
 #define COMPILE_TIME_ASSERT(pred) \
     switch(0){case 0: case pred:;}
-
-#ifdef _WIN32
-// The Windows header files define min and max macros. We prefer the min and
-// max templates from STL because they don't result in unexpected multiple
-// evaluations of arguments. In order to use them, we need to set NOMINMAX
-// to prevent namespace pollution by the Windows macros.
-#define NOMINMAX
-#endif
 
 // gettext / libintl setup
 #define _(string) gettext (string)
@@ -36,11 +27,17 @@
 
 #include "libintl.h"
 
+#elif defined(TARGET_OS_MAC)
+
+#ifndef gettext
+#include "POSupport.h"
+#define gettext(s)      localizedUTF8String(s)
+#define dgettext(d,s)   localizedUTF8StringWithDomain(d,s)
+#endif
+
 #else
 
-#ifndef TARGET_OS_MAC
 #include <libintl.h>
-#endif /* TARGET_OS_MAC */
 
 #endif
 

@@ -43,6 +43,11 @@ public:
     {
         return false;
     }
+
+    /*! Load all textures used by the model. */
+    virtual void loadTextures()
+    {
+    }
 };
 
 
@@ -103,13 +108,13 @@ class Model : public Geometry
     //! Render the model in the current OpenGL context
     virtual void render(RenderContext&, double t = 0.0);
 
-    void transform(const Vec3f& translation, float scale);
+    void transform(const Eigen::Vector3f& translation, float scale);
 
     /*! Apply a uniform scale to the model so that it fits into
      *  a box with a center at centerOffset and a maximum side
      *  length of one.
      */
-    void normalize(const Vec3f& centerOffset);
+    void normalize(const Eigen::Vector3f& centerOffset);
 
     /*! Return true if the specified texture map type is used at
      *  all within a mesh. This information is used to decide
@@ -145,6 +150,8 @@ class Model : public Geometry
 
     /*! Optimize the model by eliminating all duplicated materials */
     void uniquifyMaterials();
+
+    void loadTextures();
 
     /*! This comparator will roughly sort the model's meshes by
      *  opacity so that transparent meshes are rendered last.  It's far

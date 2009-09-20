@@ -1,6 +1,7 @@
 // stardb.h
 //
-// Copyright (C) 2001-2008, Chris Laurel <claurel@shatters.net>
+// Copyright (C) 2001-2009, the Celestia Development Team
+// Original version by Chris Laurel <claurel@gmail.com>
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -116,14 +117,14 @@ class StarDatabase
     std::vector<std::string> getCompletion(const std::string&) const;
 
     void findVisibleStars(StarHandler& starHandler,
-                          const Point3f& obsPosition,
-                          const Quatf&   obsOrientation,
+                          const Eigen::Vector3f& obsPosition,
+                          const Eigen::Quaternionf&   obsOrientation,
                           float fovY,
                           float aspectRatio,
                           float limitingMag) const;
 
     void findCloseStars(StarHandler& starHandler,
-                        const Point3f& obsPosition,
+                        const Eigen::Vector3f& obsPosition,
                         float radius) const;
 
     std::string getStarName    (const Star&, bool i18n = false) const;

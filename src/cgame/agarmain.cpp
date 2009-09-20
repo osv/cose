@@ -629,6 +629,13 @@ static void BG_Draw()
     {
 		glEnable(GL_SCISSOR_TEST);
 		glScissor(0,0, 0,0);
+        GLenum glewErr = glewInit();
+        { 
+            if (GLEW_OK != glewErr)
+            {
+                cerr << "Celestia was unable to initialize OpenGL extensions (error %1). Graphics quality will be reduced\n";
+            }
+        }
 		celAppCore->initRenderer(); 
 		glDisable(GL_SCISSOR_TEST);
 		// Set the simulation starting time to the current system time
@@ -729,6 +736,7 @@ void EventLoop_FixedFPS(void)
 			glPopMatrix();
 
 			AG_EndRendering();
+			SDL_GL_SwapBuffers();
 			AG_UnlockVFS(agView);
 			
 			/* Recalibrate the effective refresh rate. */
@@ -852,7 +860,7 @@ int main(int argc, char* argv[])
     }
 
     /* Pass AG_VIDEO_OPENGL flag to require an OpenGL display. */
-    if (AG_InitVideo(640, 480, 32, AG_VIDEO_OPENGL|AG_VIDEO_RESIZABLE)
+    if (AG_InitVideo(640, 480, 32, AG_VIDEO_OPENGL|AG_VIDEO_RESIZABLE|AG_VIDEO_OVERLAY)
 		== -1) {
 		fprintf(stderr, "%s\n", AG_GetError());
 		return (-1);

@@ -11,8 +11,7 @@
 #include <fstream>
 #include <string>
 #include <celutil/util.h>
-#include "gl.h"
-#include "glext.h"
+#include <GL/glew.h>
 #include "fragmentprog.h"
 
 using namespace std;
@@ -99,8 +98,8 @@ static bool LoadNvFragmentProgram(const string& filename, unsigned int& id)
         return false;
     }
 
-    glx::glGenProgramsNV(1, (GLuint*) &id);
-    glx::glLoadProgramNV(GL_FRAGMENT_PROGRAM_NV,
+    glGenProgramsNV(1, (GLuint*) &id);
+    glLoadProgramNV(GL_FRAGMENT_PROGRAM_NV,
                          id,
                          source->length(),
                          reinterpret_cast<const GLubyte*>(source->c_str()));
@@ -161,14 +160,14 @@ FragmentProcessor::~FragmentProcessor()
 {
 }
 
-void FragmentProcessor::parameter(fp::Parameter param, const Vec3f& v)
+void FragmentProcessor::parameter(fp::Parameter param, const Eigen::Vector3f& v)
 {
-    parameter(param, v.x, v.y, v.z, 0.0f);
+    parameter(param, v.x(), v.y(), v.z(), 0.0f);
 }
 
-void FragmentProcessor::parameter(fp::Parameter param, const Point3f& p)
+void FragmentProcessor::parameter(fp::Parameter param, const Eigen::Vector4f& v)
 {
-    parameter(param, p.x, p.y, p.z, 0.0f);
+    parameter(param, v.x(), v.y(), v.z(), v.w());
 }
 
 void FragmentProcessor::parameter(fp::Parameter param, const Color& c)
@@ -200,19 +199,19 @@ void FragmentProcessorNV::disable()
 
 void FragmentProcessorNV::use(unsigned int prog)
 {
-    glx::glBindProgramNV(GL_FRAGMENT_PROGRAM_NV, prog);
+    glBindProgramNV(GL_FRAGMENT_PROGRAM_NV, prog);
 }
 
 void FragmentProcessorNV::parameter(fp::Parameter param,
                                     float x, float y, float z, float w)
 {
-    glx::glProgramLocalParameter4fARB(GL_FRAGMENT_PROGRAM_NV,
+    glProgramLocalParameter4fARB(GL_FRAGMENT_PROGRAM_NV,
                                       param, x, y, z, w);
 }
 
 void FragmentProcessorNV::parameter(fp::Parameter param, const float* fv)
 {
-    glx::glProgramLocalParameter4fvARB(GL_FRAGMENT_PROGRAM_NV, param, fv);
+    glProgramLocalParameter4fvARB(GL_FRAGMENT_PROGRAM_NV, param, fv);
 }
 
 
@@ -238,17 +237,17 @@ void FragmentProcessorARB::disable()
 
 void FragmentProcessorARB::use(unsigned int /*prog*/)
 {
-    //glx::glBindProgramARB(GL_VERTEX_PROGRAM_ARB, prog);
+    //glBindProgramARB(GL_VERTEX_PROGRAM_ARB, prog);
 }
 
 void FragmentProcessorARB::parameter(fp::Parameter /*param*/,
                                      float /*x*/, float /*y*/,
                                      float /*z*/, float /*w*/)
 {
-    //glx::glProgramEnvParameter4fARB(GL_FRAGMENT_PROGRAM_ARB, param, x, y, z, w);
+    //glProgramEnvParameter4fARB(GL_FRAGMENT_PROGRAM_ARB, param, x, y, z, w);
 }
 
 void FragmentProcessorARB::parameter(fp::Parameter /*param*/, const float* /*fv*/)
 {
-    //glx::glProgramEnvParameter4fvARB(GL_FRAGMENT_PROGRAM_ARB, param, fv);
+    //glProgramEnvParameter4fvARB(GL_FRAGMENT_PROGRAM_ARB, param, fv);
 }

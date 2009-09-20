@@ -2,7 +2,8 @@
 //
 // Functions for rendering objects using dynamically generated GLSL shaders.
 //
-// Copyright (C) 2006-2007, Chris Laurel <claurel@shatters.net>
+// Copyright (C) 2006-2009, the Celestia Development Team
+// Original version by Chris Laurel <claurel@gmail.com>
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -26,10 +27,7 @@
 #include <celmath/intersect.h>
 #include <celutil/utf8.h>
 #include <celutil/util.h>
-#include "gl.h"
 #include "astro.h"
-#include "glext.h"
-#include "vecgl.h"
 #include "glshader.h"
 #include "shadermanager.h"
 #include "spheremesh.h"
@@ -42,8 +40,10 @@
 #include "render.h"
 #include "renderinfo.h"
 #include "renderglsl.h"
+#include <GL/glew.h>
+#include "vecgl.h"
 
-
+using namespace Eigen;
 using namespace std;
 
 
@@ -59,7 +59,7 @@ void renderSphere_GLSL(const RenderInfo& ri,
                        float radius,
                        unsigned int textureRes,
                        int renderFlags,
-                       const Mat4f& planetMat,
+                       const Quaternionf& planetOrientation,
                        const Frustum& frustum,
                        const GLContext& context)
 {
@@ -123,7 +123,7 @@ void renderSphere_GLSL(const RenderInfo& ri,
         Texture* ringsTex = rings->texture.find(textureRes);
         if (ringsTex != NULL)
         {
-            glx::glActiveTextureARB(GL_TEXTURE0_ARB + nTextures);
+            glActiveTextureARB(GL_TEXTURE0_ARB + nTextures);
             ringsTex->bind();
             nTextures++;
 
@@ -133,7 +133,7 @@ void renderSphere_GLSL(const RenderInfo& ri,
             glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, bc);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S,
                             GL_CLAMP_TO_BORDER_ARB);
-            glx::glActiveTextureARB(GL_TEXTURE0_ARB);
+            glActiveTextureARB(GL_TEXTURE0_ARB);
 
             shadprop.texUsage |= ShaderProperties::RingShadowTexture;
         }
@@ -185,9 +185,9 @@ void renderSphere_GLSL(const RenderInfo& ri,
             {
                 shadprop.texUsage |= ShaderProperties::CloudShadowTexture;
                 textures[nTextures++] = cloudTex;
-                glx::glActiveTextureARB(GL_TEXTURE0_ARB + nTextures);
+                glActiveTextureARB(GL_TEXTURE0_ARB + nTextures);
                 cloudTex->bind();
-                glx::glActiveTextureARB(GL_TEXTURE0_ARB);
+                glActiveTextureARB(GL_TEXTURE0_ARB);
             }
         }
     }
@@ -243,7 +243,7 @@ void renderSphere_GLSL(const RenderInfo& ri,
     }
 
     if (shadprop.shadowCounts != 0)
-        prog->setEclipseShadowParameters(ls, radius, planetMat);
+        prog->setEclipseShadowParameters(ls, radius, planetOrientation);
 
     glColor(ri.color);
 
@@ -255,7 +255,7 @@ void renderSphere_GLSL(const RenderInfo& ri,
                         frustum, ri.pixWidth,
                         textures[0], textures[1], textures[2], textures[3]);
 
-    glx::glUseProgramObjectARB(0);
+    glUseProgramObjectARB(0);
 }
 
 
@@ -270,12 +270,12 @@ void renderGeometry_GLSL(Geometry* geometry,
                          const Atmosphere* atmosphere,
                          float geometryScale,
                          int renderFlags,
-                         const Mat4f& planetMat,
+                         const Quaternionf& planetOrientation,
                          double tsec)
 {
     glDisable(GL_LIGHTING);
 
-    GLSL_RenderContext rc(ls, geometryScale, planetMat);
+    GLSL_RenderContext rc(ls, geometryScale, planetOrientation);
 
     if (renderFlags & Renderer::ShowAtmospheres)
     {
@@ -306,7 +306,7 @@ void renderGeometry_GLSL(Geometry* geometry,
         geometry->render(rc, tsec);
     }
 
-    glx::glUseProgramObjectARB(0);
+    glUseProgramObjectARB(0);
 }
 
 
@@ -319,7 +319,7 @@ void renderGeometry_GLSL_Unlit(Geometry* geometry,
                                ResourceHandle texOverride,
                                float geometryScale,
                                int /* renderFlags */,
-                               const Mat4f& /* planetMat */,
+                               const Quaternionf& /* planetOrientation */,
                                double tsec)
 {
     glDisable(GL_LIGHTING);
@@ -346,7 +346,7 @@ void renderGeometry_GLSL_Unlit(Geometry* geometry,
         geometry->render(rc, tsec);
     }
 
-    glx::glUseProgramObjectARB(0);
+    glUseProgramObjectARB(0);
 }
 
 
@@ -361,7 +361,7 @@ void renderClouds_GLSL(const RenderInfo& ri,
                        float radius,
                        unsigned int textureRes,
                        int renderFlags,
-                       const Mat4f& planetMat,
+                       const Quaternionf& planetOrientation,
                        const Frustum& frustum,
                        const GLContext& context)
 {
@@ -394,7 +394,7 @@ void renderClouds_GLSL(const RenderInfo& ri,
         Texture* ringsTex = rings->texture.find(textureRes);
         if (ringsTex != NULL)
         {
-            glx::glActiveTextureARB(GL_TEXTURE0_ARB + nTextures);
+            glActiveTextureARB(GL_TEXTURE0_ARB + nTextures);
             ringsTex->bind();
             nTextures++;
 
@@ -404,7 +404,7 @@ void renderClouds_GLSL(const RenderInfo& ri,
             glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, bc);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S,
                             GL_CLAMP_TO_BORDER_ARB);
-            glx::glActiveTextureARB(GL_TEXTURE0_ARB);
+            glActiveTextureARB(GL_TEXTURE0_ARB);
 
             shadprop.texUsage |= ShaderProperties::RingShadowTexture;
         }
@@ -444,8 +444,8 @@ void renderClouds_GLSL(const RenderInfo& ri,
 
     prog->setLightParameters(ls, ri.color, ri.specularColor, Color::Black);
     prog->eyePosition = ls.eyePos_obj;
-    prog->ambientColor = Vec3f(ri.ambientColor.red(), ri.ambientColor.green(),
-                               ri.ambientColor.blue());
+    prog->ambientColor = Vector3f(ri.ambientColor.red(), ri.ambientColor.green(),
+                                  ri.ambientColor.blue());
     prog->textureOffset = texOffset;
 
     float cloudRadius = radius + atmosphere->cloudHeight;
@@ -463,7 +463,7 @@ void renderClouds_GLSL(const RenderInfo& ri,
     }
 
     if (shadprop.shadowCounts != 0)
-        prog->setEclipseShadowParameters(ls, cloudRadius, planetMat);
+        prog->setEclipseShadowParameters(ls, cloudRadius, planetOrientation);
 
     unsigned int attributes = LODSphereMesh::Normals;
     if (cloudNormalMap != NULL)
@@ -475,7 +475,7 @@ void renderClouds_GLSL(const RenderInfo& ri,
 
     prog->textureOffset = 0.0f;
 
-    glx::glUseProgramObjectARB(0);
+    glUseProgramObjectARB(0);
 }
 
 
@@ -485,7 +485,7 @@ renderAtmosphere_GLSL(const RenderInfo& ri,
                       const LightingState& ls,
                       Atmosphere* atmosphere,
                       float radius,
-                      const Mat4f& /*planetMat*/,
+                      const Quaternionf& /*planetOrientation*/,
                       const Frustum& frustum,
                       const GLContext& context)
 {
@@ -511,18 +511,18 @@ renderAtmosphere_GLSL(const RenderInfo& ri,
     prog->use();
 
     prog->setLightParameters(ls, ri.color, ri.specularColor, Color::Black);
-    prog->ambientColor = Vec3f(0.0f, 0.0f, 0.0f);
+    prog->ambientColor = Vector3f::Zero();
 
     float atmosphereRadius = radius + -atmosphere->mieScaleHeight * (float) log(AtmosphereExtinctionThreshold);
     float atmScale = atmosphereRadius / radius;
 
-    prog->eyePosition = Point3f(ls.eyePos_obj.x / atmScale, ls.eyePos_obj.y / atmScale, ls.eyePos_obj.z / atmScale);
+    prog->eyePosition = ls.eyePos_obj / atmScale;
     prog->setAtmosphereParameters(*atmosphere, radius, atmosphereRadius);
 
 #if 0
     // Currently eclipse shadows are ignored when rendering atmospheres
     if (shadprop.shadowCounts != 0)
-        prog->setEclipseShadowParameters(ls, radius, planetMat);
+        prog->setEclipseShadowParameters(ls, radius, planetOrientation);
 #endif
 
     glPushMatrix();
@@ -544,9 +544,9 @@ renderAtmosphere_GLSL(const RenderInfo& ri,
     glPopMatrix();
 
 
-    glx::glUseProgramObjectARB(0);
+    glUseProgramObjectARB(0);
 
-    //glx::glActiveTextureARB(GL_TEXTURE0_ARB);
+    //glActiveTextureARB(GL_TEXTURE0_ARB);
     //glEnable(GL_TEXTURE_2D);
 }
 
@@ -615,8 +615,8 @@ void renderRings_GLSL(RingSystem& rings,
     prog->use();
 
     prog->eyePosition = ls.eyePos_obj;
-    prog->ambientColor = Vec3f(ri.ambientColor.red(), ri.ambientColor.green(),
-                               ri.ambientColor.blue());
+    prog->ambientColor = Vector3f(ri.ambientColor.red(), ri.ambientColor.green(),
+                                  ri.ambientColor.blue());
     prog->setLightParameters(ls, ri.color, ri.specularColor, Color::Black);
 
     for (unsigned int li = 0; li < ls.nLights; li++)
@@ -629,9 +629,8 @@ void renderRings_GLSL(RingSystem& rings,
         // planet would ever orbit underneath its sun (an orbital
         // inclination of 90 degrees), but this should be made
         // more robust anyway.
-        Vec3f axis = Vec3f(0, 1, 0) ^ light.direction_obj;
-        float cosAngle = Vec3f(0.0f, 1.0f, 0.0f) * light.direction_obj;
-        /*float angle = (float) acos(cosAngle);     Unused*/
+        Vector3f axis = Vector3f::UnitY().cross(light.direction_obj);
+        float cosAngle = Vector3f::UnitY().dot(light.direction_obj);
         axis.normalize();
 
         float tScale = 1.0f;
@@ -655,10 +654,14 @@ void renderRings_GLSL(RingSystem& rings,
 
         // The s axis is perpendicular to the shadow axis in the plane of the
         // of the rings, and the t axis completes the orthonormal basis.
-        Vec3f sAxis = axis * 0.5f;
-        Vec3f tAxis = (axis ^ light.direction_obj) * 0.5f * tScale;
-        Vec4f texGenS(sAxis.x, sAxis.y, sAxis.z, 0.5f);
-        Vec4f texGenT(tAxis.x, tAxis.y, tAxis.z, 0.5f);
+        Vector3f sAxis = axis * 0.5f;
+        Vector3f tAxis = (axis.cross(light.direction_obj)) * 0.5f * tScale;
+        Vector4f texGenS;
+        texGenS.start(3) = sAxis;
+        texGenS[3] = 0.5f;
+        Vector4f texGenT;
+        texGenT.start(3) = tAxis;
+        texGenT[3] = 0.5f;
 
         // r0 and r1 determine the size of the planet's shadow and penumbra
         // on the rings.
@@ -690,5 +693,5 @@ void renderRings_GLSL(RingSystem& rings,
 
     glBlendFunc(GL_SRC_ALPHA, GL_ONE);
 
-    glx::glUseProgramObjectARB(0);
+    glUseProgramObjectARB(0);
 }

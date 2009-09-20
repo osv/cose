@@ -1,6 +1,7 @@
 // astro.h
 //
-// Copyright (C) 2001-2006 Chris Laurel <claurel@shatters.net>
+// Copyright (C) 2001-2009, the Celestia Development Team
+// Original version by Chris Laurel <claurel@gmail.com>
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -10,12 +11,13 @@
 #ifndef _CELENGINE_ASTRO_H_
 #define _CELENGINE_ASTRO_H_
 
+#include <celmath/vecmath.h>
+#include <celmath/quaternion.h>
+#include <Eigen/Core>
+#include <Eigen/Geometry>
 #include <iostream>
 #include <string>
 #include <cmath>
-#include <celmath/vecmath.h>
-#include <celmath/quaternion.h>
-#include <celengine/univcoord.h>
 
 #define SOLAR_ABSMAG  4.83f
 #define LN_MAG        1.085736
@@ -25,6 +27,8 @@
 // #define OLD_KM_PER_LY     9466411842000.000
 #define KM_PER_AU     149597870.7
 #define AU_PER_LY     (KM_PER_LY / KM_PER_AU)
+
+class UniversalCoord;
 
 namespace astro
 {
@@ -157,20 +161,15 @@ namespace astro
     float sphereIlluminationFraction(Point3d spherePos,
                                      Point3d viewerPos);
 
-    Point3d heliocentricPosition(const UniversalCoord& universal,
-                                 const Point3f& starPosition);
-    UniversalCoord universalPosition(const Point3d& heliocentric,
-                                     const Point3f& starPosition);
-    UniversalCoord universalPosition(const Point3d& heliocentric,
-                                     const UniversalCoord& starPosition);
+    Eigen::Vector3f equatorialToCelestialCart(float ra, float dec, float distance);
+    Eigen::Vector3d equatorialToCelestialCart(double ra, double dec, double distance);
 
-    Point3f equatorialToCelestialCart(float ra, float dec, float distance);
-    Point3d equatorialToCelestialCart(double ra, double dec, double distance);
+    Eigen::Vector3f equatorialToEclipticCartesian(float ra, float dec, float distance);
 
-    Quatd eclipticToEquatorial();
-    Vec3d eclipticToEquatorial(const Vec3d& v);
-    Quatd equatorialToGalactic();
-    Vec3d equatorialToGalactic(const Vec3d& v);
+    Eigen::Quaterniond eclipticToEquatorial();
+    Eigen::Vector3d eclipticToEquatorial(const Eigen::Vector3d& v);
+    Eigen::Quaterniond equatorialToGalactic();
+    Eigen::Vector3d equatorialToGalactic(const Eigen::Vector3d& v);
 
     void anomaly(double meanAnomaly, double eccentricity,
                  double& trueAnomaly, double& eccentricAnomaly);

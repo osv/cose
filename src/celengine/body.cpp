@@ -16,13 +16,16 @@
 #include "mesh.h"
 #include "meshmanager.h"
 #include "body.h"
+#include "atmosphere.h"
 #include "frame.h"
 #include "timeline.h"
 #include "timelinephase.h"
 #include "frametree.h"
 #include "referencemark.h"
 
+using namespace Eigen;
 using namespace std;
+
 
 Body::Body(PlanetarySystem* _system, const string& _name) :
     names(1),
@@ -35,7 +38,7 @@ Body::Body(PlanetarySystem* _system, const string& _name) :
     semiAxes(1.0f, 1.0f, 1.0f),
     mass(0.0f),
     albedo(0.5f),
-    orientation(1.0f),
+    geometryOrientation(Quaternionf::Identity()),
     geometry(InvalidResource),
     geometryScale(1.0f),
     surface(Color(1.0f, 1.0f, 1.0f)),
@@ -135,10 +138,10 @@ Body::~Body()
 void Body::setDefaultProperties()
 {
     radius = 1.0f;
-    semiAxes = Vec3f(1.0f, 1.0f, 1.0f);
+    semiAxes = Vector3f::Ones();
     mass = 0.0f;
     albedo = 0.5f;
-    orientation = Quatf(1.0f);
+    geometryOrientation = Quaternionf::Identity();
     geometry = InvalidResource;
     surface = Surface(Color::White);
     delete atmosphere;
@@ -352,33 +355,33 @@ void Body::setAlbedo(float _albedo)
 }
 
 
-Quatf Body::getOrientation() const
+Quaternionf Body::getGeometryOrientation() const
 {
-    return orientation;
+    return geometryOrientation;
 }
 
 
-void Body::setOrientation(const Quatf& q)
+void Body::setGeometryOrientation(const Quaternionf& orientation)
 {
-    orientation = q;
+    geometryOrientation = orientation;
 }
 
 
 /*! Set the semiaxes of a body.
  */
-void Body::setSemiAxes(const Vec3f& _semiAxes)
+void Body::setSemiAxes(const Vector3f& _semiAxes)
 {
     semiAxes = _semiAxes;
 
     // Radius will always be the largest of the three semi axes
-    radius = max(semiAxes.x, max(semiAxes.y, semiAxes.z));
+    radius = semiAxes.maxCoeff();
     recomputeCullingRadius();
 }
 
 
 /*! Retrieve the body's semiaxes
  */
-Vec3f Body::getSemiAxes() const
+Vector3f Body::getSemiAxes() const
 {
     return semiAxes;
 }
@@ -404,8 +407,8 @@ float Body::getRadius() const
 bool Body::isSphere() const
 {
     return (geometry == InvalidResource) &&
-           (semiAxes.x == semiAxes.y) && 
-           (semiAxes.x == semiAxes.z);
+           (semiAxes.x() == semiAxes.y()) &&
+           (semiAxes.x() == semiAxes.z());
 }
 
 
@@ -512,59 +515,54 @@ void Body::setAtmosphere(const Atmosphere& _atmosphere)
  */
 UniversalCoord Body::getPosition(double tdb) const
 {
-    Point3d position(0.0, 0.0, 0.0);
+    Vector3d position = Vector3d::Zero();
 
     const TimelinePhase* phase = timeline->findPhase(tdb);
-    Point3d p = phase->orbit()->positionAtTime(tdb);
+    Vector3d p = phase->orbit()->positionAtTime(tdb);
     ReferenceFrame* frame = phase->orbitFrame();
 
     while (frame->getCenter().getType() == Selection::Type_Body)
     {
         phase = frame->getCenter().body()->timeline->findPhase(tdb);
-        position += Vec3d(p.x, p.y, p.z) * frame->getOrientation(tdb).toMatrix3();
+        position += frame->getOrientation(tdb).conjugate() * p;
         p = phase->orbit()->positionAtTime(tdb);
         frame = phase->orbitFrame();
     }
 
-    position += Vec3d(p.x, p.y, p.z) * frame->getOrientation(tdb).toMatrix3();
+    position += frame->getOrientation(tdb).conjugate() * p;
 
     if (frame->getCenter().star())
-        return astro::universalPosition(position, frame->getCenter().star()->getPosition(tdb));
+        return frame->getCenter().star()->getPosition(tdb).offsetKm(position);
     else
-        return astro::universalPosition(position, frame->getCenter().getPosition(tdb));
+        return frame->getCenter().getPosition(tdb).offsetKm(position);
 }
 
 
 /*! Get the orientation of the body in the universal coordinate system.
  */
-Quatd Body::getOrientation(double tdb) const
+Quaterniond Body::getOrientation(double tdb) const
 {
-    // TODO: This method overloads getOrientation(), but the two do very
-    // different things. The other method should be renamed to
-    // getModelOrientation().
     const TimelinePhase* phase = timeline->findPhase(tdb);
-    return phase->rotationModel()->orientationAtTime(tdb) *
-           phase->bodyFrame()->getOrientation(tdb);
+    return phase->rotationModel()->orientationAtTime(tdb) * phase->bodyFrame()->getOrientation(tdb);
 }
 
 
 /*! Get the velocity of the body in the universal frame.
  */
-Vec3d Body::getVelocity(double tdb) const
+Vector3d Body::getVelocity(double tdb) const
 {
     const TimelinePhase* phase = timeline->findPhase(tdb);
 
     ReferenceFrame* orbitFrame = phase->orbitFrame();
 
-    Vec3d v = phase->orbit()->velocityAtTime(tdb);
-    v = v * orbitFrame->getOrientation(tdb).toMatrix3() + orbitFrame->getCenter().getVelocity(tdb);
+    Vector3d v = phase->orbit()->velocityAtTime(tdb);
+    v = orbitFrame->getOrientation(tdb).conjugate() * v + orbitFrame->getCenter().getVelocity(tdb);
 
 	if (!orbitFrame->isInertial())
 	{
-		Vec3d r = Selection(const_cast<Body*>(this)).getPosition(tdb) - orbitFrame->getCenter().getPosition(tdb);
-		r = r * astro::microLightYearsToKilometers(1.0);
-		v += cross(orbitFrame->getAngularVelocity(tdb), r);
-	}
+        Vector3d r = Selection(const_cast<Body*>(this)).getPosition(tdb).offsetFromKm(orbitFrame->getCenter().getPosition(tdb));
+        v += orbitFrame->getAngularVelocity(tdb).cross(r);
+    }
 
 	return v;
 }
@@ -572,17 +570,17 @@ Vec3d Body::getVelocity(double tdb) const
 
 /*! Get the angular velocity of the body in the universal frame.
  */
-Vec3d Body::getAngularVelocity(double tdb) const
+Vector3d Body::getAngularVelocity(double tdb) const
 {
     const TimelinePhase* phase = timeline->findPhase(tdb);
 
-    Vec3d v = phase->rotationModel()->angularVelocityAtTime(tdb);
+    Vector3d v = phase->rotationModel()->angularVelocityAtTime(tdb);
 
     ReferenceFrame* bodyFrame = phase->bodyFrame();
-	v = v * bodyFrame->getOrientation(tdb).toMatrix3();
+    v = bodyFrame->getOrientation(tdb).conjugate() * v;
 	if (!bodyFrame->isInertial())
 	{
-		v += bodyFrame->getAngularVelocity(tdb);
+        v += bodyFrame->getAngularVelocity(tdb);
 	}
 
     return v;
@@ -595,17 +593,17 @@ Vec3d Body::getAngularVelocity(double tdb) const
  *  is ultimately defined with respect to some star or star
  *  system barycenter.
  */
-Mat4d Body::getLocalToAstrocentric(double tdb) const
+Matrix4d Body::getLocalToAstrocentric(double tdb) const
 {
     const TimelinePhase* phase = timeline->findPhase(tdb);
-    Point3d p = phase->orbitFrame()->convertToAstrocentric(phase->orbit()->positionAtTime(tdb), tdb);
-    return Mat4d::translation(p);
+    Vector3d p = phase->orbitFrame()->convertToAstrocentric(phase->orbit()->positionAtTime(tdb), tdb);
+    return Transform3d(Translation3d(p)).matrix();
 }
 
 
 /*! Get the position of the center of the body in astrocentric ecliptic coordinates.
  */
-Point3d Body::getAstrocentricPosition(double tdb) const
+Vector3d Body::getAstrocentricPosition(double tdb) const
 {
     // TODO: Switch the iterative method used in getPosition
     const TimelinePhase* phase = timeline->findPhase(tdb);
@@ -615,7 +613,7 @@ Point3d Body::getAstrocentricPosition(double tdb) const
 
 /*! Get a rotation that converts from the ecliptic frame to the body frame.
  */
-Quatd Body::getEclipticToFrame(double tdb) const
+Quaterniond Body::getEclipticToFrame(double tdb) const
 {
     const TimelinePhase* phase = timeline->findPhase(tdb);
     return phase->bodyFrame()->getOrientation(tdb);
@@ -625,29 +623,27 @@ Quatd Body::getEclipticToFrame(double tdb) const
 /*! Get a rotation that converts from the ecliptic frame to the body's 
  *  mean equatorial frame.
  */
-Quatd Body::getEclipticToEquatorial(double tdb) const
+Quaterniond Body::getEclipticToEquatorial(double tdb) const
 {
     const TimelinePhase* phase = timeline->findPhase(tdb);
-    return phase->rotationModel()->equatorOrientationAtTime(tdb) *
-           phase->bodyFrame()->getOrientation(tdb); 
+    return phase->rotationModel()->equatorOrientationAtTime(tdb) * phase->bodyFrame()->getOrientation(tdb);
 }
 
 
 /*! Get a rotation that converts from the ecliptic frame to this
  *  objects's body fixed frame.
  */
-Quatd Body::getEclipticToBodyFixed(double tdb) const
+Quaterniond Body::getEclipticToBodyFixed(double tdb) const
 {
     const TimelinePhase* phase = timeline->findPhase(tdb);
-    return phase->rotationModel()->orientationAtTime(tdb) *
-           phase->bodyFrame()->getOrientation(tdb);
+    return phase->rotationModel()->orientationAtTime(tdb) * phase->bodyFrame()->getOrientation(tdb);
 }
 
 
 // The body-fixed coordinate system has an origin at the center of the
 // body, y-axis parallel to the rotation axis, x-axis through the prime
 // meridian, and z-axis at a right angle the xy plane.
-Quatd Body::getEquatorialToBodyFixed(double tdb) const
+Quaterniond Body::getEquatorialToBodyFixed(double tdb) const
 {
     const TimelinePhase* phase = timeline->findPhase(tdb);
     return phase->rotationModel()->spin(tdb);
@@ -657,54 +653,53 @@ Quatd Body::getEquatorialToBodyFixed(double tdb) const
 /*! Get a transformation to convert from the object's body fixed frame
  *  to the astrocentric ecliptic frame.
  */
-Mat4d Body::getBodyFixedToAstrocentric(double tdb) const
+Matrix4d Body::getBodyFixedToAstrocentric(double tdb) const
 {
-    return getEquatorialToBodyFixed(tdb).toMatrix4() * getLocalToAstrocentric(tdb);
+    //return getEquatorialToBodyFixed(tdb).toMatrix4() * getLocalToAstrocentric(tdb);
+    Matrix4d m = Transform3d(getEquatorialToBodyFixed(tdb)).matrix();
+    return m * getLocalToAstrocentric(tdb);
 }
 
 
-Vec3d Body::planetocentricToCartesian(double lon, double lat, double alt) const
+Vector3d Body::planetocentricToCartesian(double lon, double lat, double alt) const
 {
     double phi = -degToRad(lat) + PI / 2;
     double theta = degToRad(lon) - PI;
 
-    Vec3d pos(cos(theta) * sin(phi),
-              cos(phi),
-              -sin(theta) * sin(phi));
+    Vector3d pos(cos(theta) * sin(phi),
+                 cos(phi),
+                 -sin(theta) * sin(phi));
 
     return pos * (getRadius() + alt);
 }
 
 
-Vec3d Body::planetocentricToCartesian(const Vec3d& lonLatAlt) const
+Vector3d Body::planetocentricToCartesian(const Vector3d& lonLatAlt) const
 {
-    return planetocentricToCartesian(lonLatAlt.x, lonLatAlt.y, lonLatAlt.z);
+    return planetocentricToCartesian(lonLatAlt.x(), lonLatAlt.y(), lonLatAlt.z());
 }
 
 
 /*! Convert cartesian body-fixed coordinates to spherical planetocentric
  *  coordinates.
  */
-Vec3d Body::cartesianToPlanetocentric(const Vec3d& v) const
+Vector3d Body::cartesianToPlanetocentric(const Vector3d& v) const
 {
-    Vec3d w = v;
-    w.normalize();
+    Vector3d w = v.normalized();
 
-    double lat = PI / 2.0 - acos(w.y);
-    double lon = atan2(w.z, -w.x);
+    double lat = PI / 2.0 - acos(w.y());
+    double lon = atan2(w.z(), -w.x());
 
-    return Vec3d(lon, lat, v.length() - getRadius());
+    return Vector3d(lon, lat, v.norm() - getRadius());
 }
 
 
 /*! Convert body-centered ecliptic coordinates to spherical planetocentric
  *  coordinates.
  */
-Vec3d Body::eclipticToPlanetocentric(const Vec3d& ecl, double tdb) const
+Vector3d Body::eclipticToPlanetocentric(const Vector3d& ecl, double tdb) const
 {
-    Quatd q = getEclipticToBodyFixed(tdb);
-    Vec3d bf = ecl * (~q).toMatrix3();
-
+    Vector3d bf = getEclipticToBodyFixed(tdb) * ecl;
     return cartesianToPlanetocentric(bf);
 }
 
@@ -777,8 +772,8 @@ float Body::getApparentMagnitude(float sunLuminosity,
 /*! Get the apparent magnitude of the body, corrected for its phase.
  */
 float Body::getApparentMagnitude(const Star& sun,
-                                 const Vec3d& sunPosition,
-                                 const Vec3d& viewerPosition) const
+                                 const Vector3d& sunPosition,
+                                 const Vector3d& viewerPosition) const
 {
     return getApparentMagnitude(sun.getLuminosity(),
                                 sunPosition,
@@ -789,13 +784,12 @@ float Body::getApparentMagnitude(const Star& sun,
 /*! Get the apparent magnitude of the body, corrected for its phase.
  */
 float Body::getApparentMagnitude(float sunLuminosity,
-                                 const Vec3d& sunPosition,
-                                 const Vec3d& viewerPosition) const
+                                 const Vector3d& sunPosition,
+                                 const Vector3d& viewerPosition) const
 {
-    double distanceToViewer = viewerPosition.length();
-    double distanceToSun = sunPosition.length();
-    float illuminatedFraction = (float) (1.0 + (viewerPosition / distanceToViewer) *
-                                         (sunPosition / distanceToSun)) / 2.0f;
+    double distanceToViewer = viewerPosition.norm();
+    double distanceToSun = sunPosition.norm();
+    float illuminatedFraction = (float) (1.0 + (viewerPosition / distanceToViewer).dot(sunPosition / distanceToSun)) / 2.0f;
 
     return astro::lumToAppMag(getLuminosity(sunLuminosity, (float) distanceToSun) * illuminatedFraction, (float) astro::kilometersToLightYears(distanceToViewer));
 }
@@ -961,13 +955,13 @@ void Body::computeLocations()
     for (vector<Location*>::const_iterator iter = locations->begin();
          iter != locations->end(); iter++)
     {
-        Vec3f v = (*iter)->getPosition();
-        float alt = v.length() - radius;
+        Vector3f v = (*iter)->getPosition();
+        float alt = v.norm() - radius;
         if (alt != -radius)
             v.normalize();
         v *= (float) boundingRadius;
 
-        Ray3d ray(Point3d(v.x, v.y, v.z), Vec3d(-v.x, -v.y, -v.z));
+        Ray3d ray(v.cast<double>(), -v.cast<double>());
         double t = 0.0;
         if (g->pick(ray, t))
         {

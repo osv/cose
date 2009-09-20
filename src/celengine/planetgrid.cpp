@@ -15,9 +15,13 @@
 #include <celmath/intersect.h>
 #include "planetgrid.h"
 #include "body.h"
-#include "gl.h"
+#include <GL/glew.h>
 #include "vecgl.h"
 #include "render.h"
+#include <Eigen/Core>
+#include <Eigen/Geometry>
+
+using namespace Eigen;
 
 
 unsigned int PlanetographicGrid::circleSubdivisions = 100;
@@ -47,58 +51,58 @@ PlanetographicGrid::~PlanetographicGrid()
 static void longLatLabel(const string& labelText,
                          double longitude,
                          double latitude,
-                         const Vec3d& viewRayOrigin,
-                         const Vec3d& viewNormal,
-                         const Vec3d& bodyCenter,
-                         const Quatd& bodyOrientation,
-                         const Vec3f& semiAxes,
+                         const Vector3d& viewRayOrigin,
+                         const Vector3d& viewNormal,
+                         const Vector3d& bodyCenter,
+                         const Quaterniond& bodyOrientation,
+                         const Vector3f& semiAxes,
                          float labelOffset,
                          Renderer* renderer)
 {
     double theta = degToRad(longitude);
     double phi = degToRad(latitude);
-    Vec3d pos(cos(phi) * cos(theta) * semiAxes.x,
-              sin(phi) * semiAxes.y,
-              -cos(phi) * sin(theta) * semiAxes.z);
+    Vector3d pos(cos(phi) * cos(theta) * semiAxes.x(),
+                 sin(phi) * semiAxes.y(),
+                 -cos(phi) * sin(theta) * semiAxes.z());
     
     float nearDist = renderer->getNearPlaneDistance();
     
     pos = pos * (1.0 + labelOffset);
     
-    double boundingRadius = max(semiAxes.x, max(semiAxes.y, semiAxes.z));
+    double boundingRadius = semiAxes.maxCoeff();
 
     // Draw the label only if it isn't obscured by the body ellipsoid
     double t = 0.0;
-    if (testIntersection(Ray3d(Point3d(0.0, 0.0, 0.0) + viewRayOrigin, pos - viewRayOrigin),
-                         Ellipsoidd(Vec3d(semiAxes.x, semiAxes.y, semiAxes.z)), t) && t >= 1.0)
+    if (testIntersection(Ray3d(viewRayOrigin, pos - viewRayOrigin), Ellipsoidd(semiAxes.cast<double>()), t) && t >= 1.0)
     {
         // Compute the position of the label
-        Vec3d labelPos = bodyCenter +
-                         (1.0 + labelOffset) * pos * bodyOrientation.toMatrix3();
+        Vector3d labelPos = bodyCenter +
+                            bodyOrientation.conjugate() * pos * (1.0 + labelOffset);
         
         // Calculate the intersection of the eye-to-label ray with the plane perpendicular to
         // the view normal that touches the front of the objects bounding sphere
-        double planetZ = viewNormal * bodyCenter - boundingRadius;
+        double planetZ = viewNormal.dot(bodyCenter) - boundingRadius;
         if (planetZ < -nearDist * 1.001)
             planetZ = -nearDist * 1.001;
-        double z = viewNormal * labelPos;
+        double z = viewNormal.dot(labelPos);
         labelPos *= planetZ / z;
         
         renderer->addObjectAnnotation(NULL, labelText,
                                       Renderer::PlanetographicGridLabelColor,
-                                      Point3f((float) labelPos.x, (float) labelPos.y, (float) labelPos.z));                             
+                                      labelPos.cast<float>());
     }
 }
 
 
 void
 PlanetographicGrid::render(Renderer* renderer,
-                           const Point3f& pos,
+                           const Eigen::Vector3f& pos,
                            float discSizeInPixels,
                            double tdb) const
 {
-    Quatd q = Quatd::yrotation(PI) * body.getEclipticToBodyFixed(tdb);
-    Quatf qf((float) q.w, (float) q.x, (float) q.y, (float) q.z);
+    // Compatibility
+    Quaterniond q = Quaterniond(AngleAxis<double>(PI, Vector3d::UnitY())) * body.getEclipticToBodyFixed(tdb);
+    Quaternionf qf = q.cast<float>();
 
     // The grid can't be rendered exactly on the planet sphere, or
     // there will be z-fighting problems. Render it at a height above the
@@ -107,15 +111,14 @@ PlanetographicGrid::render(Renderer* renderer,
     scale = max(scale, 1.001f);
     float offset = scale - 1.0f;
 
-    Vec3f semiAxes = body.getSemiAxes();
-
-    Vec3d posd(pos.x, pos.y, pos.z);
-    Vec3d viewRayOrigin = Vec3d(-pos.x, -pos.y, -pos.z)  * (~q).toMatrix3();
+    Vector3f semiAxes = body.getSemiAxes();
+    Vector3d posd = pos.cast<double>();
+    Vector3d viewRayOrigin = q * -pos.cast<double>();
     
     // Calculate the view normal; this is used for placement of the long/lat
     // label text.
-    Vec3f vn  = Vec3f(0.0f, 0.0f, -1.0f) * renderer->getCameraOrientation().toMatrix3();
-    Vec3d viewNormal(vn.x, vn.y, vn.z);
+    Vector3f vn  = renderer->getCameraOrientation().conjugate() * -Vector3f::UnitZ();
+    Vector3d viewNormal = vn.cast<double>();
 
     // Enable depth buffering
     glEnable(GL_DEPTH_TEST);
@@ -125,7 +128,7 @@ PlanetographicGrid::render(Renderer* renderer,
     glDisable(GL_TEXTURE_2D);
 
     glPushMatrix();
-    glRotate(~qf);
+    glRotate(qf.conjugate());
     glScale(scale * semiAxes);
 
     glEnableClientState(GL_VERTEX_ARRAY);
@@ -280,7 +283,7 @@ PlanetographicGrid::setIAULongLatConvention()
     }
     else
     {
-        if (body.getAngularVelocity(astro::J2000).y >= 0.0)
+        if (body.getAngularVelocity(astro::J2000).y() >= 0.0)
         {
             northDirection = NorthNormal;
             longitudeConvention = Westward;

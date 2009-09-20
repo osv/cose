@@ -8,7 +8,7 @@
 // of the License, or (at your option) any later version.
 
 #include "marker.h"
-#include "gl.h"
+#include <GL/glew.h>
 
 
 using namespace std;
@@ -267,6 +267,9 @@ void MarkerRepresentation::render(float size) const
         glBegin(GL_POLYGON);
         DrawCircle(s);
         glEnd();
+        break;
+
+    default:
         break;
     }
 }

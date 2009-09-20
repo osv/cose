@@ -42,14 +42,14 @@ class DSODatabase
     std::vector<std::string> getCompletion(const std::string&) const;
 
     void findVisibleDSOs(DSOHandler&    dsoHandler,
-                         const Point3d& obsPosition,
-                         const Quatf&   obsOrientation,
+                         const Eigen::Vector3d& obsPosition,
+                         const Eigen::Quaternionf& obsOrientation,
                          float fovY,
                          float aspectRatio,
                          float limitingMag) const;
 
     void findCloseDSOs(DSOHandler&    dsoHandler,
-                       const Point3d& obsPosition,
+                       const Eigen::Vector3d& obsPosition,
                        float radius) const;
 
     std::string getDSOName    (const DeepSkyObject* const &, bool i18n = false) const;

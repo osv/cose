@@ -10,12 +10,14 @@
 #include <celmath/mathlib.h>
 #include <cstring>
 #include <cassert>
+#include <cstdio>
 #include "celestia.h"
 #include "astro.h"
 #include "orbit.h"
 #include "star.h"
 #include "texmanager.h"
 
+using namespace Eigen;
 using namespace std;
 
 
@@ -987,7 +989,7 @@ float Star::getRadius() const
 
 
 void
-StarDetails::setEllipsoidSemiAxes(const Vec3f& v)
+StarDetails::setEllipsoidSemiAxes(const Vector3f& v)
 {
     semiAxes = v;
 }
@@ -1018,9 +1020,7 @@ Star::getPosition(double t) const
     const Orbit* orbit = getOrbit();
     if (!orbit)
     {
-        return UniversalCoord(position.x * 1.0e6,
-                              position.y * 1.0e6,
-                              position.z * 1.0e6);
+        return UniversalCoord::CreateLy(position.cast<double>());
     }
     else
     {
@@ -1028,19 +1028,12 @@ Star::getPosition(double t) const
 
         if (barycenter == NULL)
         {
-            Point3d barycenterPos(position.x * 1.0e6,
-                                  position.y * 1.0e6,
-                                  position.z * 1.0e6);
-
-            return UniversalCoord(barycenterPos) +
-                ((orbit->positionAtTime(t) - Point3d(0.0, 0.0, 0.0)) *
-                 astro::kilometersToMicroLightYears(1.0));
+            UniversalCoord barycenterPos = UniversalCoord::CreateLy(position.cast<double>());
+            return UniversalCoord(barycenterPos).offsetKm(orbit->positionAtTime(t));
         }
         else
         {
-            return barycenter->getPosition(t) +
-                ((orbit->positionAtTime(t) - Point3d(0.0, 0.0, 0.0)) *
-                 astro::kilometersToMicroLightYears(1.0));
+            return barycenter->getPosition(t).offsetKm(orbit->positionAtTime(t));
         }
     }
 }
@@ -1053,11 +1046,7 @@ Star::getOrbitBarycenterPosition(double t) const
 
     if (barycenter == NULL)
     {
-        Point3d barycenterPos(position.x * 1.0e6,
-                              position.y * 1.0e6,
-                              position.z * 1.0e6);
-
-        return UniversalCoord(barycenterPos);
+        return UniversalCoord::CreateLy(position.cast<double>());
     }
     else
     {
@@ -1068,7 +1057,7 @@ Star::getOrbitBarycenterPosition(double t) const
 
 /*! Get the velocity of the star in the universal coordinate system.
  */
-Vec3d
+Vector3d
 Star::getVelocity(double t) const
 {
     const Orbit* orbit = getOrbit();
@@ -1076,7 +1065,7 @@ Star::getVelocity(double t) const
     {
 		// The star doesn't have a defined orbit, so the velocity is just
 		// zero. (This will change when stellar proper motion is implemented.)
-		return Vec3d(0.0, 0.0, 0.0);
+        return Vector3d::Zero();
     }
     else
     {
@@ -1086,7 +1075,7 @@ Star::getVelocity(double t) const
         {
 			// Star orbit is defined around a fixed point, so the total velocity
 			// is just the star's orbit velocity.
-			return orbit->velocityAtTime(t);
+            return orbit->velocityAtTime(t);
         }
         else
         {
@@ -1128,12 +1117,12 @@ void Star::setCatalogNumber(uint32 n)
 
 void Star::setPosition(float x, float y, float z)
 {
-    position = Point3f(x, y, z);
+    position = Vector3f(x, y, z);
 }
 
-void Star::setPosition(Point3f p)
+void Star::setPosition(const Vector3f& positionLy)
 {
-    position = p;
+    position = positionLy;
 }
 
 void Star::setAbsoluteMagnitude(float mag)

@@ -1,5 +1,7 @@
 noinst_LIBRARIES = libcelengine.a
+
 noinst_HEADERS = \
+	eigenport.h \
 	precession.h \
 	catalogxref.h \
 	CGBuffer.h \
@@ -30,9 +32,7 @@ noinst_HEADERS = \
 	staroctree.h \
 	stardb.h \
 	dsodb.h \
-	3dsmesh.h \
 	starbrowser.h \
-	gl.h \
 	univcoord.h \
 	dispmap.h \
 	deepskyobj.h \
@@ -49,7 +49,6 @@ noinst_HEADERS = \
 	render.h \
 	nutation.h \
 	multitexture.h \
-	glext.h \
 	particlesystem.h \
 	solarsysxml.h \
 	vertexlist.h \
@@ -109,10 +108,8 @@ noinst_DATA = $(dosstuff)
 
 EXTRA_DIST = \
 	$(noinst_DATA) \
-	3dsmesh.cpp \
 	solarsysxml.cpp
 
-INCLUDES = -I..
 
 if ENABLE_SPICE
 SPICESOURCES = spiceinterface.cpp spiceorbit.cpp spicerotation.cpp
@@ -147,7 +144,6 @@ libcelengine_a_SOURCES = \
 	frametree.cpp \
 	galaxy.cpp \
 	glcontext.cpp \
-	glext.cpp \
 	globular.cpp \
 	glshader.cpp \
 	image.cpp \
@@ -204,11 +200,18 @@ libcelengine_a_SOURCES = \
 	virtualtex.cpp \
 	visibleregion.cpp \
         vsop87.cpp\
+	$(top_srcdir)/thirdparty/glew/src/glew.c \
+	$(top_srcdir)/thirdparty/curveplot/src/curveplot.cpp \
 	$(SPICESOURCES)\
 	$(SCRIPT_OBJ_SOURCES)
 
-AM_CXXFLAGS = @CXXFLAGS@\
-	@CELESTIA_CXXFLAGS@
+AM_CXXFLAGS = @CELESTIA_CXXFLAGS@ \
+	@CXXFLAGS@
+
+INCLUDES = -I.. \
+	-I$(top_srcdir)/thirdparty/Eigen \
+	-I$(top_srcdir)/thirdparty/curveplot/include \
+	-I$(top_srcdir)/thirdparty/glew/include
 
 LIBS = @LIBS@ \
 	@CELESTIA_LIBS@

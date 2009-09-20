@@ -17,6 +17,8 @@
 class OpenCluster : public DeepSkyObject
 {
  public:
+    EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+
     OpenCluster();
 
     virtual const char* getType() const;
@@ -28,8 +30,8 @@ class OpenCluster : public DeepSkyObject
                       double& cosAngleToBoundCenter) const;
     virtual bool load(AssociativeArray*, const std::string&);
     virtual void render(const GLContext& context,
-                        const Vec3f& offset,
-                        const Quatf& viewerOrientation,
+                        const Eigen::Vector3f& offset,
+                        const Eigen::Quaternionf& viewerOrientation,
                         float brightness,
                         float pixelSize);
 

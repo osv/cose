@@ -44,6 +44,8 @@ EXTRA_libcelutil_a_SOURCES= $(WINSOURCES)
 AM_CXXFLAGS = @CXXFLAGS@\
 	@CELESTIA_CXXFLAGS@
 
+INCLUDES = -I$(top_srcdir)/thirdparty/Eigen
+
 LIBS = @LIBS@ \
 	@CELESTIA_LIBS@
 

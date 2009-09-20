@@ -1,9 +1,9 @@
-INCLUDES = -I..
-
 DEFS = -DCONFIG_DATA_DIR='"$(PKGDATADIR)"' -DLOCALEDIR='"$(datadir)/locale"' @DEFS@
 
 AM_CXXFLAGS = @CXXFLAGS@\
 	@CGAME_CXXFLAGS@
+
+INCLUDES = -I.. -I$(top_srcdir)/thirdparty/Eigen -I$(top_srcdir)/thirdparty/glew/include
 
 LIBS = @LIBS@ \
 	@CGAME_LIBS@

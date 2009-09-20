@@ -17,6 +17,8 @@
 #include <celutil/color.h>
 #include <celutil/basictypes.h>
 #include <celengine/tokenizer.h>
+#include <Eigen/Core>
+#include <Eigen/Geometry>
 
 class Value;
 
@@ -37,9 +39,12 @@ class AssociativeArray
     bool getNumber(const std::string&, uint32&) const;
     bool getString(const std::string&, std::string&) const;
     bool getBoolean(const std::string&, bool&) const;
+    bool getVector(const std::string&, Eigen::Vector3d&) const;
+    bool getVector(const std::string&, Eigen::Vector3f&) const;
     bool getVector(const std::string&, Vec3d&) const;
     bool getVector(const std::string&, Vec3f&) const;
     bool getRotation(const std::string&, Quatf&) const;
+    bool getRotation(const std::string&, Eigen::Quaternionf&) const;
     bool getColor(const std::string&, Color&) const;
 
     HashIterator begin();

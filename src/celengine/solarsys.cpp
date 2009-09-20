@@ -1,6 +1,7 @@
 // solarsys.cpp
 //
-// Copyright (C) 2001-2006 Chris Laurel <claurel@shatters.net>
+// Copyright (C) 2001-2009, the Celestia Development Team
+// Original version by Chris Laurel <claurel@gmail.com>
 //
 // Solar system catalog parser.
 //
@@ -34,7 +35,9 @@
 #include "frametree.h"
 #include "timeline.h"
 #include "timelinephase.h"
+#include "atmosphere.h"
 
+using namespace Eigen;
 using namespace std;
 
 
@@ -162,13 +165,11 @@ static Location* CreateLocation(Hash* locationData,
 {
     Location* location = new Location();
 
-    Vec3d longlat(0.0, 0.0, 0.0);
+    Vector3d longlat(0.0, 0.0, 0.0);
     locationData->getVector("LongLat", longlat);
 
-    Vec3d position = body->planetocentricToCartesian(longlat.x,
-                                                     longlat.y,
-                                                     longlat.z);
-    location->setPosition(Vec3f((float) position.x, (float) position.y, (float) position.z));
+    Vector3f position = body->planetocentricToCartesian(longlat).cast<float>();
+    location->setPosition(position);
 
     double size = 1.0;
     locationData->getNumber("Size", size);
@@ -389,7 +390,7 @@ TimelinePhase* CreateTimelinePhase(Body* body,
         // TODO: Should distinguish between a missing rotation model (where it's
         // appropriate to use a default one) and a bad rotation model (where
         // we should report an error.)
-        rotationModel = new ConstantOrientation(Quatd(1.0));
+        rotationModel = new ConstantOrientation(Quaterniond::Identity());
     }
 
     TimelinePhase* phase = TimelinePhase::CreateTimelinePhase(universe,
@@ -747,24 +748,24 @@ static Body* CreateBody(const string& name,
     bool radiusSpecified = false;
     if (planetData->getNumber("Radius", radius))
     {
-        body->setSemiAxes(Vec3f((float) radius, (float) radius, (float) radius));
+        body->setSemiAxes(Vector3f::Constant((float) radius));
         radiusSpecified = true;
     }
 
-    Vec3d semiAxes;
+    Vector3d semiAxes = Vector3d::Ones();
     if (planetData->getVector("SemiAxes", semiAxes))
     {
         if (radiusSpecified)
             semiAxes *= radius;
         // Swap y and z to match internal coordinate system
-        body->setSemiAxes(Vec3f((float) semiAxes.x, (float) semiAxes.z, (float) semiAxes.y));
+        body->setSemiAxes(Vector3f((float) semiAxes.x(), (float) semiAxes.z(), (float) semiAxes.y()));
     }
     else
     {
         double oblateness = 0.0;
         if (planetData->getNumber("Oblateness", oblateness))
         {
-            body->setSemiAxes((float) body->getRadius() * Vec3f(1.0f, 1.0f - (float) oblateness, 1.0f));
+            body->setSemiAxes((float) body->getRadius() * Vector3f(1.0f, 1.0f - (float) oblateness, 1.0f));
         }
     }
 
@@ -829,9 +830,9 @@ static Body* CreateBody(const string& name,
     if (planetData->getNumber("Mass", mass))
         body->setMass((float) mass);
 
-    Quatf orientation;
+    Quaternionf orientation = Quaternionf::Identity();
     if (planetData->getRotation("Orientation", orientation))
-        body->setOrientation(orientation);
+        body->setGeometryOrientation(orientation);
 
     Surface surface;
     if (disposition == ModifyObject)
@@ -850,7 +851,7 @@ static Body* CreateBody(const string& name,
         string geometry("");
         if (planetData->getString("Mesh", geometry))
         {
-            Vec3f geometryCenter(0.0f, 0.0f, 0.0f);
+            Vector3f geometryCenter(Vector3f::Zero());
             if (planetData->getVector("MeshCenter", geometryCenter))
             {
                 // TODO: Adjust bounding radius if model center isn't
@@ -1029,7 +1030,7 @@ static Body* CreateReferencePoint(const string& name,
         disposition = AddObject;
     }
 
-    body->setSemiAxes(Vec3f(1.0f, 1.0f, 1.0f));
+    body->setSemiAxes(Vector3f::Ones());
     body->setClassification(Body::Invisible);
     body->setVisible(false);
     body->setVisibleAsPoint(false);
@@ -1290,7 +1291,7 @@ Star* SolarSystem::getStar() const
     return star;
 }
 
-Point3f SolarSystem::getCenter() const
+Vector3f SolarSystem::getCenter() const
 {
     // TODO: This is a very simple method at the moment, but it will get
     // more complex when planets around multistar systems are supported

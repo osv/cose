@@ -17,11 +17,11 @@
 #include "nebula.h"
 #include "meshmanager.h"
 #include "rendcontext.h"
-#include "gl.h"
-#include "glext.h"
+#include <GL/glew.h>
 #include "vecgl.h"
 #include "render.h"
 
+using namespace Eigen;
 using namespace std;
 
 
@@ -89,8 +89,8 @@ bool Nebula::load(AssociativeArray* params, const string& resPath)
 
 
 void Nebula::render(const GLContext& glcontext,
-                    const Vec3f&,
-                    const Quatf&,
+                    const Vector3f&,
+                    const Quaternionf&,
                     float,
                     float pixelSize)
 {
@@ -110,7 +110,7 @@ void Nebula::render(const GLContext& glcontext,
         GLSLUnlit_RenderContext rc(getRadius());
         rc.setPointScale(2.0f * getRadius() / pixelSize);
         g->render(rc);
-        glx::glUseProgramObjectARB(0);
+        glUseProgramObjectARB(0);
     }
     else
     {

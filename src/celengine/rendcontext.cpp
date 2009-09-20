@@ -1,6 +1,7 @@
 // rendcontext.cpp
 //
 // Copyright (C) 2004-2009, the Celestia Development Team
+// Original version by Chris Laurel <claurel@gmail.com>
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -10,10 +11,10 @@
 #include <vector>
 #include "rendcontext.h"
 #include "texmanager.h"
-#include "gl.h"
-#include "glext.h"
+#include <GL/glew.h>
 #include "vecgl.h"
 
+using namespace Eigen;
 using namespace std;
 
 
@@ -136,13 +137,13 @@ RenderContext::getPointScale() const
 
 
 void
-RenderContext::setCameraOrientation(const Quatf& q)
+RenderContext::setCameraOrientation(const Quaternionf& q)
 {
     cameraOrientation = q;
 }
 
 
-Quatf
+Quaternionf
 RenderContext::getCameraOrientation() const
 {
     return cameraOrientation;
@@ -163,7 +164,7 @@ RenderContext::drawGroup(const Mesh::PrimitiveGroup& group)
     if (group.prim == Mesh::SpriteList)
     {
         glEnable(GL_POINT_SPRITE_ARB);
-        glx::glActiveTextureARB(GL_TEXTURE0_ARB);
+        glActiveTextureARB(GL_TEXTURE0_ARB);
         glTexEnvi(GL_POINT_SPRITE_ARB, GL_COORD_REPLACE_ARB, GL_TRUE);
         glEnable(GL_VERTEX_PROGRAM_POINT_SIZE_ARB);
     }
@@ -208,7 +209,6 @@ FixedFunctionRenderContext::~FixedFunctionRenderContext()
 }
 
 
-static int blah = 0;
 void
 FixedFunctionRenderContext::makeCurrent(const Mesh::Material& m)
 {
@@ -482,8 +482,8 @@ setExtendedVertexArrays(const Mesh::VertexDescription& desc,
     switch (tangent.format)
     {
     case Mesh::Float3:
-        glx::glEnableVertexAttribArrayARB(TangentAttributeIndex);
-        glx::glVertexAttribPointerARB(TangentAttributeIndex,
+        glEnableVertexAttribArrayARB(TangentAttributeIndex);
+        glVertexAttribPointerARB(TangentAttributeIndex,
                                       GLComponentCounts[(int) tangent.format],
                                       GLComponentTypes[(int) tangent.format],
                                       GL_FALSE,
@@ -491,7 +491,7 @@ setExtendedVertexArrays(const Mesh::VertexDescription& desc,
                                       vertices + tangent.offset);
         break;
     default:
-        glx::glDisableVertexAttribArrayARB(TangentAttributeIndex);
+        glDisableVertexAttribArrayARB(TangentAttributeIndex);
         break;
     }
 
@@ -499,8 +499,8 @@ setExtendedVertexArrays(const Mesh::VertexDescription& desc,
     switch (pointsize.format)
     {
     case Mesh::Float1:
-        glx::glEnableVertexAttribArrayARB(PointSizeAttributeIndex);
-        glx::glVertexAttribPointerARB(PointSizeAttributeIndex,
+        glEnableVertexAttribArrayARB(PointSizeAttributeIndex);
+        glVertexAttribPointerARB(PointSizeAttributeIndex,
                                       GLComponentCounts[(int) pointsize.format],
                                       GLComponentTypes[(int) pointsize.format],
                                       GL_FALSE,
@@ -508,7 +508,7 @@ setExtendedVertexArrays(const Mesh::VertexDescription& desc,
                                       vertices + pointsize.offset);
         break;
     default:
-        glx::glDisableVertexAttribArrayARB(PointSizeAttributeIndex);
+        glDisableVertexAttribArrayARB(PointSizeAttributeIndex);
         break;
     }
 }
@@ -516,12 +516,12 @@ setExtendedVertexArrays(const Mesh::VertexDescription& desc,
 
 /***** GLSL render context ******/
 
-GLSL_RenderContext::GLSL_RenderContext(const LightingState& ls, float _objRadius, const Mat4f& _xform) :
+GLSL_RenderContext::GLSL_RenderContext(const LightingState& ls, float _objRadius, const Quaternionf& orientation) :
     lightingState(ls),
     atmosphere(NULL),
     blendMode(Mesh::InvalidBlend),
     objRadius(_objRadius),
-    xform(_xform),
+    objOrientation(orientation),
     lunarLambert(0.0f)
 {
     initLightingEnvironment();
@@ -534,8 +534,8 @@ GLSL_RenderContext::~GLSL_RenderContext()
     glDisableClientState(GL_NORMAL_ARRAY);
     glDisableClientState(GL_COLOR_ARRAY);
     glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-    glx::glDisableVertexAttribArrayARB(TangentAttributeIndex);
-    glx::glDisableVertexAttribArrayARB(PointSizeAttributeIndex);
+    glDisableVertexAttribArrayARB(TangentAttributeIndex);
+    glDisableVertexAttribArrayARB(PointSizeAttributeIndex);
 }
 
 
@@ -667,7 +667,7 @@ GLSL_RenderContext::makeCurrent(const Mesh::Material& m)
 
     for (unsigned int i = 0; i < nTextures; i++)
     {
-        glx::glActiveTextureARB(GL_TEXTURE0_ARB + i);
+        glActiveTextureARB(GL_TEXTURE0_ARB + i);
         glEnable(GL_TEXTURE_2D);
         textures[i]->bind();
     }
@@ -682,7 +682,7 @@ GLSL_RenderContext::makeCurrent(const Mesh::Material& m)
     prog->setLightParameters(lightingState, diffuse, m.specular, m.emissive);
 
     if (shaderProps.shadowCounts != 0)
-        prog->setEclipseShadowParameters(lightingState, objRadius, xform);
+        prog->setEclipseShadowParameters(lightingState, objRadius, objOrientation);
 
     // TODO: handle emissive color
     prog->shininess = m.specularPower;
@@ -808,8 +808,8 @@ GLSLUnlit_RenderContext::~GLSLUnlit_RenderContext()
     glDisableClientState(GL_NORMAL_ARRAY);
     glDisableClientState(GL_COLOR_ARRAY);
     glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-    glx::glDisableVertexAttribArrayARB(TangentAttributeIndex);
-    glx::glDisableVertexAttribArrayARB(PointSizeAttributeIndex);
+    glDisableVertexAttribArrayARB(TangentAttributeIndex);
+    glDisableVertexAttribArrayARB(PointSizeAttributeIndex);
 }
 
 
@@ -858,19 +858,15 @@ GLSLUnlit_RenderContext::makeCurrent(const Mesh::Material& m)
 
     for (unsigned int i = 0; i < nTextures; i++)
     {
-        glx::glActiveTextureARB(GL_TEXTURE0_ARB + i);
+        glActiveTextureARB(GL_TEXTURE0_ARB + i);
         glEnable(GL_TEXTURE_2D);
         textures[i]->bind();
     }
 
 #ifdef HDR_COMPRESS
-    prog->lights[0].diffuse = Vec3f(m.diffuse.red()   * 0.5f,
-                                    m.diffuse.green() * 0.5f,
-                                    m.diffuse.blue()  * 0.5f);
+    prog->lights[0].diffuse = m.diffuse.toVector3() * 0.5f;
 #else
-    prog->lights[0].diffuse = Vec3f(m.diffuse.red(),
-                                    m.diffuse.green(),
-                                    m.diffuse.blue());
+    prog->lights[0].diffuse = m.diffuse.toVector3();
 #endif
     prog->opacity = m.opacity;
 
