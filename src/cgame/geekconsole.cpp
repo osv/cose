@@ -270,7 +270,7 @@ bool GeekConsole::execFunction(std::string funName, std::string param)
 void GeekConsole::describeCurText(std::string text)
 {
     if (curFun)
-        curFun->call(this, -1, text);
+        curFun->call(this, -funState - 1, text);
 }
 
 void GeekConsole::registerFunction(GCFunc fun, std::string name)
@@ -939,12 +939,15 @@ void ListInteractive::renderCompletion(float height, float width)
             // match char background
             if (s.size() >= buf_length)
             {
-                std::string text(s, buf_length, 1);
-                glColor4ubv(clCompletionMatchCharBg->rgba);
-                gc->getOverlay()->rect(0.0f, 0.0f - 2,
-                                       font->getWidth(text), font->getHeight());
-                glColor4ubv(clCompletionMatchCharFnt->rgba);
-                *gc->getOverlay() << text;
+                if (clCompletionMatchCharBg->rgba[3] > 0)
+                {
+                    std::string text(s, buf_length, 1);
+                    glColor4ubv(clCompletionMatchCharBg->rgba);
+                    gc->getOverlay()->rect(font->getWidth(string(s, 0, buf_length)), 0.0f - 2,
+                                           font->getWidth(text), font->getHeight());
+                    glColor4ubv(clCompletionMatchCharFnt->rgba);
+                    *gc->getOverlay() << text;
+                }
                 // rest text of item from match char
                 glColor4ubv(clCompletionAfterMatch->rgba);
                 if (s.size() > buf_length)
@@ -1322,12 +1325,15 @@ void CelBodyInteractive::renderCompletion(float height, float width)
             // match char background
             if (s.size() >= buf_length)
             {
-                std::string text(s, buf_length, 1);
-                glColor4ubv(clCompletionMatchCharBg->rgba);
-                gc->getOverlay()->rect(0.0f, 0.0f - 2,
-                                       font->getWidth(text), font->getHeight());
-                glColor4ubv(clCompletionMatchCharFnt->rgba);
-                *gc->getOverlay() << text;
+                if (clCompletionMatchCharBg->rgba[3] > 0)
+                {
+                    std::string text(s, buf_length, 1);
+                    glColor4ubv(clCompletionMatchCharBg->rgba);
+                    gc->getOverlay()->rect(font->getWidth(string(s, 0, buf_length)), 0.0f - 2,
+                                           font->getWidth(text), font->getHeight());
+                    glColor4ubv(clCompletionMatchCharFnt->rgba);
+                    *gc->getOverlay() << text;
+                }
                 // rest text of item from match char
                 glColor4ubv(clCompletionAfterMatch->rgba);
                 if (s.size() > buf_length)
@@ -1385,15 +1391,9 @@ static int execFunction(GeekConsole *gc, int state, std::string value)
         listInteractive->setCompletion(gc->getFunctionsNames());
         listInteractive->setMatchCompletion(true);
         break;
-    case 1:
-        f = gc->getFunctionByName(value);
-        if (f)
-        {
-            gc->execFunction(f);
-            return 0;
-        }
-        break;
-    case -1: // describe key binds for this function
+    case -1:
+    {
+        // describe key binds for this function
         std::vector<GeekBind *>* gbs = gc->getGeekBinds();
         std::string bindstr;
         for (std::vector<GeekBind *>::iterator it = gbs->begin();
@@ -1406,6 +1406,15 @@ static int execFunction(GeekConsole *gc, int state, std::string value)
         }
         if (!bindstr.empty())
             gc->descriptionStr += " [Matched;" + bindstr + ']';
+        break;
+    }
+    case 1:
+        f = gc->getFunctionByName(value);
+        if (f)
+        {
+            gc->execFunction(f);
+            return 0;
+        }
         break;
     }
     return state;
@@ -1484,6 +1493,13 @@ static int bindKey(GeekConsole *gc, int state, std::string value)
         }
         break;
     }
+    case -1-1:
+    {
+        GeekBind *gb = gc->getGeekBind(bindspace);
+        if (gb)
+            gc->descriptionStr = gb->getBindDescr(value);
+        break;
+    }
     case 2:
         keybind = value;
         gc->setInteractive(listInteractive, "exec-function", _("Function"), _("Select function to bind ") + keybind );
@@ -1536,6 +1552,13 @@ static int unBindKey(GeekConsole *gc, int state, std::string value)
         }
         break;
     }
+    case -1-1:
+    {
+        GeekBind *gb = gc->getGeekBind(bindspace);
+        if (gb)
+            gc->descriptionStr = gb->getBindDescr(value);
+        break;
+    }
     case 2:
         gc->unbind(bindspace, value);
         gc->finish();
@@ -1579,6 +1602,13 @@ static int describebindKey(GeekConsole *gc, int state, std::string value)
             listInteractive->setCompletion(gb->getAllBinds());
             listInteractive->setMatchCompletion(true);
         }
+        break;
+    }
+    case -1-1:
+    {
+        GeekBind *gb = gc->getGeekBind(bindspace);
+        if (gb)
+            gc->descriptionStr = gb->getBindDescr(value);
         break;
     }
     case 2:

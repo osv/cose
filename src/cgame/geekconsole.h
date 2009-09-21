@@ -79,6 +79,7 @@
   Special keys (F1, etc) not processed.
 
   For first exec of fun state is 0.
+  For describe current entered text callback is called with state (-currentState - 1)
   State will inc by 1 before GCInteractive finished.
 
   Key binds:
@@ -187,7 +188,7 @@ public:
     void renderCompletion(float height, float width);
     void setRightText(std::string str);
     std::string getRightText()const; // return text before after "/"
-    void updateDescrStr(); // update descr str of consl. with info about body
+    void updateDescrStr(); // update descr str of console with info about body
     void cancelInteractive();
 private:
     void updateTextCompletion();
@@ -256,7 +257,7 @@ public:
     void execFunction(GCFunc *fun);
     bool execFunction(std::string funName);
     bool execFunction(std::string funName, std::string param);
-    // call callback fun for describe interactive text with state -1
+    // call callback fun for describe interactive text with state (-funstate - 1)
     void describeCurText(string text);
     void registerFunction(GCFunc fun, std::string name);
     void reRegisterFunction(GCFunc fun, std::string name);
