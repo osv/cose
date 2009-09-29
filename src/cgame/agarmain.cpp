@@ -777,10 +777,11 @@ static void usage()
 		  "options:\n"
 		  "   -g, --gamedir game_dir    Select a game directory.\n"
 		  "   -f, --startfile filename  Select a startup filename.\n"
+          "   -r, --reset [force]       Reset saved configuration\n"
 		  "   -m, --mode mode           Set game mode:\n"
 		  "                             [game|viewer]\n"
 		  "   -d, --debug  n            Turn debugging on.\n"
-		  "   --ag-primitive            Set GUI primitive style\n"
+		  "   --ag-primitive style      Set GUI primitive style\n"
 		  "                             [transparent-full|transparent-simple|default]\n"
 		  "\n"
 			));
@@ -851,6 +852,32 @@ int main(int argc, char* argv[])
 			usage();
 			exit(0);
 		}
+		else if (strcmp(s, "reset") == 0 || strcmp(s, "r") == 0)
+		{
+            char dataDir[AG_PATHNAME_MAX];
+            AG_GetString(agConfig, "save-path", dataDir, AG_PATHNAME_MAX);
+            cout << "Configurations located in '" << dataDir << "'\n";
+			char *narg = argv[++i];
+            bool remove = false;
+            if ((i <= argc - 1) && (*narg != '-'))
+            {
+                if (!strcmp(narg, "force"))
+                    remove = true;
+            }
+            else
+            {
+                char y;
+                cout << "Remove? y[n]: "; cin >> y;
+                if (y == 'y')
+                    remove = true;
+            }
+            if (remove)
+            {
+                AG_ObjectUnlinkDatafiles(agConfig);
+                cout << "Primary config file removed.\n";
+            }
+            exit(0);
+        }
 		else
 		{
 			printf(_("Bad arg: %s\n"), argv[i]);
