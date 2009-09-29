@@ -20,11 +20,11 @@ void GameCore::setGameMode(GameMode gameMode)
     switch(gameMode)
     {
     case VIEWER:
-	cout << " >>> Viewer mode <<<\n";
-	break;
+    cout << " >>> Viewer mode <<<\n";
+    break;
     case GAME:
-	cout << " >>> Game mode <<<\n";
-	break;
+    cout << " >>> Game mode <<<\n";
+    break;
     }
 }
 
@@ -43,14 +43,14 @@ void GameCore::setGameMode(GameMode gameMode)
 // void removeSelFromPool(Selection &sel)
 // {
 //     for (vector<Selection>::iterator i = selectionPool.begin();
-// 	 i != selectionPool.end(); i++)
+//   i != selectionPool.end(); i++)
 //     {
-// 	if (i->getType() != Selection::Type_Nil &&
-// 	    *i==sel)
-// 	{
-// 	    cout << "removed: " << sel.getName() << "\tTotal" << selectionPool.size()<<"\n";
-// 	    return;
-// 	}
+//  if (i->getType() != Selection::Type_Nil &&
+//      *i==sel)
+//  {
+//      cout << "removed: " << sel.getName() << "\tTotal" << selectionPool.size()<<"\n";
+//      return;
+//  }
 //     }
 // }
 
@@ -58,15 +58,15 @@ void GameCore::setGameMode(GameMode gameMode)
 // void clearSelsInPool(Selection &sel)
 // {
 //     for (vector<Selection>::iterator i = selectionPool.begin();
-// 	 i != selectionPool.end(); i++)
+//   i != selectionPool.end(); i++)
 //     {
-// 	if (i->getType() != Selection::Type_Nil &&
-// 	    *i==sel)
-// 	{
-// 	    *i=Selection();
-// 	    selectionPool.erase(i);
-// 	    cout << "remove one: " << sel.getName() << "\tTotal" << selectionPool.size()<<"\n";
-// 	    --i;
-// 	}
+//  if (i->getType() != Selection::Type_Nil &&
+//      *i==sel)
+//  {
+//      *i=Selection();
+//      selectionPool.erase(i);
+//      cout << "remove one: " << sel.getName() << "\tTotal" << selectionPool.size()<<"\n";
+//      --i;
+//  }
 //     }
 // }

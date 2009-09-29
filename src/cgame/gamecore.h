@@ -5,15 +5,15 @@ class GameCore
 {
 public:
     enum GameMode {
-	GAME = 1,
-	VIEWER = 2	
+    GAME = 1,
+    VIEWER = 2  
     };
     GameCore();
     ~GameCore();
 
     void setGameMode(GameMode gameMode);
     GameMode getGameMode() const {
-	return fGameMode; }
+    return fGameMode; }
    
 private:
     GameMode fGameMode;
