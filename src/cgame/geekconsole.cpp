@@ -1,6 +1,7 @@
 #include "cgame.h"
 #include "geekconsole.h"
 #include <celutil/directory.h>
+#include <celengine/starbrowser.h>
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -147,6 +148,126 @@ static void planetocentricCoords2Sstream(std::stringstream& ss,
         ss << ' ' << altitude << _("km");
 }
 
+std::string describeSelection(Selection sel, CelestiaCore *celAppCore)
+{
+    std::stringstream ss;
+    if (!sel.empty())
+    {
+        Vec3d v = sel.getPosition(celAppCore->getSimulation()->getTime()) -
+            celAppCore->getSimulation()->getObserver().getPosition();
+        double distance;
+        Star *star;
+        SolarSystem* sys;
+        double kmDistance;
+        Body *body;
+        DeepSkyObject *dso;
+        Location *location;
+        switch (sel.getType())
+        {
+        case Selection::Type_Star:
+            distance = v.length() * 1e-6;
+            star = sel.star();
+            ss << "[Star] Dist: ";
+            distance2Sstream(ss, distance);
+            ss << CEL_DESCR_SEP << _("Radius: ")
+               << SigDigitNum(star->getRadius() / 696000.0f, 2)
+               << " " << _("Rsun")
+               << "  (" << SigDigitNum(star->getRadius(), 3) << " km" << ")"
+               << CEL_DESCR_SEP "class ";
+            if (star->getSpectralType()[0] == 'Q')
+                ss <<  _("Neutron star");
+            else if (star->getSpectralType()[0] == 'X')
+                ss <<  _("Black hole");
+            else
+                ss << star->getSpectralType();
+            sys = celAppCore->getSimulation()->
+                getUniverse()->getSolarSystem(star);
+            if (sys != NULL && sys->getPlanets()->getSystemSize() != 0)
+            {
+                int planetsnum = 0;
+                int dwarfsnum = 0;
+                int astersnum = 0;
+                PlanetarySystem *planets = sys->getPlanets();
+                for (int i = 0; i < planets->getSystemSize(); i++)
+                {
+                    switch (planets->getBody(i)->getClassification())
+                    {
+                    case Body::Planet:
+                        planetsnum++;
+                        break;
+                    case Body::DwarfPlanet:
+                        dwarfsnum++;
+                        break;
+                    case Body::Asteroid:
+                        astersnum++;
+                        break;
+                    default:
+                        break;
+                    }
+                }
+                ss << CEL_DESCR_SEP << planetsnum << " Planets, " << dwarfsnum
+                   << " Dwarf, " << astersnum << " Asteroid";
+            }
+            break;
+        case Selection::Type_Body:
+            distance = v.length() * 1e-6,
+                v * astro::microLightYearsToKilometers(1.0);
+            body = sel.body();
+            kmDistance = astro::lightYearsToKilometers(distance);
+            ss << "[Body] Dist: ";
+            distance = astro::kilometersToLightYears(kmDistance - body->getRadius());
+            distance2Sstream(ss, distance);
+            ss << CEL_DESCR_SEP << _("Radius: ");
+            distance = astro::kilometersToLightYears(body->getRadius());
+            distance2Sstream(ss, distance);
+            break;
+        case Selection::Type_DeepSky:
+        {
+            dso = sel.deepsky();
+            distance = v.length() * 1e-6 - dso->getRadius();
+            char descBuf[128];
+            dso->getDescription(descBuf, sizeof(descBuf));
+            ss << "[DSO, "
+               << descBuf
+               << "] ";
+            if (distance >= 0)
+            {
+                ss << _("Distance: ");
+                distance2Sstream(ss, distance);
+            }
+            else
+            {
+                ss << _("Distance from center: ");
+                distance2Sstream(ss, distance + dso->getRadius());
+            }
+            ss << CEL_DESCR_SEP << _("Radius: ");
+            distance2Sstream(ss, dso->getRadius());
+            break;
+        }
+        case Selection::Type_Location:
+        {
+            location = sel.location();
+            body = location->getParentBody();
+            ss << "[Location] "
+               << _("Distance: ");
+            distance2Sstream(ss, v.length() * 1e-6);
+            ss << CEL_DESCR_SEP;
+            Vector3f locPos = location->getPosition();
+            Vector3d lonLatAlt = body->cartesianToPlanetocentric(locPos.cast<double>());
+            planetocentricCoords2Sstream(ss, *body,
+                                         lonLatAlt.x(), lonLatAlt.y(), lonLatAlt.z(), false);
+            break;
+        }
+        default:
+            break;
+        }
+    }
+    return ss.str();
+}
+
+/*
+  GeekConsole
+ */
 GeekConsole::GeekConsole(CelestiaCore *celCore):
     isVisible(false),
     consoleType(Tiny),
@@ -1186,105 +1307,20 @@ void CelBodyInteractive::charEntered(const wchar_t wc, int modifiers)
 void CelBodyInteractive::updateDescrStr()
 {
     Selection sel = celApp->getSimulation()->findObjectFromPath(GCInteractive::getBufferText(), true);
-    if (!sel.empty())
+    std::string desc = describeSelection(sel, celApp);
+    if (!desc.empty())
     {
-        Vec3d v = sel.getPosition(celApp->getSimulation()->getTime()) -
-            celApp->getSimulation()->getObserver().getPosition();
-        double distance;
-        std::stringstream ss;
-        Star *star;
-        SolarSystem* sys;
-        double kmDistance;
-        Body *body;
-        DeepSkyObject *dso;
-        Location *location;
-        switch (sel.getType())
-        {
-        case Selection::Type_Star:
-            distance = v.length() * 1e-6;
-            star = sel.star();
-            ss << "[Star] Dist: ";
-            distance2Sstream(ss, distance);
-            ss << CEL_DESCR_SEP << _("Radius: ")
-               << SigDigitNum(star->getRadius() / 696000.0f, 2)
-               << " " << _("Rsun")
-               << "  (" << SigDigitNum(star->getRadius(), 3) << " km" << ")"
-               << CEL_DESCR_SEP "class ";
-            if (star->getSpectralType()[0] == 'Q')
-                ss <<  _("Neutron star");
-            else if (star->getSpectralType()[0] == 'X')
-                ss <<  _("Black hole");
-            else
-                ss << star->getSpectralType();
-            sys = celApp->getSimulation()->
-                getUniverse()->getSolarSystem(star);
-            if (sys != NULL && sys->getPlanets()->getSystemSize() != 0)
-                ss << CEL_DESCR_SEP << _("Planetary companions present\n");
-            break;
-        case Selection::Type_Body:
-            distance = v.length() * 1e-6,
-                v * astro::microLightYearsToKilometers(1.0);
-            body = sel.body();
-            kmDistance = astro::lightYearsToKilometers(distance);
-            ss << "[Body] Dist: ";
-            distance = astro::kilometersToLightYears(kmDistance - body->getRadius());
-            distance2Sstream(ss, distance);
-            ss << CEL_DESCR_SEP << _("Radius: ");
-            distance = astro::kilometersToLightYears(body->getRadius());
-            distance2Sstream(ss, distance);
-            break;
-        case Selection::Type_DeepSky:
-        {
-            dso = sel.deepsky();
-            distance = v.length() * 1e-6 - dso->getRadius();
-            char descBuf[128];
-            dso->getDescription(descBuf, sizeof(descBuf));
-            ss << "[DSO, "
-               << descBuf
-               << "] ";
-            if (distance >= 0)
-            {
-                ss << _("Distance: ");
-                distance2Sstream(ss, distance);
-            }
-            else
-            {
-                ss << _("Distance from center: ");
-                distance2Sstream(ss, distance + dso->getRadius());
-            }
-            ss << CEL_DESCR_SEP << _("Radius: ");
-            distance2Sstream(ss, dso->getRadius());
-            break;
-        }
-        case Selection::Type_Location:
-        {
-            location = sel.location();
-            body = location->getParentBody();
-            ss << "[Location] "
-               << _("Distance: ");
-            distance2Sstream(ss, v.length() * 1e-6);
-            ss << CEL_DESCR_SEP;
-            Vector3f locPos = location->getPosition();
-            Vector3d lonLatAlt = body->cartesianToPlanetocentric(locPos.cast<double>());
-            planetocentricCoords2Sstream(ss, *body,
-                                         lonLatAlt.x(), lonLatAlt.y(), lonLatAlt.z(), false);
-            break;
-        }
-        default:
-            break;
-        }
-        gc->descriptionStr = ss.str() + _(", M-c - Select");
-
-        // mark selected
-        MarkerRepresentation markerRep(MarkerRepresentation::Crosshair);
-        markerRep.setSize(10.0f);
-        markerRep.setColor(Color(0.0f, 1.0f, 0.0f, 0.9f));
-        celApp->getSimulation()->
-            getUniverse()->unmarkObject(lastCompletionSel, 3);
-        celApp->getSimulation()->
-            getUniverse()->markObject(sel, markerRep, 3);
-        lastCompletionSel = sel;
+        gc->descriptionStr = desc + _(", M-c - Select");
     }
+    // mark selected
+    MarkerRepresentation markerRep(MarkerRepresentation::Crosshair);
+    markerRep.setSize(10.0f);
+    markerRep.setColor(Color(0.0f, 1.0f, 0.0f, 0.9f));
+    celApp->getSimulation()->
+        getUniverse()->unmarkObject(lastCompletionSel, 3);
+    celApp->getSimulation()->
+        getUniverse()->markObject(sel, markerRep, 3);
+    lastCompletionSel = sel;
 }
 
 void CelBodyInteractive::renderCompletion(float height, float width)
@@ -1542,7 +1578,6 @@ static int unBindKey(GeekConsole *gc, int state, std::string value)
     case 1:
     {
         bindspace = value;
-        bindspace = value;
         gc->setInteractive(listInteractive, "bindkey-key", _("Un bind key"), _("Choose key bind"));
         GeekBind *gb = gc->getGeekBind(value);
         if (gb)
@@ -1594,7 +1629,6 @@ static int describebindKey(GeekConsole *gc, int state, std::string value)
     case 1:
     {
         bindspace = value;
-        bindspace = value;
         gc->setInteractive(listInteractive, "bindkey-key", _("Key bind for describing"), _("Choose key bind"));
         GeekBind *gb = gc->getGeekBind(value);
         if (gb)
@@ -1627,6 +1661,101 @@ static int describebindKey(GeekConsole *gc, int state, std::string value)
     return state;
 }
 
+static StarBrowser starBrowser;
+static int selectStar(GeekConsole *gc, int state, std::string value)
+{
+    const std::string nearest("Nearest");
+    const std::string brightestApp("Brightest App");
+    const std::string brightestAbs("Brightest Abs");
+    const std::string wplanets("With Planets");
+    std::vector<std::string> completion;
+    switch (state)
+    {
+    case 0: // sort stars by..
+    {
+        completion.push_back(nearest);      completion.push_back(brightestApp);
+        completion.push_back(brightestAbs); completion.push_back(wplanets);
+        gc->setInteractive(listInteractive, "sort-star", _("Sort by:"), "");
+        listInteractive->setCompletion(completion);
+        listInteractive->setMatchCompletion(true);
+        break;
+    }
+    case 1:
+    {
+        // set sort type
+        if (compareIgnoringCase(value, nearest) == 0)
+            starBrowser.setPredicate(0);
+        else if (compareIgnoringCase(value, brightestApp) == 0)
+            starBrowser.setPredicate(1);
+        else if (compareIgnoringCase(value, brightestAbs) == 0)
+            starBrowser.setPredicate(2);
+        else if (compareIgnoringCase(value, wplanets) == 0)
+            starBrowser.setPredicate(3);
+        // interact for num of stars
+        gc->setInteractive(listInteractive, "num-of-star", _("Num of stars:"), "");
+        listInteractive->setCompletionFromSemicolonStr("16;50;100;200;300;400;500");
+        break;
+    }
+    case 2: // select star
+    {
+        int numListStars = atoi(value.c_str());
+        if (numListStars < 1)
+            numListStars = 1;
+        /* Load the catalogs and set data */
+        starBrowser.setSimulation(gc->getCelCore()->getSimulation());
+        StarDatabase* stardb = celAppCore->getSimulation()->
+            getUniverse()->getStarCatalog();
+        starBrowser.refresh();
+        vector<const Star*> *stars = starBrowser.listStars(numListStars);
+        if (!stars)
+        {
+            gc->finish();
+            break;
+        }
+        int currentLength = (*stars).size();
+        if (currentLength == 0)
+        {
+            gc->finish();
+            break;
+        }
+        celAppCore->getSimulation()->setSelection(Selection((Star *)(*stars)[0]));
+
+        for (int i = 0; i < currentLength; i++)
+        {
+            const Star *star=(*stars)[i];
+            completion.push_back(stardb->getStarName(*star));
+        }
+
+        gc->setInteractive(listInteractive, "select-star", _("Select star"), "");
+        listInteractive->setCompletion(completion);
+        break;
+    }
+    case -2-1: // describe star
+    {
+        cout << 2 << "\n";
+        Selection sel = gc->getCelCore()->getSimulation()->
+            findObjectFromPath(value, true);
+        std::string descr = describeSelection(sel, gc->getCelCore());
+        if (!descr.empty())
+            gc->descriptionStr = describeSelection(sel, gc->getCelCore());
+        break;
+    }
+    case 3: // finish
+    {
+        Selection sel = gc->getCelCore()->getSimulation()->findObjectFromPath(value, true);
+        if (!sel.empty())
+        {
+            gc->getCelCore()->getSimulation()->setSelection(sel);
+        }
+        gc->finish();
+        break;
+    }
+    default:
+        break;
+    }
+    return state;
+}
+
 static bool isInteractsInit = false;
 
 void initGCInteractivesAndFunctions(GeekConsole *gc)
@@ -1648,6 +1777,7 @@ void initGCInteractivesAndFunctions(GeekConsole *gc)
     gc->registerFunction(GCFunc(bindKey), "bind");
     gc->registerFunction(GCFunc(unBindKey), "unbind");
     gc->registerFunction(GCFunc(describebindKey), "describe key");
+    gc->registerFunction(GCFunc(selectStar), "select star");
 }
 
 void destroyGCInteractivesAndFunctions()

@@ -311,7 +311,7 @@ namespace UI
         }
 
         // Show cel pref window
-        static void celPreference(AG_Event *event)
+        static void showCelPreference(AG_Event *event)
         {
             if (celCfgWin != NULL)
             {
@@ -474,6 +474,9 @@ namespace UI
                 geekConsole->bind("Global", buff,
                                   "set render preset");
             }
+            // show and hide, need for "swith window" proper work
+            showCelPreference(NULL); 
+            AG_WindowHide(celCfgWin);
         }
 
         int GCSetPreset(GeekConsole *gc, int state, std::string value)
@@ -498,7 +501,7 @@ namespace UI
 
         int GCShowCelPreference(GeekConsole *gc, int state, std::string value)
         {
-            celPreference(NULL);
+            showCelPreference(NULL);
             gc->finish();
             riseUI();
             return state;
@@ -1083,7 +1086,7 @@ namespace UI
         {
             AG_MenuItem *mi = (AG_MenuItem *)AG_SENDER();
             AG_MenuAction(mi, _("Preferences..."), agIconMagnifier.s,
-                          RenderCfgDial::celPreference, NULL);
+                          RenderCfgDial::showCelPreference, NULL);
             if (appGame->getGameMode() == GameCore::VIEWER)
             {
                 AG_MenuAction(mi, _("Reload Solar systems"), NULL,
@@ -1240,6 +1243,47 @@ namespace UI
         showUI = true;
     }
 
+    // switch to agar's window
+    int switchWindow(GeekConsole *gc, int state, std::string value)
+    {
+        AG_Window *win;
+        switch (state)
+        {
+        case 0:
+        {
+            std::vector<std::string> completion;
+            AGVIEW_FOREACH_WINDOW(win, agView) {
+                AG_ObjectLock(win);
+                if ((win->flags & AG_WINDOW_DENYFOCUS) == 0)
+                    completion.push_back(std::string(win->caption));
+                AG_ObjectUnlock(win);
+            }
+            gc->setInteractive(listInteractive, "agar-window",
+                               _("Window"), _("Switch to window"));
+            listInteractive->setCompletion(completion);
+            listInteractive->setMatchCompletion(true);
+            break;
+        }
+        case 1:
+            riseUI();
+            AGVIEW_FOREACH_WINDOW(win, agView) {
+                AG_ObjectLock(win);
+                if ((win->flags & AG_WINDOW_DENYFOCUS) == 0)
+                    if (strcmp(value.c_str(), win->caption) == 0)
+                    {
+                        AG_WindowShow(win);
+                        AG_WindowFocus(win);
+                    }
+                AG_ObjectUnlock(win);
+            }
+            gc->finish();
+            break;
+        default:
+            break;
+        }
+        return state;
+    }
+
     int quitFunction(GeekConsole *gc, int state, std::string value)
     {
         switch (state)
@@ -1285,5 +1329,8 @@ namespace UI
         geekConsole->registerFunction(GCFunc(RenderCfgDial::GCShowCelPreference), "show preference");
         geekConsole->registerAndBind("", "C-x C-c",
                                      GCFunc(quitFunction), "quit");
+        geekConsole->registerAndBind("", "C-x b",
+                                     GCFunc(switchWindow), "switch window");
+
     }
 } //namespace UI
