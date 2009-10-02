@@ -248,7 +248,7 @@ namespace UI
 
                 if (!AG_GetBool(agConfig, "cel.flags.init"))
                 {
-                    AG_EventArgs(&event, "%p:%i", &renderCfgSets[i], i);
+                    AG_EventArgs(&event, "%p,%i", &renderCfgSets[i], i);
                     resetCelCfg(&event);
                 }
             }
@@ -355,7 +355,7 @@ namespace UI
                 {               
                     vBox = AG_BoxNewVert(hBox, AG_BOX_VFILL|AG_BOX_FRAME);
                     {
-                        AG_LabelNewStaticString(vBox, 0, _("Show label/object:"));
+                        AG_LabelNewStaticS(vBox, 0, _("Show label/object:"));
                                         
                         hDblChkbox(vBox, _("Stars"), labelFlagCel, Renderer::StarLabels, renderFlag, Renderer::ShowStars);                      
                         hDblChkbox(vBox, _("Galaxies"), labelFlagCel, Renderer::GalaxyLabels, renderFlag, Renderer::ShowGalaxies);
@@ -365,7 +365,7 @@ namespace UI
                         hDblChkbox(vBox, _("Globulars"), labelFlagCel, Renderer::GlobularLabels, renderFlag, Renderer::ShowGlobulars);
                         hDblChkbox(vBox, _("Planets"), labelFlagCel, Renderer::PlanetLabels, renderFlag, Renderer::ShowPlanets);
                         AG_SeparatorNew(vBox, AG_SEPARATOR_HORIZ);
-                        AG_LabelNewStaticString(vBox, 0, _("Show object:"));
+                        AG_LabelNewStaticS(vBox, 0, _("Show object:"));
                         AG_CheckboxNewFlag(vBox, 0, _("Atmospheres"), renderFlag, Renderer::ShowAtmospheres);
                         AG_CheckboxNewFlag(vBox, 0, _("Clouds"), renderFlag, Renderer::ShowCloudMaps);
                         AG_CheckboxNewFlag(vBox, 0, _("CloudShadows"), renderFlag, Renderer::ShowCloudShadows);
@@ -394,7 +394,7 @@ namespace UI
                     vBox = AG_BoxNewVert(hBox, AG_BOX_VFILL|AG_BOX_FRAME);
                     {
 
-                        AG_LabelNewStaticString(vBox, 0, _("Show label:"));
+                        AG_LabelNewStaticS(vBox, 0, _("Show label:"));
                         AG_CheckboxNewFlag (vBox, 0, _("Dwarf Planets"), labelFlagCel, Renderer::DwarfPlanetLabels);
                         AG_CheckboxNewFlag (vBox, 0, _("Moons"), labelFlagCel, Renderer::MoonLabels);
                         AG_CheckboxNewFlag (vBox, 0, _("Minor Moons"), labelFlagCel, Renderer::MinorMoonLabels);
@@ -422,7 +422,7 @@ namespace UI
                     hBox2 = AG_BoxNewHoriz(ntab, AG_BOX_HFILL|AG_BOX_HOMOGENOUS);
                     {
                         AG_ButtonNewFn(hBox2, 0, _("Reset"),
-                                       resetCelCfg, "%p:%i", renderCfg, qualy);
+                                       resetCelCfg, "%p,%i", renderCfg, qualy);
                         AG_Radio *radTextureRes;
                         const char *radioItems[] = {
                             _("Low Texture resolution"),
@@ -451,7 +451,7 @@ namespace UI
             tab = celCfgWinNewTab(std::string("Current"), nb, &renderFlags, 0);
             AG_Box * hBox = AG_BoxNewHoriz(tab, AG_BOX_HFILL|AG_BOX_FRAME);
             {                           
-                AG_LabelNewStaticString(hBox, 0, _("Set current as preset:"));
+                AG_LabelNewStaticS(hBox, 0, _("Set current as preset:"));
                 for (i = 0; i < 5; i++)
                 {
                     AG_Button *btn = AG_ButtonNewFn(hBox, 0, NULL, setCurrentAsPreset, "%p", &renderCfgSets[i]);
