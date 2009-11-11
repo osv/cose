@@ -581,6 +581,9 @@ void GeekConsole::finish()
 
 GeekBind *GeekConsole::createGeekBind(std::string bindspace)
 {
+    GeekBind *gb = getGeekBind;
+    if (gb)
+        return gb;
     GeekBind *gb = new GeekBind(bindspace, this);
     geekBinds.push_back(gb);
     return gb;
