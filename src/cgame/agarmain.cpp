@@ -254,7 +254,7 @@ FocusWindowAt(int x, int y)
 {
     AG_Window *win;
 
-    AGVIEW_FOREACH_WINDOW_REVERSE(win, agView) {
+    AG_TAILQ_FOREACH_REVERSE(win, &agView->windows, ag_windowq, windows) {
         AG_ObjectLock(win);
         if (!win->visible ||
             !AG_WidgetArea(win, x,y)) {
@@ -314,7 +314,7 @@ static void BG_ResizeWithMenu()
         w = agView->w;
         h = agView->h - (AGWIDGET(agAppMenuWin)->h);
     }
-    BG_Resize(w, h);
+    Resize(w, h);
 }
 
 void BG_GainFocus()
@@ -708,7 +708,7 @@ void EventLoop_FixedFPS(void)
             UI::updateGUIalpha(Tr2-Tr1, !bgFocuse);
             if (UI::showUI)
             {
-                AGVIEW_FOREACH_WINDOW(win, agView) {
+                AG_TAILQ_FOREACH_REVERSE(win, &agView->windows, ag_windowq, windows) {
                     AG_ObjectLock(win);
                     UI::precomputeGUIalpha(AG_WindowIsFocused(win));
                     AG_WindowDraw(win);
@@ -887,7 +887,7 @@ int main(int argc, char* argv[])
     }
 
     /* Pass AG_VIDEO_OPENGL flag to require an OpenGL display. */
-    if (AG_InitVideo(640, 480, 32, AG_VIDEO_OPENGL|AG_VIDEO_RESIZABLE|AG_VIDEO_OVERLAY)
+    if (AG_InitVideo(800, 600, 32, AG_VIDEO_OPENGL|AG_VIDEO_RESIZABLE|AG_VIDEO_OVERLAY)
         == -1) {
         fprintf(stderr, "%s\n", AG_GetError());
         return (-1);

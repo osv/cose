@@ -1252,7 +1252,7 @@ namespace UI
         case 0:
         {
             std::vector<std::string> completion;
-            AGVIEW_FOREACH_WINDOW(win, agView) {
+            AG_TAILQ_FOREACH_REVERSE(win, &agView->windows, ag_windowq, windows) {
                 AG_ObjectLock(win);
                 if ((win->flags & AG_WINDOW_DENYFOCUS) == 0)
                     completion.push_back(std::string(win->caption));
@@ -1266,7 +1266,7 @@ namespace UI
         }
         case 1:
             riseUI();
-            AGVIEW_FOREACH_WINDOW(win, agView) {
+            AG_TAILQ_FOREACH_REVERSE(win, &agView->windows, ag_windowq, windows) {
                 AG_ObjectLock(win);
                 if ((win->flags & AG_WINDOW_DENYFOCUS) == 0)
                     if (strcmp(value.c_str(), win->caption) == 0)
