@@ -3,7 +3,9 @@ AM_CXXFLAGS = @CXXFLAGS@ \
 	@CGAME_CXXFLAGS@ \
 	@AGAR_CXXFLAGS@ 
 
-INCLUDES = -I.. -I../celestia -I$(top_srcdir)/thirdparty/Eigen
+INCLUDES = -I.. -I../celestia \
+	-I$(top_srcdir)/thirdparty/Eigen \
+	-I$(top_srcdir)/thirdparty/glew/include
 
 AM_CFLAGS = @CFLAGS@ \
 	@AGAR_CXXFLAGS@ 

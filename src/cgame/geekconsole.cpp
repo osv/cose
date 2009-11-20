@@ -6,6 +6,7 @@
 #include <fstream>
 #include <sstream>
 #include <iomanip>
+#include <algorithm>
 #include <celutil/formatnum.h>
 #include <celengine/eigenport.h>
 
@@ -922,7 +923,7 @@ void ListInteractive::charEntered(const wchar_t wc, int modifiers)
             pageScrollIdx += scrollSize;
             if (pageScrollIdx > typedTextCompletion.size())
                 pageScrollIdx = 0;
-            char buff[32];
+            char buff[128];
             sprintf(buff,"%i of %i pages, M-/ next expand, M-? prev expand, C-z unexpand", (pageScrollIdx / scrollSize) + 1,
                     (typedTextCompletion.size() / scrollSize) + 1);
             gc->descriptionStr = buff;
@@ -1224,7 +1225,7 @@ void CelBodyInteractive::charEntered(const wchar_t wc, int modifiers)
             pageScrollIdx += scrollSize;
             if (pageScrollIdx > typedTextCompletion.size())
                 pageScrollIdx = 0;
-            char buff[32];
+            char buff[128];
             sprintf(buff,"%i of %i pages, M-/ next expand, M-? prev expand, C-z unexpand", (pageScrollIdx / scrollSize) + 1,
                     (typedTextCompletion.size() / scrollSize) + 1);
             gc->descriptionStr = buff;
