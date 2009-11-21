@@ -10,10 +10,11 @@
 #include <time.h>
 #include <unistd.h>
 
-#include "cgame.h"
+#include "cgame.h" 
 #include "ui.h"
 #include "ui_theme.h"
 #include "geekconsole.h"
+#include "configfile.h"
 
 using namespace std;
 
@@ -94,7 +95,7 @@ static void ToggleFullscreen()
     }
 }
 
-static void registerAndbindKeys()
+static void registerAndBindKeys()
 {
     geekConsole->registerFunction(GCFunc(startTogVidRecord), "toggle video record");
     geekConsole->registerFunction(GCFunc(stopVidRecord), "stop video record");
@@ -103,6 +104,8 @@ static void registerAndbindKeys()
 
     GeekBind *geekBindCel = geekConsole->createGeekBind("Celestia");
     geekBindCel->bind("C-x C-m", "quit");
+
+    cVarBindInt32("geekconsole.type", &geekConsole->consoleType, geekConsole->consoleType);
 }
 
 static void BG_Display(void)
@@ -708,7 +711,7 @@ void EventLoop_FixedFPS(void)
             UI::updateGUIalpha(Tr2-Tr1, !bgFocuse);
             if (UI::showUI)
             {
-                AG_TAILQ_FOREACH_REVERSE(win, &agView->windows, ag_windowq, windows) {
+                AG_TAILQ_FOREACH(win, &agView->windows, windows) {
                     AG_ObjectLock(win);
                     UI::precomputeGUIalpha(AG_WindowIsFocused(win));
                     AG_WindowDraw(win);
@@ -758,6 +761,7 @@ void EventLoop_FixedFPS(void)
 
 void gameTerminate()
 {
+    saveCfg();
     if (fullscreen)
         ToggleFullscreen();
     if (geekConsole)
@@ -765,8 +769,8 @@ void gameTerminate()
     destroyGCInteractivesAndFunctions();
     // memory leak 
     Core::removeAllSolSys();
-
     AG_ConfigSave();
+    freeCfg();
     AG_Quit();
 }
 
@@ -808,6 +812,9 @@ int main(int argc, char* argv[])
 
     // parse command line
     char *s;
+    bool loadCfgFile = true;
+    static int32 agPrimitive;
+    cVarBindInt32Hex("render.agar.primitive", &agPrimitive, UI::FullTransparent);
     for (i = 1; i < argc; ++i)
     {
         s = argv[i];
@@ -839,13 +846,12 @@ int main(int argc, char* argv[])
         else if (strcmp(s, "ag-primitive") == 0)
         {
             char *mode=argv[++i];
-            const char *s = "cose.ag.primitive";
             if (!strcmp(mode, "default"))
-                AG_SetUint8(agConfig, s, UI::Default);
+                agPrimitive = UI::Default;
             else if (!strcmp(mode, "transparent-full"))
-                AG_SetUint8(agConfig, s, UI::FullTransparent);
+                agPrimitive = UI::FullTransparent;
             else if (!strcmp(mode, "transparent-simple"))
-                AG_SetUint8(agConfig, s, UI::SimpleTransparent);
+                agPrimitive = UI::SimpleTransparent;
         }
         else if (strcmp(s, "help") == 0 || strcmp(s, "h") == 0)
         {
@@ -853,31 +859,7 @@ int main(int argc, char* argv[])
             exit(0);
         }
         else if (strcmp(s, "reset") == 0 || strcmp(s, "r") == 0)
-        {
-            char dataDir[AG_PATHNAME_MAX];
-            AG_GetString(agConfig, "save-path", dataDir, AG_PATHNAME_MAX);
-            cout << "Configurations located in '" << dataDir << "'\n";
-            char *narg = argv[++i];
-            bool remove = false;
-            if ((i <= argc - 1) && (*narg != '-'))
-            {
-                if (!strcmp(narg, "force"))
-                    remove = true;
-            }
-            else
-            {
-                char y;
-                cout << "Remove? y[n]: "; cin >> y;
-                if (y == 'y')
-                    remove = true;
-            }
-            if (remove)
-            {
-                AG_ObjectUnlinkDatafiles(agConfig);
-                cout << "Primary config file removed.\n";
-            }
-            exit(0);
-        }
+            loadCfgFile = false;
         else
         {
             printf(_("Bad arg: %s\n"), argv[i]);
@@ -885,6 +867,9 @@ int main(int argc, char* argv[])
             exit(0);
         }
     }
+
+    if (loadCfgFile)
+        loadCfg();
 
     /* Pass AG_VIDEO_OPENGL flag to require an OpenGL display. */
     if (AG_InitVideo(800, 600, 32, AG_VIDEO_OPENGL|AG_VIDEO_RESIZABLE|AG_VIDEO_OVERLAY)
@@ -908,7 +893,7 @@ int main(int argc, char* argv[])
 
     initGCInteractivesAndFunctions(geekConsole);
 
-    registerAndbindKeys();
+    registerAndBindKeys();
 
     UI::Init();
 

@@ -456,8 +456,8 @@ bool GeekConsole::charEntered(const char sym, const wchar_t wc, int modifiers)
     char C = toupper((char)wc);
     switch (C)
     {
-    case '\023':  // Ctrl+U
-        if (consoleType == Big)
+    case '\023':  // Ctrl+S
+        if (consoleType >= Big)
             consoleType = Tiny;
         else
             consoleType++;
@@ -582,10 +582,10 @@ void GeekConsole::finish()
 
 GeekBind *GeekConsole::createGeekBind(std::string bindspace)
 {
-    GeekBind *gb = getGeekBind;
+    GeekBind *gb = getGeekBind(bindspace);
     if (gb)
         return gb;
-    GeekBind *gb = new GeekBind(bindspace, this);
+    gb = new GeekBind(bindspace, this);
     geekBinds.push_back(gb);
     return gb;
 }

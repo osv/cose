@@ -271,7 +271,7 @@ public:
         };
     void render();
     bool isVisible;
-    int consoleType;
+    int32 consoleType;
 
     TextureFont* getInteractiveFont() const
         {return titleFont;}
