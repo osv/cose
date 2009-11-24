@@ -21,7 +21,7 @@ extern void saveCfg(const string &filename, const char *namesp);
 extern void freeCfg();
 
 // flag name and his mask struct
-typedef struct i32flags {
+struct i32flags {
     const char *name;
     uint32 mask;
 };

@@ -2,6 +2,12 @@
 #include "configfile.h"
 #include <libconfig.h>
 #include <stdint.h>
+
+// for some version of inttypes.h need to define it for macros PRIi32...
+#ifndef __STDC_FORMAT_MACROS
+#define __STDC_FORMAT_MACROS
+#endif
+
 #include <inttypes.h>
 
 const char *mainConfigFile = "openspace.cfg";
@@ -279,7 +285,7 @@ void cVarBindInt64Hex(string name, int64 *var, const int64 resetval)
     }
 }
 
-void cVarBindInt64(string name, int64 *var, const int32 resetval)
+void cVarBindInt64(string name, int64 *var, const int64 resetval)
 {
     char buffer[64];
     sprintf(buffer, "%" PRIi64, resetval);
@@ -505,6 +511,11 @@ void loadRecursive(config_t *cfg, config_setting_t *setting, string name, const 
                     *(bool *) oldv->p = (bool) atoi(v->get().c_str());
                     break;
                 }
+                case cvar::String:
+                {
+                    *(string *) oldv->p = v->get();
+                    break;
+                }
                 case cvar::Float:
                 {
                     *(double *) oldv->p = (double)atof(v->get().c_str());
@@ -545,7 +556,6 @@ void loadRecursive(config_t *cfg, config_setting_t *setting, string name, const 
 
 void saveVariables(config_t *cfg, const char *validnamesp)
 {
-    config_setting_t *setting = NULL;
     std::vector<cvar*>::iterator it;
     for (it = variables.begin();
          it != variables.end(); it++)
