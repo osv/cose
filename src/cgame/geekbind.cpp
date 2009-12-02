@@ -2,14 +2,14 @@
 #include "geekbind.h"
 #include <cstdlib>
 
-int skipWhiteSpace(const char *str, int offset)
+static int skipWhiteSpace(const char *str, int offset)
 {
     while (str[offset] && str[offset] == ' ')
         offset++;
     return offset;
 }
 
-int skipWord(const char *str, int offset)
+static int skipWord(const char *str, int offset)
 {
     while (str[offset] && str[offset] != ' ')
         offset++;
@@ -137,84 +137,11 @@ bool GeekBind::KeyBind::set(const char *keybind)
     return true;
 }
 
-GeekBind::GeekBind(std::string _name,GeekConsole *_gc):
+GeekBind::GeekBind(std::string _name):
     isActive(true),
-    gc(_gc),
     name(_name)
 {
     curKey.len = 0;
-}
-
-GeekBind::GBRes GeekBind::charEntered(char sym, int modifiers)
-{
-    if (!gc)
-        return NOTMATCHED;
-    bool renderKeyHint = true;
-    curKey.c[curKey.len] = sym;
-    curKey.mod[curKey.len] = modifiers;
-    curKey.len++;
-    if (modifiers & SHIFT)
-        curKey.mod[curKey.len] |= SHIFT;
-    if (modifiers & CTRL)
-        curKey.mod[curKey.len] |= CTRL;
-    if (modifiers & META)
-        curKey.mod[curKey.len] |= META;
-    bool isKeyPrefix = false;
-    std::vector<KeyBind>::iterator it;
-    for (it = binds.begin();
-         it != binds.end(); it++)
-    {
-        if (curKey.len > it->len)
-            continue;
-        bool eq = true;
-        for (int i = 0; i < curKey.len; i++)
-        {
-            if (curKey.mod[i] != it->mod[i])
-            {
-                eq = false;
-                break;
-            }
-            if (curKey.c[i] != it->c[i])
-            {
-                eq = false;
-                break;
-            }
-        }
-        if (eq)
-            if (curKey.len == it->len)
-            {
-                if (gc->execFunction(it->gcFunName, it->params))
-                {
-                    if (curKey.len > 1)
-                        gc->getCelCore()->flash(curKey.keyToStr() + " (" + it->gcFunName + ") " + it->params, 2.5);
-                    curKey.len = 0;
-                }
-                else
-                {
-                    gc->getCelCore()->flash(curKey.keyToStr() + " (" + it->gcFunName + ") not defined", 1.5);
-                    curKey.len = 0;
-                }
-                return KEYMATCH;
-            }
-            else
-                isKeyPrefix = true;
-    }
-    if (!isKeyPrefix || curKey.len == MAX_KEYBIND_LEN)
-        if (curKey.len > 1)
-        {
-            gc->getCelCore()->flash(curKey.keyToStr() + " is undefined");
-            curKey.len = 0;
-            return KEYPREFIX;
-        }
-        else
-        {
-            renderKeyHint = false;
-            curKey.len = 0;
-            return NOTMATCHED;
-        }
-    if (renderKeyHint)
-        gc->getCelCore()->flash(curKey.keyToStr(), 2.5);
-    return KEYPREFIX;
 }
 
 bool GeekBind::isBinded(KeyBind b)

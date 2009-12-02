@@ -292,8 +292,8 @@ public:
     GeekBind *getGeekBind(std::string bindspace);
     void registerAndBind(std::string bindspace, const char *bindkey,
                          GCFunc fun, const char *funname);
-    std::vector<GeekBind *> *getGeekBinds()
-        { return &geekBinds;}
+    const std::vector<GeekBind *>& getGeekBinds()
+        { return geekBinds;}
     bool bind(std::string bindspace, std::string bindkey, std::string function);
     void unbind(std::string bindspace, std::string bindkey);
     // descript. prefix in before interactive prompt
@@ -315,6 +315,7 @@ private:
     typedef std::map<std::string, GCFunc>  Functions;
     Functions functions;
     std::vector<GeekBind *> geekBinds; // list of key bind spaces
+    GeekBind::KeyBind curKey; // current key sequence
 };
 
 extern void initGCInteractivesAndFunctions(GeekConsole *gc);

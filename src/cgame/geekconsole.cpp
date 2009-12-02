@@ -284,9 +284,9 @@ GeekConsole::GeekConsole(CelestiaCore *celCore):
     *overlay << ios::fixed;
     // create global key bind space
 //    geekConsole->createGeekBind("Global");
-    GeekBind *gb = new GeekBind("Global", this);
+    GeekBind *gb = new GeekBind("Global");
     geekBinds.push_back(gb);
-
+    curKey.len = 0;
 }
 
 GeekConsole::~GeekConsole()
@@ -433,26 +433,83 @@ std::vector<std::string> GeekConsole::getFunctionsNames()
     return names;
 }
 
+
+/**
+   Process key event for interactive if visible console, if not, than
+   check hot keys
+ */
 bool GeekConsole::charEntered(const char sym, const wchar_t wc, int modifiers)
 {
     if (!isVisible)
     {
-        bool isPrefix = false;
-        for (std::vector<GeekBind *>::iterator it = geekBinds.begin();
-             it != geekBinds.end(); it++)
+        curKey.c[curKey.len] = sym;
+        curKey.mod[curKey.len] = modifiers;
+        curKey.len++;
+        if (modifiers & GeekBind::SHIFT)
+            curKey.mod[curKey.len] |= GeekBind::SHIFT;
+        if (modifiers & GeekBind::CTRL)
+            curKey.mod[curKey.len] |= GeekBind::CTRL;
+        if (modifiers & GeekBind::META)
+            curKey.mod[curKey.len] |= GeekBind::META;
+        bool isKeyPrefix = false;
+        std::vector<GeekBind::KeyBind>::const_iterator it;
+        std::vector<GeekBind *>::iterator gb;
+        for (gb  = geekBinds.begin();
+             gb != geekBinds.end(); gb++)
         {
-            GeekBind *gb = *it;
-            if (gb->isActive)
+            if (!(*gb)->isActive)
+                continue;
+            const std::vector<GeekBind::KeyBind>& binds = (*gb)->getBinds();
+            for (it = binds.begin();
+                 it != binds.end(); it++)
             {
-                GeekBind::GBRes r = gb->charEntered(sym, modifiers);
-                if (r == GeekBind::KEYPREFIX)
-                    isPrefix = true;
-                else if (r == GeekBind::KEYMATCH)
-                    return true;
+                if (curKey.len > it->len)
+                    continue;
+                bool eq = true;
+                // compare hot-keys
+                for (int i = 0; i < curKey.len; i++)
+                {
+                    if (curKey.mod[i] != it->mod[i] ||
+                        curKey.c[i] != it->c[i])
+                    {
+                        eq = false;
+                        break;
+                    }
+                }
+                if (eq)
+                    if (curKey.len == it->len)
+                    {
+                        if (execFunction(it->gcFunName, it->params))
+                        {
+                            if (curKey.len > 1)
+                                getCelCore()->flash(curKey.keyToStr() + " (" + it->gcFunName + 
+                                                    ") " + it->params, 2.5);
+                        }
+                        else
+                        {
+                            getCelCore()->flash(curKey.keyToStr() + " (" + it->gcFunName +
+                                                    ") not defined", 1.5);
+                        }
+                        curKey.len = 0;
+                        return true;
+                    }
+                    else
+                        isKeyPrefix = true;
             }
         }
-        return isPrefix;
-    }
+        if (!isKeyPrefix || curKey.len == MAX_KEYBIND_LEN)
+        {
+            // for key length 1 dont flash messg.
+            if (curKey.len > 1)
+                getCelCore()->flash(curKey.keyToStr() + " is undefined");
+            curKey.len = 0;
+            return false;
+        }
+        else
+            getCelCore()->flash(curKey.keyToStr() + "-", 15.0);
+        return true;
+    } // !isVisible
+
     char C = toupper((char)wc);
     switch (C)
     {
@@ -585,7 +642,7 @@ GeekBind *GeekConsole::createGeekBind(std::string bindspace)
     GeekBind *gb = getGeekBind(bindspace);
     if (gb)
         return gb;
-    gb = new GeekBind(bindspace, this);
+    gb = new GeekBind(bindspace);
     geekBinds.push_back(gb);
     return gb;
 }
@@ -1434,10 +1491,10 @@ static int execFunction(GeekConsole *gc, int state, std::string value)
     case -1:
     {
         // describe key binds for this function
-        std::vector<GeekBind *>* gbs = gc->getGeekBinds();
+        const std::vector<GeekBind *>& gbs = gc->getGeekBinds();
         std::string bindstr;
-        for (std::vector<GeekBind *>::iterator it = gbs->begin();
-             it != gbs->end(); it++)
+        for (std::vector<GeekBind *>::const_iterator it = gbs.begin();
+             it != gbs.end(); it++)
         {
             GeekBind *gb = *it;
             std::string str = gb->getBinds(value);
@@ -1508,10 +1565,10 @@ static int bindKey(GeekConsole *gc, int state, std::string value)
     case 0:
     {
         gc->setInteractive(listInteractive, "bindkey-space", _("BindSpace"), _("Bind key: Select bindspace"));
-        std::vector<GeekBind *> *gbs = gc->getGeekBinds();
+        const std::vector<GeekBind *> &gbs = gc->getGeekBinds();
         std::vector<string> completion;
-        for (std::vector<GeekBind *>::iterator it = gbs->begin();
-             it != gbs->end(); it++)
+        for (std::vector<GeekBind *>::const_iterator it = gbs.begin();
+             it != gbs.end(); it++)
         {
             GeekBind *gb = *it;
             std::string name = gb->getName();
@@ -1566,10 +1623,10 @@ static int unBindKey(GeekConsole *gc, int state, std::string value)
     case 0:
     {
         gc->setInteractive(listInteractive, "bindkey-space", _("BindSpace"), _("Unbind key: Select bindspace"));
-        std::vector<GeekBind *> *gbs = gc->getGeekBinds();
+        const std::vector<GeekBind *> &gbs = gc->getGeekBinds();
         std::vector<string> completion;
-        for (std::vector<GeekBind *>::iterator it = gbs->begin();
-             it != gbs->end(); it++)
+        for (std::vector<GeekBind *>::const_iterator it = gbs.begin();
+             it != gbs.end(); it++)
         {
             GeekBind *gb = *it;
             std::string name = gb->getName();
@@ -1617,10 +1674,10 @@ static int describebindKey(GeekConsole *gc, int state, std::string value)
     case 0:
     {
         gc->setInteractive(listInteractive, "bindkey-space", _("BindSpace"), _("Describe bind key: Select bindspace"));
-        std::vector<GeekBind *> *gbs = gc->getGeekBinds();
+        const std::vector<GeekBind *> &gbs = gc->getGeekBinds();
         std::vector<string> completion;
-        for (std::vector<GeekBind *>::iterator it = gbs->begin();
-             it != gbs->end(); it++)
+        for (std::vector<GeekBind *>::const_iterator it = gbs.begin();
+             it != gbs.end(); it++)
         {
             GeekBind *gb = *it;
             std::string name = gb->getName();
