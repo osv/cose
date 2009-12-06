@@ -429,7 +429,7 @@ namespace UI{
         cVarBindInt32Hex("render.color.gconsole.COMPLETION_MATCH", (int32 *)&clCompletionMatchCharFnt->i, clCompletionMatchCharFnt->i);
         cVarBindInt32Hex("render.color.gconsole.COMPLETION_MATCH_BG", (int32 *)&clCompletionMatchCharBg->i, clCompletionMatchCharBg->i);
         cVarBindInt32Hex("render.color.gconsole.COMPLETION_AFTER_MATCH", (int32 *)&clCompletionAfterMatch->i, clCompletionAfterMatch->i);
-        cVarBindInt32Hex("render.color.gconsole.COMPLETION_EXPAND_BRD", (int32 *)&clCompletionExpandBrd->i, clCompletionExpandBrd->i);
+        cVarBindInt32Hex("render.color.gconsole.COMPLETION_EXPAND_BG", (int32 *)&clCompletionExpandBg->i, clCompletionExpandBg->i);
         
         themeInit = true;
 

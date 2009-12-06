@@ -111,6 +111,7 @@ struct Color32
             rgba[2]= b;
             rgba[3]= a;
         }
+    Color32(): i(0) {};
     union
     {
         GLubyte rgba[4];
@@ -158,7 +159,7 @@ private:
 class ListInteractive: public GCInteractive
 {
 public:
-    ListInteractive(std::string name):GCInteractive(name, true)
+    ListInteractive(std::string name):GCInteractive(name, true), cols(4)
         {};
     void Interact(GeekConsole *_gc, string historyName);
     bool tryComplete();
@@ -167,13 +168,15 @@ public:
     void setCompletion(std::vector<std::string> completion);
     void setMatchCompletion(bool mustMatch); // true - result must be matched in completion. Default false
     void setCompletionFromSemicolonStr(std::string); // add completion by str like "yes;no"
+    void setColumns(int c = 4)
+        {if (c >0 && c < 8) cols = c;}
 protected:
     void updateTextCompletion();
     std::vector<std::string> completionList;
     uint pageScrollIdx;
     uint scrollSize; // number of compl. items to scroll
     uint completedIdx;
-    int rows;
+    int cols;
     std::vector<std::string> typedTextCompletion;
     bool mustMatch; // if true - on RET key finish promt only if matched in completionList
 };
@@ -190,13 +193,15 @@ public:
     std::string getRightText()const; // return text before after "/"
     void updateDescrStr(); // update descr str of console with info about body
     void cancelInteractive();
+    void setColumns(int c = 4)
+        {if (c >0 && c < 8) cols = c;}
 private:
     void updateTextCompletion();
     std::vector<std::string> completionList;
     uint pageScrollIdx;
     uint scrollSize; // number of compl. items to scroll
     uint completedIdx;
-    int rows;
+    int cols;
     std::vector<std::string> typedTextCompletion;
     CelestiaCore *celApp;
     Selection lastCompletionSel;
@@ -211,6 +216,19 @@ public:
     ~PasswordInteractive()
         {};
     void renderInteractive();
+};
+
+// color interactive
+class ColorChooserInteractive: public ListInteractive
+{
+public:
+    ColorChooserInteractive(std::string name):ListInteractive(name)
+        {};
+    ~ColorChooserInteractive()
+        {};
+    void Interact(GeekConsole *_gc, string historyName);
+    void renderInteractive();
+    void renderCompletion(float height, float width);
 };
 
 // container for C and lua function
@@ -269,6 +287,7 @@ public:
             overlay->setWindowSize(w, h);
             width = w; height = h;
         };
+    int const getWidth() {return width;}
     void render();
     bool isVisible;
     int32 consoleType;
@@ -301,6 +320,8 @@ public:
     // bottom description str
     std::string descriptionStr;
 private:
+    // call current fun, and recall if state returned by fun less
+    void call(const std::string &value);
     TextureFont* titleFont;
     TextureFont* font;
 
@@ -318,13 +339,15 @@ private:
     GeekBind::KeyBind curKey; // current key sequence
 };
 
+extern Color getColorFromText(const string &text);
+
 extern void initGCInteractivesAndFunctions(GeekConsole *gc);
 extern void destroyGCInteractivesAndFunctions();
 extern void LoadLuaGeekConsoleLibrary(lua_State* l);
 extern GeekConsole *geekConsole;
 extern ListInteractive *listInteractive;
 extern PasswordInteractive *passwordInteractive;
-
+extern ColorChooserInteractive *colorChooserInteractive;
 // direcory to store history (default = "history/")
 extern std::string historyDir;
 
@@ -339,6 +362,6 @@ extern Color32 *clCompletionFnt;
 extern Color32 *clCompletionMatchCharFnt;
 extern Color32 *clCompletionAfterMatch;
 extern Color32 *clCompletionMatchCharBg;
-extern Color32 *clCompletionExpandBrd;
+extern Color32 *clCompletionExpandBg;
 
 #endif // _GEEKCONSOLE_H_
