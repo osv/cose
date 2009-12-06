@@ -1132,11 +1132,16 @@ bool GeekConsole::charEntered(const char sym, const wchar_t wc, int modifiers)
                         isKeyPrefix = true;
             }
         }
-        if (!isKeyPrefix || curKey.len == MAX_KEYBIND_LEN)
+        if (!isKeyPrefix || curKey.len >= MAX_KEYBIND_LEN)
         {
             // for key length 1 dont flash messg.
             if (curKey.len > 1)
+            {
                 getCelCore()->flash(curKey.keyToStr() + " is undefined");
+                curKey.len = 0;
+                // true because we dont want to continue passing key event
+                return true;
+            }
             curKey.len = 0;
             return false;
         }

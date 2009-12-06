@@ -58,6 +58,7 @@ typedef struct cvar {
         {
             if (!loaded)
                 return;
+            loaded = false;
             flagtbl = NULL;
             switch(type)
             {
@@ -186,7 +187,6 @@ void freeCfg()
     for (it = variables.begin();
          it != variables.end(); it++)
     {
-        (*it)->freeVal();
          delete *it;
     }
 }
@@ -224,15 +224,18 @@ cvar *getCVar(string name)
             if (v->loaded)                                              \
             {                                                           \
                 /* if loaded from configfile */                         \
-                /* we must copy var's value if typea equal */           \
+                /* we must copy var's value */                          \
                 loadedval = v->get();                                   \
                 /* free old loaded var */                               \
                 v->freeVal();                                           \
+                /* set new type & pointer of var*/                      \
+                v->type = cvar::FunType;                                \
+                v->p = var;                                             \
+                /* setup var with loaded value */                       \
+                v->set(loadedval);                                      \
             }                                                           \
             v->type = cvar::FunType;                                    \
             v->p = var;                                                 \
-            if (v->loaded)                                              \
-                v->set(loadedval);                                      \
             v->loaded = false;                                          \
             v->flagtbl = NULL;                                          \
             v->resetp = resetval;                                       \
