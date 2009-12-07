@@ -48,6 +48,7 @@ openspace_client_SOURCES = \
 	geekconsole.cpp \
 	geekbind.cpp \
 	configfile.cpp \
+	stdcelinter.cpp \
 	ui_theme.cpp
 
 noinst_DATA = ../../openspace_client

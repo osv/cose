@@ -100,7 +100,7 @@ static void registerAndBindKeys()
     geekConsole->registerFunction(GCFunc(startTogVidRecord), "toggle video record");
     geekConsole->registerFunction(GCFunc(stopVidRecord), "stop video record");
     geekConsole->registerAndBind("", "M-RET", GCFunc(ToggleFullscreen), "toggle fullscreen");
-    geekConsole->bind("", "C-x C-g e @Earth", "select object");
+    geekConsole->bind("", "C-x C-g e @Earth@EXEC@goto object@", "select object");
 
     GeekBind *geekBindCel = geekConsole->createGeekBind("Celestia");
     geekBindCel->bind("C-x C-m", "quit");
@@ -766,7 +766,7 @@ void gameTerminate()
         ToggleFullscreen();
     if (geekConsole)
         delete geekConsole;
-    destroyGCInteractivesAndFunctions();
+    destroyGCInteractives();
     // memory leak 
     Core::removeAllSolSys();
     AG_ConfigSave();
@@ -891,7 +891,8 @@ int main(int argc, char* argv[])
     // init geek console
     geekConsole = new GeekConsole(celAppCore);
 
-    initGCInteractivesAndFunctions(geekConsole);
+    initGCInteractives(geekConsole);
+    initGCStdInteractivsFunctions(geekConsole);
 
     registerAndBindKeys();
 

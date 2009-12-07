@@ -341,15 +341,41 @@ private:
 
 extern Color getColorFromText(const string &text);
 
-extern void initGCInteractivesAndFunctions(GeekConsole *gc);
-extern void destroyGCInteractivesAndFunctions();
+/* Init/destroy interactives */
+
+extern void initGCInteractives(GeekConsole *gc);
+extern void destroyGCInteractives();
+
+/* Setup celestia's interactive's functions */
+extern void initGCStdInteractivsFunctions(GeekConsole *gc);
+
+/* Setup lua api for working with geekconsole */
 extern void LoadLuaGeekConsoleLibrary(lua_State* l);
+
+/* geekConsole sample */
 extern GeekConsole *geekConsole;
+
+/* Interactives */
+
 extern ListInteractive *listInteractive;
 extern PasswordInteractive *passwordInteractive;
+extern CelBodyInteractive *celBodyInteractive;
 extern ColorChooserInteractive *colorChooserInteractive;
+
+/* describeselection is used celestia body interactive.
+   You can setup own describer
+*/
+typedef std::string (*CustomDescribeSelection)(Selection sel,
+                                               CelestiaCore *celAppCore);
+
+extern std::string describeSelection(Selection sel, CelestiaCore *celAppCore, bool doCustomDescribe = true);
+
+extern CustomDescribeSelection customDescribeSelection;
+
 // direcory to store history (default = "history/")
 extern std::string historyDir;
+
+// color theming of gc
 
 extern Color32 *clBackground;
 extern Color32 *clBgInteractive;

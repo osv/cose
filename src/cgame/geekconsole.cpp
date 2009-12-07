@@ -51,6 +51,8 @@ const std::string strUniqMatchedRET("Unique match, RET - complete and finish");
 
 std::string historyDir("history/");
 
+CustomDescribeSelection customDescribeSelection = NULL;
+
 typedef struct colortbl {
     const char *colorName;
     const char *colorHexName;
@@ -785,11 +787,14 @@ static void planetocentricCoords2Sstream(std::stringstream& ss,
         ss << ' ' << altitude << _("km");
 }
 
-std::string describeSelection(Selection sel, CelestiaCore *celAppCore)
+std::string describeSelection(Selection sel, CelestiaCore *celAppCore, bool doCustomDescribe)
 {
     std::stringstream ss;
     if (!sel.empty())
     {
+        if (doCustomDescribe && customDescribeSelection)
+            return customDescribeSelection(sel, celAppCore);
+
         Vec3d v = sel.getPosition(celAppCore->getSimulation()->getTime()) -
             celAppCore->getSimulation()->getObserver().getPosition();
         double distance;
@@ -799,6 +804,7 @@ std::string describeSelection(Selection sel, CelestiaCore *celAppCore)
         Body *body;
         DeepSkyObject *dso;
         Location *location;
+
         switch (sel.getType())
         {
         case Selection::Type_Star:
@@ -980,21 +986,18 @@ bool GeekConsole::execFunction(std::string funName, std::string param)
             next_pos = param.find_first_of("@", curr_pos);
             val = (param.substr(curr_pos, next_pos-curr_pos));
             funState++;
-            if (!isVisible)
+            if (val == "EXEC")
             {
-                if (val == "EXEC")
+                GCFunc *f = getFunctionByName(funName);
+                if (!f)
                 {
-                    GCFunc *f = getFunctionByName(funName);
-                    if (!f)
-                    {
-                        DPRINTF(1, "GFunction not found: '%s'", val.c_str());
-                        return false;
-                    }
-                    isVisible = true;
-                    curFun = f;
-                    funState = 0;
-                    call("");
+                    DPRINTF(1, "GFunction not found: '%s'", val.c_str());
+                    return false;
                 }
+                isVisible = true;
+                curFun = f;
+                funState = 0;
+                call("");
             }
             else
                 call(val);
@@ -1003,21 +1006,6 @@ bool GeekConsole::execFunction(std::string funName, std::string param)
                 break;
             curr_pos = next_pos+1;
         }
-        // int i = 0;
-        // size_t pos = 0, end;
-        // std::string val;
-        // curFun->call(this, funState, "");
-        // pos = param.find('@');
-        // funState++;
-        // while(pos != std::string::npos && isVisible)
-        // {
-        //     end = param.find('@', pos + 1);
-        //     val = param.substr(pos + 1, end - 1);
-        //     cout << val << "' --- val state: " << funState << " " << param << "\n";
-        //     isVisible = true;
-        //     curFun->call(this, funState, val);
-        //     pos = param.find('@', end);
-        // }
     }
     else
         isVisible = false;
@@ -2251,53 +2239,6 @@ static int execFunction(GeekConsole *gc, int state, std::string value)
     return state;
 }
 
-static int gotoBody(GeekConsole *gc, int state, std::string value)
-{
-    gc->getCelCore()->getSimulation()->
-        gotoSelection(5.0, Vector3f::UnitY(), ObserverFrame::ObserverLocal);
-    gc->finish();
-    return state;
-}
-
-static int gotoBodyGC(GeekConsole *gc, int state, std::string value)
-{
-    gc->getCelCore()->getSimulation()->getObserver().gotoSelectionGC(
-        gc->getCelCore()->getSimulation()->getSelection(),
-        5.0, 0.0, 0.5,
-        Vector3f::UnitY(), ObserverFrame::ObserverLocal);
-    gc->finish();
-    return state;
-}
-
-static int unmarkAll(GeekConsole *gc, int state, std::string value)
-{
-    Simulation* sim = gc->getCelCore()->getSimulation();
-    sim->getUniverse()->unmarkAll();
-    gc->finish();
-    return state;
-}
-
-static int selectBody(GeekConsole *gc, int state, std::string value)
-{
-    switch (state)
-    {
-    case 1:
-    {
-        Selection sel = gc->getCelCore()->getSimulation()->findObjectFromPath(value, true);
-        if (!sel.empty())
-        {
-            gc->getCelCore()->getSimulation()->setSelection(sel);
-        }
-    }
-    gc->finish();
-    break;
-    case 0:
-        gc->setInteractive(celBodyInteractive, "select", _("Target name: "), _("Enter target for select"));
-        break;
-    }
-    return state;
-}
-
 static int bindKey(GeekConsole *gc, int state, std::string value)
 {
     static string bindspace;
@@ -2464,104 +2405,10 @@ static int describebindKey(GeekConsole *gc, int state, std::string value)
     return state;
 }
 
-static StarBrowser starBrowser;
-static int selectStar(GeekConsole *gc, int state, std::string value)
-{
-    const std::string nearest("Nearest");
-    const std::string brightestApp("Brightest App");
-    const std::string brightestAbs("Brightest Abs");
-    const std::string wplanets("With Planets");
-    std::vector<std::string> completion;
-    switch (state)
-    {
-    case 0: // sort stars by..
-    {
-        completion.push_back(nearest);      completion.push_back(brightestApp);
-        completion.push_back(brightestAbs); completion.push_back(wplanets);
-        gc->setInteractive(listInteractive, "sort-star", _("Sort by:"), "");
-        listInteractive->setCompletion(completion);
-        listInteractive->setMatchCompletion(true);
-        break;
-    }
-    case 1:
-    {
-        // set sort type
-        if (compareIgnoringCase(value, nearest) == 0)
-            starBrowser.setPredicate(0);
-        else if (compareIgnoringCase(value, brightestApp) == 0)
-            starBrowser.setPredicate(1);
-        else if (compareIgnoringCase(value, brightestAbs) == 0)
-            starBrowser.setPredicate(2);
-        else if (compareIgnoringCase(value, wplanets) == 0)
-            starBrowser.setPredicate(3);
-        // interact for num of stars
-        gc->setInteractive(listInteractive, "num-of-star", _("Num of stars:"), "");
-        listInteractive->setCompletionFromSemicolonStr("16;50;100;200;300;400;500");
-        break;
-    }
-    case 2: // select star
-    {
-        int numListStars = atoi(value.c_str());
-        if (numListStars < 1)
-            numListStars = 1;
-        /* Load the catalogs and set data */
-        starBrowser.setSimulation(gc->getCelCore()->getSimulation());
-        StarDatabase* stardb = celAppCore->getSimulation()->
-            getUniverse()->getStarCatalog();
-        starBrowser.refresh();
-        vector<const Star*> *stars = starBrowser.listStars(numListStars);
-        if (!stars)
-        {
-            gc->finish();
-            break;
-        }
-        int currentLength = (*stars).size();
-        if (currentLength == 0)
-        {
-            gc->finish();
-            break;
-        }
-        celAppCore->getSimulation()->setSelection(Selection((Star *)(*stars)[0]));
-
-        for (int i = 0; i < currentLength; i++)
-        {
-            const Star *star=(*stars)[i];
-            completion.push_back(stardb->getStarName(*star));
-        }
-
-        gc->setInteractive(listInteractive, "select-star", _("Select star"), "");
-        listInteractive->setCompletion(completion);
-        break;
-    }
-    case -2-1: // describe star
-    {
-        cout << 2 << "\n";
-        Selection sel = gc->getCelCore()->getSimulation()->
-            findObjectFromPath(value, true);
-        std::string descr = describeSelection(sel, gc->getCelCore());
-        if (!descr.empty())
-            gc->descriptionStr = describeSelection(sel, gc->getCelCore());
-        break;
-    }
-    case 3: // finish
-    {
-        Selection sel = gc->getCelCore()->getSimulation()->findObjectFromPath(value, true);
-        if (!sel.empty())
-        {
-            gc->getCelCore()->getSimulation()->setSelection(sel);
-        }
-        gc->finish();
-        break;
-    }
-    default:
-        break;
-    }
-    return state;
-}
 
 static bool isInteractsInit = false;
 
-void initGCInteractivesAndFunctions(GeekConsole *gc)
+void initGCInteractives(GeekConsole *gc)
 {
     if (!isInteractsInit)
     {
@@ -2573,19 +2420,12 @@ void initGCInteractivesAndFunctions(GeekConsole *gc)
     }
     gc->registerAndBind("", "M-x",
                         GCFunc(execFunction), "exec function");
-    gc->registerAndBind("", "C-RET",
-                        GCFunc(selectBody), "select object");
-    gc->registerFunction(GCFunc(gotoBody), "goto object");
-    gc->registerAndBind("", "C-c g",
-                        GCFunc(gotoBodyGC), "goto object gc");
     gc->registerFunction(GCFunc(bindKey), "bind");
     gc->registerFunction(GCFunc(unBindKey), "unbind");
     gc->registerFunction(GCFunc(describebindKey), "describe key");
-    gc->registerFunction(GCFunc(selectStar), "select star");
-    gc->registerFunction(GCFunc(unmarkAll), "unmark all");
 }
 
-void destroyGCInteractivesAndFunctions()
+void destroyGCInteractives()
 {
     delete listInteractive;
     delete passwordInteractive;
