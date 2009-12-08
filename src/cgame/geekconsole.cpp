@@ -681,7 +681,7 @@ Color32 getColor32FromText(const string &text)
 Color getColorFromText(const string &text)
 {
     Color32 c = getColor32FromText(text);
-    return Color(c.rgba[0] / 255, (float)c.rgba[1] / 255,
+    return Color((float)c.rgba[0] / 255, (float)c.rgba[1] / 255,
                  (float)c.rgba[2] / 255, (float)c.rgba[3] / 255);
 }
 
@@ -1804,7 +1804,8 @@ void ListInteractive::charEntered(const wchar_t wc, int modifiers)
 
     if (typedTextCompletion.size() == 1)
     {
-        gc->descriptionStr = strUniqMatchedRET;
+        if (mustMatch)
+            gc->descriptionStr = strUniqMatchedRET;
 	    gc->describeCurText(getBufferText());
     }
 }

@@ -368,11 +368,13 @@ extern ColorChooserInteractive *colorChooserInteractive;
 typedef std::string (*CustomDescribeSelection)(Selection sel,
                                                CelestiaCore *celAppCore);
 
+/* Describe selection.
+   doCustomDescribe - use custom describer if exist*/
 extern std::string describeSelection(Selection sel, CelestiaCore *celAppCore, bool doCustomDescribe = true);
 
 extern CustomDescribeSelection customDescribeSelection;
 
-// direcory to store history (default = "history/")
+// directory to store history (default = "history/")
 extern std::string historyDir;
 
 // color theming of gc

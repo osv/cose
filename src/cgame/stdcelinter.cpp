@@ -150,7 +150,6 @@ static int unmarkAll(GeekConsole *gc, int state, std::string value)
 
 static int markObject(GeekConsole *gc, int state, std::string value)
 {
-    static bool occludable;
     static bool labelled;
     static MarkerRepresentation::Symbol markSymbol;
     static std::string markType;
@@ -161,22 +160,12 @@ static int markObject(GeekConsole *gc, int state, std::string value)
     switch (state)
     {
     case 0:
-        gc->setInteractive(listInteractive, "occulude-mark", _("Occludable mark"),
-                           _("Dous marker will be occludable?"));
-        listInteractive->setCompletionFromSemicolonStr("yes;no");
-        listInteractive->setMatchCompletion(true);
-        break;
-    case 1:
-        if (value == "yes")
-            occludable = true;
-        else
-            occludable = false;
         // ask for labels on marks
         gc->setInteractive(listInteractive, "labelled-mark", _("Show label on mark"), "");
         listInteractive->setCompletionFromSemicolonStr("yes;no");
         listInteractive->setMatchCompletion(true);
         break;
-    case 2:
+    case 1:
         if (value == "yes")
             labelled = true;
         else
@@ -186,7 +175,7 @@ static int markObject(GeekConsole *gc, int state, std::string value)
         gc->setInteractive(listInteractive, "mark-size", _("Mark size"),_("Choose mark size"));
         listInteractive->setCompletionFromSemicolonStr("5;7;9;14;20;32;45");
         break;
-    case 3:
+    case 2:
         markSize = atof(value.c_str());
 
         // ask for mark type
@@ -197,7 +186,7 @@ static int markObject(GeekConsole *gc, int state, std::string value)
         listInteractive->setCompletionFromSemicolonStr("diamond;triangle;square;filledsquare;plus;x;leftarrow;rightarrow;uparrow;downarrow;circle;disk");
         listInteractive->setMatchCompletion(true);
         break;
-    case 4:
+    case 3:
         if (value == "diamond")
             markSymbol = MarkerRepresentation::Diamond;
         else if (value == "triangle")
@@ -231,7 +220,7 @@ static int markObject(GeekConsole *gc, int state, std::string value)
         gc->setInteractive(colorChooserInteractive, "mark-color", ss.str(),
                            _("Color of marker"));
         break;
-    case 5:
+    case 4:
         markColor = getColorFromText(value);
         markColorStr = value;
         // ask for object
@@ -239,7 +228,7 @@ static int markObject(GeekConsole *gc, int state, std::string value)
         gc->setInteractive(celBodyInteractive, "select", _("Target to mark:"),
                            ss.str());
         break;
-    case 6:
+    case 5:
     {
         Selection sel = gc->getCelCore()->getSimulation()->findObjectFromPath(value, true);
         std::string askStr(_("Other target to mark:"));
@@ -253,15 +242,15 @@ static int markObject(GeekConsole *gc, int state, std::string value)
             markerRep.setLabel(sel.getName());
             sim->getUniverse()->unmarkObject(sel, 4);
 
-            sim->getUniverse()->markObject(sel, markerRep, 4, occludable);
+            sim->getUniverse()->markObject(sel, markerRep, 4);
             askStr = _("Marked \"") + value + "\". " + askStr;
         }
         // ask for next object
         ss << _("Next object to mark (\"") << markType << "\", " << markSize << ", "
-           << markColorStr << '), C-g or ESC to cancel';
+           << markColorStr << _("), C-g or ESC to cancel");
         gc->setInteractive(celBodyInteractive, "select", askStr,
                            ss.str());
-        return 5;
+        return 4;
         break;
     }
     }
