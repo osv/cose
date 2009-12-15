@@ -937,79 +937,107 @@ GeekConsole::~GeekConsole()
     delete overlay;
 }
 
-void GeekConsole::execFunction(GCFunc *fun)
+int GeekConsole::execFunction(GCFunc *fun)
 {
     curFun = fun;
+    curFunName.clear();
     funState = 0;
     isVisible = true;
-    fun->call(this, funState, "");
+    return call("");
 }
 
-bool GeekConsole::execFunction(std::string funName)
+int GeekConsole::execFunction(std::string funName)
 {
     GCFunc *f = getFunctionByName(funName);
     curFun = f;
     funState = 0;
     if (f)
     {
+        curFunName = funName;
         isVisible = true;
-        f->call(this, funState, "");
+        return call("");
     }
     else
         isVisible = false;
-    return f;
+    return 0;
 }
 
-bool GeekConsole::execFunction(std::string funName, std::string param)
+int GeekConsole::execFunction(std::string funName, std::string param)
 {
     GCFunc *f = getFunctionByName(funName);
     curFun = f;
     funState = 0;
     if (f)
     {
+        curFunName = funName;
         isVisible = true;
         std::string val;
         call("");
-        if (!param.empty())
-        {
-            if (param[param.size() - 1] == '@')
-                param.resize(param.size() - 1);
-            if (param[0] == '@')
-                param.erase(0, 1);
-        }
-        else
-            return true;
-        vector<string> res;
-        string::size_type next_pos, curr_pos=0;
 
-        for (int i=0; ;i++) {
-            next_pos = param.find_first_of("@", curr_pos);
-            val = (param.substr(curr_pos, next_pos-curr_pos));
-            funState++;
-            if (val == "EXEC")
+        if (param[param.size() - 1] == '@')
+            param.resize(param.size() - 1);
+        if (param[0] == '@')
+            param.erase(0, 1);
+
+        vector<string> params;
+        uint cutAt;
+        while( (cutAt = param.find_first_of( "@" )) != param.npos )
+        {
+            if( cutAt > 0 )
             {
-                GCFunc *f = getFunctionByName(funName);
-                if (!f)
+                params.push_back( param.substr( 0, cutAt ) );
+            }
+            param = param.substr( cutAt + 1 );
+        }
+        if( param.length() > 0 )
+        {
+            params.push_back( param );
+        }
+
+        std::vector<string>::iterator it;
+        for (it = params.begin();
+             it != params.end(); it++)
+        {
+            funState++;
+            if (*it == "*ESC*")
+            {
+                finish();
+                return funState;
+            }
+            else if (*it == "*EXEC*")
+            {
+                finish();
+                it++;
+                if (it != params.end())
                 {
-                    DPRINTF(1, "GFunction not found: '%s'", val.c_str());
-                    return false;
+                    GCFunc *f = getFunctionByName(*it);
+                    if (!f)
+                    {
+                        DPRINTF(1, "GFunction not found: '%s'", (*it).c_str());
+                        return funState;
+                    }
+                    isVisible = true;
+                    curFun = f;
+                    curFunName = *it;
+                    funState = 0;
+                    call("");
                 }
-                isVisible = true;
-                curFun = f;
-                funState = 0;
+                else
+                {
+                    return funState;
+                }
+            }
+            else if (*it == "*NILL*")
+            {
                 call("");
             }
             else
-                call(val);
-
-            if (string::npos == next_pos)
-                break;
-            curr_pos = next_pos+1;
+                call(*it);
         }
     }
     else
         isVisible = false;
-    return f;
+    return funState;
 }
 
 void GeekConsole::describeCurText(std::string text)
@@ -1082,7 +1110,8 @@ bool GeekConsole::charEntered(const char sym, const wchar_t wc, int modifiers)
         {
             if (!(*gb)->isActive)
                 continue;
-            const std::vector<GeekBind::KeyBind>& binds = (*gb)->getBinds();
+
+            std::vector<GeekBind::KeyBind> binds = (*gb)->getBinds();
             for (it = binds.begin();
                  it != binds.end(); it++)
             {
@@ -1102,7 +1131,8 @@ bool GeekConsole::charEntered(const char sym, const wchar_t wc, int modifiers)
                 if (eq)
                     if (curKey.len == it->len)
                     {
-                        if (execFunction(it->gcFunName, it->params))
+                        execFunction(it->gcFunName, it->params);
+                        if (getFunctionByName(it->gcFunName))
                         {
                             if (curKey.len > 1)
                                 getCelCore()->flash(curKey.keyToStr() + " (" + it->gcFunName + 
@@ -1192,17 +1222,35 @@ void GeekConsole::render()
     overlay->begin();
     glTranslatef(0.0f, BOTTOM_MARGIN, 0.0f); //little margin from bottom
 
+    float funNameWidth = titleFont->getWidth(curFunName) + 10.0;
+
     // background
     glColor4ubv(clBackground->rgba);
     overlay->rect(0.0f, 0.0f, width, rectH);
+    overlay->rect(0.0f, rectH, funNameWidth, titleFontH);
 
     // Interactive & description rects
+
     glColor4ubv(clBgInteractive->rgba);
     overlay->rect(0.0f, 0.0f , width, titleFontH);
     overlay->rect(0.0f, rectH - titleFontH , width, titleFontH);
+    overlay->rect(0.0f, rectH, funNameWidth, titleFontH);
     glColor4ubv(clBgInteractiveBrd->rgba);
     overlay->rect(0.0f, 0.0f , width-1, titleFontH, false);
     overlay->rect(0.0f, rectH - titleFontH , width-1, titleFontH, false);
+    overlay->rect(0.0f, rectH, funNameWidth, titleFontH, false);
+
+    // render function name
+    glPushMatrix();
+    {
+        overlay->setFont(titleFont);
+        glTranslatef(2.0f, rectH + 4, 0.0f);
+        overlay->beginText();
+        glColor4ubv(clInteractivePrefixFnt->rgba);
+        *overlay << curFunName << ":";
+        overlay->endText();
+    }
+    glPopMatrix();
 
     // render Interactive
     glPushMatrix();
@@ -1252,10 +1300,11 @@ void GeekConsole::setInteractive(GCInteractive *Interactive, std::string history
     descriptionStr = descrStr;
 }
 
-void GeekConsole::call(const std::string &value)
+int GeekConsole::call(const std::string &value)
 {
-    if(!curFun) return;
+    if(!curFun) return 0;
     funState = curFun->call(this, funState, value);
+    return funState;
 }
 
 void GeekConsole::InteractFinished(std::string value)
@@ -1269,6 +1318,7 @@ void GeekConsole::finish()
 {
     isVisible = false;
     curFun = NULL;
+    curFunName.clear();
     if (curInteractive)
         curInteractive->cancelInteractive();
 }
@@ -1331,10 +1381,12 @@ void GeekConsole::unbind(std::string bindspace, std::string bindkey)
 
 GCInteractive::GCInteractive(std::string _InteractiveName, bool _useHistory)
 {
-    InteractiveName = _InteractiveName;
+    interactiveName = _InteractiveName;
     useHistory = _useHistory;
     if (!useHistory)
         return;
+
+    // load history
     Directory* dir = OpenDirectory(historyDir);
     std::string filename;
     if (dir != NULL)
@@ -1346,7 +1398,7 @@ GCInteractive::GCInteractive(std::string _InteractiveName, bool _useHistory)
             if (extPos == (int)string::npos)
                 continue;
             std::string ext = string(filename, extPos, filename.length() - extPos + 1);
-            if (compareIgnoringCase("." + InteractiveName, ext) == 0)
+            if (compareIgnoringCase("." + interactiveName, ext) == 0)
             {
                 std::string line;
                 std::ifstream infile((historyDir + filename).c_str(), ifstream::in);
@@ -1375,7 +1427,7 @@ GCInteractive::~GCInteractive()
              it1 != history.end(); it1++)
         {
             std::string name = it1->first;
-            std::ofstream outfile(string(historyDir + name + "." + InteractiveName).c_str(), ofstream::out);
+            std::ofstream outfile(string(historyDir + name + "." + interactiveName).c_str(), ofstream::out);
 
             for (it2 = history[name].begin();
                  it2 != history[name].end(); it2++)
@@ -2185,19 +2237,21 @@ ColorChooserInteractive *colorChooserInteractive;
 
 int GCFunc::call(GeekConsole *gc, int state, std::string value)
 {
-    if (!isLuaFunc)
-        if (vFun)
-        { vFun(); gc->finish(); return 1;}
-        else
-            return cFun(gc, state, value);
-    else
+    switch (type)
     {
+    case C:
+        return cFun(gc, state, value);
+    case Cvoid:
+        vFun(); gc->finish(); return 1;
+    case Lua:
         lua_pcall       ( lua, 0, LUA_MULTRET, 0 );
         lua_getfield    ( lua, LUA_GLOBALSINDEX, luaFunName.c_str());   // push global function on stack
         lua_pushinteger ( lua, state );                     // push second argument on stack
         lua_pushstring  ( lua, value.c_str());              // push first argument on stack
         lua_pcall       ( lua, 2, 1, 0 );                   // call function taking 2 argsuments and getting one return value
         return lua_tointeger ( lua, -1 );
+    case Alias:
+        return gc->execFunction(aliasfun, params);
     }
 }
 
@@ -2229,13 +2283,8 @@ static int execFunction(GeekConsole *gc, int state, std::string value)
         break;
     }
     case 1:
-        f = gc->getFunctionByName(value);
-        if (f)
-        {
-            gc->execFunction(f);
-            return 0;
-        }
-        break;
+        gc->finish();
+        return gc->execFunction(value);
     }
     return state;
 }
@@ -2286,7 +2335,6 @@ static int bindKey(GeekConsole *gc, int state, std::string value)
         gc->setInteractive(listInteractive, "exec-function", _("Function"), _("Select function to bind ") + keybind );
         listInteractive->setCompletion(gc->getFunctionsNames());
         listInteractive->setMatchCompletion(true);
-        break;
         break;
     case 3:
         gc->bind(bindspace, keybind, value);
@@ -2431,6 +2479,7 @@ void destroyGCInteractives()
     delete listInteractive;
     delete passwordInteractive;
     delete celBodyInteractive;
+    delete colorChooserInteractive;
 }
 
 /******************************************************************

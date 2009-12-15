@@ -577,6 +577,7 @@ namespace UI
                 if (i > 0 && i <= 5 )
                     copyRenderFlag(&renderFlags, &renderCfgSets[i]);
                 gc->finish();
+                break;
             }
             case 0:
                 gc->setInteractive(listInteractive, "r.preset", "Preset", "Set current preset");

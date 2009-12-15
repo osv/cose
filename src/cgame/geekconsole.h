@@ -78,8 +78,20 @@
 
   Special keys (F1, etc) not processed.
 
+  You can pass samoe parameter to interactive. Example:
+
+  geekConsole->bind("", "C-x C-g e @Sol/Earth@*EXEC*@goto object@",
+                    "select object"); // some test
+
+  Here binded key "C-x C-g e" to select Sol/Earth end execute other
+  interactive "goto object" (by passing parameter *EXEC* before).
+  Special parameters:
+  - *ESC* stop current interactive;
+  - *NILL* pass empty value into interactive's promt;
+  - *EXEC* finish current interactive and start other.
+
   For first exec of fun state is 0.
-  For describe current entered text callback is called with state (-currentState - 1)
+  To describe current entered text, callback is called with state (-currentState - 1)
   State will inc by 1 before GCInteractive finished.
 
   Key binds:
@@ -150,7 +162,7 @@ public:
         {return buf;}
 private:
     std::string buf;
-    std::string InteractiveName;
+    std::string interactiveName;
     bool useHistory;
 };
 
@@ -211,7 +223,7 @@ private:
 class PasswordInteractive: public GCInteractive
 {
 public:
-    PasswordInteractive(std::string name):GCInteractive(name, true)
+    PasswordInteractive(std::string name):GCInteractive(name, false)
         {};
     ~PasswordInteractive()
         {};
@@ -224,36 +236,51 @@ class ColorChooserInteractive: public ListInteractive
 public:
     ColorChooserInteractive(std::string name):ListInteractive(name)
         {};
-    ~ColorChooserInteractive()
-        {};
     void Interact(GeekConsole *_gc, string historyName);
     void renderInteractive();
     void renderCompletion(float height, float width);
 };
 
-// container for C and lua function
+// container for C and lua callback
 typedef int (* CFunc)(GeekConsole *gc, int state, std::string value);
 typedef void (* CFuncVoid)();
 
 class GCFunc
 {
 public:
+    enum GCFuncType
+    {
+        C,
+        Cvoid,
+        Lua,
+        Alias,
+        Nill
+    };
     GCFunc():
-        isNil(true) {};
+        type(Nill) {};
     // constructor for c function
-    GCFunc(CFunc cfun): isLuaFunc(false), cFun(cfun), vFun(NULL), isNil(false){};
-	GCFunc(CFuncVoid vfun): isLuaFunc(false), cFun(NULL), vFun(vfun), isNil(false){};
+    GCFunc(CFunc cfun): type(C), cFun(cfun), vFun(NULL){};
+    // simple c void callback
+	GCFunc(CFuncVoid vfun): type(Cvoid), cFun(NULL), vFun(vfun){};
     // constructor for name of lua function
-    GCFunc(const char *name, lua_State* l): isLuaFunc(true), luaFunName(name),
-                                            isNil(false), lua(l){};
+    GCFunc(const char *name, lua_State* l): type(Lua), luaFunName(name),
+                                            lua(l){};
+    // constructor for alias to function with some preset parameters
+    GCFunc(const char *alias, const char *parameters): type(Alias),
+                                                       aliasfun(alias), params(parameters){};
     int call(GeekConsole *gc, int state, std::string value);
+
+    std::string const getAliasParams() { return params;
+}
 private:
-    bool isLuaFunc;
+    GCFuncType type;
     CFunc cFun;
 	CFuncVoid vFun; // simple void func()
     string luaFunName;
     bool isNil;
     lua_State* lua;
+    string aliasfun; // alias to function
+    string params; // parameters to alias functions
 };
 
 
@@ -272,9 +299,9 @@ public:
 
     void addPromter(std::string name,
                     GCInteractive *Interactive);
-    void execFunction(GCFunc *fun);
-    bool execFunction(std::string funName);
-    bool execFunction(std::string funName, std::string param);
+    int execFunction(GCFunc *fun);
+    int execFunction(std::string funName);
+    int execFunction(std::string funName, std::string param);
     // call callback fun for describe interactive text with state (-funstate - 1)
     void describeCurText(string text);
     void registerFunction(GCFunc fun, std::string name);
@@ -321,7 +348,7 @@ public:
     std::string descriptionStr;
 private:
     // call current fun, and recall if state returned by fun less
-    void call(const std::string &value);
+    int call(const std::string &value);
     TextureFont* titleFont;
     TextureFont* font;
 
@@ -332,6 +359,7 @@ private:
 
     GCInteractive *curInteractive;
     GCFunc *curFun;
+    std::string curFunName;
     int funState;
     typedef std::map<std::string, GCFunc>  Functions;
     Functions functions;
