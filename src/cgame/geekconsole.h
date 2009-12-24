@@ -12,102 +12,21 @@
 
 #define MAX_HISTORY_SYZE 128
 
-/*
-  GeekConsole
+inline vector<string> splitString( string str, string delim ){
+    vector<string> result;
+    uint cutAt;
+    while( (cutAt = str.find_first_of( delim )) != str.npos ){
+        if( cutAt > 0 ){
+            result.push_back( str.substr( 0, cutAt ) );
+        }
+        str = str.substr( cutAt + 1 );
+    }
+    if( str.length() > 0 ){
+        result.push_back( str );
+    }
+    return result;
+}
 
-  GeekConsole used for interacting using callback function:
-
-  int _somefun(GeekConsole *gc, int state, std::string value)
-  {
-  switch (state)
-  {
-  case 1:
-  if (value == "yes")
-  exit(1);
-  else
-  gc->finish(); // *finish* interacting and hide console
-  case 0:
-  // setup interactive
-  gc->setInteractive(listInteract, "quit", "Are You Sure?", "Quit from game");
-  listInteractive->setCompletionFromSemicolonStr("yes;no");
-  listInteractive->setMatchCompletion(true); // default false
-  }
-  return state;
-  }
-
-  So you can call console's interactive:
-
-  GCFunc somefun(_somefun);
-  geekConsole->execFunction(&_somefun);
-
-  Function _somefun will be called by geekconsole, and you must call
-  some interacter in this.
-
-  You can create simple "void" callback:
-
-  void toggleFullScreen()
-  {
-  // ... just toggle, no need geekconsole.finish() or other.
-  }
-
-  and register this
-  geekConsole->registerFunction(GCFunc(ToggleFullscreen), "toggle fullscreen");
-
-  To set key bind for some func use bind:
-
-  geekConsole->bind("Global", "M-RET",
-  "toggle fullscreen");
-
-  or register and bind at once:
-
-  geekConsole->registerAndBind("Global", "C-x f",
-  GCFunc(ToggleFullscreen), "toggle fullscreen");
-
-  you can use void bindspace that's mean "Global":
-
-  geekConsole->bind("", "M-RET",
-  "toggle fullscreen");
-
-  For key bind there are some emacs's suggestion:
-
-  M- alt (not true meta key)
-  C- Ctrl
-  S- Shift
-  RET enter
-  etc
-
-  Special keys (F1, etc) not processed.
-
-  You can pass samoe parameter to interactive. Example:
-
-  geekConsole->bind("", "C-x C-g e @Sol/Earth@*EXEC*@goto object@",
-                    "select object"); // some test
-
-  Here binded key "C-x C-g e" to select Sol/Earth end execute other
-  interactive "goto object" (by passing parameter *EXEC* before).
-  Special parameters:
-  - *ESC* stop current interactive;
-  - *NILL* pass empty value into interactive's promt;
-  - *EXEC* finish current interactive and start other.
-
-  For first exec of fun state is 0.
-  To describe current entered text, callback is called with state (-currentState - 1)
-  State will inc by 1 before GCInteractive finished.
-
-  Key binds:
-  C-s............... Change size of console
-  C-g............... Cancel interactive
-  Esc............... Cancel interactive
-  Ctrl+p............ Prev in history
-  Ctrl+n............ Next in history
-  Ctrl+z............ Remove expanded part from input
-  Ctrl+w............ Kill backword
-  Ctrl+u............ Kill whole line
-  TAB............... Try complete or scroll completion
-  Alt+/............. Expand next
-  Alt+?............. Expand prev
-  Alt+c............. cel object promt: select & center view
-*/
 
 class GeekConsole;
 class GCFunction;
@@ -139,31 +58,49 @@ class GCInteractive
 public:
     GCInteractive(std::string name, bool useHistory = true);
     ~GCInteractive();
+    /* Reset interactive
+     */
     virtual void Interact(GeekConsole *gc, string historyName);
     virtual void charEntered(const wchar_t wc, int modifiers);
+    // called by gc
     virtual void cancelInteractive();
     /* You must render Interactive by using GeekConsole's overlay
-     * because overlay->beginText() called before call renderInteractive.
+     * overlay->beginText() called before call renderInteractive.
      */
     virtual void renderInteractive();
     /* render with default font gc->getCompletionFont()
      */
     virtual void renderCompletion(float height, float width);
+    /* Update descibe str completion, etc.
+       Will called after charEntered
+     */
+    virtual void update();
+    /* set def value in buffer
+     */
+    virtual void setDefaultValue(std::string v);
+    /* set to buffer str from last value in history
+     */
+    void setLastFromHistory();
+protected:
     GeekConsole *gc;
-    typedef std::map<std::string, std::vector<std::string>, CompareIgnoringCasePredicate> History;
-    History history;
-    std::string curHistoryName;
-    uint typedHistoryCompletionIdx;
-    void prepareHistoryCompletion();
+    std::string separatorChars; // additional separator chars
+
     std::vector<std::string> typedHistoryCompletion;
-    uint bufSizeBeforeHystory; //size of buf befor apply mathed str from hist. need for restore prev buf
+
+    //size of buf without expanded part (by history or completion)
+    uint bufSizeBeforeHystory;
     void setBufferText(std::string str);
     std::string getBufferText()const
         {return buf;}
 private:
+    void prepareHistoryCompletion();
     std::string buf;
     std::string interactiveName;
     bool useHistory;
+    typedef std::map<std::string, std::vector<std::string>, CompareIgnoringCasePredicate> History;
+    History history;
+    std::string curHistoryName;
+    uint typedHistoryCompletionIdx;
 };
 
 
@@ -174,16 +111,19 @@ public:
     ListInteractive(std::string name):GCInteractive(name, true), cols(4)
         {};
     void Interact(GeekConsole *_gc, string historyName);
+    virtual void setRightText(std::string str);
+    virtual std::string getRightText()const; // return text before after 
     bool tryComplete();
     void charEntered(const wchar_t wc, int modifiers);
-    void renderCompletion(float height, float width);
+    virtual void renderCompletion(float height, float width);
+    void update();
     void setCompletion(std::vector<std::string> completion);
     void setMatchCompletion(bool mustMatch); // true - result must be matched in completion. Default false
     void setCompletionFromSemicolonStr(std::string); // add completion by str like "yes;no"
     void setColumns(int c = 4)
         {if (c >0 && c < 8) cols = c;}
 protected:
-    void updateTextCompletion();
+    virtual void updateTextCompletion();
     std::vector<std::string> completionList;
     uint pageScrollIdx;
     uint scrollSize; // number of compl. items to scroll
@@ -193,32 +133,56 @@ protected:
     bool mustMatch; // if true - on RET key finish promt only if matched in completionList
 };
 
-class CelBodyInteractive: public GCInteractive
+// celestia's object prompter
+class CelBodyInteractive: public ListInteractive
 {
 public:
     CelBodyInteractive(std::string name, CelestiaCore *celApp);
     void Interact(GeekConsole *_gc, string historyName);
-    bool tryComplete();
     void charEntered(const wchar_t wc, int modifiers);
     void renderCompletion(float height, float width);
-    void setRightText(std::string str);
-    std::string getRightText()const; // return text before after "/"
-    void updateDescrStr(); // update descr str of console with info about body
+    void update();
     void cancelInteractive();
-    void setColumns(int c = 4)
-        {if (c >0 && c < 8) cols = c;}
 private:
     void updateTextCompletion();
-    std::vector<std::string> completionList;
-    uint pageScrollIdx;
-    uint scrollSize; // number of compl. items to scroll
-    uint completedIdx;
-    int cols;
-    std::vector<std::string> typedTextCompletion;
     CelestiaCore *celApp;
     Selection lastCompletionSel;
+    Selection firstSelection; // selection before interactive do any sel changes
 };
 
+
+class FlagInteractive: public ListInteractive
+{
+public:
+    FlagInteractive(std::string name): ListInteractive(name), defDelim("/;") {};
+
+    void Interact(GeekConsole *_gc, string historyName);
+    void setSeparatorChars(std::string);
+    string getDefaultDelim() const
+        { return defDelim; }
+
+private:
+    void updateTextCompletion();
+    string defDelim;
+};
+
+class FileInteractive: public ListInteractive
+{
+public:
+    FileInteractive(std::string name): ListInteractive(name) {};
+    void Interact(GeekConsole *_gc, string historyName);
+    void setFileExtenstion(std::string);
+    void setRightText(std::string str);
+    void update();
+    void charEntered(const wchar_t wc, int modifiers);
+    /* Set dir, entire - root dir; use it in inter-callback */
+    void setDir(std::string dir, std::string entire = "./");
+private:
+    void updateTextCompletion();
+    std::vector<std::string> fileExt;
+    std::string dirEntire; // root dir entire (not show for user)
+    std::vector<std::string> dirCache;
+};
 // no history + ****** Interactive
 class PasswordInteractive: public GCInteractive
 {
@@ -266,8 +230,8 @@ public:
     GCFunc(const char *name, lua_State* l): type(Lua), luaFunName(name),
                                             lua(l){};
     // constructor for alias to function with some preset parameters
-    GCFunc(const char *alias, const char *parameters): type(Alias),
-                                                       aliasfun(alias), params(parameters){};
+    GCFunc(const char *aliasTo, const char *parameters): type(Alias),
+                                                       aliasfun(aliasTo), params(parameters){};
     int call(GeekConsole *gc, int state, std::string value);
 
     std::string const getAliasParams() { return params;
@@ -327,8 +291,8 @@ public:
         {return overlay;}
     void setInteractive(GCInteractive *Interactive,
                         std::string historyName,  // if empty - dont use history
-                        std::string InteractiveStr, // str before prompt
-                        std::string descrStr); // describe str (bottom)
+                        std::string InteractiveStr = "", // str before prompt
+                        std::string descrStr = ""); // describe str (bottom)
 
     void InteractFinished(std::string value);
     void finish();
@@ -389,6 +353,8 @@ extern ListInteractive *listInteractive;
 extern PasswordInteractive *passwordInteractive;
 extern CelBodyInteractive *celBodyInteractive;
 extern ColorChooserInteractive *colorChooserInteractive;
+extern FlagInteractive *flagInteractive;
+extern FileInteractive *fileInteractive;
 
 /* describeselection is used celestia body interactive.
    You can setup own describer
