@@ -36,7 +36,7 @@ SUBDIRS = src po locale merge
 
 MAINTAINERCLEANFILES = subdirs configure.in 
 
-NONAUTO = thirdparty
+NONAUTO = thirdparty doc
 
 dist-hook:
 	( \

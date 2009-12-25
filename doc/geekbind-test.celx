@@ -1,0 +1,133 @@
+-- lua unit tests for geekconsole
+
+-- interactive test
+gc.registerFunction("lua list test", "listTest")
+gc.registerFunction("lua password test", "passwdTest")
+gc.registerFunction("lua color chooser test", "colorChooserTest")
+gc.registerFunction("lua celestia body test", "celBodyTest")
+gc.registerFunction("lua flag test", "flagTest")
+gc.registerFunction("lua file test", "fileTest")
+
+-- alias test
+-- select moon and goto
+gc.registerAlias("lua alias test", "select object", "sol/Earth/moon@*EXEC*@goto object gc")
+
+-- some more complex function
+gc.registerFunction("lua mark body and goto test", "markAndGotoBody" );
+
+--key bind test
+-- simple
+gc.bind("C-c l", "goto object")
+-- complex: select moon and goto greate circle
+gc.bind("C-c s m @Sol/Earth/Moon@*EXEC*@goto object gc@", "select object")
+
+-- unbind test
+gc.bind("C-c C-x", "goto object")
+gc.unbind("C-c C-x")
+
+
+-- INTERACTIVES CALLBACKS--
+
+-- listInteractive(string:semicolon-completion, string:history, 
+--                 string:prefix-text, string:describe-text,
+--                 [number:must-match])
+function listTest (state, s)
+   if state == 0 then
+      gc.listInteractive("class O;class B;class A;class F;class G;class K;class M","test-list", "Spectral class: ","Type spectral class", 1);
+   elseif state == 1 then
+      celestia:flash(s)
+      gc.finish()
+   end
+   return state
+end
+
+-- passwordInteractive(string:prefix-text, string:describe-text)
+function passwdTest (state, s)
+   if state == 0 then
+      gc.passwdInteractive("Password", " Password test");
+   elseif state == 1 then
+      celestia:flash(s)
+      gc.finish()
+   end
+   return state
+end
+
+-- colorChooseInteractive(string:history, string:prefix-text, string:describe-text)
+-- use gc.color2HexRGB(s), gc.alphaFromColor(s) to extract rgb color and alpha
+function colorChooserTest (state, s)
+   if state == 0 then
+      gc.colorChooseInteractive("test-color", "Select color", "Color select")
+      gc.setColumns(1)
+   elseif state == 1 then
+      celestia:flash("Hex color: " .. gc.color2HexRGB(s) .. ", Alpha: " .. gc.alphaFromColor(s), 5)
+      gc.finish()
+   end
+   return state
+end
+
+-- celBodyInteractive(string:history, string:prefix-text, string:describe-text)
+function celBodyTest (state, s)
+   if state == 0 then
+      gc.celBodyInteractive("test-body-sel", "Body", "Select object")
+      gc.setColumns(5)
+   elseif state == 1 then
+      celestia:flash(s)
+      gc.finish()
+   end
+   return state
+end
+
+-- listInteractive(string:semicolon-completion, string:history, 
+--                 string:prefix-text, string:describe-text,
+--                 [number:must-match], [string:delimiter=";/"])
+function flagTest (state, s)
+   if state == 0 then
+      gc.flagInteractive("stars;planets;galaxy;clouds;atmospheres",
+			 "test-flag", "Select flag (use ';/' as delimiter)", "Select object")
+   elseif state == 1 then
+      celestia:flash(s)
+      gc.finish()
+   end
+   return state
+end
+
+
+-- fileInteractive(string:history, string:prefix-text, string:describe-text,
+--                 [number:must-match], [string:dir], [string:rootdir="./"], [string:fileExt])
+function fileTest (state, s)
+   if state == 0 then
+      gc.fileInteractive("test-file", "Choose texture", "Select texture (.png, .jpg, .dds) ",
+			 1, "textures/", "./", ".png;.dds;.jpg")
+      gc.setColumns(3)
+      gc.setLastFromHistory()
+   elseif state == 1 then
+      celestia:flash("Texture " .. s)
+      gc.finish()
+   end
+   return state
+end
+
+-- Complex test.
+-- Prompt object, select him, prompt color, mark him with color,
+-- and call geekconsole's command "goto object"
+function markAndGotoBody (state, s)
+   if state == 0 then
+      gc.celBodyInteractive("", "Target ", "Select body to goto")
+      gc.setColumns(8)
+   elseif state == 1 then
+      obs = celestia:getobserver()
+      myObject = celestia:find(s)
+      celestia:select(myObject)
+      gc.colorChooseInteractive("color", "Select color", "Color select")
+   elseif state == 2 then
+      sel = celestia:getselection()
+      color = gc.color2HexRGB(s)
+      sel:mark(color, "diamond", 15)
+      celestia:flash(color)
+      gc.finish()
+      gc.call("goto object")
+   end
+
+   return state
+end
+

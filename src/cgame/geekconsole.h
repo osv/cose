@@ -121,7 +121,7 @@ public:
     void setMatchCompletion(bool mustMatch); // true - result must be matched in completion. Default false
     void setCompletionFromSemicolonStr(std::string); // add completion by str like "yes;no"
     void setColumns(int c = 4)
-        {if (c >0 && c < 8) cols = c;}
+        {cols = c; if (cols < 1) cols = 1; if (cols > 8) cols = 8;}
 protected:
     virtual void updateTextCompletion();
     std::vector<std::string> completionList;
@@ -199,7 +199,7 @@ class ColorChooserInteractive: public ListInteractive
 {
 public:
     ColorChooserInteractive(std::string name):ListInteractive(name)
-        {};
+        {cols = 2;};
     void Interact(GeekConsole *_gc, string historyName);
     void renderInteractive();
     void renderCompletion(float height, float width);
@@ -306,6 +306,8 @@ public:
         { return geekBinds;}
     bool bind(std::string bindspace, std::string bindkey, std::string function);
     void unbind(std::string bindspace, std::string bindkey);
+    GCInteractive *getCurrentInteractive() const
+        {return curInteractive;}
     // descript. prefix in before interactive prompt
     std::string InteractivePrefixStr;
     // bottom description str
