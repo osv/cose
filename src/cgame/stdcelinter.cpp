@@ -38,6 +38,7 @@ static int selectBody(GeekConsole *gc, int state, std::string value)
     break;
     case 0:
         gc->setInteractive(celBodyInteractive, "select", _("Target name: "), _("Enter target for select"));
+        celBodyInteractive->setLastFromHistory();
         break;
     }
     return state;
@@ -62,6 +63,7 @@ static int selectStar(GeekConsole *gc, int state, std::string value)
         gc->setInteractive(listInteractive, "sort-star", _("Sort by:"), "");
         listInteractive->setCompletion(completion);
         listInteractive->setMatchCompletion(true);
+        listInteractive->setLastFromHistory();
         break;
     }
     case 1:
@@ -78,6 +80,7 @@ static int selectStar(GeekConsole *gc, int state, std::string value)
         // interact for num of stars
         gc->setInteractive(listInteractive, "num-of-star", _("Num of stars:"), "");
         listInteractive->setCompletionFromSemicolonStr("16;50;100;200;300;400;500");
+        listInteractive->setLastFromHistory();
         break;
     }
     case 2: // select star
@@ -112,6 +115,7 @@ static int selectStar(GeekConsole *gc, int state, std::string value)
 
         gc->setInteractive(listInteractive, "select-star", _("Select star"), "");
         listInteractive->setCompletion(completion);
+        listInteractive->setLastFromHistory();
         break;
     }
     case -2-1: // describe star
@@ -257,6 +261,205 @@ static int markObject(GeekConsole *gc, int state, std::string value)
     return state;
 }
 
+/* prompt script name and run */
+static int openScript(GeekConsole *gc, int state, std::string value)
+{
+    switch (state)
+    {
+    case 0:
+        gc->setInteractive(fileInteractive, "run-script", _("Select script to run"));
+        fileInteractive->setDir("scripts/");
+        fileInteractive->setLastFromHistory();
+        fileInteractive->setMatchCompletion(true);
+        fileInteractive->setFileExtenstion(".celx;.cel");
+        break;
+    case 1:
+        gc->getCelCore()->runScript("./" + value);
+        gc->finish();
+        break;
+    }
+    return state;
+}
+
+/* render flag config */
+struct flags_s {
+    const char *name;
+    uint32 mask;
+};
+
+flags_s renderflags[] = {
+    {"Stars",       0x0001},
+    {"Planets",     0x0002},
+    {"Galaxies",    0x0004},
+    {"Diagrams",    0x0008},
+    {"Cloud Maps",   0x0010},
+    {"Orbits",      0x0020},
+    {"Celestial Sphere", 0x0040},
+    {"Night Maps",   0x0080},
+    {"Atmospheres", 0x0100},
+    {"Smooth Lines", 0x0200},
+    {"Eclipse Shadows", 0x0400},
+    {"Stars As Points", 0x0800},
+    {"Ring Shadows", 0x1000},
+    {"Boundaries",  0x2000},
+    {"AutoMag",     0x4000},
+    {"Comet Tails",  0x8000},
+    {"Markers",     0x10000},
+    {"Partial Trajectories", 0x20000},
+    {"Nebulae",     0x40000},
+    {"Open Clusters", 0x80000},
+    {"Globulars",   0x100000},
+    {"Cloud Shadows", 0x200000},
+    {"Galactic Grid", 0x400000},
+    {"Ecliptic Grid", 0x800000},
+    {"Horizon Grid", 0x1000000},
+    {"Ecliptic",    0x2000000},
+    {NULL}
+};
+
+flags_s labelflags[] = {
+    {"Star",               0x001},
+    {"Planet",             0x002},
+    {"Moon",               0x004},
+    {"Constellation",      0x008},
+    {"Galaxy",             0x010},
+    {"Asteroid",           0x020},
+    {"Spacecraft",         0x040},
+    {"Location",           0x080},
+    {"Comet",              0x100},
+    {"Nebula",             0x200},
+    {"Open Cluster",        0x400},
+    {"Constellation in latin",  0x800},
+    {"DwarfPlanet",        0x1000},
+    {"MinorMoon",          0x2000},
+    {"Globular",           0x4000},
+    {NULL}
+};
+
+flags_s orbitflag[] = {
+    {"Planet",          0x01},
+    {"Moon",            0x02},
+    {"Asteroid",        0x04},
+    {"Comet",           0x08},
+    {"Spacecraft",      0x10},
+    {"Invisible",       0x20},
+//    {"Barycenter",      0x40}, // Not used (invisible is used instead)
+//    {"SmallBody",       0x80}, // Not used
+    {"Dwarf Planet",     0x100},
+    {"Stellar",         0x200}, // only used for orbit mask
+    {"Surface Feature",  0x400},
+    {"Component",       0x800},
+    {"Minor Moon",       0x1000},
+    {"Diffuse",         0x2000},
+    {"Unknown",         0x10000},
+    {NULL}
+};
+
+static flags_s *flagsToSet = renderflags;
+
+static int setFlag(GeekConsole *gc, int state, std::string value)
+{
+    static uint32 var; // flag here
+    static bool setUnset; // true set flag, flase - unset
+    std::stringstream ss;
+
+    switch(state)
+    {
+    case 0:
+        gc->setInteractive(listInteractive, "set-unset", _("Show/Hide objects"));
+        listInteractive->setCompletionFromSemicolonStr("show;hide");
+        listInteractive->setMatchCompletion(true);
+        break;
+    case 1:
+        if (value == "show")
+            setUnset = true;
+        else
+            setUnset = false;
+        ss << (setUnset ? _("Show") : _("Hide"));
+        gc->setInteractive(listInteractive, "flag-type", ss.str(),
+                           setUnset ?
+                           _("Which type of flag to set") : _("Which type of flag to unset"));
+        listInteractive->setCompletionFromSemicolonStr("objects;labels;orbits");
+        listInteractive->setMatchCompletion(true);
+        break;
+    case 2:
+    {
+        Renderer *r = gc->getCelCore()->getRenderer();
+        if (value == "labels")
+        {
+            flagsToSet = labelflags;
+            var = r->getLabelMode();
+        } else if (value == "orbits")
+        {
+            flagsToSet = orbitflag;
+            var = r->getOrbitMask();
+        } else {
+            flagsToSet = renderflags;
+            var = r->getRenderFlags();
+        }
+
+        std::vector<std::string> completion;
+        int j = 0;
+        while(flagsToSet[j].name != NULL)
+        {
+            // add only if flag not set currently if need to set flag and so on
+            if (setUnset)
+            {
+                if (!(var & flagsToSet[j].mask))
+                    completion.push_back(flagsToSet[j].name);
+            } else
+                if ((var & flagsToSet[j].mask))
+                    completion.push_back(flagsToSet[j].name);
+            j++;
+        }
+
+        ss << (setUnset ? _("Show") : _("Hide")) << " " << value;
+        gc->setInteractive(flagInteractive, "flag-" + value, ss.str());
+        flagInteractive->setCompletion(completion);
+        flagInteractive->setColumns(5);
+        flagInteractive->setMatchCompletion(true);
+        break;
+    }
+    case 3:
+    {
+        Renderer *r = gc->getCelCore()->getRenderer();
+        // split flags
+        std::vector<std::string> strArray =
+            splitString(value, flagInteractive->getDefaultDelim());
+        std::vector<string>::iterator it;
+
+        // set flag
+        for (it = strArray.begin();
+             it != strArray.end(); it++)
+        {
+            int j = 0;
+            while(flagsToSet[j].name != NULL)
+            {
+                string s = *it;
+                if(s == flagsToSet[j].name )
+                {
+                    if (setUnset)
+                        var |= flagsToSet[j].mask;
+                    else
+                        var &= ~ flagsToSet[j].mask;
+                    break;
+                }
+                j++;
+            }
+        }
+        if (flagsToSet == renderflags)
+            r->setRenderFlags(var);
+        else if (flagsToSet == labelflags)
+            r->setLabelMode(var);
+        else if (flagsToSet == orbitflag)
+            r->setOrbitMask(var);
+        }
+        gc->finish();
+        break;
+    }
+    return state;
+}
+
 /* init */
 
 void initGCStdInteractivsFunctions(GeekConsole *gc)
@@ -269,4 +472,12 @@ void initGCStdInteractivsFunctions(GeekConsole *gc)
     gc->registerFunction(GCFunc(selectStar), "select star");
     gc->registerFunction(GCFunc(unmarkAll), "unmark all");
     gc->registerFunction(GCFunc(markObject), "mark object");
+    gc->registerAndBind("", "C-x 4 f",
+                        GCFunc(openScript), "open script");
+    gc->registerFunction(GCFunc(setFlag), "celestia options");
+    // aliases
+    gc->registerFunction(GCFunc("celestia options", "@show"),
+                         "show objects");
+    gc->registerFunction(GCFunc("celestia options", "@hide"),
+                         "hide objects");
 }
