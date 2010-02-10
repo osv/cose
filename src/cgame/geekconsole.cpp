@@ -1280,7 +1280,8 @@ bool GeekConsole::charEntered(const char sym, const wchar_t wc, int modifiers)
     if (curInteractive)
     {
         curInteractive->charEntered(wc, modifiers);
-        curInteractive->update();
+        if (isVisible)
+            curInteractive->update();
     }
     return true;
 }
@@ -2190,7 +2191,7 @@ void CelBodyInteractive::update()
     std::string desc = describeSelection(sel, celApp);
     if (!desc.empty())
     {
-        gc->descriptionStr = desc + _(", M-c - Select. ") + gc->descriptionStr;
+        gc->descriptionStr = desc + _(", M-c - Select. ");
     }
     // mark selected
     MarkerRepresentation markerRep(MarkerRepresentation::Crosshair);

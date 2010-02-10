@@ -554,7 +554,7 @@ namespace UI
                 sprintf(buff,"%d",i);
                 tab = celCfgWinNewTab(std::string("preset ") +  buff, nb, 
                                       &renderCfgSets[i], i);
-                std::string str = std::string(_("To set this preference use Ctrl+"))+ buff;
+                std::string str = std::string(_("To set this preference use C-x r "))+ buff;
                 AG_SeparatorNew(tab, AG_SEPARATOR_HORIZ);
                 AG_ButtonNewFn(tab, 0, str.c_str(), 
                                setPreset, "%i", i);
@@ -1271,6 +1271,24 @@ namespace UI
             AG_WindowHide(w);
     }
 
+    void maximizeCurrentFocusedWindow()
+    {
+        AG_Window *w = AG_WindowFindFocused();
+        if (w) {
+            if (w->flags & AG_WINDOW_MAXIMIZED)
+                AG_WindowUnmaximize(w);
+            else
+                AG_WindowMaximize(w);
+        }
+    }
+
+    void minimizeCurrentFocusedWindow()
+    {
+        AG_Window *w = AG_WindowFindFocused();
+        if (w)
+            AG_WindowMinimize(w);
+    }
+
     void toggleShowUI()
     {
         if (showUI)
@@ -1361,12 +1379,15 @@ namespace UI
         agTextAntialiasing = 1;
         geekConsole->registerAndBind("", "C-x k",
                                      GCFunc(closeCurrentFocusedWindow), "close window");
+        geekConsole->registerFunction(GCFunc(minimizeCurrentFocusedWindow), "minimize window");
+        geekConsole->registerAndBind("", "C-x 1",
+                                     GCFunc(maximizeCurrentFocusedWindow), "maximize window");
         geekConsole->registerAndBind("", "C-o",
                                      GCFunc(toggleShowUI), "toggle ui");
         geekConsole->registerAndBind("", "C-x r r",
                                      GCFunc(RenderCfgDial::GCSetPreset), "set render preset");
         // geekconsole
-        geekConsole->registerFunction(CFunc(StarBrowserDialog::GCShowStarBrowser), "show solar browser");
+        geekConsole->registerFunction(GCFunc(StarBrowserDialog::GCShowStarBrowser), "show solar browser");
         geekConsole->registerFunction(GCFunc(SolarSysBrowser::GCBrowseNearestSolarSystem), "show solar system browser");
         geekConsole->registerFunction(GCFunc(RenderCfgDial::GCShowCelPreference), "show preference");
         geekConsole->registerAndBind("", "C-x C-c",
