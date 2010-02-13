@@ -2133,9 +2133,24 @@ void CelBodyInteractive::updateTextCompletion()
     //skip update for some history and expand action
     if (str.length() != bufSizeBeforeHystory)
         return;
-    typedTextCompletion = celApp->getSimulation()->
-        getObjectCompletion(str,
-                            (celApp->getRenderer()->getLabelMode() & Renderer::LocationLabels) != 0);
+
+    if (completionList.size()) {
+        std::string buftext = string(getBufferText(), 0, bufSizeBeforeHystory);
+        std::vector<std::string>::iterator it;
+        typedTextCompletion.clear();
+        int buf_length = UTF8Length(buftext);
+        // Search through all string in base completion list
+        for (it = completionList.begin();
+             it != completionList.end(); it++)
+        {
+            if (buf_length == 0 ||
+                (UTF8StringCompare(*it, buftext, buf_length) == 0))
+                typedTextCompletion.push_back(*it);
+        }
+    } else // if no completion list take it from simulation
+        typedTextCompletion = celApp->getSimulation()->
+            getObjectCompletion(str,
+                                (celApp->getRenderer()->getLabelMode() & Renderer::LocationLabels) != 0);
 }
 
 void CelBodyInteractive::Interact(GeekConsole *_gc, string historyName)
@@ -2145,6 +2160,8 @@ void CelBodyInteractive::Interact(GeekConsole *_gc, string historyName)
     completedIdx = -1;
     lastCompletionSel = Selection();
     update();
+    completionList.clear();
+    typedTextCompletion.clear();
     ListInteractive::setColumns(4);
     ListInteractive::separatorChars = "/";
 }
@@ -2206,6 +2223,18 @@ void CelBodyInteractive::update()
     GCInteractive::update();
     updateTextCompletion();
 };
+
+void CelBodyInteractive::setCompletion(std::vector<std::string> completion)
+{
+    ListInteractive::setCompletion(completion);
+    separatorChars = "";
+}
+
+void CelBodyInteractive::setCompletionFromSemicolonStr(std::string completion)
+{
+    ListInteractive::setCompletionFromSemicolonStr(completion);
+    separatorChars = "";
+}
 
 void CelBodyInteractive::cancelInteractive()
 {
@@ -2698,11 +2727,14 @@ static int setPasswdInteractive(lua_State* l)
 static int setCelBodyInteractive(lua_State* l)
 {
     CelxLua celx(l);
-    celx.checkArgs(3, 3, "Three arguments expected for gc.celBodyInteractive(shistory, sPrefix, sDescr)");
+    celx.checkArgs(3, 4, "Three arguments expected for gc.celBodyInteractive(shistory, sPrefix, sDescr, [sCompetion]");
     const char *history = celx.safeGetString(1, AllErrors, "argument 1 to gc.celBodyInteractive must be a string");
     const char *prefix = celx.safeGetString(2, AllErrors, "argument 2 to gc.celBodyInteractive must be a string");
     const char *descr = celx.safeGetString(3, AllErrors, "argument 3 to gc.celBodyInteractive must be a string");
+    const char *completion = celx.safeGetString(4, WrongType, "argument 4 to gc.celBodyInteractive must be a string");
     geekConsole->setInteractive(celBodyInteractive, history, prefix, descr);
+    if (completion)
+        celBodyInteractive->setCompletionFromSemicolonStr(completion);
     return 0;
 }
 

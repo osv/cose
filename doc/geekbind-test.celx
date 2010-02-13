@@ -7,6 +7,7 @@ gc.registerFunction("lua color chooser test", "colorChooserTest")
 gc.registerFunction("lua celestia body test", "celBodyTest")
 gc.registerFunction("lua flag test", "flagTest")
 gc.registerFunction("lua file test", "fileTest")
+gc.registerFunction("lua custom cel body sel", "customSet")
 
 -- alias test
 -- select moon and goto
@@ -131,3 +132,14 @@ function markAndGotoBody (state, s)
    return state
 end
 
+function customSet (state, s)
+   if state == 0 then
+      gc.celBodyInteractive("", "Body", "Select object", "Sol/Earth;Sol/Earth/Moon;eps eri/b;eps eri;iss")
+   elseif state == 1 then
+      obs = celestia:getobserver()
+      myObject = celestia:find(s)
+      celestia:select(myObject)
+      gc.finish()
+   end
+   return state
+end

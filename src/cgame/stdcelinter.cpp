@@ -113,19 +113,9 @@ static int selectStar(GeekConsole *gc, int state, std::string value)
             completion.push_back(stardb->getStarName(*star));
         }
 
-        gc->setInteractive(listInteractive, "select-star", _("Select star"), "");
+        gc->setInteractive(celBodyInteractive, "select-star", _("Select star"), "");
         listInteractive->setCompletion(completion);
         listInteractive->setLastFromHistory();
-        break;
-    }
-    case -2-1: // describe star
-    {
-        cout << 2 << "\n";
-        Selection sel = gc->getCelCore()->getSimulation()->
-            findObjectFromPath(value, true);
-        std::string descr = describeSelection(sel, gc->getCelCore());
-        if (!descr.empty())
-            gc->descriptionStr = describeSelection(sel, gc->getCelCore());
         break;
     }
     case 3: // finish

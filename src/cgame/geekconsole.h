@@ -142,6 +142,8 @@ public:
     void charEntered(const wchar_t wc, int modifiers);
     void renderCompletion(float height, float width);
     void update();
+    void setCompletion(std::vector<std::string> completion);
+    void setCompletionFromSemicolonStr(std::string);
     void cancelInteractive();
 private:
     void updateTextCompletion();
