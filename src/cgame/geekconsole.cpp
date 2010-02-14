@@ -1896,7 +1896,9 @@ void ListInteractive::setRightText(std::string text)
         string::size_type pos = str.find_last_of(separatorChars, str.length());
         if (pos != string::npos)
         {
-            GCInteractive::setBufferText(string(str, 0, pos + 1) + text);
+                GCInteractive::setBufferText(string(str, 0,
+                                                    pos + 1 < bufSizeBeforeHystory ? pos + 1 : bufSizeBeforeHystory) 
+                                             + text);
         }
         else
             GCInteractive::setBufferText(text);
@@ -1948,11 +1950,11 @@ void ListInteractive::charEntered(const wchar_t wc, int modifiers)
         if (!typedTextCompletion.empty())
         {
             vector<std::string>::const_iterator it = typedTextCompletion.begin();
-            if (completedIdx == 0)
+            if (completedIdx <= 0)
                 completedIdx = pageScrollIdx + scrollSize;
             completedIdx--;
             if (completedIdx < pageScrollIdx)
-                completedIdx = pageScrollIdx + scrollSize;
+                completedIdx = pageScrollIdx + scrollSize - 1;
             if (completedIdx > typedTextCompletion.size())
                 completedIdx = typedTextCompletion.size() - 1;
             it += completedIdx;
