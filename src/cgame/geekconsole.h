@@ -127,8 +127,8 @@ protected:
     std::vector<std::string> completionList;
     uint pageScrollIdx;
     uint scrollSize; // number of compl. items to scroll
-    uint completedIdx;
-    int cols;
+    int completedIdx;
+    uint cols;
     std::vector<std::string> typedTextCompletion;
     bool mustMatch; // if true - on RET key finish promt only if matched in completionList
 };
@@ -148,8 +148,19 @@ public:
 private:
     void updateTextCompletion();
     CelestiaCore *celApp;
-    Selection lastCompletionSel;
-    Selection firstSelection; // selection before interactive do any sel changes
+
+    // Selesction  is  string name  not  class  Selection, because  in
+    // future in  game, objects  may be destroyed  so it  will prevent
+    // segfault.
+
+    // TODO: seems that celestia will have dynamic load/unload addons,
+    // maybe  this will  be not  problem with  shared  pointers.  Need
+    // optimisation for code replacing to Selection instead string.
+
+    // name of last selection
+    std::string lastCompletionSel;
+    // selection before interactive do any sel changes
+    std::string firstSelection;
 };
 
 
@@ -219,39 +230,47 @@ public:
         C,
         Cvoid,
         Lua,
+        LuaNamed, // str of lua fun name
         Alias,
         Nill
     };
     GCFunc():
         type(Nill) {};
     // constructor for c function
-    GCFunc(CFunc cfun): type(C), cFun(cfun), vFun(NULL){};
+    GCFunc(CFunc cfun, std::string doc = ""): type(C), cFun(cfun), vFun(NULL),  info(doc){};
     // simple c void callback
-	GCFunc(CFuncVoid vfun): type(Cvoid), cFun(NULL), vFun(vfun){};
+	GCFunc(CFuncVoid vfun, std::string doc = ""): type(Cvoid), cFun(NULL), vFun(vfun), info(doc){};
     // constructor for name of lua function
-    GCFunc(const char *name, lua_State* l): type(Lua), luaFunName(name),
-                                            lua(l){};
+    GCFunc(const char *name, lua_State* l, std::string doc = ""): type(LuaNamed), luaFunName(name),
+                                                                  lua(l), info(doc){};
+    // constructor for lua callback
+    GCFunc(const int callBackRef, lua_State* l, std::string doc = ""): type(Lua), luaCallBack(callBackRef),
+                                                                       lua(l), info(doc){};
     // constructor for alias to function with some preset parameters
-    GCFunc(const char *aliasTo, const char *parameters): type(Alias),
-                                                       aliasfun(aliasTo), params(parameters){};
+    GCFunc(const char *aliasTo, const char *parameters, std::string doc = ""): type(Alias),
+                                                                               aliasfun(aliasTo),
+                                                                               params(parameters),
+                                                                               info(doc){};
     int call(GeekConsole *gc, int state, std::string value);
 
-    std::string const getAliasParams() { return params;
-}
+    std::string const getAliasParams() { return params; }
+    std::string const getInfo() { return info; }
 private:
     GCFuncType type;
     CFunc cFun;
 	CFuncVoid vFun; // simple void func()
     string luaFunName;
-    bool isNil;
+    int luaCallBack;
     lua_State* lua;
     string aliasfun; // alias to function
     string params; // parameters to alias functions
+    string info; // documentation of this function
 };
 
 
 class GeekConsole
 {
+    friend class GCFunc;
 public:
     enum ConsoleType
     {
@@ -265,7 +284,6 @@ public:
 
     void addPromter(std::string name,
                     GCInteractive *Interactive);
-    int execFunction(GCFunc *fun);
     int execFunction(std::string funName);
     int execFunction(std::string funName, std::string param);
     // call callback fun for describe interactive text with state (-funstate - 1)
@@ -285,19 +303,18 @@ public:
     bool isVisible;
     int32 consoleType;
 
-    TextureFont* getInteractiveFont() const
-        {return titleFont;}
-    TextureFont* getCompletionFont() const
-        {return font;}
+    TextureFont* getInteractiveFont();
+    TextureFont* getCompletionFont();
+
     Overlay* getOverlay() const
         {return overlay;}
     void setInteractive(GCInteractive *Interactive,
                         std::string historyName,  // if empty - dont use history
                         std::string InteractiveStr = "", // str before prompt
                         std::string descrStr = ""); // describe str (bottom)
-
+    // on "ENTER" press event
     void InteractFinished(std::string value);
-    void finish();
+    void finish(); // hide console
     CelestiaCore *getCelCore() const
         {return celCore;}
     GeekBind *createGeekBind(std::string bindspace);
@@ -310,13 +327,27 @@ public:
     void unbind(std::string bindspace, std::string bindkey);
     GCInteractive *getCurrentInteractive() const
         {return curInteractive;}
+    void setInfoText(std::string);
+    void clearInfoText();
+
+    // enable/disable macro recording
+    void setMacroRecord(bool enable, bool quiet = false);
+    bool isMacroRecord() const
+        { return isMacroRecording; }
+    void callMacro();
+    std::string getCurrentMacro() const
+        { return currentMacro; }
+    void appendCurrentMacro(std::string);
+
     // descript. prefix in before interactive prompt
     std::string InteractivePrefixStr;
     // bottom description str
     std::string descriptionStr;
 private:
+    int execFunction(GCFunc *fun);
+
     // call current fun, and recall if state returned by fun less
-    int call(const std::string &value);
+    int call(const std::string &value, bool params = false);
     TextureFont* titleFont;
     TextureFont* font;
 
@@ -333,6 +364,16 @@ private:
     Functions functions;
     std::vector<GeekBind *> geekBinds; // list of key bind spaces
     GeekBind::KeyBind curKey; // current key sequence
+
+    std::vector<std::string> infoText; // lines of info text
+    uint infoWidth; // max width in pixel of infoText
+
+    std::string lastMacro;
+    std::string currentMacro;
+    bool isMacroRecording;
+    uint maxMacroLevel;
+    uint curMacroLevel;
+
 };
 
 extern Color getColorFromText(const string &text);
@@ -389,5 +430,8 @@ extern Color32 *clCompletionMatchCharFnt;
 extern Color32 *clCompletionAfterMatch;
 extern Color32 *clCompletionMatchCharBg;
 extern Color32 *clCompletionExpandBg;
+extern Color32 *clInfoTextFnt;
+extern Color32 *clInfoTextBg;
+extern Color32 *clInfoTextBrd;
 
 #endif // _GEEKCONSOLE_H_

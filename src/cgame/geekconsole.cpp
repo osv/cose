@@ -79,18 +79,20 @@ int _somefun(GeekConsole *gc, int state, std::string value)
   State will inc by 1 before GCInteractive finished.
 
   Key binds:
-  C-s............... Change size of console
+  C-s C-S-s......... Change size of console
   C-g............... Cancel interactive
+  C-s-g............. Break intractive and finish macro record
   Esc............... Cancel interactive
-  Ctrl+p............ Prev in history
-  Ctrl+n............ Next in history
-  Ctrl+z............ Remove expanded part from input
-  Ctrl+w............ Kill backword
-  Ctrl+u............ Kill whole line
+  C-h............... Show documentation about current interactive function
+  C-p............... Prev in history
+  C-n............... Next in history
+  C-z............... Remove expanded part from input
+  C-w............... Kill backword
+  C-u............... Kill whole line
   TAB............... Try complete or scroll completion
-  Alt+/............. Expand next
-  Alt+?............. Expand prev
-  Alt+c............. cel object promt: select & center view
+  M-/............... Expand next
+  M-?............... Expand prev
+  M-c............... cel object promt: select & center view
 */
 
 #include "cgame.h"
@@ -109,11 +111,14 @@ int _somefun(GeekConsole *gc, int state, std::string value)
 using namespace Eigen;
 
 #ifndef CEL_DESCR_SEP
-#define CEL_DESCR_SEP " | "
+#define CEL_DESCR_SEP "; "
 #endif
 
 // margin from bottom
 #define BOTTOM_MARGIN 5.0
+
+// lines of info text
+#define MAX_LINES_INFO 6
 
 Color32 clBackgroundD(100, 100, 250,200);
 Color32 *clBackground = &clBackgroundD;
@@ -139,6 +144,12 @@ Color32 clCompletionMatchCharBgD(255, 0, 0, 255);
 Color32 *clCompletionMatchCharBg = &clCompletionMatchCharBgD;
 Color32 clCompletionExpandBgD(0, 0, 0, 200);
 Color32 *clCompletionExpandBg = &clCompletionExpandBgD;
+Color32 clInfoTextFntD(0, 0, 0, 255);
+Color32 *clInfoTextFnt = &clInfoTextFntD;
+Color32 clInfoTextBgD(255, 255, 50, 210);
+Color32 *clInfoTextBg = &clInfoTextBgD;
+Color32 clInfoTextBrdD(255, 255, 255, 200);
+Color32 *clInfoTextBrd = &clInfoTextBrdD;
 
 GeekConsole *geekConsole = NULL;
 const char *ctrlZDescr = "C-z - Unexpand";
@@ -884,6 +895,7 @@ static void planetocentricCoords2Sstream(std::stringstream& ss,
 std::string describeSelection(Selection sel, CelestiaCore *celAppCore, bool doCustomDescribe)
 {
     std::stringstream ss;
+    char buf[128];
     if (!sel.empty())
     {
         if (doCustomDescribe && customDescribeSelection)
@@ -904,19 +916,37 @@ std::string describeSelection(Selection sel, CelestiaCore *celAppCore, bool doCu
         case Selection::Type_Star:
             distance = v.length() * 1e-6;
             star = sel.star();
-            ss << "[Star] Dist: ";
+            if (!star->getVisibility())
+            {
+                ss << _("Star system barycenter\n");
+                break;
+            } else
+                ss << "Star" << CEL_DESCR_SEP;
+
+            ss << _("Distance: ");
             distance2Sstream(ss, distance);
-            ss << CEL_DESCR_SEP << _("Radius: ")
+            if (!star->getVisibility())
+                break;
+            ss << "\n" << _("Radius: ")
                << SigDigitNum(star->getRadius() / 696000.0f, 2)
                << " " << _("Rsun")
                << "  (" << SigDigitNum(star->getRadius(), 3) << " km" << ")"
-               << CEL_DESCR_SEP "class ";
+               << "\n" << _("Class: ");
             if (star->getSpectralType()[0] == 'Q')
                 ss <<  _("Neutron star");
             else if (star->getSpectralType()[0] == 'X')
                 ss <<  _("Black hole");
             else
                 ss << star->getSpectralType();
+            ss << CEL_DESCR_SEP;
+            sprintf(buf, _("Abs (app) mag: %.2f (%.2f)\n"),
+                    star->getAbsoluteMagnitude(),
+                    astro::absToAppMag(star->getAbsoluteMagnitude(),
+                                       (float) distance));
+            ss << buf;
+            if (star->getLuminosity() > 1.0e-10f)
+                ss << _("Luminosity: ") << SigDigitNum(star->getLuminosity(), 3) << _("x Sun") << CEL_DESCR_SEP;
+            ss << _("Surface temp: ") << SigDigitNum(star->getTemperature(), 3) << " K\n";
             sys = celAppCore->getSimulation()->
                 getUniverse()->getSolarSystem(star);
             if (sys != NULL && sys->getPlanets()->getSystemSize() != 0)
@@ -942,7 +972,7 @@ std::string describeSelection(Selection sel, CelestiaCore *celAppCore, bool doCu
                         break;
                     }
                 }
-                ss << CEL_DESCR_SEP << planetsnum << " Planets, " << dwarfsnum
+                ss << "\n" << planetsnum << "Planets, " << dwarfsnum
                    << " Dwarf, " << astersnum << " Asteroid";
             }
             break;
@@ -951,10 +981,10 @@ std::string describeSelection(Selection sel, CelestiaCore *celAppCore, bool doCu
                 v * astro::microLightYearsToKilometers(1.0);
             body = sel.body();
             kmDistance = astro::lightYearsToKilometers(distance);
-            ss << "[Body] Dist: ";
+            ss << "Body" << CEL_DESCR_SEP << _("Distance: ");
             distance = astro::kilometersToLightYears(kmDistance - body->getRadius());
             distance2Sstream(ss, distance);
-            ss << CEL_DESCR_SEP << _("Radius: ");
+            ss << "\n" << _("Radius: ");
             distance = astro::kilometersToLightYears(body->getRadius());
             distance2Sstream(ss, distance);
             break;
@@ -964,9 +994,9 @@ std::string describeSelection(Selection sel, CelestiaCore *celAppCore, bool doCu
             distance = v.length() * 1e-6 - dso->getRadius();
             char descBuf[128];
             dso->getDescription(descBuf, sizeof(descBuf));
-            ss << "[DSO, "
+            ss << "DSO" << CEL_DESCR_SEP
                << descBuf
-               << "] ";
+               << "\n";
             if (distance >= 0)
             {
                 ss << _("Distance: ");
@@ -977,7 +1007,7 @@ std::string describeSelection(Selection sel, CelestiaCore *celAppCore, bool doCu
                 ss << _("Distance from center: ");
                 distance2Sstream(ss, distance + dso->getRadius());
             }
-            ss << CEL_DESCR_SEP << _("Radius: ");
+            ss << "\n" << _("Radius: ");
             distance2Sstream(ss, dso->getRadius());
             break;
         }
@@ -985,7 +1015,7 @@ std::string describeSelection(Selection sel, CelestiaCore *celAppCore, bool doCu
         {
             location = sel.location();
             body = location->getParentBody();
-            ss << "[Location] "
+            ss << "Location" << CEL_DESCR_SEP
                << _("Distance: ");
             distance2Sstream(ss, v.length() * 1e-6);
             ss << CEL_DESCR_SEP;
@@ -1013,13 +1043,14 @@ GeekConsole::GeekConsole(CelestiaCore *celCore):
     celCore(celCore),
     overlay(NULL),
     curInteractive(NULL),
-    curFun(NULL)
+    curFun(NULL),
+    isMacroRecording(false),
+    maxMacroLevel(64)
 {
     overlay = new Overlay();
     *overlay << setprecision(6);
     *overlay << ios::fixed;
     // create global key bind space
-//    geekConsole->createGeekBind("Global");
     GeekBind *gb = new GeekBind("Global");
     geekBinds.push_back(gb);
     curKey.len = 0;
@@ -1033,6 +1064,7 @@ GeekConsole::~GeekConsole()
 
 int GeekConsole::execFunction(GCFunc *fun)
 {
+    finish(); //need clean old interactive
     curFun = fun;
     curFunName.clear();
     funState = 0;
@@ -1043,6 +1075,12 @@ int GeekConsole::execFunction(GCFunc *fun)
 int GeekConsole::execFunction(std::string funName)
 {
     GCFunc *f = getFunctionByName(funName);
+    // if not called from other function
+    if (f && isMacroRecording && !curFun)
+    {
+        appendCurrentMacro("@*EXEC*@" + funName);
+    }
+    finish();
     curFun = f;
     funState = 0;
     if (f)
@@ -1066,7 +1104,7 @@ int GeekConsole::execFunction(std::string funName, std::string param)
         curFunName = funName;
         isVisible = true;
         std::string val;
-        call("");
+        call("", true);
 
         if (param[param.size() - 1] == '@')
             param.resize(param.size() - 1);
@@ -1114,7 +1152,7 @@ int GeekConsole::execFunction(std::string funName, std::string param)
                     curFun = f;
                     curFunName = *it;
                     funState = 0;
-                    call("");
+                    call("", true);
                 }
                 else
                 {
@@ -1123,10 +1161,10 @@ int GeekConsole::execFunction(std::string funName, std::string param)
             }
             else if (*it == "*NILL*")
             {
-                call("");
+                call("", true);
             }
             else
-                call(*it);
+                call(*it, true);
         }
     }
     else
@@ -1225,12 +1263,18 @@ bool GeekConsole::charEntered(const char sym, const wchar_t wc, int modifiers)
                 if (eq)
                     if (curKey.len == it->len)
                     {
-                        execFunction(it->gcFunName, it->params);
                         if (getFunctionByName(it->gcFunName))
                         {
                             if (curKey.len > 1)
                                 getCelCore()->flash(curKey.keyToStr() + " (" + it->gcFunName + 
                                                     ") " + it->params, 2.5);
+                            if (isMacroRecording)
+                            {
+                                appendCurrentMacro("@*EXEC*@" + it->gcFunName);
+                                if (!it->params.empty())
+                                    appendCurrentMacro(it->params);
+                            }
+                            execFunction(it->gcFunName, it->params);
                         }
                         else
                         {
@@ -1262,19 +1306,43 @@ bool GeekConsole::charEntered(const char sym, const wchar_t wc, int modifiers)
         return true;
     } // !isVisible
 
-    char C = toupper((char)wc);
-    switch (C)
+    bool isCtrl = modifiers & GeekBind::CTRL;
+    bool isShift = modifiers & GeekBind::SHIFT;
+    char c = tolower(sym);
+    if (isCtrl && c == 'h')
     {
-    case '\023':  // Ctrl+S
-        if (consoleType >= Big)
-            consoleType = Tiny;
-        else
-            consoleType++;
+        if (curFun)
+            setInfoText(curFun->getInfo());
         return true;
-    case '\007':  // Ctrl+G
-    case '\033':  // ESC
+    } else if (isCtrl && c == 's') // C-s
+    {
+        if (isShift)
+        {
+            if (consoleType <= Tiny)
+                consoleType = Big;
+            else
+                consoleType--;
+            return true;
+        } else
+        {
+            if (consoleType >= Big)
+                consoleType = Tiny;
+            else
+                consoleType++;
+            return true;
+        }
+    } else if ((isCtrl && c == 'g') || // C-g
+               sym == '\033') // ESC
+    {
+        if (isMacroRecording) // append macro
+            if (isShift && c == 'g') // C-S-g
+            { // last macro command is cancel command
+                appendCurrentMacro("@*EXEC*@end macro");
+                setMacroRecord(false);
+            }
+            else
+                appendCurrentMacro("@*ESC*");
         finish();
-    return true;
     }
 
     if (curInteractive)
@@ -1286,14 +1354,27 @@ bool GeekConsole::charEntered(const char sym, const wchar_t wc, int modifiers)
     return true;
 }
 
+TextureFont* GeekConsole::getInteractiveFont()
+{
+    if (titleFont == NULL)
+        titleFont = getTitleFont(celCore);
+    return titleFont;
+}
+
+TextureFont* GeekConsole::getCompletionFont()
+{
+    if (font == NULL)
+        font = getFont(celCore);
+    return font;
+}
+
+
 void GeekConsole::render()
 {
     if (!isVisible || !curInteractive)
         return;
-    if (font == NULL)
-        font = getFont(celCore);
-    if (titleFont == NULL)
-        titleFont = getTitleFont(celCore);
+    TextureFont* font = getCompletionFont();
+    TextureFont* titleFont = getInteractiveFont();
     if (font == NULL || titleFont == NULL)
         return;
 
@@ -1308,14 +1389,14 @@ void GeekConsole::render()
         nb_lines = 3;
         break;
     case GeekConsole::Medium:
-        nb_lines = (height * 0.4 - 2 * titleFontH) / fontH;
+        nb_lines = (height * 0.5 - 3 * titleFontH - 10) / (fontH + 1);
         break;
     case GeekConsole::Big:
     default:
-        nb_lines = (height * 0.8 - 2 * titleFontH) / fontH;
+        nb_lines = ((height - 3 * titleFontH) / (fontH + 1)) - MAX_LINES_INFO - 1;
         break;
     }
-    complH = (nb_lines+1) * fontH + nb_lines;
+    complH = (nb_lines+1) * (fontH + 1);
     rectH = complH + 2 * titleFontH;
     overlay->begin();
     glTranslatef(0.0f, BOTTOM_MARGIN, 0.0f); //little margin from bottom
@@ -1333,10 +1414,40 @@ void GeekConsole::render()
     overlay->rect(0.0f, 0.0f , width, titleFontH);
     overlay->rect(0.0f, rectH - titleFontH , width, titleFontH);
     overlay->rect(0.0f, rectH, funNameWidth, titleFontH);
+
     glColor4ubv(clBgInteractiveBrd->rgba);
     overlay->rect(0.0f, 0.0f , width-1, titleFontH, false);
     overlay->rect(0.0f, rectH - titleFontH , width-1, titleFontH, false);
     overlay->rect(0.0f, rectH, funNameWidth, titleFontH, false);
+
+    // info text
+    if (infoText.size()) {
+        float y = rectH + titleFontH;
+        glColor4ubv(clInfoTextBg->rgba);
+        overlay->rect(0.0f, y,
+                      infoWidth, fontH * infoText.size() + 2);
+
+        glColor4ubv(clInfoTextBrd->rgba);
+        overlay->rect(0.0f, y,
+                      infoWidth, fontH * infoText.size() + 2, false);
+
+        // render info text
+        glPushMatrix();
+        {
+            overlay->setFont(font);
+            glTranslatef(2.0f, y + 6
+                         + (infoText.size() - 1) * fontH, 0.0f);
+            overlay->beginText();
+            glColor4ubv(clInfoTextFnt->rgba);
+            std::vector<std::string>::iterator it;
+            for (it = infoText.begin();
+                 it != infoText.end(); it++) {
+                *overlay << *it << "\n";
+            }
+            overlay->endText();
+        }
+        glPopMatrix();
+    }
 
     // render function name
     glPushMatrix();
@@ -1396,12 +1507,34 @@ void GeekConsole::setInteractive(GCInteractive *Interactive, std::string history
     curInteractive->Interact(this, historyName);
     InteractivePrefixStr = InteractiveStr;
     descriptionStr = descrStr;
+    clearInfoText();
 }
 
-int GeekConsole::call(const std::string &value)
+int GeekConsole::call(const std::string &value, bool params)
 {
     if(!curFun) return 0;
-    funState = curFun->call(this, funState, value);
+
+    if (isMacroRecording && !params)
+    {
+        // zero state must be skipped
+        // <0 skip, because its a describe state
+        if (funState > 0)
+        {
+            if (value == "")
+            {
+                appendCurrentMacro("@*NILL*");
+            }
+            else
+            {
+                appendCurrentMacro("@" + value);
+            }
+        }
+    }
+    GCFunc *lastFun = curFun;
+    int state = curFun->call(this, funState, value);
+    // set new state only if no new function called
+    if (lastFun == curFun)
+        funState = state;
     return funState;
 }
 
@@ -1409,6 +1542,10 @@ void GeekConsole::InteractFinished(std::string value)
 {
     if(!curFun) return;
     funState++;
+
+    // some interactives may need do some clean
+    if (curInteractive)
+        curInteractive->cancelInteractive();
     call(value);
 }
 
@@ -1419,6 +1556,7 @@ void GeekConsole::finish()
     curFunName.clear();
     if (curInteractive)
         curInteractive->cancelInteractive();
+    curInteractive = NULL;
 }
 
 GeekBind *GeekConsole::createGeekBind(std::string bindspace)
@@ -1471,6 +1609,112 @@ void GeekConsole::unbind(std::string bindspace, std::string bindkey)
     GeekBind *gb = getGeekBind(bindspace);
     if (gb)
         gb->unbind(bindkey.c_str());
+}
+
+void GeekConsole::setInfoText(std::string info)
+{
+    infoText = splitString(info, "\n");
+    if (infoText.size() > MAX_LINES_INFO)
+        infoText.resize(MAX_LINES_INFO);
+
+    std::vector<std::string>::iterator it;
+    infoWidth = 0;
+    TextureFont* font = getCompletionFont();
+    if (!font)
+        return;
+    for (it = infoText.begin();
+         it != infoText.end(); it++) {
+        if (!(*it).empty())
+        {
+            uint s = font->getWidth(*it);
+            if (s > infoWidth)
+                infoWidth = s + 4;
+        }
+    }
+}
+
+void GeekConsole::clearInfoText()
+{
+    infoWidth = 0;
+    infoText.clear();
+}
+
+void GeekConsole::setMacroRecord(bool enable, bool quiet)
+{
+    std::string execkey = "@*EXEC*";
+
+    if (enable)
+    {
+        if (isMacroRecording)
+        {
+            if (!quiet)
+                celAppCore->flash(_("Already defining macro"));
+
+            size_t found = currentMacro.rfind(execkey);
+            if( found != string::npos )
+                currentMacro = currentMacro.substr(0, found);
+            return;
+        }
+        currentMacro = "";
+        curMacroLevel = 0;
+        isMacroRecording = true;
+    } else
+    {
+        if (!isMacroRecording)
+        {
+            if (!quiet)
+                celAppCore->flash(_("Not defining macro"));
+            return;
+        }
+
+        size_t found = currentMacro.rfind(execkey);
+        if( found != string::npos )
+            currentMacro = currentMacro.substr(0, found);
+
+        // replace unusefull *EXEC*@exec function into *EXEC*
+        std::string key = "@*EXEC*@exec function";
+        found = currentMacro.find(key);
+        while (found != string::npos) {
+            currentMacro.replace(found, key.length(), execkey);
+            found = currentMacro.find(key);
+        }
+
+        // remove all nill execs
+        key = "@*EXEC*@*ESC*";
+        found = currentMacro.find(key);
+        while (found != string::npos) {
+            currentMacro.replace(found, key.length(), execkey);
+            found = currentMacro.find(key);
+        }
+
+        if (currentMacro.find(execkey) == 0)
+            currentMacro.replace(0, execkey.length(), "");
+        isMacroRecording = false;
+        lastMacro = currentMacro;
+    }
+}
+
+void GeekConsole::callMacro()
+{
+    setMacroRecord(false);
+    celAppCore->flash(_("Call macro"));
+    execFunction("exec function", lastMacro);
+}
+
+void GeekConsole::appendCurrentMacro(std::string macro)
+{
+    if (!isMacroRecording)
+        return;
+    if ( curMacroLevel >= maxMacroLevel)
+    {
+        setMacroRecord(false, true);
+        celAppCore->flash(_("Max level of macro, defining stopped."), 8);
+    }
+    else
+    {
+        currentMacro += macro;
+        curMacroLevel++;
+    }
 }
 
 /******************************************************************
@@ -1554,6 +1798,7 @@ void GCInteractive::charEntered(const wchar_t wc, int modifiers)
     char C = toupper((char)wc);
 
     gc->descriptionStr = "";
+    gc->clearInfoText();
 
     std::vector<std::string>::iterator it;
     std::vector<std::string>::reverse_iterator rit;
@@ -1632,11 +1877,16 @@ void GCInteractive::charEntered(const wchar_t wc, int modifiers)
         if ( wc && (!iswcntrl(wc)) )
 #endif
         {
-            buf += wc;
-            prepareHistoryCompletion();
-            bufSizeBeforeHystory = buf.size();
+            if (!(modifiers & GeekBind::CTRL) &&
+                !(modifiers & GeekBind::META))
+            {
+                buf += wc;
+                prepareHistoryCompletion();
+                bufSizeBeforeHystory = buf.size();
+            }
         }
     gc->descriptionStr.clear();
+    gc->clearInfoText();
 }
 
 void GCInteractive::cancelInteractive()
@@ -2160,7 +2410,10 @@ void CelBodyInteractive::Interact(GeekConsole *_gc, string historyName)
     GCInteractive::Interact(_gc, historyName);
     pageScrollIdx = 0;
     completedIdx = -1;
-    lastCompletionSel = Selection();
+    lastCompletionSel.clear();
+
+    firstSelection = gc->getCelCore()->
+        getSimulation()->getSelection().getName();
     update();
     completionList.clear();
     typedTextCompletion.clear();
@@ -2174,7 +2427,9 @@ void CelBodyInteractive::charEntered(const wchar_t wc, int modifiers)
 
     if (((modifiers & GeekBind::META ) != 0) && C == 'C')
     {
-        celApp->getSimulation()->setSelection(lastCompletionSel);
+        Selection sel = gc->getCelCore()->
+            getSimulation()->findObjectFromPath(lastCompletionSel, true);
+        celApp->getSimulation()->setSelection(sel);
         celApp->getSimulation()->centerSelection();
         return;
     }
@@ -2184,8 +2439,23 @@ void CelBodyInteractive::charEntered(const wchar_t wc, int modifiers)
         Selection sel = celApp->getSimulation()->findObjectFromPath(GCInteractive::getBufferText(), true);
         if (sel.empty()) // dont continue if not match any obj
             return;
-        // pass event
-        GCInteractive::charEntered(wc, modifiers);
+
+        // if custom completion present
+        if (completionList.size()) {
+            vector<std::string>::const_iterator it;
+            std::string buftext = getBufferText();
+
+            for (it = typedTextCompletion.begin();
+                 it != typedTextCompletion.end(); it++)
+            {
+                if (UTF8StringCompare(*it, buftext) == 0)
+                {
+                    GCInteractive::charEntered(wc, modifiers);
+                    return;
+                }
+            }
+        } else // pass event
+            GCInteractive::charEntered(wc, modifiers);
         return;
     }
     else
@@ -2208,19 +2478,26 @@ void CelBodyInteractive::update()
 {
     Selection sel = celApp->getSimulation()->findObjectFromPath(GCInteractive::getBufferText(), true);
     std::string desc = describeSelection(sel, celApp);
+
     if (!desc.empty())
     {
-        gc->descriptionStr = desc + _(", M-c - Select. ");
+        gc->setInfoText(desc);
+        gc->descriptionStr = gc->descriptionStr + _(", M-c - Select. ");
     }
     // mark selected
     MarkerRepresentation markerRep(MarkerRepresentation::Crosshair);
     markerRep.setSize(10.0f);
     markerRep.setColor(Color(0.0f, 1.0f, 0.0f, 0.9f));
+
+    // unmark last selection
+    Selection lastsel = gc->getCelCore()->
+        getSimulation()->findObjectFromPath(lastCompletionSel, true);
     celApp->getSimulation()->
-        getUniverse()->unmarkObject(lastCompletionSel, 3);
+        getUniverse()->unmarkObject(lastsel, 3);
+
     celApp->getSimulation()->
         getUniverse()->markObject(sel, markerRep, 3);
-    lastCompletionSel = sel;
+    lastCompletionSel = GCInteractive::getBufferText();
 
     GCInteractive::update();
     updateTextCompletion();
@@ -2240,9 +2517,17 @@ void CelBodyInteractive::setCompletionFromSemicolonStr(std::string completion)
 
 void CelBodyInteractive::cancelInteractive()
 {
+    Selection sel = gc->getCelCore()->
+        getSimulation()->findObjectFromPath(lastCompletionSel, true);
+
     celApp->getSimulation()->
-        getUniverse()->unmarkObject(lastCompletionSel, 3);
-    lastCompletionSel = Selection();
+        getUniverse()->unmarkObject(sel, 3);
+    lastCompletionSel.clear();
+
+    // restore first selection
+    sel = gc->getCelCore()->
+        getSimulation()->findObjectFromPath(firstSelection, true);
+    celApp->getSimulation()->setSelection(sel);
 }
 
 /* Flag interactive
@@ -2322,8 +2607,12 @@ void FileInteractive::charEntered(const wchar_t wc, int modifiers)
     {
         std::string buf = getBufferText();
         int end = buf.length() - 1;
-        if (buf.length() > 1 && buf[end] =='.' && buf[end - 1] == '.' )
+        if (!modifiers && buf.length() > 1 && buf[end] =='.' && buf[end - 1] == '.' )
             return;
+        // dont allow double //
+        if (!modifiers && buf.length() > 1 && buf[end] =='/')
+            return;
+
     }
     ListInteractive::charEntered(wc, modifiers);
 }
@@ -2418,6 +2707,7 @@ FileInteractive *fileInteractive;
 
 int GCFunc::call(GeekConsole *gc, int state, std::string value)
 {
+    int res;
     switch (type)
     {
     case C:
@@ -2425,20 +2715,46 @@ int GCFunc::call(GeekConsole *gc, int state, std::string value)
     case Cvoid:
         vFun(); gc->finish(); return 1;
     case Lua:
-        lua_pcall       ( lua, 0, LUA_MULTRET, 0 );
-        lua_getfield    ( lua, LUA_GLOBALSINDEX, luaFunName.c_str());   // push global function on stack
+        lua_rawgeti(lua, LUA_REGISTRYINDEX, luaCallBack);
         lua_pushinteger ( lua, state );                     // push second argument on stack
         lua_pushstring  ( lua, value.c_str());              // push first argument on stack
-        lua_pcall       ( lua, 2, 1, 0 );                   // call function taking 2 argsuments and getting one return value
-        return lua_tointeger ( lua, -1 );
+        res = lua_pcall ( lua, 2, 1, 0 );              // call function taking 2 argsuments and getting one return value
+        if (res == 0)
+            return lua_tointeger ( lua, -1 );
+        else
+        {
+            gc->getCelCore()->flash("Error during executing lua function");
+            break;
+        }
+    case LuaNamed:
+        lua_pcall       ( lua, 0, LUA_MULTRET, 0 );
+        lua_getfield    ( lua, LUA_GLOBALSINDEX, luaFunName.c_str());   // push global function on stack
+        if (!lua_isfunction(lua, -1)) {
+            gc->finish();
+            gc->getCelCore()->flash("Lua function \""+luaFunName+"\" is undefined.");
+            return 1;
+        }
+        lua_pushinteger ( lua, state );                     // push second argument on stack
+        lua_pushstring  ( lua, value.c_str());              // push first argument on stack
+        res = lua_pcall ( lua, 2, 1, 0 );              // call function taking 2 argsuments and getting one return value
+        if (res == 0)
+            return lua_tointeger ( lua, -1 );
+        else
+        {
+            gc->getCelCore()->flash("Error during executing lua function");
+            break;
+        }
     case Alias:
         return gc->execFunction(aliasfun, params);
+    default:
+        break;
     }
+    gc->finish();
+    return 0;
 }
 
 static int execFunction(GeekConsole *gc, int state, std::string value)
 {
-    GCFunc *f;
     switch (state)
     {
     case 0:
@@ -2449,6 +2765,10 @@ static int execFunction(GeekConsole *gc, int state, std::string value)
     case -1:
     {
         // describe key binds for this function
+        GCFunc *f = gc->getFunctionByName(value);
+        if (!f)
+            break;
+        gc->setInfoText(f->getInfo());
         const std::vector<GeekBind *>& gbs = gc->getGeekBinds();
         std::string bindstr;
         for (std::vector<GeekBind *>::const_iterator it = gbs.begin();
@@ -2464,9 +2784,107 @@ static int execFunction(GeekConsole *gc, int state, std::string value)
         break;
     }
     case 1:
-        gc->finish();
         return gc->execFunction(value);
     }
+    return state;
+}
+
+static void startMacro()
+{
+    geekConsole->setMacroRecord(true);
+}
+
+static void endMacro()
+{
+    geekConsole->setMacroRecord(false);
+}
+
+static void endAndCallMacro()
+{
+    geekConsole->callMacro();
+}
+
+static int saveMacro(GeekConsole *gc, int state, std::string value)
+{
+    static string svmFunName; // save fun name here
+    static string bindspace; // save name of bind space here
+
+    geekConsole->setMacroRecord(false, true);
+
+    if (state == 0)
+    {
+        gc->setInteractive(listInteractive, "exec-function", _("Alias name:"), _("Set name for alias"));
+        gc->setInfoText("Current macro:\n" + gc->getCurrentMacro());
+        listInteractive->setCompletion(gc->getFunctionsNames());
+    } else if (state == 1)
+    {
+        svmFunName = value;
+        if (gc->getFunctionByName(value))
+        {
+            gc->setInteractive(listInteractive, "yes-no", _("Are you sure to overwrite?"), "\"" + value + "\" " + _("already defined."));
+            listInteractive->setCompletionFromSemicolonStr("yes;no");
+            listInteractive->setMatchCompletion(true);
+            gc->setInfoText(string(_("Info about")) + "\"" + value + "\":\n" + gc->getFunctionByName(value)->getInfo());
+        }
+        else // register function
+            state = 3; // skip next state
+    }
+
+    if (state == 2)
+    {
+        if (value != "yes")
+        {
+            gc->setInteractive(listInteractive, "exec-function", _("Set other alias name:"),
+                               string(_("Set name for alias, last was")) + "\"" + svmFunName + "\"");
+            gc->setInfoText(string(_("Current macro")) + ":\n" + gc->getCurrentMacro());
+            listInteractive->setCompletion(gc->getFunctionsNames());
+            return 0; // recall with 0 state
+        }
+        state = 3;
+    }
+
+    if (state == 3) // register function and ask for bind space
+    {
+        gc->reRegisterFunction(GCFunc("exec function", gc->getCurrentMacro().c_str()), svmFunName);
+        // TODO: maybe good to save macro in cfg file for load it at startup
+        gc->setInteractive(listInteractive, "bindkey-space", _("BindSpace"), _("Bind key: Select bindspace"));
+        gc->setInfoText(svmFunName + "\n" +
+                        _("You can continue and assign key or break by ESC or C-g"));
+        const std::vector<GeekBind *> &gbs = gc->getGeekBinds();
+        std::vector<string> completion;
+        for (std::vector<GeekBind *>::const_iterator it = gbs.begin();
+             it != gbs.end(); it++)
+        {
+            GeekBind *gb = *it;
+            std::string name = gb->getName();
+            completion.push_back(name);
+        }
+        listInteractive->setCompletion(completion);
+        listInteractive->setMatchCompletion(true);
+    }
+
+    if (state == 4 ) // ask for key
+    {
+        bindspace = value;
+        gc->setInteractive(listInteractive, "bindkey-key", _("Key bind"), _("Choose key bind, and parameters. Example: C-c g @param 1@"));
+        GeekBind *gb = gc->getGeekBind(value);
+        if (gb)
+        {
+            listInteractive->setCompletion(gb->getAllBinds());
+            listInteractive->setMatchCompletion(false);
+        }
+        return 4;
+    } else if (state == -1 -4) // describe current bind
+    {
+        GeekBind *gb = gc->getGeekBind(bindspace);
+        if (gb)
+            gc->descriptionStr = gb->getBindDescr(value);
+    } else if (state == 5) // finish
+    {
+        gc->bind(bindspace, value, svmFunName);
+        gc->finish();
+    }
+
     return state;
 }
 
@@ -2654,6 +3072,27 @@ void initGCInteractives(GeekConsole *gc)
     gc->registerFunction(GCFunc(bindKey), "bind");
     gc->registerFunction(GCFunc(unBindKey), "unbind");
     gc->registerFunction(GCFunc(describebindKey), "describe key");
+    gc->registerAndBind("", "C-x C-k s",
+                        GCFunc(startMacro, _("Define macro.\n"
+                                             "Record subsequent keyboard input (only for geekconsole binds),\n"
+                                             "record interactive action of geekconsole.\n"
+                                             "To end record use \"macro end\",\n"
+                                             "to call macro use \"macro end and call\"")),
+                        "macro start");
+    gc->registerAndBind("", "C-x C-k e",
+                        GCFunc(endMacro, _("End macro.\n"
+                                             "To call macro use \"macro end and call\"\n"
+                                             "To save macro as alias and define key use \"macro save\"")),
+                        "macro end");
+    gc->registerAndBind("", "C-x C-k n",
+                        GCFunc(saveMacro, _("Assign name to last macro.\n"
+                                                  "Also bind you can bind key")),
+                        "macro save");
+    gc->registerAndBind("", "C-x e",
+                        GCFunc(endAndCallMacro, _("Call last macro, "
+                                                  "ending it first if currently being defined.\n"
+                                                  "Also bind to key")),
+                        "macro end and call");
 }
 
 void destroyGCInteractives()
@@ -2670,34 +3109,77 @@ void destroyGCInteractives()
  *  Lua API for geek console
  ******************************************************************/
 
+static void registerLuaFunction(lua_State* l, bool reregister)
+{
+    const char *errMsg = "Two or 3 arguments expected for "
+        "gc.re(Re)gisterFunction(string, string, [string])";
+    CelxLua celx(l);
+    celx.checkArgs(2, 3, errMsg);
+    const char *gcFunName = celx.safeGetString(1, AllErrors, "argument 1 to gc.re(Re)gisterFunction must be a string");
+    int callback;
+    const char *luaFunName = 0;
+    const char *luaInfo = 0;
+    if (l) {
+        int argc = lua_gettop(l);
+        if (argc >= 2 && argc <= 3)
+        {
+            if (argc == 3)
+                luaInfo = celx.safeGetString(2, WrongType, "argument 2 to gc.re(Re)gisterFunction/3 must be a string or function");
+            if (lua_isfunction (l, argc)) // last arg may be function or string
+            {
+                callback = luaL_ref(l, LUA_REGISTRYINDEX);
+                if (!reregister)
+                    if (luaInfo)
+                        geekConsole->registerFunction(GCFunc(callback, l, luaInfo), gcFunName);
+                    else
+                        geekConsole->registerFunction(GCFunc(callback, l), gcFunName);
+                else
+                    if (luaInfo)
+                        geekConsole->reRegisterFunction(GCFunc(callback, l, luaInfo), gcFunName);
+                    else
+                        geekConsole->reRegisterFunction(GCFunc(callback, l), gcFunName);
+            } else  {
+                const char *luaFunName = celx.safeGetString(argc, AllErrors, "last argument to gc.re(Re)gisterFunction must be a string or function");
+                if (!reregister)
+                    if (luaInfo)
+                        geekConsole->registerFunction(GCFunc(luaFunName, l, luaInfo), gcFunName);
+                    else
+                        geekConsole->registerFunction(GCFunc(luaFunName, l), gcFunName);
+                else
+                    if (luaInfo)
+                        geekConsole->reRegisterFunction(GCFunc(luaFunName, l, luaInfo), gcFunName);
+                    else
+                        geekConsole->reRegisterFunction(GCFunc(luaFunName, l), gcFunName);
+            }
+        }
+    }
+    return;
+}
+
 static int registerFunction(lua_State* l)
 {
-    CelxLua celx(l);
-    celx.checkArgs(2, 2, "Two arguments expected for gc.registerFunction(string, string)");
-    const char *gcFunName = celx.safeGetString(1, AllErrors, "argument 1 to gc.reRegisterFunction must be a string");
-    const char *luaFunName = celx.safeGetString(2, AllErrors, "argument 2 to gc.reRegisterFunction must be a string");
-    geekConsole->registerFunction(GCFunc(luaFunName, l), gcFunName);
+    registerLuaFunction(l, false);
     return 0;
 }
 
 static int reRegisterFunction(lua_State* l)
 {
-    CelxLua celx(l);
-    celx.checkArgs(2, 2, "Two arguments expected for gc.reRegisterFunction(string, string)");
-    const char *gcFunName = celx.safeGetString(1, AllErrors, "argument 1 to gc.reRegisterFunction must be a string");
-    const char *luaFunName = celx.safeGetString(2, AllErrors, "argument 2 to gc.reRegisterFunction must be a string");
-    geekConsole->reRegisterFunction(GCFunc(luaFunName, l), gcFunName);
+    registerLuaFunction(l, true);
     return 0;
 }
 
 static int registerAlias(lua_State* l)
 {
     CelxLua celx(l);
-    celx.checkArgs(3, 3, "Three arguments expected for gc.registerAlias(string, string, string)");
+    celx.checkArgs(3, 4, "Three arguments expected for gc.registerAlias(string, string, string, [string])");
     const char *gcFunName = celx.safeGetString(1, AllErrors, "argument 1 to gc.registerAlias must be a string");
     const char *aliasName = celx.safeGetString(2, AllErrors, "argument 2 to gc.registerAlias must be a string");
     const char *args = celx.safeGetString(3, AllErrors, "argument 3 to gc.registerAlias must be a string");
-    geekConsole->reRegisterFunction(GCFunc(aliasName, args), gcFunName);
+    const char *doc = celx.safeGetString(4, WrongType, "argument 4 to gc.registerAlias must be a string");
+    if (doc)
+        geekConsole->reRegisterFunction(GCFunc(aliasName, args, doc), gcFunName);
+    else
+        geekConsole->reRegisterFunction(GCFunc(aliasName, args), gcFunName);
     return 0;
 }
 
@@ -2817,6 +3299,27 @@ static int alphaFromColor(lua_State* l)
     return 1;
 }
 
+static int isFunctionRegistered(lua_State* l)
+{
+    CelxLua celx(l);
+    celx.checkArgs(1, 1, "One arguments expected for gc.isFunction(sName)");
+    const char *name = celx.safeGetString(1, AllErrors, "argument 1 to gc.isFunction must be a string");
+    if (geekConsole->getFunctionByName(name))
+        lua_pushnumber(l, 1);
+    else
+        lua_pushnumber(l, 0);
+    return 1;
+}
+
+static int setInfoText(lua_State* l)
+{
+    CelxLua celx(l);
+    celx.checkArgs(1, 1, "One arguments expected for gc.setInfoText(sText)");
+    const char *text = celx.safeGetString(1, AllErrors, "argument 1 to gc.setInfoText must be a string");
+    geekConsole->setInfoText(text);
+    return 0;
+}
+
 static int finishGConsole(lua_State* l)
 {
     CelxLua celx(l);
@@ -2832,10 +3335,19 @@ static int callFun(lua_State* l)
     celx.checkArgs(1, 2, "One or two arguments expected for gc.call(sFunName, [sArgs])");
     const char *funName = celx.safeGetString(1, AllErrors, "argument 1 to gc.call must be a string");
     const char *args = celx.safeGetString(2, WrongType, "argument 2 to gc.call must be a string");
+
+    if (!geekConsole->getFunctionByName(funName))
+        return 0;
+
+    // append macro
+    geekConsole->appendCurrentMacro(string("@*EXEC*@") + funName);
+    if (args)
+        geekConsole->appendCurrentMacro(args);
+
     if (args)
         geekConsole->execFunction(funName, args);
-    else 
-        geekConsole->execFunction(funName);
+    else
+        geekConsole->execFunction(funName, "");
     return 0;
 }
 
@@ -2903,6 +3415,8 @@ void LoadLuaGeekConsoleLibrary(lua_State* l)
     lua_newtable(l);
     celx.registerMethod("registerFunction", registerFunction);
     celx.registerMethod("reRegisterFunction", reRegisterFunction);
+    celx.registerMethod("isFunction", isFunctionRegistered);
+    celx.registerMethod("setInfoText", setInfoText);
     celx.registerMethod("registerAlias", registerAlias);
     celx.registerMethod("listInteractive", setListInteractive);
     celx.registerMethod("passwdInteractive", setPasswdInteractive);

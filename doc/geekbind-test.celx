@@ -1,20 +1,48 @@
 -- lua unit tests for geekconsole
 
 -- interactive test
-gc.registerFunction("lua list test", "listTest")
-gc.registerFunction("lua password test", "passwdTest")
+-- here anonymous function (string as name ) register
 gc.registerFunction("lua color chooser test", "colorChooserTest")
 gc.registerFunction("lua celestia body test", "celBodyTest")
-gc.registerFunction("lua flag test", "flagTest")
-gc.registerFunction("lua file test", "fileTest")
-gc.registerFunction("lua custom cel body sel", "customSet")
+gc.registerFunction("lua flag test", "gc.flagInteractive demo", "flagTest")
+gc.registerFunction("lua file test", 
+		    "gc.fileInteractive demo\n" ..
+		       "You can select file with custom file extantions for open (set matching)\n" ..
+		       "or saving (configure without matching)\n" ..
+		       "You can specify root and start directory",
+		    "fileTest")
+gc.registerFunction("lua custom cel body sel",
+		    "gc.celBodyInteractive demo\n" ..
+		       "You can specify custom stars, planets, etc for completion",
+		    "customSet")
+
+-- registe undefined function
+gc.registerFunction("lua undefined test", "foobar")
 
 -- alias test
 -- select moon and goto
-gc.registerAlias("lua alias test", "select object", "sol/Earth/moon@*EXEC*@goto object gc")
+gc.registerAlias("lua alias test", "select object", "sol/Earth/moon@*EXEC*@goto object gc",
+		 "This is alias demo from lua code (gc.registerAlias)\n" ..
+		    "This command will call \"select object\" @sol/Earth/moon@*EXEC*@goto object gc")
 
--- some more complex function
-gc.registerFunction("lua mark body and goto test", "markAndGotoBody" );
+-- reregister function test
+gc.registerFunction("lua reregister test",
+		  function (state, s)
+		     celestia:flash("not redefine")
+		     gc.finish()
+		  end)
+-- .. also test gc.isFunction
+if gc.isFunction("lua reregister test") then
+   gc.reRegisterFunction("lua reregister test",
+			 "Redefine function demo\n" ..
+			    "Use gc.reRegisterFunction to redefine",
+			 function (state, s)
+			    celestia:flash("Redefined")
+			    gc.finish()
+			 end)
+end
+
+
 
 --key bind test
 -- simple
@@ -35,6 +63,10 @@ gc.unbind("C-c C-x")
 function listTest (state, s)
    if state == 0 then
       gc.listInteractive("class O;class B;class A;class F;class G;class K;class M","test-list", "Spectral class: ","Type spectral class", 1);
+   elseif state == -1 then
+      -- describer for 0 state (i.e -1-state)
+      gc.setInfoText("You can describe current prompt by gc.setInfoText\n" ..
+		     "Typed: \"" .. s .. "\"")
    elseif state == 1 then
       celestia:flash(s)
       gc.finish()
@@ -125,8 +157,9 @@ function markAndGotoBody (state, s)
       color = gc.color2HexRGB(s)
       sel:mark(color, "diamond", 15)
       celestia:flash(color)
-      gc.finish()
-      gc.call("goto object")
+      -- its last state so we'll need to call gc.finish() 
+      -- but here is gc.call() which call it without you.
+      gc.call("select star")
    end
 
    return state
@@ -143,3 +176,39 @@ function customSet (state, s)
    end
    return state
 end
+
+-- listTest and passwdTest function is defined, so can register as not string
+gc.registerFunction("lua list test",
+		    "gc.listInteractive demo\n" ..
+		       "Match value from list",
+		    listTest)
+gc.registerFunction("lua password test",
+		    "gc.passwdInteractive demo\n" ..
+		       "History here not available",
+		    passwdTest)
+
+-- some more complex function
+gc.registerFunction("lua mark and goto",
+		    "Select and mark body than do\n" ..
+		       "gc.call(\"goto object\") to goto",
+		    function  (state, s)
+		       if state == 0 then
+			  gc.celBodyInteractive("", "Target ", "Select body to goto")
+			  gc.setColumns(8)
+		       elseif state == 1 then
+			  obs = celestia:getobserver()
+			  myObject = celestia:find(s)
+			  celestia:select(myObject)
+			  gc.colorChooseInteractive("color", "Select color", "Color select")
+		       elseif state == 2 then
+			  sel = celestia:getselection()
+			  color = gc.color2HexRGB(s)
+			  sel:mark(color, "diamond", 15)
+			  celestia:flash(color)			  
+			  -- gc.call will finish do gc.finish() first
+			  gc.call("goto object")
+		       end
+
+		       return state
+		    end
+		 )

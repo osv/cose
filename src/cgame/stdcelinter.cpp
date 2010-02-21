@@ -28,13 +28,13 @@ static int selectBody(GeekConsole *gc, int state, std::string value)
     {
     case 1:
     {
+        gc->finish();
         Selection sel = gc->getCelCore()->getSimulation()->findObjectFromPath(value, true);
         if (!sel.empty())
         {
             gc->getCelCore()->getSimulation()->setSelection(sel);
         }
     }
-    gc->finish();
     break;
     case 0:
         gc->setInteractive(celBodyInteractive, "select", _("Target name: "), _("Enter target for select"));
@@ -114,8 +114,8 @@ static int selectStar(GeekConsole *gc, int state, std::string value)
         }
 
         gc->setInteractive(celBodyInteractive, "select-star", _("Select star"), "");
-        listInteractive->setCompletion(completion);
-        listInteractive->setLastFromHistory();
+        celBodyInteractive->setCompletion(completion);
+        celBodyInteractive->setLastFromHistory();
         break;
     }
     case 3: // finish
@@ -458,16 +458,16 @@ void initGCStdInteractivsFunctions(GeekConsole *gc)
                         GCFunc(selectBody), "select object");
     gc->registerFunction(GCFunc(gotoBody), "goto object");
     gc->registerAndBind("", "C-c g",
-                        GCFunc(gotoBodyGC), "goto object gc");
+                        GCFunc(gotoBodyGC, _("Goto object with greate circle")), "goto object gc");
     gc->registerFunction(GCFunc(selectStar), "select star");
     gc->registerFunction(GCFunc(unmarkAll), "unmark all");
     gc->registerFunction(GCFunc(markObject), "mark object");
     gc->registerAndBind("", "C-x 4 f",
-                        GCFunc(openScript), "open script");
-    gc->registerFunction(GCFunc(setFlag), "celestia options");
+                        GCFunc(openScript, _("Run lua or celestia script")), "open script");
+    gc->registerFunction(GCFunc(setFlag, _("Show or hide objects, labels, orbits")), "celestia options");
     // aliases
-    gc->registerFunction(GCFunc("celestia options", "@show"),
+    gc->registerFunction(GCFunc("celestia options", "@show", _("Select objects, labels or orbits to show")),
                          "show objects");
-    gc->registerFunction(GCFunc("celestia options", "@hide"),
+    gc->registerFunction(GCFunc("celestia options", "@hide", _("Select objects, labels or orbits to hide")),
                          "hide objects");
 }
