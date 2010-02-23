@@ -4,17 +4,26 @@
 #include <celengine/eigenport.h>
 using namespace Eigen;
 
+// referenceMarkNames maybe  different for celestia and OS  project, so it
+// be public not static.
+std::vector<std::string> referenceMarkNames;
+
 static int gotoBody(GeekConsole *gc, int state, std::string value)
 {
-    gc->getCelCore()->getSimulation()->
-        gotoSelection(5.0, Vector3f::UnitY(), ObserverFrame::ObserverLocal);
+    Simulation *sim = gc->getCelCore()->getSimulation();
+    if (sim->getFrame()->getCoordinateSystem() == ObserverFrame::Universal)
+        sim->follow();
+    sim->gotoSelection(5.0, Vector3f::UnitY(), ObserverFrame::ObserverLocal);
     gc->finish();
     return state;
 }
 
 static int gotoBodyGC(GeekConsole *gc, int state, std::string value)
 {
-    gc->getCelCore()->getSimulation()->getObserver().gotoSelectionGC(
+    Simulation *sim = gc->getCelCore()->getSimulation();
+    if (sim->getFrame()->getCoordinateSystem() == ObserverFrame::Universal)
+        sim->follow();
+    sim->getObserver().gotoSelectionGC(
         gc->getCelCore()->getSimulation()->getSelection(),
         5.0, 0.0, 0.5,
         Vector3f::UnitY(), ObserverFrame::ObserverLocal);
@@ -120,12 +129,12 @@ static int selectStar(GeekConsole *gc, int state, std::string value)
     }
     case 3: // finish
     {
+        gc->finish();
         Selection sel = gc->getCelCore()->getSimulation()->findObjectFromPath(value, true);
         if (!sel.empty())
         {
             gc->getCelCore()->getSimulation()->setSelection(sel);
         }
-        gc->finish();
         break;
     }
     default:
@@ -450,10 +459,79 @@ static int setFlag(GeekConsole *gc, int state, std::string value)
     return state;
 }
 
+static int toggleReferenceMark(GeekConsole *gc, int state, std::string value)
+{
+    std::vector<std::string>::iterator it1;
+    std::vector<std::string>::iterator it2;
+    
+    switch(state)
+    {
+    case 0:
+        gc->setInteractive(flagInteractive, "refmark");
+        flagInteractive->setCompletion(referenceMarkNames);
+        flagInteractive->setMatchCompletion(true);
+        break;
+    case 1:
+    {
+        gc->finish();
+        Selection sel = gc->getCelCore()->
+            getSimulation()->getSelection();
+        if (sel.empty())
+            break;
+        std::vector<std::string> values =
+            splitString(value, flagInteractive->getDefaultDelim());
+
+        // toggle ref marks
+        for (it1 = referenceMarkNames.begin();
+             it1 != referenceMarkNames.end(); it1++)
+        {
+            for (it2 = values.begin();
+                 it2 != values.end(); it2++)
+                if (*it1 == *it2)
+                {
+                    gc->getCelCore()->toggleReferenceMark(*it2, sel);
+                    break;
+                }
+        }
+        break;
+    }
+    default: break;
+    }
+    return state;
+}
+
+static int disableReferenceMark(GeekConsole *gc, int state, std::string value)
+{
+    gc->finish();
+    Selection sel = gc->getCelCore()->
+        getSimulation()->getSelection();
+
+    if (sel.empty())
+        return state;
+
+    for (std::vector<std::string>::iterator it1 = referenceMarkNames.begin();
+         it1 != referenceMarkNames.end(); it1++)
+    {
+        if (gc->getCelCore()->referenceMarkEnabled(*it1, sel))
+            gc->getCelCore()->toggleReferenceMark(*it1, sel);
+    }
+
+    return state;
+}
+
 /* init */
 
 void initGCStdInteractivsFunctions(GeekConsole *gc)
 {
+    referenceMarkNames.push_back("body axes");
+    referenceMarkNames.push_back("frame axes");
+    referenceMarkNames.push_back("sun direction");
+    referenceMarkNames.push_back("velocity vector");
+    referenceMarkNames.push_back("spin vector");
+    referenceMarkNames.push_back("frame center direction");
+    referenceMarkNames.push_back("planetographic grid");
+    referenceMarkNames.push_back("terminator");
+
     gc->registerAndBind("", "C-RET",
                         GCFunc(selectBody), "select object");
     gc->registerFunction(GCFunc(gotoBody), "goto object");
@@ -465,6 +543,10 @@ void initGCStdInteractivsFunctions(GeekConsole *gc)
     gc->registerAndBind("", "C-x 4 f",
                         GCFunc(openScript, _("Run lua or celestia script")), "open script");
     gc->registerFunction(GCFunc(setFlag, _("Show or hide objects, labels, orbits")), "celestia options");
+    gc->registerFunction(GCFunc(toggleReferenceMark, _("Toggle reference marks for selected object")),
+                         "toggle ref marks");
+    gc->registerFunction(GCFunc(disableReferenceMark, _("Disable all reference marks for selected object")),
+                         "disable ref marks");
     // aliases
     gc->registerFunction(GCFunc("celestia options", "@show", _("Select objects, labels or orbits to show")),
                          "show objects");
