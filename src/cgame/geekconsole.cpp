@@ -152,7 +152,7 @@ Color32 clInfoTextBrdD(255, 255, 255, 200);
 Color32 *clInfoTextBrd = &clInfoTextBrdD;
 
 GeekConsole *geekConsole = NULL;
-const char *ctrlZDescr = "C-z - Unexpand";
+const char *ctrlZDescr = ", C-z Unexpand";
 
 std::string historyDir("history/");
 
@@ -1103,7 +1103,6 @@ int GeekConsole::execFunction(std::string funName, std::string param)
     {
         curFunName = funName;
         isVisible = true;
-        std::string val;
         call("", true);
 
         if (param[param.size() - 1] == '@')
@@ -1306,6 +1305,12 @@ bool GeekConsole::charEntered(const char sym, const wchar_t wc, int modifiers)
         return true;
     } // !isVisible
 
+    if (isMacroRecording)
+        descriptionStr = _("C-S-g Stop macro here");
+    else
+        descriptionStr = _("ESC or C-g Cancel");
+    clearInfoText();
+
     bool isCtrl = modifiers & GeekBind::CTRL;
     bool isShift = modifiers & GeekBind::SHIFT;
     char c = tolower(sym);
@@ -1339,6 +1344,7 @@ bool GeekConsole::charEntered(const char sym, const wchar_t wc, int modifiers)
             { // last macro command is cancel command
                 appendCurrentMacro("@*EXEC*@end macro");
                 setMacroRecord(false);
+                descriptionStr = _("Macro defining stopped");
             }
             else
                 appendCurrentMacro("@*ESC*");
@@ -1797,8 +1803,10 @@ void GCInteractive::charEntered(const wchar_t wc, int modifiers)
 {
     char C = toupper((char)wc);
 
-    gc->descriptionStr = "";
-    gc->clearInfoText();
+    if (useHistory && !curHistoryName.empty())
+    {
+        gc->descriptionStr += _(", C-p Previous, C-n Next in history");
+    }
 
     std::vector<std::string>::iterator it;
     std::vector<std::string>::reverse_iterator rit;
@@ -1835,8 +1843,7 @@ void GCInteractive::charEntered(const wchar_t wc, int modifiers)
         rit = typedHistoryCompletion.rbegin() + typedHistoryCompletionIdx;
         typedHistoryCompletionIdx++;
         buf = *rit;
-        gc->descriptionStr = _(ctrlZDescr);
-        gc->describeCurText(getBufferText());
+        gc->descriptionStr += _(ctrlZDescr);
         return;
     case '\016':  // Ctrl+N forw history
         if (typedHistoryCompletion.empty())
@@ -1846,8 +1853,7 @@ void GCInteractive::charEntered(const wchar_t wc, int modifiers)
         it = typedHistoryCompletion.begin() + typedHistoryCompletionIdx;
         typedHistoryCompletionIdx--;
         buf = *it;
-        gc->descriptionStr = _(ctrlZDescr);
-        gc->describeCurText(getBufferText());
+        gc->descriptionStr += _(ctrlZDescr);
         return;
     case '\032':  // Ctrl+Z
         if (bufSizeBeforeHystory == buf.size())
@@ -1885,8 +1891,6 @@ void GCInteractive::charEntered(const wchar_t wc, int modifiers)
                 bufSizeBeforeHystory = buf.size();
             }
         }
-    gc->descriptionStr.clear();
-    gc->clearInfoText();
 }
 
 void GCInteractive::cancelInteractive()
@@ -2167,7 +2171,7 @@ void ListInteractive::charEntered(const wchar_t wc, int modifiers)
             if (pageScrollIdx > typedTextCompletion.size())
                 pageScrollIdx = 0;
             char buff[128];
-            sprintf(buff,_("%i of %i pages, M-/ next expand, M-? prev expand, C-z unexpand"), (pageScrollIdx / scrollSize) + 1,
+            sprintf(buff,_("%i of %i pages, M-/ next expand, M-? prev expand, C-z Unexpand"), (pageScrollIdx / scrollSize) + 1,
                     (typedTextCompletion.size() / scrollSize) + 1);
             gc->descriptionStr = buff;
             completedIdx = pageScrollIdx;
@@ -3117,7 +3121,6 @@ static void registerLuaFunction(lua_State* l, bool reregister)
     celx.checkArgs(2, 3, errMsg);
     const char *gcFunName = celx.safeGetString(1, AllErrors, "argument 1 to gc.re(Re)gisterFunction must be a string");
     int callback;
-    const char *luaFunName = 0;
     const char *luaInfo = 0;
     if (l) {
         int argc = lua_gettop(l);
