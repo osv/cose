@@ -5,6 +5,7 @@ AM_CXXFLAGS = @CXXFLAGS@ \
 
 INCLUDES = -I.. -I../celestia \
 	-I$(top_srcdir)/thirdparty/Eigen \
+	-I$(top_srcdir)/thirdparty/geekconsole \
 	-I$(top_srcdir)/thirdparty/glew/include
 
 AM_CFLAGS = @CFLAGS@ \
@@ -23,8 +24,6 @@ noinst_HEADERS = \
 	gamecore.h\
 	ui.h \
 	videocapture.h \
-	geekconsole.h \
-	geekbind.h \
 	configfile.h \
 	ui_theme.h
 
@@ -45,10 +44,10 @@ openspace_client_SOURCES = \
 	ui_context.cpp \
 	videocapture.cpp \
 	cgame.cpp \
-	geekconsole.cpp \
-	geekbind.cpp \
 	configfile.cpp \
-	stdcelinter.cpp \
+	$(top_srcdir)/thirdparty/geekconsole/geekconsole.cpp \
+	$(top_srcdir)/thirdparty/geekconsole/geekbind.cpp \
+	$(top_srcdir)/thirdparty/geekconsole/stdcelinter.cpp \
 	ui_theme.cpp
 
 noinst_DATA = ../../openspace_client
