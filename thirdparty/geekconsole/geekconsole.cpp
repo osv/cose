@@ -2079,6 +2079,9 @@ void ListInteractive::updateTextCompletion()
     for (it = completionList.begin();
          it != completionList.end(); it++)
     {
+        // hide item that start from "." like files in *nix systems
+        if ((*it)[0] == '.' && buftext[0] != '.')
+            continue;
         if (buf_length == 0 ||
             (UTF8StringCompare(*it, buftext, buf_length) == 0))
             typedTextCompletion.push_back(*it);
