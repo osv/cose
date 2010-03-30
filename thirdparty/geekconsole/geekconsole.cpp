@@ -1514,6 +1514,7 @@ void GeekConsole::setInteractive(GCInteractive *Interactive, std::string history
     InteractivePrefixStr = InteractiveStr;
     descriptionStr = descrStr;
     clearInfoText();
+    isVisible = true;
 }
 
 int GeekConsole::call(const std::string &value, bool params)
@@ -1555,11 +1556,12 @@ void GeekConsole::InteractFinished(std::string value)
     call(value);
 }
 
+/** Hide console and clear interactive */
 void GeekConsole::finish()
 {
     isVisible = false;
-    curFun = NULL;
-    curFunName.clear();
+//    curFun = NULL;
+//    curFunName.clear();
     if (curInteractive)
         curInteractive->cancelInteractive();
     curInteractive = NULL;
