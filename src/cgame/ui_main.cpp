@@ -7,6 +7,7 @@
 #include "ui.h"
 #include "videocapture.h"
 #include "geekconsole.h"
+#include <agar/core/types.h>
 #include "ui_theme.h"
 
 #include <celengine/starbrowser.h>
@@ -856,8 +857,8 @@ namespace UI
                 break;
             case '+': // expand
             case '-':
-            case SDLK_RIGHT:
-            case SDLK_LEFT:
+            case AG_KEY_RIGHT:
+            case AG_KEY_LEFT:
                 {
                     if (ti->flags & AG_TLIST_VISIBLE_CHILDREN) 
                     {
@@ -1313,7 +1314,7 @@ namespace UI
         case 0:
         {
             std::vector<std::string> completion;
-            AG_TAILQ_FOREACH_REVERSE(win, &agView->windows, ag_windowq, windows) {
+            AG_FOREACH_WINDOW_REVERSE(win, agDriverSw) {
                 AG_ObjectLock(win);
                 if ((win->flags & AG_WINDOW_DENYFOCUS) == 0)
                     completion.push_back(std::string(win->caption));
@@ -1327,13 +1328,12 @@ namespace UI
         }
         case 1:
             riseUI();
-            AG_TAILQ_FOREACH_REVERSE(win, &agView->windows, ag_windowq, windows) {
+            AG_FOREACH_WINDOW_REVERSE(win, agDriverSw) {
                 AG_ObjectLock(win);
                 if ((win->flags & AG_WINDOW_DENYFOCUS) == 0)
                     if (strcmp(value.c_str(), win->caption) == 0)
                     {
-                        AG_WindowShow(win);
-                        AG_WindowFocus(win);
+                        AG_WindowUnminimize(win);
                     }
                 AG_ObjectUnlock(win);
             }
@@ -1367,7 +1367,8 @@ namespace UI
     void Init()
     {
         UI::initThemes();
-        UI::setupThemes((PrimitiveStyle) cVarGetInt32("render.agar.primitive"));
+        UI::setupThemeStyle(
+            (PrimitiveStyle) cVarGetInt32("render.agar.primitive"));
 
         RenderCfgDial::initDefaultFlags();
 
@@ -1376,7 +1377,7 @@ namespace UI
         Menu::initMenu();
 
         celAppCore->setContextMenuCallback(ContextMenu::menuContext);
-        agTextAntialiasing = 1;
+
         geekConsole->registerAndBind("", "C-x k",
                                      GCFunc(closeCurrentFocusedWindow), "close window");
         geekConsole->registerFunction(GCFunc(minimizeCurrentFocusedWindow), "minimize window");

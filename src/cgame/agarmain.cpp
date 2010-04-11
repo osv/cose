@@ -12,9 +12,11 @@
 
 #include "cgame.h" 
 #include "ui.h"
-#include "ui_theme.h"
 #include "geekconsole.h"
 #include "configfile.h"
+
+#include <agar/core/types.h>
+#include "ui_theme.h"
 
 using namespace std;
 
@@ -27,13 +29,13 @@ static bool bgFocuse = false;
 static AG_Timeout toRepeat;     /* Repeat timer */
 static AG_Timeout toDelay;      /* Pre-repeat delay timer */
 
-SDLKey repeatKey;               /* Last keysym */
-SDLMod repeatMod;               /* Last keymod */
-Uint32 repeatUnicode;           /* Last unicode translated key */
+AG_Key repeatKey;               /* Last key */
 
 float mProjection[16];          /* Projection matrix to load for 'background' */
 float mModelview[16];           /* Modelview matrix to load for 'background' */
 float mTexture[16];             /* Texture matrix to load for 'background' */
+
+int curFPS = 0; 				/* Measured frame rate */
 
 /* Stick main menu (f. e. when videocapture on) 
  * You can set it in any time
@@ -82,17 +84,16 @@ static void stopVidRecord()
 
 static void ToggleFullscreen()
 {
-    SDL_Event vexp;
+    // todo: fullscreen toggle: may use AG_ResizeDisplay but need flag setups
+    // SDL_Event vexp;
 
-    fullscreen = !fullscreen;
-    if (agView == NULL)
-        return;
-    if ((fullscreen && (agView->v->flags & SDL_FULLSCREEN) == 0) ||
-        (!fullscreen && (agView->v->flags & SDL_FULLSCREEN))) {
-        SDL_WM_ToggleFullScreen(agView->v);
-        vexp.type = SDL_VIDEOEXPOSE;
-        SDL_PushEvent(&vexp);       
-    }
+    // fullscreen = !fullscreen;
+    // if ((fullscreen && (agView->v->flags & SDL_FULLSCREEN) == 0) ||
+    //     (!fullscreen && (agView->v->flags & SDL_FULLSCREEN))) {
+    //     SDL_WM_ToggleFullScreen(agView->v);
+    //     vexp.type = SDL_VIDEOEXPOSE;
+    //     SDL_PushEvent(&vexp);       
+    // }
 }
 
 static void registerAndBindKeys()
@@ -118,88 +119,88 @@ static bool handleSpecialKey(int key, int state, bool down)
     int k = -1;
     switch (key)
     {
-    case SDLK_UP:
+    case AG_KEY_UP:
         k = CelestiaCore::Key_Up;
         break;
-    case SDLK_DOWN:
+    case AG_KEY_DOWN:
         k = CelestiaCore::Key_Down;
         break;
-    case SDLK_LEFT:
+    case AG_KEY_LEFT:
         k = CelestiaCore::Key_Left;
         break;
-    case SDLK_RIGHT:
+    case AG_KEY_RIGHT:
         k = CelestiaCore::Key_Right;
         break;
-    case SDLK_HOME:
+    case AG_KEY_HOME:
         k = CelestiaCore::Key_Home;
         break;
-    case SDLK_END:
+    case AG_KEY_END:
         k = CelestiaCore::Key_End;
         break;
-    case SDLK_F1:
+    case AG_KEY_F1:
         k = CelestiaCore::Key_F1;
         break;
-    case SDLK_F2:
+    case AG_KEY_F2:
         k = CelestiaCore::Key_F2;
         break;
-    case SDLK_F3:
+    case AG_KEY_F3:
         k = CelestiaCore::Key_F3;
         break;
-    case SDLK_F4:
+    case AG_KEY_F4:
         k = CelestiaCore::Key_F4;
         break;
-    case SDLK_F5:
+    case AG_KEY_F5:
         k = CelestiaCore::Key_F5;
         break;
-    case SDLK_F6:
+    case AG_KEY_F6:
         k = CelestiaCore::Key_F6;
         break;
-    case SDLK_F7:
+    case AG_KEY_F7:
         k = CelestiaCore::Key_F7;
         break;
-        // case SDLK_F10:
+        // case AG_KEY_F10:
         //   todo: Capture Image
         //   break;
-    case SDLK_F11:
+    case AG_KEY_F11:
         k = CelestiaCore::Key_F11;
         break;
-    case SDLK_F12:
+    case AG_KEY_F12:
         k = CelestiaCore::Key_F12;
         break;
-    case SDLK_KP0:
+    case AG_KEY_KP0:
         k = CelestiaCore::Key_NumPad0;
         break;
-    case SDLK_KP1:
+    case AG_KEY_KP1:
         k = CelestiaCore::Key_NumPad1;
         break;
-    case SDLK_KP2:
+    case AG_KEY_KP2:
         k = CelestiaCore::Key_NumPad2;
         break;
-    case SDLK_KP3:
+    case AG_KEY_KP3:
         k = CelestiaCore::Key_NumPad3;
         break;
-    case SDLK_KP4:
+    case AG_KEY_KP4:
         k = CelestiaCore::Key_NumPad4;
         break;
-    case SDLK_KP5:
+    case AG_KEY_KP5:
         k = CelestiaCore::Key_NumPad5;
         break;
-    case SDLK_KP6:
+    case AG_KEY_KP6:
         k = CelestiaCore::Key_NumPad6;
         break;
-    case SDLK_KP7:
+    case AG_KEY_KP7:
         k = CelestiaCore::Key_NumPad7;
         break;
-    case SDLK_KP8:
+    case AG_KEY_KP8:
         k = CelestiaCore::Key_NumPad8;
         break;
-    case SDLK_KP9:
+    case AG_KEY_KP9:
         k = CelestiaCore::Key_NumPad9;
         break;
-    case SDLK_a:
+    case AG_KEY_A:
         k = 'a';
         break;
-    case SDLK_z:
+    case AG_KEY_Z:
         k = 'z';
         break;
     }
@@ -207,9 +208,9 @@ static bool handleSpecialKey(int key, int state, bool down)
     if (k >= 0)
     {
         int mod = 0;
-        if ((state & KMOD_SHIFT) != 0)
+        if ((state & AG_KEYMOD_SHIFT) != 0)
             mod |= CelestiaCore::ShiftKey;
-        if ((state & KMOD_CTRL) != 0)
+        if ((state & AG_KEYMOD_CTRL) != 0)
             mod |= CelestiaCore::ControlKey;
 
         if (down)
@@ -248,27 +249,28 @@ static void dirFixup(char *argv0) {
 
 /*
  * Place focus on a Window following a click at the given coordinates.
- * Returns 1 if the focus state has changed as a result.
- * Note: AG_WindowFocusAtPos can't be used because it exclude wins with
+ * Returns 1 if mouse is over window
+ * Note: AG_WindowFocusAtPos can't be used because it not exclude wins with
  * AG_WINDOW_DENYFOCUS flag.
  */
-int
-FocusWindowAt(int x, int y)
+int FocusWindowAt(AG_DriverSw *dsw, int x, int y)
 {
-    AG_Window *win;
+	AG_Window *win;
 
-    AG_TAILQ_FOREACH_REVERSE(win, &agView->windows, ag_windowq, windows) {
-        AG_ObjectLock(win);
-        if (!win->visible ||
-            !AG_WidgetArea(win, x,y)) {
-            AG_ObjectUnlock(win);
-            continue;
-        }
-        AG_ObjectUnlock(win);
-        return (1);
-    }
-    return (0);
+	AG_ASSERT_CLASS(dsw, "AG_Driver:AG_DriverSw:*");
+	AG_FOREACH_WINDOW_REVERSE(win, dsw) {
+		AG_ObjectLock(win);
+		if (!win->visible ||
+		    !AG_WidgetArea(win, x,y)) {
+			AG_ObjectUnlock(win);
+			continue;
+		}
+		AG_ObjectUnlock(win);
+		return (1);
+	}
+	return (0);
 }
+
 
 static void BG_Resize(unsigned int w, unsigned int h)
 {
@@ -305,17 +307,24 @@ static void Resize(unsigned int w, unsigned int h)
 // make sure that main menu not over BG
 static void BG_ResizeWithMenu()
 {
-    int w;
-    int h;
+	Uint wDisp, hDisp, w, h;
+	AG_Driver *drv = AGWIDGET(agAppMenuWin)->drv;
+    if (!drv)
+        return;
+	if (AG_GetDisplaySize(drv, &wDisp, &hDisp) == -1) {
+		wDisp = 0;
+		hDisp = 0;
+	}
+
     if (!AG_WindowIsVisible(agAppMenuWin))
     {
-        w = agView->w;
-        h = agView->h;
+        w = wDisp;
+        h = hDisp;
     }
     else
     {
-        w = agView->w;
-        h = agView->h - (AGWIDGET(agAppMenuWin)->h);
+        w = wDisp;
+        h = hDisp - (AGWIDGET(agAppMenuWin)->h);
     }
     Resize(w, h);
 }
@@ -352,109 +361,118 @@ void BG_LostFocus()
  * Background process event (mouse, key)
  * Returns 1 if the event was processed.
  */
-static int BG_ProcessEvent(SDL_Event *ev)
+static int BG_ProcessEvent(AG_DriverEvent *dev)
 {
+	AG_Driver *drv;
+    AG_Keyboard *kbd;
+
+	drv = (AG_Driver *) agDriverSw;
+    kbd = drv->kbd;
     int rv = 0;
-    switch (ev->type) {
-    case SDL_KEYDOWN:
+    switch (dev->type) {
+    case AG_DRIVER_KEY_DOWN:
     {
+        cout << "KEY_DOWN" << "\n";
         UI::syncRenderFromAgar();
 
-        repeatKey = ev->key.keysym.sym;
-        repeatMod = ev->key.keysym.mod;
-        repeatUnicode = ev->key.keysym.unicode;
-        if (!handleSpecialKey(repeatKey, repeatMod, true))
-            celAppCore->charEntered((char) repeatUnicode);
+        if (!handleSpecialKey(repeatKey.sym, repeatKey.mod, true))
+            celAppCore->charEntered((char) repeatKey.uch);
         UI::syncRenderToAgar();
         return 1;
     }
-    case SDL_KEYUP:
+    case AG_DRIVER_KEY_UP:
     {       
+        cout << "KEY_UP" << "\n";
         UI::syncRenderFromAgar();
 
-        SDLKey sym = ev->key.keysym.sym;
-        SDLMod mod = ev->key.keysym.mod;
-
-        handleSpecialKey(sym, mod, false);
+        handleSpecialKey(dev->data.key.ks,
+                         drv->kbd->modState, false);
         UI::syncRenderToAgar();
         return 1;
     }   
-    case SDL_MOUSEBUTTONDOWN:
+    case AG_DRIVER_MOUSE_BUTTON_DOWN:
     {
-        int x = ev->button.x;
-        int y = ev->button.y;
+        int x = dev->data.button.x;
+        int y = dev->data.button.y;
 
         UI::syncRenderFromAgar();
-        switch (ev->button.button) {
-        case SDL_BUTTON_WHEELUP:
+        switch (dev->data.button.which) {
+        case AG_MOUSE_WHEELUP:
             celAppCore->mouseWheel(-1.0f, 0);
             break;
-        case SDL_BUTTON_WHEELDOWN:
+        case AG_MOUSE_WHEELDOWN:
             celAppCore->mouseWheel(1.0f, 0);
             break;
-        case SDL_BUTTON_RIGHT:
+        case AG_MOUSE_RIGHT:
             rightButton = true;
             celAppCore->mouseButtonDown(x, y, CelestiaCore::RightButton);
             break;
-        case SDL_BUTTON_LEFT:
+        case AG_MOUSE_LEFT:
             leftButton = true;
             celAppCore->mouseButtonDown(x, y, CelestiaCore::LeftButton);
             break;
-        case SDL_BUTTON_MIDDLE:
+        case AG_MOUSE_MIDDLE:
             middleButton = true;
             celAppCore->mouseButtonDown(x, y, CelestiaCore::MiddleButton);
+            break;
+        default:
             break;
         }
         UI::syncRenderToAgar();
         return 1;
     }
-    case SDL_MOUSEBUTTONUP:
+    case AG_DRIVER_MOUSE_BUTTON_UP:
     {
-        int x = ev->button.x;
-        int y = ev->button.y;
+        int x = dev->data.button.x;
+        int y = dev->data.button.y;
     
         UI::syncRenderFromAgar();
 
-        switch (ev->button.button) {
-        case SDL_BUTTON_RIGHT:
+        switch (dev->data.button.which) {
+        case AG_MOUSE_RIGHT:
             if (rightButton)
             {
                 rightButton = false;
                 celAppCore->mouseButtonUp(x, y, CelestiaCore::RightButton);
             }
             break;
-        case SDL_BUTTON_LEFT:
+        case AG_MOUSE_LEFT:
             if (leftButton)
             {
                 leftButton = false;
                 celAppCore->mouseButtonUp(x, y, CelestiaCore::LeftButton);
             }
             break;
-        case SDL_BUTTON_MIDDLE:
+        case AG_MOUSE_MIDDLE:
             middleButton = false;
             celAppCore->mouseButtonUp(x, y, CelestiaCore::MiddleButton);
+            break;
+        default:
             break;
         }
         UI::syncRenderToAgar();
         return 1;
     }
-    case SDL_MOUSEMOTION:
+    case AG_DRIVER_MOUSE_MOTION:
     {
-        int buttons = ev->motion.state;
-        SDLMod mod = SDL_GetModState();
+        int buttons = 0;
+        Uint mod = AG_GetModState(kbd);
+        // TODO: use AG_MouseGetState to get mouse state
         if (leftButton)
             buttons |= CelestiaCore::LeftButton;
         if (rightButton)
             buttons |= CelestiaCore::RightButton;
         if (middleButton)
             buttons |= CelestiaCore::MiddleButton;
-        if ((mod & KMOD_SHIFT) != 0)
+        if ((mod & AG_KEYMOD_SHIFT) != 0)
             buttons |= CelestiaCore::ShiftKey;
-        if ((mod & KMOD_CTRL) != 0)
+        if ((mod & AG_KEYMOD_CTRL) != 0)
             buttons |= CelestiaCore::ControlKey;
 
         // autohide main menu (agAppMenuWin) & autoresize BG
-        if (UI::showUI && AG_WidgetArea(agAppMenuWin, ev->motion.x, ev->motion.y)){
+        if (UI::showUI && AG_WidgetArea(agAppMenuWin,
+                                        dev->data.motion.x,
+                                        dev->data.motion.y)) {
             if (!AG_WindowIsVisible(agAppMenuWin))
             {
                 AG_WindowShow(agAppMenuWin);
@@ -471,7 +489,7 @@ static int BG_ProcessEvent(SDL_Event *ev)
                 BG_ResizeWithMenu();
                 celAppCore->flashFrame();
             }
-        celAppCore->mouseMove(ev->motion.xrel, ev->motion.yrel, buttons);
+        celAppCore->mouseMove(drv->mouse->xRel, drv->mouse->yRel, buttons);
         return 1;
     }
 
@@ -486,15 +504,15 @@ RepeatTimeout(void *obj, Uint32 ival, void *arg)
     if (geekConsole)
     {
         int mod = 0;
-        if (repeatMod & KMOD_CTRL)
+        if (repeatKey.mod & AG_KEYMOD_CTRL)
             mod |=  GeekBind::CTRL;
-        if (repeatMod & KMOD_SHIFT)
+        if (repeatKey.mod & AG_KEYMOD_SHIFT)
             mod |=  GeekBind::SHIFT;
-        if (repeatMod & KMOD_ALT)
+        if (repeatKey.mod & AG_KEYMOD_ALT)
             mod |=  GeekBind::META;
-        if (repeatUnicode && !geekConsole->charEntered(repeatKey, repeatUnicode, mod))
-            if (!handleSpecialKey(repeatKey, repeatMod, true))
-                celAppCore->charEntered((char) repeatUnicode);
+        if (repeatKey.uch && !geekConsole->charEntered(repeatKey.sym, repeatKey.uch, mod))
+            if (!handleSpecialKey(repeatKey.sym, repeatKey.mod, true))
+                celAppCore->charEntered((char) repeatKey.uch);
             else
                 return 0;
         return (agKbdRepeat);
@@ -509,8 +527,26 @@ DelayTimeout(void *obj, Uint32 ival, void *arg)
     return (0);
 }
 
+// Analog of AG_SDL_PostEventCallback
+//
+// Some event  may change focused  window but not be  procceed because
+// BG_ProcessEvent be calles instead of AG_ProcessEvent
+//
+// AGAR-UPGRADE: gui/drv_sdl_common.c: check AG_SDL_PostEventCallback(void *obj) for changes
+int My_PostEventCallback()
+{
+	if (!AG_TAILQ_EMPTY(&agWindowDetachQ)) {
+		AG_FreeDetachedWindows();
+	}
+	if (agWindowToFocus != NULL) {
+		AG_WM_CommitWindowFocus(agWindowToFocus);
+		agWindowToFocus = NULL;
+	}
+	return (1);
+}
+
 /**
- * Process an SDL event. Returns 1 if the event was processed in some
+ * Process an AGAR event. Returns 1 if the event was processed in some
  * way, -1 if application is exiting.
  * At first process mouse event:
  *  if LMB down, find focused object (widget), if last
@@ -518,63 +554,67 @@ DelayTimeout(void *obj, Uint32 ival, void *arg)
  *     else
  *        last focused = new focused; 
  */
-int CL_ProcessEvent(SDL_Event *ev)
+int CL_ProcessEvent(AG_DriverEvent *dev)
 {
     int rv = 0;
     int x,y;
     int mod = 0;
-    switch (ev->type) {
-    case SDL_MOUSEBUTTONDOWN:
-        x = ev->button.x;
-        y = ev->button.y;
-        AG_LockVFS(agView);
-        
-#ifdef OPENGL_INVERTED_Y
-        if (agView->opengl)
-            y = agView->h - y;
-#endif
-        if (UI::showUI && FocusWindowAt(x,y))
+	AG_Driver *drv;
+
+    drv = (AG_Driver *) agDriverSw;
+    switch (dev->type) {
+    case AG_DRIVER_MOUSE_BUTTON_DOWN:
+    {
+        x = dev->data.button.x;
+        y = dev->data.button.y;
+
+        AG_DriverSw *dsw = agDriverSw;
+        if (UI::showUI && FocusWindowAt(dsw, x,y))
         {
-            AG_UnlockVFS(agView);
             // is focus of backgraund lost
             if (bgFocuse)
                 BG_LostFocus();
-            return AG_ProcessEvent(ev);
+            /* Forward the event to Agar. */
+            return AG_ProcessEvent(NULL, dev);
         }
         else
         {
             if (bgFocuse)
-                return BG_ProcessEvent(ev);
+                return BG_ProcessEvent(dev);
             else 
                 BG_GainFocus();
         }
-        AG_UnlockVFS(agView);
         break;
-    case SDL_KEYDOWN:
+    }
+    case AG_DRIVER_KEY_DOWN:
         AG_DelTimeout(NULL, &toRepeat);
-        repeatMod = ev->key.keysym.mod;
-        repeatKey = ev->key.keysym.sym;
-        repeatUnicode = ev->key.keysym.unicode;
+        repeatKey.sym = dev->data.key.ks;
+        repeatKey.mod = drv->kbd->modState;
+        repeatKey.uch = dev->data.key.ucs;
+
         if (geekConsole)
         {
-            if (ev->key.keysym.mod & KMOD_CTRL)
+            if (repeatKey.mod & AG_KEYMOD_CTRL)
                 mod |=  GeekBind::CTRL;
-            if (ev->key.keysym.mod & KMOD_SHIFT)
+            if (repeatKey.mod & AG_KEYMOD_SHIFT)
                 mod |=  GeekBind::SHIFT;
-            if (ev->key.keysym.mod & KMOD_ALT)
+            if (repeatKey.mod & AG_KEYMOD_ALT)
                 mod |=  GeekBind::META;
-            // SDL specific: if repeatUnicode = 0 then just mod pressed
-            if (repeatUnicode && geekConsole->charEntered(repeatKey, repeatUnicode, mod))
+            // if repeatUnicode = 0 then just mod key pressed
+            if (repeatKey.uch)
             {
-                AG_ScheduleTimeout(NULL, &toDelay, agKbdDelay);
-                return 1;
+                if (geekConsole->charEntered(repeatKey.sym, repeatKey.uch, mod))
+                {
+                    AG_ScheduleTimeout(NULL, &toDelay, agKbdDelay);
+                    return My_PostEventCallback();
+                }
             }
         }
         if (bgFocuse || !UI::showUI) // no key repeat if agar focused
             AG_ScheduleTimeout(NULL, &toDelay, agKbdDelay);
         goto def;
-    case SDL_KEYUP:
-        if (repeatKey == ev->key.keysym.sym) {
+    case AG_DRIVER_KEY_UP:
+        if (repeatKey.sym == dev->data.key.ks) {
             AG_DelTimeout(NULL, &toRepeat);
             AG_DelTimeout(NULL, &toDelay);
         }
@@ -582,12 +622,12 @@ int CL_ProcessEvent(SDL_Event *ev)
     def:
         if (!bgFocuse && UI::showUI)
         {
-            rv = AG_ProcessEvent(ev);
+            rv = AG_ProcessEvent(NULL, dev);
         }
         else
         {
-            if (BG_ProcessEvent(ev) !=1)
-                rv = AG_ProcessEvent(ev);
+            if (BG_ProcessEvent(dev) !=1)
+                rv = AG_ProcessEvent(NULL, dev);
             else return 1;
         }
     }
@@ -689,72 +729,92 @@ static void BG_Draw()
 
 }
 
-
-void EventLoop_FixedFPS(void)
+void MyEventLoop(void)
 {
-    SDL_Event ev;
     AG_Window *win;
-    Uint32 Tr1, Tr2 = 0;
+    Uint32 t1, t2;
+    AG_DriverEvent dev;
 
-    Tr1 = SDL_GetTicks();
-    for (;;) 
-    {
-        Tr2 = SDL_GetTicks();
-        if (Tr2-Tr1 >= agView->rNom) {
-            AG_LockVFS(agView);
-            AG_BeginRendering();
+    t1 = AG_GetTicks();
+    for (;;) {
+        t2 = AG_GetTicks();
 
-            // draw background
-            BG_Draw();
+        if (agDriverSw && t2-t1 >= agDriverSw->rNom) {
+            /*
+             * Case 1: Update the video display.
+             */
+            AG_LockVFS(&agDrivers);
 
-            //draw agar's windows
-            UI::updateGUIalpha(Tr2-Tr1, !bgFocuse);
-            if (UI::showUI)
-            {
-                AG_TAILQ_FOREACH(win, &agView->windows, windows) {
-                    AG_ObjectLock(win);
-                    UI::precomputeGUIalpha(AG_WindowIsFocused(win));
-                    AG_WindowDraw(win);
-                    AG_ObjectUnlock(win);
+            /* Render the Agar windows */
+            if (agDriverSw) {
+                /* With single-window drivers (e.g., sdlfb). */
+                AG_BeginRendering(agDriverSw);
+
+                BG_Draw();
+
+                //draw agar's windows
+                UI::updateGUIalpha(t2-t1, !bgFocuse);
+                if (UI::showUI)
+                {
+                    AG_FOREACH_WINDOW(win, agDriverSw) {
+                        AG_ObjectLock(win);
+                        UI::precomputeGUIalpha(AG_WindowIsFocused(win));
+                        AG_WindowDraw(win);
+                        AG_ObjectUnlock(win);
+                    }
                 }
-            }
-            glMatrixMode(GL_TEXTURE);
-            glPushMatrix();
 
-            glMatrixMode(GL_PROJECTION);
-            glPushMatrix();
-        
-            glMatrixMode(GL_MODELVIEW);
-            glPushMatrix();
-            glPushAttrib(GL_ALL_ATTRIB_BITS );
-    
-            if (geekConsole)
-                geekConsole->render();
-            glPopAttrib();
-            glMatrixMode(GL_MODELVIEW);
-            glPopMatrix();
-            glMatrixMode(GL_TEXTURE);
-            glPopMatrix();
-            glMatrixMode(GL_PROJECTION);
-            glPopMatrix();
+                glMatrixMode(GL_TEXTURE);
+                glPushMatrix();
 
-            AG_EndRendering();
-            SDL_GL_SwapBuffers();
-            AG_UnlockVFS(agView);
-            
-            /* Recalibrate the effective refresh rate. */
-            Tr1 = SDL_GetTicks();
-            agView->rCur = agView->rNom - (Tr1-Tr2);
-            if (agView->rCur < 1) {
-                agView->rCur = 1;
+                glMatrixMode(GL_PROJECTION);
+                glPushMatrix();
+
+                glMatrixMode(GL_MODELVIEW);
+                glPushMatrix();
+                glPushAttrib(GL_ALL_ATTRIB_BITS );
+
+                if (geekConsole)
+                    geekConsole->render();
+                glPopAttrib();
+                glMatrixMode(GL_MODELVIEW);
+                glPopMatrix();
+                glMatrixMode(GL_TEXTURE);
+                glPopMatrix();
+                glMatrixMode(GL_PROJECTION);
+                glPopMatrix();
+
+                AG_EndRendering(agDriverSw);
+                //SDL_GL_SwapBuffers();
             }
-        } else if (SDL_PollEvent(&ev) != 0) {
-            if (CL_ProcessEvent(&ev) == -1)
-                return;
-        } else if (AG_TIMEOUTS_QUEUED()) {      /* Safe */
-            AG_ProcessTimeouts(Tr2);
-        } else if (agView->rCur > agIdleThresh) {
-            SDL_Delay(agView->rCur - agIdleThresh);
+            AG_UnlockVFS(&agDrivers);
+
+            t1 = AG_GetTicks();
+            curFPS = agDriverSw->rNom - (t1-t2);
+            if (curFPS < 1) { curFPS = 1; }
+
+        } else if (AG_PendingEvents(NULL) > 0) {
+            /*
+             * Case 2: There are events waiting to be processed.
+             */
+            do {
+                /* Retrieve the next queued event. */
+                if (AG_GetNextEvent(NULL, &dev) == 1) {
+                    if (CL_ProcessEvent(&dev) == -1)
+                        return;
+                }
+            } while (AG_PendingEvents(NULL) > 0);
+
+        } else if (AG_TIMEOUTS_QUEUED()) {
+            /*
+             * Case 3: There are AG_Timeout(3) callbacks to run.
+             */
+            AG_ProcessTimeouts(t2);
+        } else {
+            /*
+             * Case 4: Nothing to do, idle.
+             */
+            AG_Delay(1);
         }
     }
 }
@@ -872,19 +932,16 @@ int main(int argc, char* argv[])
         loadCfg();
 
     /* Pass AG_VIDEO_OPENGL flag to require an OpenGL display. */
-    if (AG_InitVideo(800, 600, 32, AG_VIDEO_OPENGL|AG_VIDEO_RESIZABLE|AG_VIDEO_OVERLAY)
-        == -1) {
-        fprintf(stderr, "%s\n", AG_GetError());
-        return (-1);
-    }
+    AG_InitGraphics("sdlgl");
+
     AG_SetVideoResizeCallback(Resize);
 
     /* repeat key timeouts init */
     AG_SetTimeout(&toRepeat, RepeatTimeout, NULL, 0);
     AG_SetTimeout(&toDelay, DelayTimeout, NULL, 0);
-    repeatKey = (SDLKey) 0;
-    repeatMod = KMOD_NONE;
-    repeatUnicode = 0;
+    repeatKey.sym = AG_KEY_NONE;
+    repeatKey.mod = 0;
+    repeatKey.uch = 0;
 
     celAppCore = new CelestiaCore();
 
@@ -911,7 +968,7 @@ int main(int argc, char* argv[])
     appGame->setGameMode(gameMode);
     
     AG_SetRefreshRate(160);
-    EventLoop_FixedFPS();
+    MyEventLoop();
     AG_Destroy();
 
     return 0;
