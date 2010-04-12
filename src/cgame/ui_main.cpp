@@ -1184,9 +1184,8 @@ namespace UI
             }
         }
 
-        static void mnuRender(AG_Event *event)
+        static void createMenuRender(AG_MenuItem *mi)
         {
-            AG_MenuItem *mi = (AG_MenuItem *)AG_SENDER();
             AG_MenuItem *item = AG_MenuNode(mi, _("Show"), NULL);               
             AG_MenuInt32Flags(item, _("Stars"), agIconClose.s, &renderFlags.renderFlagCustom, Renderer::ShowStars, 0);                  
             AG_MenuInt32Flags(item, _("Galaxies"),agIconClose.s, &renderFlags.renderFlagCustom, Renderer::ShowGalaxies, 0);
@@ -1258,11 +1257,11 @@ namespace UI
             AG_MenuSetPollFn(itemopt, mnuOption, NULL);
 
             itemopt = AG_MenuNode(celMenu->root, _("Render"), NULL);
-            AG_MenuSetPollFn(itemopt, mnuRender, NULL);
+            createMenuRender(itemopt);
             itemopt = AG_MenuNode(celMenu->root, _("Customize"), NULL);
             itemopt2 = AG_MenuNode(itemopt, _("UI Theme"), NULL);
-            UI::addThemeTist2Menu(itemopt2);
-        }               
+            UI::createMenuTheme(itemopt2);
+        }
     }
 
     void closeCurrentFocusedWindow()

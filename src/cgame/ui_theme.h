@@ -15,7 +15,7 @@ namespace UI
     extern void updateGUIalpha(Uint32 tickDelta, bool agarUIfocused);
     extern void precomputeGUIalpha(bool isWinFocused);
 
-    extern void addThemeTist2Menu(AG_MenuItem *mi);
+    extern void createMenuTheme(AG_MenuItem *menu);
 }
 
 #endif // _UI_THEME_H_

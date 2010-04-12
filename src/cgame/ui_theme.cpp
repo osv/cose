@@ -17,6 +17,23 @@
 namespace UI{
 
     static const string thmDir = "agar/themes/";
+    AG_Window *winThemeCfg;
+
+    bool themeInit = false;
+
+    double g_maxAlpha = 1.0;
+    double g_minAlpha = 0.3;
+    double g_unfocusedWindowAlpha = 0.5;
+    float precomputeAlpha = 0;
+
+    float uiAlpha = 0;
+
+    // default agars's primitives
+    // AGAR-UPGRADE: drv_gl_common.c: check agar gl primitives
+    void (*defDrawLineH)(void *drv, int x1, int x2, int y, AG_Color C);
+    void (*defDrawLineV)(void *drv, int x, int y1, int y2, AG_Color C);
+    void (*defDrawBoxRoundedTop)(void *drv, AG_Rect r, int z, int rad, AG_Color C[3]);
+    void (*defDrawRectFilled)(void *drv, AG_Rect r, AG_Color C);
 
     static void actSetTheme(AG_Event *event)
     {
@@ -28,7 +45,7 @@ namespace UI{
     {
         if (!IsDirectory(thmDir))
         {
-            cout << "Failed locate theme dir:" << thmDir << "\n";
+            cout << "Failed locate theme dir: " << thmDir << "\n";
             return;
         }
         Directory* dir = OpenDirectory(thmDir);
@@ -61,6 +78,7 @@ namespace UI{
         switch (state)
         {
         case 1:
+            AG_MkPath(thmDir.c_str());
             saveCfg(thmDir + value + ".thm", "render.color.");
             gc->finish();
             break;
@@ -130,21 +148,14 @@ namespace UI{
         return state;
     }
 
-    bool themeInit = false;
-
-    double g_maxAlpha = 1.0;
-    double g_minAlpha = 0.3;
-    double g_unfocusedWindowAlpha = 0.5;
-    float precomputeAlpha = 0;
-
-    float uiAlpha = 0;
-
-    // default agars's primitives
-    // AGAR-UPGRADE: drv_gl_common.c: check agar gl primitives
-    void (*defDrawLineH)(void *drv, int x1, int x2, int y, AG_Color C);
-    void (*defDrawLineV)(void *drv, int x, int y1, int y2, AG_Color C);
-    void (*defDrawBoxRoundedTop)(void *drv, AG_Rect r, int z, int rad, AG_Color C[3]);
-    void (*defDrawRectFilled)(void *drv, AG_Rect r, AG_Color C);
+    static void showConfigureTheme(AG_Event *event)
+    {
+        AG_WindowHide(winThemeCfg);
+        AGWIDGET(winThemeCfg)->x = -1;
+        AGWIDGET(winThemeCfg)->y = -1;
+        AG_WindowSetPosition(winThemeCfg, AG_WINDOW_TC, 0);
+        AG_WindowShow(winThemeCfg);
+    }
 
     void updateGUIalpha(Uint32 tickDelta, bool agarUIfocused)
     {
@@ -306,6 +317,16 @@ namespace UI{
         EndBlending();
     }
 
+    static void
+    BindSelectedColor(AG_Event *event)
+    {
+        AG_HSVPal *hsv = (AG_HSVPal *)AG_PTR(1);
+        AG_TlistItem *it = (AG_TlistItem *)AG_PTR(2);
+        // pointer to int32 color
+        Uint8 *c = (Uint8 *)it->p1;
+        AG_BindUint8(hsv, "RGBAv", c);
+    }
+
     void initThemes()
     {
         if (themeInit)
@@ -322,112 +343,214 @@ namespace UI{
         defDrawBoxRoundedTop = cls->drawBoxRoundedTop;
         defDrawRectFilled = cls->drawRectFilled;
 
+        // create theme config window
+        winThemeCfg = AG_WindowNewNamed(0, "config-theme");
+        AG_WindowSetCaption(winThemeCfg, _("Config theme settings"));
+        AG_Notebook *nb = AG_NotebookNew(winThemeCfg,
+                                         AG_NOTEBOOK_HFILL|AG_NOTEBOOK_VFILL);
+        AG_NotebookTab *tab;
+        tab = AG_NotebookAddTab(nb, _("General"), AG_BOX_VERT);
+        {
+            AG_Numerical *amb;
+            amb = AG_NumericalNewDblR(tab, NULL, NULL, _("Min Alpha"),
+                                      &g_minAlpha, 0, 1);
+            AG_NumericalSetIncrement(amb, 0.1);
+            amb = AG_NumericalNewDblR(tab, NULL, NULL, _("Max Alpha"),
+                                      &g_maxAlpha, 0, 1);
+            AG_NumericalSetIncrement(amb, 0.1);
+            amb = AG_NumericalNewDblR(tab, NULL, NULL, _("Unfocused window alpha"),
+                                      &g_unfocusedWindowAlpha, 0, 1);
+            AG_NumericalSetIncrement(amb, 0.1);
+        }
+
         // bind some config vars
         cVarBindFloat("render.agar.maxAlpha", &g_maxAlpha, g_maxAlpha);
         cVarBindFloat("render.agar.minAlpha", &g_minAlpha, g_minAlpha);
         cVarBindFloat("render.agar.unfocusedWindowAlpha", &g_unfocusedWindowAlpha, g_unfocusedWindowAlpha);
 
-        // // color theme
-        // cVarBindInt32Hex("render.color.agar.BG", (int32*)&agColors[BG_COLOR], agColors[BG_COLOR]);
-        // cVarBindInt32Hex("render.color.agar.FRAME", (int32*)&agColors[FRAME_COLOR], agColors[FRAME_COLOR]);
-        // cVarBindInt32Hex("render.color.agar.LINE", (int32 *)&agColors[LINE_COLOR], agColors[LINE_COLOR]);
-        // cVarBindInt32Hex("render.color.agar.TEXT", (int32 *)&agColors[TEXT_COLOR], agColors[TEXT_COLOR]);
-        // cVarBindInt32Hex("render.color.agar.WINDOW_BG", (int32 *)&agColors[WINDOW_BG_COLOR], agColors[WINDOW_BG_COLOR]);
-        // cVarBindInt32Hex("render.color.agar.WINDOW_HI", (int32 *)&agColors[WINDOW_HI_COLOR], agColors[WINDOW_HI_COLOR]);
-        // cVarBindInt32Hex("render.color.agar.WINDOW_LO", (int32 *)&agColors[WINDOW_LO_COLOR], agColors[WINDOW_LO_COLOR]);
-        // cVarBindInt32Hex("render.color.agar.TITLEBAR_FOCUSED", (int32 *)&agColors[TITLEBAR_FOCUSED_COLOR], agColors[TITLEBAR_FOCUSED_COLOR]);
-        // cVarBindInt32Hex("render.color.agar.TITLEBAR_UNFOCUSED", (int32 *)&agColors[TITLEBAR_UNFOCUSED_COLOR], agColors[TITLEBAR_UNFOCUSED_COLOR]);
-        // cVarBindInt32Hex("render.color.agar.TITLEBAR_CAPTION", (int32 *)&agColors[TITLEBAR_CAPTION_COLOR], agColors[TITLEBAR_CAPTION_COLOR]);
-        // cVarBindInt32Hex("render.color.agar.BUTTON", (int32 *)&agColors[BUTTON_COLOR], agColors[BUTTON_COLOR]);
-        // cVarBindInt32Hex("render.color.agar.BUTTON_TXT", (int32 *)&agColors[BUTTON_TXT_COLOR], agColors[BUTTON_TXT_COLOR]);
-        // cVarBindInt32Hex("render.color.agar.DISABLED", (int32 *)&agColors[DISABLED_COLOR], agColors[DISABLED_COLOR]);
-        // cVarBindInt32Hex("render.color.agar.CHECKBOX", (int32 *)&agColors[CHECKBOX_COLOR], agColors[CHECKBOX_COLOR]);
-        // cVarBindInt32Hex("render.color.agar.CHECKBOX_TXT", (int32 *)&agColors[CHECKBOX_TXT_COLOR], agColors[CHECKBOX_TXT_COLOR]);
-        // cVarBindInt32Hex("render.color.agar.GRAPH_BG", (int32 *)&agColors[GRAPH_BG_COLOR], agColors[GRAPH_BG_COLOR]);
-        // cVarBindInt32Hex("render.color.agar.GRAPH_XAXIS", (int32 *)&agColors[GRAPH_XAXIS_COLOR], agColors[GRAPH_XAXIS_COLOR]);
-        // cVarBindInt32Hex("render.color.agar.HSVPAL_CIRCLE", (int32 *)&agColors[HSVPAL_CIRCLE_COLOR], agColors[HSVPAL_CIRCLE_COLOR]);
-        // cVarBindInt32Hex("render.color.agar.HSVPAL_TILE1", (int32 *)&agColors[HSVPAL_TILE1_COLOR], agColors[HSVPAL_TILE1_COLOR]);
-        // cVarBindInt32Hex("render.color.agar.HSVPAL_TILE2", (int32 *)&agColors[HSVPAL_TILE2_COLOR], agColors[HSVPAL_TILE2_COLOR]);
-        // cVarBindInt32Hex("render.color.agar.MENU_UNSEL", (int32 *)&agColors[MENU_UNSEL_COLOR], agColors[MENU_UNSEL_COLOR]);
-        // cVarBindInt32Hex("render.color.agar.MENU_SEL", (int32 *)&agColors[MENU_SEL_COLOR], agColors[MENU_SEL_COLOR]);
-        // cVarBindInt32Hex("render.color.agar.MENU_OPTION", (int32 *)&agColors[MENU_OPTION_COLOR], agColors[MENU_OPTION_COLOR]);
-        // cVarBindInt32Hex("render.color.agar.MENU_TXT", (int32 *)&agColors[MENU_TXT_COLOR], agColors[MENU_TXT_COLOR]);
-        // cVarBindInt32Hex("render.color.agar.MENU_SEP1", (int32 *)&agColors[MENU_SEP1_COLOR], agColors[MENU_SEP1_COLOR]);
-        // cVarBindInt32Hex("render.color.agar.MENU_SEP2", (int32 *)&agColors[MENU_SEP2_COLOR], agColors[MENU_SEP2_COLOR]);
-        // cVarBindInt32Hex("render.color.agar.NOTEBOOK_BG", (int32 *)&agColors[NOTEBOOK_BG_COLOR], agColors[NOTEBOOK_BG_COLOR]);
-        // cVarBindInt32Hex("render.color.agar.NOTEBOOK_SEL", (int32 *)&agColors[NOTEBOOK_SEL_COLOR], agColors[NOTEBOOK_SEL_COLOR]);
-        // cVarBindInt32Hex("render.color.agar.NOTEBOOK_TXT", (int32 *)&agColors[NOTEBOOK_TXT_COLOR], agColors[NOTEBOOK_TXT_COLOR]);
-        // cVarBindInt32Hex("render.color.agar.RADIO_SEL", (int32 *)&agColors[RADIO_SEL_COLOR], agColors[RADIO_SEL_COLOR]);
-        // cVarBindInt32Hex("render.color.agar.RADIO_OVER", (int32 *)&agColors[RADIO_OVER_COLOR], agColors[RADIO_OVER_COLOR]);
-        // cVarBindInt32Hex("render.color.agar.RADIO_HI", (int32 *)&agColors[RADIO_HI_COLOR], agColors[RADIO_HI_COLOR]);
-        // cVarBindInt32Hex("render.color.agar.RADIO_LO", (int32 *)&agColors[RADIO_LO_COLOR], agColors[RADIO_LO_COLOR]);
-        // cVarBindInt32Hex("render.color.agar.RADIO_TXT", (int32 *)&agColors[RADIO_TXT_COLOR], agColors[RADIO_TXT_COLOR]);
-        // cVarBindInt32Hex("render.color.agar.SCROLLBAR", (int32 *)&agColors[SCROLLBAR_COLOR], agColors[SCROLLBAR_COLOR]);
-        // cVarBindInt32Hex("render.color.agar.SCROLLBAR_BTN", (int32 *)&agColors[SCROLLBAR_BTN_COLOR], agColors[SCROLLBAR_BTN_COLOR]);
-        // cVarBindInt32Hex("render.color.agar.SCROLLBAR_ARR1", (int32 *)&agColors[SCROLLBAR_ARR1_COLOR], agColors[SCROLLBAR_ARR1_COLOR]);
-        // cVarBindInt32Hex("render.color.agar.SCROLLBAR_ARR2", (int32 *)&agColors[SCROLLBAR_ARR2_COLOR], agColors[SCROLLBAR_ARR2_COLOR]);
-        // cVarBindInt32Hex("render.color.agar.SEPARATOR_LINE1", (int32 *)&agColors[SEPARATOR_LINE1_COLOR], agColors[SEPARATOR_LINE1_COLOR]);
-        // cVarBindInt32Hex("render.color.agar.SEPARATOR_LINE2", (int32 *)&agColors[SEPARATOR_LINE2_COLOR], agColors[SEPARATOR_LINE2_COLOR]);
-        // cVarBindInt32Hex("render.color.agar.TABLEVIEW", (int32 *)&agColors[TABLEVIEW_COLOR], agColors[TABLEVIEW_COLOR]);
-        // cVarBindInt32Hex("render.color.agar.TABLEVIEW_HEAD", (int32 *)&agColors[TABLEVIEW_HEAD_COLOR], agColors[TABLEVIEW_HEAD_COLOR]);
-        // cVarBindInt32Hex("render.color.agar.TABLEVIEW_HTXT", (int32 *)&agColors[TABLEVIEW_HTXT_COLOR], agColors[TABLEVIEW_HTXT_COLOR]);
-        // cVarBindInt32Hex("render.color.agar.TABLEVIEW_CTXT", (int32 *)&agColors[TABLEVIEW_CTXT_COLOR], agColors[TABLEVIEW_CTXT_COLOR]);
-        // cVarBindInt32Hex("render.color.agar.TABLEVIEW_LINE", (int32 *)&agColors[TABLEVIEW_LINE_COLOR], agColors[TABLEVIEW_LINE_COLOR]);
-        // cVarBindInt32Hex("render.color.agar.TABLEVIEW_SEL", (int32 *)&agColors[TABLEVIEW_SEL_COLOR], agColors[TABLEVIEW_SEL_COLOR]);
-        // cVarBindInt32Hex("render.color.agar.TEXTBOX", (int32 *)&agColors[TEXTBOX_COLOR], agColors[TEXTBOX_COLOR]);
-        // cVarBindInt32Hex("render.color.agar.TEXTBOX_TXT", (int32 *)&agColors[TEXTBOX_TXT_COLOR], agColors[TEXTBOX_TXT_COLOR]);
-        // cVarBindInt32Hex("render.color.agar.TEXTBOX_CURSOR", (int32 *)&agColors[TEXTBOX_CURSOR_COLOR], agColors[TEXTBOX_CURSOR_COLOR]);
-        // cVarBindInt32Hex("render.color.agar.TLIST_TXT", (int32 *)&agColors[TLIST_TXT_COLOR], agColors[TLIST_TXT_COLOR]);
-        // cVarBindInt32Hex("render.color.agar.TLIST_BG", (int32 *)&agColors[TLIST_BG_COLOR], agColors[TLIST_BG_COLOR]);
-        // cVarBindInt32Hex("render.color.agar.TLIST_LINE", (int32 *)&agColors[TLIST_LINE_COLOR], agColors[TLIST_LINE_COLOR]);
-        // cVarBindInt32Hex("render.color.agar.TLIST_SEL", (int32 *)&agColors[TLIST_SEL_COLOR], agColors[TLIST_SEL_COLOR]);
-        // cVarBindInt32Hex("render.color.agar.MAPVIEW_GRID", (int32 *)&agColors[MAPVIEW_GRID_COLOR], agColors[MAPVIEW_GRID_COLOR]);
-        // cVarBindInt32Hex("render.color.agar.MAPVIEW_CURSOR", (int32 *)&agColors[MAPVIEW_CURSOR_COLOR], agColors[MAPVIEW_CURSOR_COLOR]);
-        // cVarBindInt32Hex("render.color.agar.MAPVIEW_TILE1", (int32 *)&agColors[MAPVIEW_TILE1_COLOR], agColors[MAPVIEW_TILE1_COLOR]);
-        // cVarBindInt32Hex("render.color.agar.MAPVIEW_TILE2", (int32 *)&agColors[MAPVIEW_TILE2_COLOR], agColors[MAPVIEW_TILE2_COLOR]);
-        // cVarBindInt32Hex("render.color.agar.MAPVIEW_MSEL", (int32 *)&agColors[MAPVIEW_MSEL_COLOR], agColors[MAPVIEW_MSEL_COLOR]);
-        // cVarBindInt32Hex("render.color.agar.MAPVIEW_ESEL", (int32 *)&agColors[MAPVIEW_ESEL_COLOR], agColors[MAPVIEW_ESEL_COLOR]);
-        // cVarBindInt32Hex("render.color.agar.TILEVIEW_TILE1", (int32 *)&agColors[TILEVIEW_TILE1_COLOR], agColors[TILEVIEW_TILE1_COLOR]);
-        // cVarBindInt32Hex("render.color.agar.TILEVIEW_TILE2", (int32 *)&agColors[TILEVIEW_TILE2_COLOR], agColors[TILEVIEW_TILE2_COLOR]);
-        // cVarBindInt32Hex("render.color.agar.TILEVIEW_TEXTBG", (int32 *)&agColors[TILEVIEW_TEXTBG_COLOR], agColors[TILEVIEW_TEXTBG_COLOR]);
-        // cVarBindInt32Hex("render.color.agar.TILEVIEW_TEXT", (int32 *)&agColors[TILEVIEW_TEXT_COLOR], agColors[TILEVIEW_TEXT_COLOR]);
-        // cVarBindInt32Hex("render.color.agar.TRANSPARENT", (int32 *)&agColors[TRANSPARENT_COLOR], agColors[TRANSPARENT_COLOR]);
-        // cVarBindInt32Hex("render.color.agar.HSVPAL_BAR1", (int32 *)&agColors[HSVPAL_BAR1_COLOR], agColors[HSVPAL_BAR1_COLOR]);
-        // cVarBindInt32Hex("render.color.agar.HSVPAL_BAR2", (int32 *)&agColors[HSVPAL_BAR2_COLOR], agColors[HSVPAL_BAR2_COLOR]);
-        // cVarBindInt32Hex("render.color.agar.PANE", (int32 *)&agColors[PANE_COLOR], agColors[PANE_COLOR]);
-        // cVarBindInt32Hex("render.color.agar.PANE_CIRCLE", (int32 *)&agColors[PANE_CIRCLE_COLOR], agColors[PANE_CIRCLE_COLOR]);
-        // cVarBindInt32Hex("render.color.agar.MAPVIEW_RSEL", (int32 *)&agColors[MAPVIEW_RSEL_COLOR], agColors[MAPVIEW_RSEL_COLOR]);
-        // cVarBindInt32Hex("render.color.agar.MAPVIEW_ORIGIN", (int32 *)&agColors[MAPVIEW_ORIGIN_COLOR], agColors[MAPVIEW_ORIGIN_COLOR]);
-        // cVarBindInt32Hex("render.color.agar.FOCUS", (int32 *)&agColors[FOCUS_COLOR], agColors[FOCUS_COLOR]);
-        // cVarBindInt32Hex("render.color.agar.TABLE", (int32 *)&agColors[TABLE_COLOR], agColors[TABLE_COLOR]);
-        // cVarBindInt32Hex("render.color.agar.TABLE_LINE", (int32 *)&agColors[TABLE_LINE_COLOR], agColors[TABLE_LINE_COLOR]);
-        // cVarBindInt32Hex("render.color.agar.FIXED_BG", (int32 *)&agColors[FIXED_BG_COLOR], agColors[FIXED_BG_COLOR]);
-        // cVarBindInt32Hex("render.color.agar.FIXED_BOX", (int32 *)&agColors[FIXED_BOX_COLOR], agColors[FIXED_BOX_COLOR]);
-        // cVarBindInt32Hex("render.color.agar.TEXT_DISABLED", (int32 *)&agColors[TEXT_DISABLED_COLOR], agColors[TEXT_DISABLED_COLOR]);
-        // cVarBindInt32Hex("render.color.agar.MENU_TXT_DISABLED", (int32 *)&agColors[MENU_TXT_DISABLED_COLOR], agColors[MENU_TXT_DISABLED_COLOR]);
-        // cVarBindInt32Hex("render.color.agar.SOCKET", (int32 *)&agColors[SOCKET_COLOR], agColors[SOCKET_COLOR]);
-        // cVarBindInt32Hex("render.color.agar.SOCKET_LABEL", (int32 *)&agColors[SOCKET_LABEL_COLOR], agColors[SOCKET_LABEL_COLOR]);
-        // cVarBindInt32Hex("render.color.agar.SOCKET_HIGHLIGHT", (int32 *)&agColors[SOCKET_HIGHLIGHT_COLOR], agColors[SOCKET_HIGHLIGHT_COLOR]);
-        // cVarBindInt32Hex("render.color.agar.PROGRESS_BAR", (int32 *)&agColors[PROGRESS_BAR_COLOR], agColors[PROGRESS_BAR_COLOR]);
-        // cVarBindInt32Hex("render.color.agar.WINDOW_BORDER", (int32 *)&agColors[WINDOW_BORDER_COLOR], agColors[WINDOW_BORDER_COLOR]);
+        typedef struct agar_color_vars_t {
+            const char *name;
+            int index;
+        };
 
-        cVarBindInt32Hex("render.color.gconsole.BG", (int32 *)&clBackground->i, clBackground->i);
-        cVarBindInt32Hex("render.color.gconsole.BG_INTERACTIVE", (int32 *)&clBgInteractive->i, clBgInteractive->i);
-        cVarBindInt32Hex("render.color.gconsole.BG_INTERACTIVE_BRD", (int32 *)&clBgInteractiveBrd->i, clBgInteractiveBrd->i);
-        cVarBindInt32Hex("render.color.gconsole.INTERACTIVE_FNT", (int32 *)&clInteractiveFnt->i, clInteractiveFnt->i);
-        cVarBindInt32Hex("render.color.gconsole.INTERACTIVE_PREFIX_FNT", (int32 *)&clInteractivePrefixFnt->i, clInteractivePrefixFnt->i);
-        cVarBindInt32Hex("render.color.gconsole.INTERACTIVE_EXPAND", (int32 *)&clInteractiveExpand->i, clInteractiveExpand->i);
-        cVarBindInt32Hex("render.color.gconsole.DESCRIPTION", (int32 *)&clDescrFnt->i, clDescrFnt->i);
-        cVarBindInt32Hex("render.color.gconsole.COMPLETION", (int32 *)&clCompletionFnt->i, clCompletionFnt->i);
-        cVarBindInt32Hex("render.color.gconsole.COMPLETION_MATCH", (int32 *)&clCompletionMatchCharFnt->i, clCompletionMatchCharFnt->i);
-        cVarBindInt32Hex("render.color.gconsole.COMPLETION_MATCH_BG", (int32 *)&clCompletionMatchCharBg->i, clCompletionMatchCharBg->i);
-        cVarBindInt32Hex("render.color.gconsole.COMPLETION_AFTER_MATCH", (int32 *)&clCompletionAfterMatch->i, clCompletionAfterMatch->i);
-        cVarBindInt32Hex("render.color.gconsole.COMPLETION_EXPAND_BG", (int32 *)&clCompletionExpandBg->i, clCompletionExpandBg->i);
-        cVarBindInt32Hex("render.color.gconsole.INFOTEXT_FNT", (int32 *)&clInfoTextFnt->i, clInfoTextFnt->i);
-        cVarBindInt32Hex("render.color.gconsole.INFOTEXT_BG", (int32 *)&clInfoTextBg->i, clInfoTextBg->i);
-        cVarBindInt32Hex("render.color.gconsole.INFOTEXT_BRD", (int32 *)&clInfoTextBrd->i, clInfoTextBrd->i);
+        agar_color_vars_t agar_color_vars[] = {
+            {"BG", BG_COLOR},
+            {"FRAME", FRAME_COLOR},
+            {"LINE", LINE_COLOR},
+            {"TEXT", TEXT_COLOR},
+            {"WINDOW_BG", WINDOW_BG_COLOR},
+            {"WINDOW_HI", WINDOW_HI_COLOR},
+            {"WINDOW_LO", WINDOW_LO_COLOR},
+            {"TITLEBAR_FOCUSED", TITLEBAR_FOCUSED_COLOR},
+            {"TITLEBAR_UNFOCUSED", TITLEBAR_UNFOCUSED_COLOR},
+            {"TITLEBAR_CAPTION", TITLEBAR_CAPTION_COLOR},
+            {"BUTTON", BUTTON_COLOR},
+            {"BUTTON_TXT", BUTTON_TXT_COLOR},
+            {"DISABLED", DISABLED_COLOR},
+            {"CHECKBOX", CHECKBOX_COLOR},
+            {"CHECKBOX_TXT", CHECKBOX_TXT_COLOR},
+            {"GRAPH_BG", GRAPH_BG_COLOR},
+            {"GRAPH_XAXIS", GRAPH_XAXIS_COLOR},
+            {"HSVPAL_CIRCLE", HSVPAL_CIRCLE_COLOR},
+            {"HSVPAL_TILE1", HSVPAL_TILE1_COLOR},
+            {"HSVPAL_TILE2", HSVPAL_TILE2_COLOR},
+            {"MENU_UNSEL", MENU_UNSEL_COLOR},
+            {"MENU_SEL", MENU_SEL_COLOR},
+            {"MENU_OPTION", MENU_OPTION_COLOR},
+            {"MENU_TXT", MENU_TXT_COLOR},
+            {"MENU_SEP1", MENU_SEP1_COLOR},
+            {"MENU_SEP2", MENU_SEP2_COLOR},
+            {"NOTEBOOK_BG", NOTEBOOK_BG_COLOR},
+            {"NOTEBOOK_SEL", NOTEBOOK_SEL_COLOR},
+            {"NOTEBOOK_TXT", NOTEBOOK_TXT_COLOR},
+            {"RADIO_SEL", RADIO_SEL_COLOR},
+            {"RADIO_OVER", RADIO_OVER_COLOR},
+            {"RADIO_HI", RADIO_HI_COLOR},
+            {"RADIO_LO", RADIO_LO_COLOR},
+            {"RADIO_TXT", RADIO_TXT_COLOR},
+            {"SCROLLBAR", SCROLLBAR_COLOR},
+            {"SCROLLBAR_BTN", SCROLLBAR_BTN_COLOR},
+            {"SCROLLBAR_ARR1", SCROLLBAR_ARR1_COLOR},
+            {"SCROLLBAR_ARR2", SCROLLBAR_ARR2_COLOR},
+            {"SEPARATOR_LINE1", SEPARATOR_LINE1_COLOR},
+            {"SEPARATOR_LINE2", SEPARATOR_LINE2_COLOR},
+            {"TABLEVIEW", TABLEVIEW_COLOR},
+            {"TABLEVIEW_HEAD", TABLEVIEW_HEAD_COLOR},
+            {"TABLEVIEW_HTXT", TABLEVIEW_HTXT_COLOR},
+            {"TABLEVIEW_CTXT", TABLEVIEW_CTXT_COLOR},
+            {"TABLEVIEW_LINE", TABLEVIEW_LINE_COLOR},
+            {"TABLEVIEW_SEL", TABLEVIEW_SEL_COLOR},
+            {"TEXTBOX", TEXTBOX_COLOR},
+            {"TEXTBOX_TXT", TEXTBOX_TXT_COLOR},
+            {"TEXTBOX_CURSOR", TEXTBOX_CURSOR_COLOR},
+            {"TLIST_TXT", TLIST_TXT_COLOR},
+            {"TLIST_BG", TLIST_BG_COLOR},
+            {"TLIST_LINE", TLIST_LINE_COLOR},
+            {"TLIST_SEL", TLIST_SEL_COLOR},
+            {"MAPVIEW_GRID", MAPVIEW_GRID_COLOR},
+            {"MAPVIEW_CURSOR", MAPVIEW_CURSOR_COLOR},
+            {"MAPVIEW_TILE1", MAPVIEW_TILE1_COLOR},
+            {"MAPVIEW_TILE2", MAPVIEW_TILE2_COLOR},
+            {"MAPVIEW_MSEL", MAPVIEW_MSEL_COLOR},
+            {"MAPVIEW_ESEL", MAPVIEW_ESEL_COLOR},
+            {"TILEVIEW_TILE1", TILEVIEW_TILE1_COLOR},
+            {"TILEVIEW_TILE2", TILEVIEW_TILE2_COLOR},
+            {"TILEVIEW_TEXTBG", TILEVIEW_TEXTBG_COLOR},
+            {"TILEVIEW_TEXT", TILEVIEW_TEXT_COLOR},
+            {"TRANSPARENT", TRANSPARENT_COLOR},
+            {"HSVPAL_BAR1", HSVPAL_BAR1_COLOR},
+            {"HSVPAL_BAR2", HSVPAL_BAR2_COLOR},
+            {"PANE", PANE_COLOR},
+            {"PANE_CIRCLE", PANE_CIRCLE_COLOR},
+            {"MAPVIEW_RSEL", MAPVIEW_RSEL_COLOR},
+            {"MAPVIEW_ORIGIN", MAPVIEW_ORIGIN_COLOR},
+            {"FOCUS", FOCUS_COLOR},
+            {"TABLE", TABLE_COLOR},
+            {"TABLE_LINE", TABLE_LINE_COLOR},
+            {"FIXED_BG", FIXED_BG_COLOR},
+            {"FIXED_BOX", FIXED_BOX_COLOR},
+            {"TEXT_DISABLED", TEXT_DISABLED_COLOR},
+            {"MENU_TXT_DISABLED", MENU_TXT_DISABLED_COLOR},
+            {"SOCKET", SOCKET_COLOR},
+            {"SOCKET_LABEL", SOCKET_LABEL_COLOR},
+            {"SOCKET_HIGHLIGHT", SOCKET_HIGHLIGHT_COLOR},
+            {"PROGRESS_BAR", PROGRESS_BAR_COLOR},
+            {"WINDOW_BORDER", WINDOW_BORDER_COLOR},
+            {NULL}
+        };
 
-        
+        typedef struct gconsole_color_vars_t {
+            const char *name;
+            Color32 *c;
+        };
+
+        gconsole_color_vars_t gconsole_color_vars[] = {
+            {"BG", clBackground},
+            {"BG_INTERACTIVE", clBgInteractive},
+            {"BG_INTERACTIVE_BRD", clBgInteractiveBrd},
+            {"INTERACTIVE_FNT", clInteractiveFnt},
+            {"INTERACTIVE_PREFIX_FNT", clInteractivePrefixFnt},
+            {"INTERACTIVE_EXPAND", clInteractiveExpand},
+            {"DESCRIPTION", clDescrFnt},
+            {"COMPLETION", clCompletionFnt},
+            {"COMPLETION_MATCH", clCompletionMatchCharFnt},
+            {"COMPLETION_MATCH_BG", clCompletionMatchCharBg},
+            {"COMPLETION_AFTER_MATCH", clCompletionAfterMatch},
+            {"COMPLETION_EXPAND_BG", clCompletionExpandBg},
+            {"INFOTEXT_FNT", clInfoTextFnt},
+            {"INFOTEXT_BG", clInfoTextBg},
+            {"INFOTEXT_BRD", clInfoTextBrd},
+            {NULL}
+        };
+
+        // bind vars for color theme
+        tab = AG_NotebookAddTab(nb, _("Agar"), AG_BOX_VERT);
+        {
+            AG_Tlist *tl;
+            AG_TlistItem *it;
+            AG_Pane *hPane;
+            AG_HSVPal *hsv;
+
+            hPane = AG_PaneNew(tab, AG_PANE_HORIZ, AG_PANE_EXPAND);
+            {
+                tl = AG_TlistNew(hPane->div[0], AG_TLIST_EXPAND);
+                AG_TlistSizeHint(tl, "Tileview text background", 10);
+                // color list, fist agar's colors
+                int i = 0;
+
+                while (agar_color_vars[i].name) {
+                    std::string bname("render.color.agar.");
+                    Color32 *c = (Color32 *) &agColors[agar_color_vars[i].index];
+
+                    // bind cfg var
+                    cVarBindInt32Hex(bname + agar_color_vars[i].name,
+                                     (int32 *)&c->i,
+                                     c->i);
+
+                    // add to tlist
+                    it = AG_TlistAdd(tl, NULL, _(agColorNames[i]));
+                    it->p1 = &agColors[i];
+                    i++;
+                }
+                hsv = AG_HSVPalNew(hPane->div[1], AG_HSVPAL_EXPAND);
+                AG_SetEvent(tl, "tlist-selected", BindSelectedColor,
+                            "%p", hsv);
+            }
+        }
+        tab = AG_NotebookAddTab(nb, _("geekconsole"), AG_BOX_VERT);
+        {
+            AG_Tlist *tl;
+            AG_TlistItem *it;
+            AG_Pane *hPane;
+            AG_HSVPal *hsv;
+
+            hPane = AG_PaneNew(tab, AG_PANE_HORIZ, AG_PANE_EXPAND);
+            {
+                tl = AG_TlistNew(hPane->div[0], AG_TLIST_EXPAND);
+                AG_TlistSizeHint(tl, "Tileview COMPLETION_AFTER_MATCH", 10);
+                int i = 0;
+                while (gconsole_color_vars[i].name) {
+                    std::string bname("render.color.gconsole.");
+
+                    // bind cfg var
+                    cVarBindInt32Hex(bname + gconsole_color_vars[i].name,
+                                     (int32 *)&gconsole_color_vars[i].c->i,
+                                     gconsole_color_vars[i].c->i);
+
+                    it = AG_TlistAdd(tl, NULL, _(gconsole_color_vars[i].name));
+                    it->p1 = gconsole_color_vars[i].c->rgba;
+                    i++;
+                }
+
+                hsv = AG_HSVPalNew(hPane->div[1], AG_HSVPAL_EXPAND);
+                AG_SetEvent(tl, "tlist-selected", BindSelectedColor,
+                            "%p", hsv);
+            }
+        }
+
+        AG_WindowSetPosition(winThemeCfg, AG_WINDOW_TC, 0);
+        AG_WindowShow(winThemeCfg);
+        AG_WindowHide(winThemeCfg);
         themeInit = true;
 
         geekConsole->registerFunction(GCFunc(loadColorTheme), "load color theme");
@@ -458,5 +581,21 @@ namespace UI{
         default:
             break;
         }
+    }
+
+    static void mnuThemes(AG_Event *event) {
+        AG_MenuItem *mi = (AG_MenuItem *)AG_SENDER();
+        addThemeTist2Menu(mi);
+    }
+
+    void createMenuTheme(AG_MenuItem *menu)
+    {
+        AG_MenuItem *item;
+        AG_MenuAction(menu, _("Configure theme..."), NULL,
+                      showConfigureTheme, NULL);
+
+        item = AG_MenuNode(menu, _("Theme"), NULL);
+        // polled theme list
+        AG_MenuSetPollFn(item, mnuThemes, NULL);
     }
 }

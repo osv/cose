@@ -101,7 +101,7 @@ static void registerAndBindKeys()
     geekConsole->registerFunction(GCFunc(startTogVidRecord), "toggle video record");
     geekConsole->registerFunction(GCFunc(stopVidRecord), "stop video record");
     geekConsole->registerAndBind("", "M-RET", GCFunc(ToggleFullscreen), "toggle fullscreen");
-    geekConsole->bind("", "C-x C-g e @Earth@EXEC@goto object@", "select object");
+    geekConsole->bind("", "C-x C-g e @Earth@*EXEC*@goto object@", "select object");
 
     GeekBind *geekBindCel = geekConsole->createGeekBind("Celestia");
     geekBindCel->bind("C-x C-m", "quit");
@@ -372,7 +372,6 @@ static int BG_ProcessEvent(AG_DriverEvent *dev)
     switch (dev->type) {
     case AG_DRIVER_KEY_DOWN:
     {
-        cout << "KEY_DOWN" << "\n";
         UI::syncRenderFromAgar();
 
         if (!handleSpecialKey(repeatKey.sym, repeatKey.mod, true))
@@ -382,7 +381,6 @@ static int BG_ProcessEvent(AG_DriverEvent *dev)
     }
     case AG_DRIVER_KEY_UP:
     {       
-        cout << "KEY_UP" << "\n";
         UI::syncRenderFromAgar();
 
         handleSpecialKey(dev->data.key.ks,
