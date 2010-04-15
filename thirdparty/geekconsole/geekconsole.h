@@ -61,7 +61,7 @@ public:
     /* Reset interactive
      */
     virtual void Interact(GeekConsole *gc, string historyName);
-    virtual void charEntered(const wchar_t wc, int modifiers);
+    virtual void charEntered(const char *c_p, int modifiers);
     // called by gc
     virtual void cancelInteractive();
     /* You must render Interactive by using GeekConsole's overlay
@@ -114,7 +114,7 @@ public:
     virtual void setRightText(std::string str);
     virtual std::string getRightText()const; // return text before after 
     bool tryComplete();
-    void charEntered(const wchar_t wc, int modifiers);
+    void charEntered(const char *c_p, int modifiers);
     virtual void renderCompletion(float height, float width);
     void update();
     void setCompletion(std::vector<std::string> completion);
@@ -139,7 +139,7 @@ class CelBodyInteractive: public ListInteractive
 public:
     CelBodyInteractive(std::string name, CelestiaCore *celApp);
     void Interact(GeekConsole *_gc, string historyName);
-    void charEntered(const wchar_t wc, int modifiers);
+    void charEntered(const char *c_p, int modifiers);
     void renderCompletion(float height, float width);
     void update();
     void setCompletion(std::vector<std::string> completion);
@@ -187,7 +187,7 @@ public:
     void setFileExtenstion(std::string);
     void setRightText(std::string str);
     void update();
-    void charEntered(const wchar_t wc, int modifiers);
+    void charEntered(const char *c_p, int modifiers);
     /* Set dir, entire - root dir; use it in inter-callback */
     void setDir(std::string dir, std::string entire = "./");
 private:
@@ -292,7 +292,7 @@ public:
     void reRegisterFunction(GCFunc fun, std::string name);
     GCFunc *getFunctionByName(std::string);
     std::vector<std::string> getFunctionsNames();
-    bool charEntered(const char sym, const wchar_t wc, int modifiers);
+    bool charEntered(const char sym, const char *c_p, int modifiers);
     void resize(int w, int h)
         {
             overlay->setWindowSize(w, h);

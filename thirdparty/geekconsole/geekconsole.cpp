@@ -1220,8 +1220,11 @@ std::vector<std::string> GeekConsole::getFunctionsNames()
    Process key event for interactive if visible console, if not, than
    check hot keys
  */
-bool GeekConsole::charEntered(const char sym, const wchar_t wc, int modifiers)
+bool GeekConsole::charEntered(const char sym, const char *c_p, int modifiers)
 {
+    wchar_t wc = 0;
+    UTF8Decode(c_p, 0, strlen(c_p), wc);
+
     if (!isVisible)
     {
         curKey.c[curKey.len] = sym;
@@ -1353,7 +1356,7 @@ bool GeekConsole::charEntered(const char sym, const wchar_t wc, int modifiers)
 
     if (curInteractive)
     {
-        curInteractive->charEntered(wc, modifiers);
+        curInteractive->charEntered(c_p, modifiers);
         if (isVisible)
             curInteractive->update();
     }
@@ -1801,8 +1804,11 @@ void GCInteractive::Interact(GeekConsole *_gc, string historyName)
     prepareHistoryCompletion();
 }
 
-void GCInteractive::charEntered(const wchar_t wc, int modifiers)
+void GCInteractive::charEntered(const char *c_p, int modifiers)
 {
+    wchar_t wc = 0;
+    UTF8Decode(c_p, 0, strlen(c_p), wc);
+
     char C = toupper((char)wc);
 
     if (useHistory && !curHistoryName.empty())
@@ -1874,6 +1880,9 @@ void GCInteractive::charEntered(const wchar_t wc, int modifiers)
                                          buf[buf.size() - 1])) {
                 setBufferText(string(buf, 0, buf.size() - 1));
             }
+    while (buf.size() && ((buf[buf.size() - 1] & 0xC0) == 0x80)) {
+        buf = string(buf, 0, buf.size() - 1);
+    }
     setBufferText(string(buf, 0, buf.size() - 1));
     prepareHistoryCompletion();
     default:
@@ -1888,7 +1897,7 @@ void GCInteractive::charEntered(const wchar_t wc, int modifiers)
             if (!(modifiers & GeekBind::CTRL) &&
                 !(modifiers & GeekBind::META))
             {
-                buf += wc;
+                buf += c_p;
                 prepareHistoryCompletion();
                 bufSizeBeforeHystory = buf.size();
             }
@@ -2164,8 +2173,11 @@ void ListInteractive::setRightText(std::string text)
     }
 }
 
-void ListInteractive::charEntered(const wchar_t wc, int modifiers)
+void ListInteractive::charEntered(const char *c_p, int modifiers)
 {
+    wchar_t wc = 0;
+    UTF8Decode(c_p, 0, strlen(c_p), wc);
+
     char C = toupper((char)wc);
     if  (C == '\t') // TAB - expand and scroll if many items to expand found
     {
@@ -2238,7 +2250,7 @@ void ListInteractive::charEntered(const wchar_t wc, int modifiers)
             {
                 if (*it == buftext)
                 {
-                    GCInteractive::charEntered(wc, modifiers);
+                    GCInteractive::charEntered(c_p, modifiers);
                     return;
                 }
             }
@@ -2247,7 +2259,7 @@ void ListInteractive::charEntered(const wchar_t wc, int modifiers)
     }
     std::string oldBufText = getBufferText();
 
-    GCInteractive::charEntered(wc, modifiers);
+    GCInteractive::charEntered(c_p, modifiers);
 
     std::string buftext = getBufferText();
     // reset page scroll only if text changed
@@ -2430,8 +2442,11 @@ void CelBodyInteractive::Interact(GeekConsole *_gc, string historyName)
     ListInteractive::separatorChars = "/";
 }
 
-void CelBodyInteractive::charEntered(const wchar_t wc, int modifiers)
+void CelBodyInteractive::charEntered(const char *c_p, int modifiers)
 {
+    wchar_t wc = 0;
+    UTF8Decode(c_p, 0, strlen(c_p), wc);
+
     char C = toupper((char)wc);
 
     if (((modifiers & GeekBind::META ) != 0) && C == 'C')
@@ -2459,12 +2474,12 @@ void CelBodyInteractive::charEntered(const wchar_t wc, int modifiers)
             {
                 if (UTF8StringCompare(*it, buftext) == 0)
                 {
-                    GCInteractive::charEntered(wc, modifiers);
+                    GCInteractive::charEntered(c_p, modifiers);
                     return;
                 }
             }
         } else // pass event
-            GCInteractive::charEntered(wc, modifiers);
+            GCInteractive::charEntered(c_p, modifiers);
         return;
     }
     else
@@ -2472,7 +2487,7 @@ void CelBodyInteractive::charEntered(const wchar_t wc, int modifiers)
         // Ignore "must competion", use may set it like for ListInteractive
         // we use other finish validator (see upper)
         setMatchCompletion(false);
-        return ListInteractive::charEntered(wc, modifiers);
+        return ListInteractive::charEntered(c_p, modifiers);
     }
 }
 
@@ -2609,8 +2624,11 @@ void FileInteractive::update()
     updateTextCompletion();
 }
 
-void FileInteractive::charEntered(const wchar_t wc, int modifiers)
+void FileInteractive::charEntered(const char *c_p, int modifiers)
 {
+    wchar_t wc = 0;
+    UTF8Decode(c_p, 0, strlen(c_p), wc);
+
     // don't go outside of current chdir ie. prevent '../'
     if (wc == '/')
     {
@@ -2623,7 +2641,7 @@ void FileInteractive::charEntered(const wchar_t wc, int modifiers)
             return;
 
     }
-    ListInteractive::charEntered(wc, modifiers);
+    ListInteractive::charEntered(c_p, modifiers);
 }
 
 void FileInteractive::updateTextCompletion()

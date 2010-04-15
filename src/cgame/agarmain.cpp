@@ -508,7 +508,11 @@ RepeatTimeout(void *obj, Uint32 ival, void *arg)
             mod |=  GeekBind::SHIFT;
         if (repeatKey.mod & AG_KEYMOD_ALT)
             mod |=  GeekBind::META;
-        if (repeatKey.uch && !geekConsole->charEntered(repeatKey.sym, repeatKey.uch, mod))
+
+        char utf_c[8];
+        UTF8Encode(repeatKey.uch, utf_c);
+
+        if (repeatKey.uch && !geekConsole->charEntered(repeatKey.sym, utf_c, mod))
             if (!handleSpecialKey(repeatKey.sym, repeatKey.mod, true))
                 celAppCore->charEntered((char) repeatKey.uch);
             else
@@ -601,7 +605,10 @@ int CL_ProcessEvent(AG_DriverEvent *dev)
             // if repeatUnicode = 0 then just mod key pressed
             if (repeatKey.uch)
             {
-                if (geekConsole->charEntered(repeatKey.sym, repeatKey.uch, mod))
+                char utf_c[8];
+                UTF8Encode(repeatKey.uch, utf_c);
+
+                if (geekConsole->charEntered(repeatKey.sym, utf_c, mod))
                 {
                     AG_ScheduleTimeout(NULL, &toDelay, agKbdDelay);
                     return My_PostEventCallback();
