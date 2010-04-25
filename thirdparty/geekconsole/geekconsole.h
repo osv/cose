@@ -218,6 +218,46 @@ public:
     void renderCompletion(float height, float width);
 };
 
+// pager, text viewer, similar to `less` command
+class PagerInteractive: public GCInteractive
+{
+public:
+    PagerInteractive(std::string name):GCInteractive(name, false) {};
+    void Interact(GeekConsole *_gc, string historyName);
+    void charEntered(const char *c_p, int modifiers);
+    void renderCompletion(float height, float width);
+    void renderInteractive();
+    void setText(std::string text);
+    void appendText(std::string text);
+    void setText(std::vector<std::string> text);
+    enum {
+        PG_NOP = 0,
+        PG_ENTERDIGIT = 1,
+        PG_SEARCH_FWD = 2,
+        PG_SEARCH_BWD = 3,
+        PG_ESC = 4
+    };
+private:
+    void forward(int);
+    //
+    void charEntered(const char *c_p, int modifiers, int N);
+    std::vector<std::string> lines;
+    int pageScrollIdx;
+    int leftScrollIdx; //  scroll
+    uint scrollSize;
+    bool richedEnd;
+    int state;
+    int width;
+    std::string lastSearchStr;
+
+    int chopLine;
+    int windowSize;
+    int halfWindowSize;
+    int getChopLine();
+    int getWindowSize();
+    int getHalfWindowSize();
+};
+
 // container for C and lua callback
 typedef int (* CFunc)(GeekConsole *gc, int state, std::string value);
 typedef void (* CFuncVoid)();
@@ -271,6 +311,7 @@ private:
 class GeekConsole
 {
     friend class GCFunc;
+
 public:
     enum ConsoleType
     {
@@ -338,6 +379,7 @@ public:
     std::string getCurrentMacro() const
         { return currentMacro; }
     void appendCurrentMacro(std::string);
+    void appendDescriptionStr(std::string);
 
     // descript. prefix in before interactive prompt
     std::string InteractivePrefixStr;
@@ -373,7 +415,6 @@ private:
     bool isMacroRecording;
     uint maxMacroLevel;
     uint curMacroLevel;
-
 };
 
 extern Color getColorFromText(const string &text);

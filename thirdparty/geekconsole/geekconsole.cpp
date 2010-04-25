@@ -152,9 +152,36 @@ Color32 clInfoTextBrdD(255, 255, 255, 200);
 Color32 *clInfoTextBrd = &clInfoTextBrdD;
 
 GeekConsole *geekConsole = NULL;
-const char *ctrlZDescr = ", C-z Unexpand";
+const char *ctrlZDescr = "C-z Unexpand";
 
 std::string historyDir("history/");
+
+#define CTRL_A '\001'
+#define CTRL_B '\002'
+#define CTRL_C '\003'
+#define CTRL_D '\004'
+#define CTRL_E '\005'
+#define CTRL_F '\006'
+#define CTRL_G '\007'
+#define CTRL_H '\010'
+#define CTRL_I '\011'
+#define CTRL_J '\012'
+#define CTRL_K '\013'
+#define CTRL_L '\014'
+#define CTRL_M '\015'
+#define CTRL_N '\016'
+#define CTRL_O '\017'
+#define CTRL_P '\020'
+#define CTRL_Q '\021'
+#define CTRL_R '\022'
+#define CTRL_S '\023'
+#define CTRL_T '\024'
+#define CTRL_U '\025'
+#define CTRL_V '\026'
+#define CTRL_W '\027'
+#define CTRL_X '\030'
+#define CTRL_Y '\031'
+#define CTRL_Z '\032'
 
 CustomDescribeSelection customDescribeSelection = NULL;
 
@@ -1728,6 +1755,14 @@ void GeekConsole::appendCurrentMacro(std::string macro)
     }
 }
 
+void GeekConsole::appendDescriptionStr(std::string text)
+{
+    if (descriptionStr.length())
+        descriptionStr += ", " + text;
+    else
+        descriptionStr = text;
+}
+
 /******************************************************************
  *  Interactives
  ******************************************************************/
@@ -1851,7 +1886,7 @@ void GCInteractive::charEntered(const char *c_p, int modifiers)
         rit = typedHistoryCompletion.rbegin() + typedHistoryCompletionIdx;
         typedHistoryCompletionIdx++;
         buf = *rit;
-        gc->descriptionStr += _(ctrlZDescr);
+        gc->appendDescriptionStr(_(ctrlZDescr));
         return;
     case '\016':  // Ctrl+N forw history
         if (typedHistoryCompletion.empty())
@@ -1861,7 +1896,7 @@ void GCInteractive::charEntered(const char *c_p, int modifiers)
         it = typedHistoryCompletion.begin() + typedHistoryCompletionIdx;
         typedHistoryCompletionIdx--;
         buf = *it;
-        gc->descriptionStr += _(ctrlZDescr);
+        gc->appendDescriptionStr(_(ctrlZDescr));
         return;
     case '\032':  // Ctrl+Z
         if (bufSizeBeforeHystory == buf.size())
@@ -1971,7 +2006,7 @@ void GCInteractive::setLastFromHistory()
         typedHistoryCompletion.rbegin() + typedHistoryCompletionIdx;
     typedHistoryCompletionIdx++;
     buf = *rit;
-    gc->descriptionStr = _(ctrlZDescr);
+    gc->appendDescriptionStr(_(ctrlZDescr));
 }
 
 void PasswordInteractive::renderInteractive()
@@ -2036,13 +2071,6 @@ void ColorChooserInteractive::renderCompletion(float height, float width)
         gc->getOverlay()->beginText();
         for (uint j = 0; it < typedTextCompletion.end() && j < nb_lines; it++, j++)
         {
-            if (i * nb_lines + j == completedIdx - pageScrollIdx)
-            {
-                // border of current completion
-                glColor4ubv(clCompletionExpandBg->rgba);
-                gc->getOverlay()->rect(-2.0f, 0.0f - 2,
-                                       marg + 2, fh + 4);
-            }
             int k = 0;
             while (colorTable[k].colorName)
             {
@@ -2188,9 +2216,10 @@ void ListInteractive::charEntered(const char *c_p, int modifiers)
             if (pageScrollIdx > typedTextCompletion.size())
                 pageScrollIdx = 0;
             char buff[128];
-            sprintf(buff,_("%i of %i pages, M-/ next expand, M-? prev expand, C-z Unexpand"), (pageScrollIdx / scrollSize) + 1,
+            sprintf(buff,_("%i of %i pages, M-/ next expand, M-? prev expand"), (pageScrollIdx / scrollSize) + 1,
                     (typedTextCompletion.size() / scrollSize) + 1);
             gc->descriptionStr = buff;
+            gc->appendDescriptionStr(_(ctrlZDescr));
             completedIdx = pageScrollIdx;
             return;
         }
@@ -2211,7 +2240,7 @@ void ListInteractive::charEntered(const char *c_p, int modifiers)
             uint oldBufSizeBeforeHystory = bufSizeBeforeHystory;
             setRightText(*it);
             bufSizeBeforeHystory = oldBufSizeBeforeHystory;
-            gc->descriptionStr = _(ctrlZDescr);
+            gc->appendDescriptionStr(_(ctrlZDescr));
             return;
         }
     }
@@ -2232,7 +2261,7 @@ void ListInteractive::charEntered(const char *c_p, int modifiers)
             uint oldBufSizeBeforeHystory = bufSizeBeforeHystory;
             setRightText(*it);
             bufSizeBeforeHystory = oldBufSizeBeforeHystory;
-            gc->descriptionStr = _(ctrlZDescr);
+            gc->appendDescriptionStr(_(ctrlZDescr));
             return;
         }
     }
@@ -2322,7 +2351,7 @@ void ListInteractive::renderCompletion(float height, float width)
                 // border of current completion
                 glColor4ubv(clCompletionExpandBg->rgba);
                 gc->getOverlay()->rect(0.0f, 0.0f - 2,
-                                       font->getWidth(s), fh);
+                                       (float)shiftx, fh);
             }
             // completion item (only text before match char)
             glColor4ubv(clCompletionFnt->rgba);
@@ -2721,12 +2750,380 @@ void FileInteractive::setDir(std::string dir, std::string entire)
     setDefaultValue(dir);
 }
 
+/* Pager interactive */
+
+void PagerInteractive::setText(std::string text)
+{
+//    lines = splitString(text, "\n");
+    // TODO: need optimisation of split
+    std::istringstream is(text);
+    std::string s;
+    while (std::getline(is, s, '\n'))
+        lines.push_back(s);
+}
+
+void PagerInteractive::appendText(std::string text)
+{
+//    std::vector<std::string> 
+}
+
+void PagerInteractive::setText(std::vector<std::string> text)
+{
+    lines = text;
+}
+
+void PagerInteractive::Interact(GeekConsole *_gc, string historyName)
+{
+    GCInteractive::Interact(_gc, historyName);
+    pageScrollIdx = 0;
+    leftScrollIdx = 0;
+    scrollSize = 0;
+    richedEnd = false;
+    state = PG_NOP;
+    lastSearchStr = "";
+
+    chopLine = -1;
+    windowSize = -1;
+    halfWindowSize = -1;
+}
+
+// forward scrollIdx
+// Dont increment if end of view is visible
+void PagerInteractive::forward(int fwdby)
+{
+    if (fwdby > 0)
+    {
+        if (pageScrollIdx < lines.size() - scrollSize)
+        {
+            pageScrollIdx += fwdby;
+            if (pageScrollIdx > lines.size() - scrollSize)
+                pageScrollIdx = lines.size() - scrollSize;
+        }
+    } else
+        pageScrollIdx += fwdby;
+}
+
+int PagerInteractive::getChopLine()
+{
+    if (chopLine == -1)
+        return width;
+    else
+        return chopLine;
+}
+
+int PagerInteractive::getWindowSize()
+{
+    if (windowSize == -1)
+        return scrollSize;
+    else
+        return windowSize;
+}
+
+int PagerInteractive::getHalfWindowSize()
+{
+    if (halfWindowSize == -1)
+        return scrollSize / 2;
+    else
+        return halfWindowSize;
+}
+
+void PagerInteractive::charEntered(const char *c_p, int modifiers)
+{
+    char c = *c_p;
+
+    switch (state)
+    {
+    case PG_NOP:
+        if ((c >= '0' && c <= '9')) {
+            state = PG_ENTERDIGIT;
+            GCInteractive::charEntered(c_p, modifiers);
+            break;
+        } else if (c == '/') {
+            state = PG_SEARCH_FWD;
+            return;
+        } else if (c == '?') {
+            state = PG_SEARCH_BWD;
+            return;
+        }
+        else {
+            charEntered(c_p, modifiers, -1);
+        }
+        gc->appendDescriptionStr(_("q - finish"));
+        break;
+    case PG_ENTERDIGIT:
+        // only promt for digits, otherwise dispatch with resulted N
+        if ((c >= '0' && c <= '9') || c == '\b') {
+            GCInteractive::charEntered(c_p, modifiers);
+            break;
+        } else {
+            state = PG_NOP;
+            int N = atoi(getBufferText().c_str());
+            charEntered(c_p, modifiers, N);
+        }
+        setBufferText("");
+        break;
+    case PG_SEARCH_BWD:
+    {
+        if (c == '\n' || c == '\r') {
+            state = PG_NOP;
+            vector<std::string>::const_reverse_iterator it = lines.rbegin();
+            if (getBufferText() != "")
+            {
+                lastSearchStr = getBufferText();
+            }
+            int lastSearch = pageScrollIdx;
+            setBufferText("");
+            if (lastSearch > 0) {
+                it += lines.size() - lastSearch;
+                for (uint j = 0; it < lines.rend(); it++, j++)
+                {
+                    if ((std::string (*it)).find(lastSearchStr) != string::npos)
+                    {
+                        pageScrollIdx = lastSearch - j - 1;
+                        gc->descriptionStr = _("Search backward");
+                        gc->descriptionStr += ": " + lastSearchStr;
+                        return;
+                    }
+                }
+            }
+            gc->descriptionStr = _("Pattern not found: ") + lastSearchStr;
+            return;
+        } else {
+            GCInteractive::charEntered(c_p, modifiers);
+            gc->descriptionStr = _("Search backward");
+        }
+        break;
+    }
+    case PG_SEARCH_FWD:
+    {
+        if (c == '\n' || c == '\r') {
+            state = PG_NOP;
+            vector<std::string>::const_iterator it = lines.begin();
+            if (getBufferText() != "")
+            {
+                lastSearchStr = getBufferText();
+            }
+            int lastSearch = pageScrollIdx + 1;
+            setBufferText("");
+            if (lastSearch < lines.size()) {
+                it += lastSearch;
+                for (uint j = 0; it < lines.end(); it++, j++)
+                {
+                    if ((std::string (*it)).find(lastSearchStr) != string::npos)
+                    {
+                        pageScrollIdx = lastSearch + j;
+                        gc->descriptionStr = _("Search forward");
+                        gc->descriptionStr += ": " + lastSearchStr;
+                        return;
+                    }
+                }
+            }
+            gc->descriptionStr = _("Pattern not found: ") + lastSearchStr;
+            return;
+        } else {
+            GCInteractive::charEntered(c_p, modifiers);
+            gc->descriptionStr = _("Search forward");
+        }
+        break;
+    }
+    } // switch
+
+    if (leftScrollIdx < 0)
+        leftScrollIdx = 0;
+    if (pageScrollIdx >= (int) lines.size())
+        pageScrollIdx = lines.size() - 1;
+    if (pageScrollIdx < 0)
+        pageScrollIdx = 0;
+}
+
+// Commands are based on both more and vi. Commands may be preceded by
+// a decimal number, called N in.
+// N = -1 is default
+void PagerInteractive::charEntered(const char *c_p, int modifiers, int N)
+{
+    char c = *c_p;
+
+    setBufferText("");
+    switch (state)
+    {
+    case PG_NOP:
+        if (c == '<' || c == 'g') {
+            // Go to line N in the file, default 1
+            if (N < 0) // default
+                pageScrollIdx = 0;
+            else
+                pageScrollIdx = N;
+            leftScrollIdx = 0;
+        } else if (c == '>' || c == 'G') {
+            // Go to line N in the file, default the end of the file.
+            if (N < 0) // default
+                pageScrollIdx = lines.size() - scrollSize;
+            else
+                pageScrollIdx = N;
+            leftScrollIdx = 0;
+        } else if (c == 'p' || c == '%') {
+            // Go to a position N percent
+            if (N < 0) // default
+                pageScrollIdx = 0;
+            else
+                pageScrollIdx = lines.size() * N / 100;
+            leftScrollIdx = 0;
+        } else if (c == ' ' || c == 'f' || c == CTRL_V) {
+            // Scroll forward N lines, default one window
+            if (N > 0)
+                forward(N);
+            else
+                forward(getWindowSize());
+        } else if (c == 'z') {
+            // Scroll  forward N  lines,  but if  N  is specified,  it
+            // becomes the new window size.
+            if (N > 0)
+                windowSize = N;
+            forward(getWindowSize());
+        } else if (c == '\r' || c == '\n' || c == CTRL_N ||
+                   c == 'e' || c == CTRL_E || c == 'j' || c == CTRL_J) {
+            // Scroll forward  N lines, default 1. The  entire N lines
+            // are displayed, even if N is more than the screen size.
+            if (N > 0)
+                forward(N);
+            else
+                forward(1);
+        } else if (c == 'd' || c == CTRL_D) {
+            //Scroll forward  N lines, default one half  of the screen
+            //size. If N is specified,  it becomes the new default for
+            //subsequent d and u commands.
+            if (N > 0)
+                halfWindowSize = N;
+            forward(getHalfWindowSize());
+        } else if (c == 'b' || c == CTRL_B) {
+            // Scroll backward N lines, default one window
+            if (N > 0)
+                forward(-N);
+            else
+                forward(-getWindowSize());
+        } else if (c == 'w') {
+            // Scroll  backward N  lines, but  if N  is  specified, it
+            // becomes the new window size.
+            if (N > 0)
+                windowSize = N;
+            forward(-getWindowSize());
+        } else if (c == 'y' || c == 'k' || c == 'e' ||
+                   c == CTRL_Y || c == CTRL_P || c == CTRL_K) {
+            // Scroll backward N lines,  default 1. The entire N lines
+            // are displayed, even if N is more than the screen size.
+            if (N > 0)
+                forward(-N);
+            else
+                forward(-1);
+        } else if (c == 'u' || c == CTRL_U) {
+            //Scroll backward N lines,  default one half of the screen
+            //size. If N is specified,  it becomes the new default for
+            //subsequent d and u commands.
+            if (N > 0)
+                halfWindowSize = N;
+            forward(-getHalfWindowSize());
+        } else if (c == 'l') {
+            if (N > 0)
+                chopLine = N;
+            leftScrollIdx -= getChopLine() * gc->getCompletionFont()->getWidth("X");
+        } else if (c == 'r') {
+            if (N > 0)
+                chopLine = N;
+            leftScrollIdx += getChopLine() * gc->getCompletionFont()->getWidth("X");
+        } else if (c == 'q')
+            GCInteractive::charEntered("\r", 0); // quit
+        break;
+    }
+}
+
+void PagerInteractive::renderCompletion(float height, float width)
+{
+    TextureFont *font = gc->getCompletionFont();
+    float fwidth = font->getWidth("X");
+    float fh = font->getHeight();
+    vector<std::string>::const_iterator it = lines.begin();
+    uint nb_lines = height / (fh + 1); // +1 because overlay margin be-twin '\n' is 1 pixel
+    scrollSize = nb_lines;
+    this->width = width;
+
+    if (pageScrollIdx < 0)
+        pageScrollIdx = 0;
+
+    it += pageScrollIdx;
+
+    glColor4ubv(clCompletionFnt->rgba);
+    glPushMatrix();
+    gc->getOverlay()->beginText();
+    glTranslatef((float) -leftScrollIdx, 0.0f, 0.0f);
+    uint j;
+    for (j= 0; it < lines.end() && j < nb_lines; it++, j++)
+    {
+        *gc->getOverlay() << *it;
+        *gc->getOverlay() << "\n";
+    }
+    for (; j < nb_lines; j++)
+    {
+        *gc->getOverlay() << "~";
+        *gc->getOverlay() << "\n";
+    }
+    gc->getOverlay()->endText();
+    glPopMatrix();
+    // render scroll
+    uint scrolled_perc = 0;
+    if ((lines.size() - nb_lines) > 0)
+        scrolled_perc = 100 * pageScrollIdx / (lines.size() - nb_lines);
+
+    gc->getOverlay()->beginText();
+    {
+        glPushMatrix();
+        const float scrollW = 5;
+        glColor4ubv(clCompletionExpandBg->rgba);
+        glTranslatef((float) (width - 5 * fwidth) - scrollW - 4, 0.0f, 0.0f);
+        gc->getOverlay()->rect(0, 0.0f - 2, 5 * fwidth, fh);
+        glColor4ubv(clCompletionFnt->rgba);
+        *gc->getOverlay() << scrolled_perc << "%";
+        glPopMatrix();
+
+        // scrollbar
+        if (lines.size())
+        {
+            float scrollH = height + fh - 2;
+            glTranslatef(width - scrollW - 2.0f, -height, 0.0f);
+            glColor4ubv(clCompletionExpandBg->rgba);
+            gc->getOverlay()->rect(0.0f, 0.0f, scrollW, scrollH);
+            // bar
+            float scrollHInner = scrollH - 2;
+            float scrollSize = scrollHInner / ((float)lines.size() / nb_lines);
+            if (scrollSize < 2.0f)
+                scrollSize = 2.0f;
+            float offsetY = scrollHInner -
+                pageScrollIdx * scrollHInner / lines.size() - scrollSize + 1;
+            glColor4ubv(clCompletionFnt->rgba);
+            gc->getOverlay()->rect(1.0f, offsetY, scrollW - 2.0f, scrollSize);
+        }
+    }
+    gc->getOverlay()->endText();
+}
+
+void PagerInteractive::renderInteractive()
+{
+    glColor4ubv(clInteractiveFnt->rgba);
+    if (state == PG_SEARCH_FWD)
+        *gc->getOverlay() << "/";
+    else if (state == PG_SEARCH_BWD)
+        *gc->getOverlay() << "?";
+    else
+        *gc->getOverlay() << ":";
+    *gc->getOverlay() << getBufferText();
+}
+
 ListInteractive *listInteractive;
 PasswordInteractive *passwordInteractive;
 CelBodyInteractive *celBodyInteractive;
 ColorChooserInteractive *colorChooserInteractive;
 FlagInteractive *flagInteractive;
 FileInteractive *fileInteractive;
+PagerInteractive *pagerInteractive;
 
 /******************************************************************
  *  Functions
@@ -3092,6 +3489,7 @@ void initGCInteractives(GeekConsole *gc)
         flagInteractive = new FlagInteractive("flag");
         fileInteractive = new FileInteractive("file");
         colorChooserInteractive = new ColorChooserInteractive("colorch");
+        pagerInteractive = new PagerInteractive("pager");
         isInteractsInit = true;
     }
     gc->registerAndBind("", "M-x",
@@ -3130,6 +3528,7 @@ void destroyGCInteractives()
     delete colorChooserInteractive;
     delete flagInteractive;
     delete fileInteractive;
+    delete pagerInteractive;
 }
 
 /******************************************************************
