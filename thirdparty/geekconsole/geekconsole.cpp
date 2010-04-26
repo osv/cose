@@ -2752,24 +2752,67 @@ void FileInteractive::setDir(std::string dir, std::string entire)
 
 /* Pager interactive */
 
-void PagerInteractive::setText(std::string text)
+PagerInteractive::PagerInteractive(std::string name)
+ :GCInteractive(name, false)
 {
-//    lines = splitString(text, "\n");
-    // TODO: need optimisation of split
-    std::istringstream is(text);
+    std::istringstream is(
+        "\n                   SUMMARY OF PAGER COMMANDS\n\n"
+        "     Notes in parentheses indicate the behavior if N is given.\n"
+        "\n"
+        "h  H              Display this help.\n"
+        "q  Q              Exit.\n\n"
+        "                          MOVING\n"
+        "e  ^E  j  ^N  CR    Forward  one line   (or N lines).\n"
+        "y  ^Y  k  ^K  ^P    Backward one line   (or N lines).\n"
+        "f  ^F  ^V  SPACE    Forward  one window (or N lines).\n"
+        "b  ^B  ESC-v        Backward one window (or N lines).\n"
+        "z                   Forward  one window (and set window to N).\n"
+        "w                   Backward one window (and set window to N).\n"
+        "d  ^D               Forward  one half-window (and set half-window to N).\n"
+        "u  ^U               Backward one half-window (and set half-window to N).\n"
+        "l                   Left  one half screen width (or N positions).\n"
+        "r                   Right one half screen width (or N positions).\n"
+        "--\n"
+        "Default \"window\" is the screen height.\n"
+        "Default \"half-window\" is half of the screen height.\n"
+        "\n                          SEARCHING\n"
+        "/pattern            Search forward for (N-th) matching line.\n"
+        "?pattern            Search backward for (N-th) matching line.\n"
+        "n                   Repeat previous search (for N-th occurrence).\n"
+        "N                   Repeat previous search in reverse direction.\n"
+        "\n                          JUMPING\n"
+        "g  <  ESC-<         Go to first line in file (or line N).\n"
+        "G  >  ESC->         Go to last line in file (or line N).\n"
+        "p  %                Go to beginning of file (or N percent into file).\n");
     std::string s;
     while (std::getline(is, s, '\n'))
-        lines.push_back(s);
+        helpText.push_back(s);
 }
 
-void PagerInteractive::appendText(std::string text)
+void PagerInteractive::setText(std::string t)
 {
-//    std::vector<std::string> 
+    // TODO: need optimisation of split
+    lines = &text;
+    text.clear();
+    std::istringstream is(t);
+    std::string s;
+    while (std::getline(is, s, '\n'))
+        text.push_back(s);
 }
 
-void PagerInteractive::setText(std::vector<std::string> text)
+void PagerInteractive::appendText(std::string t)
 {
-    lines = text;
+    lines = &text;
+    std::istringstream is(t);
+    std::string s;
+    while (std::getline(is, s, '\n'))
+        text.push_back(s);
+}
+
+void PagerInteractive::setText(std::vector<std::string> t)
+{
+    lines = &text;
+    text = t;
 }
 
 void PagerInteractive::Interact(GeekConsole *_gc, string historyName)
@@ -2785,6 +2828,9 @@ void PagerInteractive::Interact(GeekConsole *_gc, string historyName)
     chopLine = -1;
     windowSize = -1;
     halfWindowSize = -1;
+    text.clear();
+    lines = &text;
+    N = -1;
 }
 
 // forward scrollIdx
@@ -2793,11 +2839,11 @@ void PagerInteractive::forward(int fwdby)
 {
     if (fwdby > 0)
     {
-        if (pageScrollIdx < lines.size() - scrollSize)
+        if (pageScrollIdx < (int) lines->size() - (int) scrollSize)
         {
             pageScrollIdx += fwdby;
-            if (pageScrollIdx > lines.size() - scrollSize)
-                pageScrollIdx = lines.size() - scrollSize;
+            if (pageScrollIdx > (int) lines->size() - (int) scrollSize)
+                pageScrollIdx = lines->size() - scrollSize;
         }
     } else
         pageScrollIdx += fwdby;
@@ -2846,9 +2892,12 @@ void PagerInteractive::charEntered(const char *c_p, int modifiers)
             return;
         }
         else {
-            charEntered(c_p, modifiers, -1);
+            processChar(c_p, modifiers);
         }
-        gc->appendDescriptionStr(_("q - finish"));
+        if (lines == &helpText)
+            gc->appendDescriptionStr(_("q - quit from help"));
+        else
+            gc->appendDescriptionStr(_("q - finish, h - help"));
         break;
     case PG_ENTERDIGIT:
         // only promt for digits, otherwise dispatch with resulted N
@@ -2857,8 +2906,8 @@ void PagerInteractive::charEntered(const char *c_p, int modifiers)
             break;
         } else {
             state = PG_NOP;
-            int N = atoi(getBufferText().c_str());
-            charEntered(c_p, modifiers, N);
+            N = atoi(getBufferText().c_str());
+            charEntered(c_p, modifiers);
         }
         setBufferText("");
         break;
@@ -2866,7 +2915,7 @@ void PagerInteractive::charEntered(const char *c_p, int modifiers)
     {
         if (c == '\n' || c == '\r') {
             state = PG_NOP;
-            vector<std::string>::const_reverse_iterator it = lines.rbegin();
+            vector<std::string>::const_reverse_iterator it = lines->rbegin();
             if (getBufferText() != "")
             {
                 lastSearchStr = getBufferText();
@@ -2874,18 +2923,21 @@ void PagerInteractive::charEntered(const char *c_p, int modifiers)
             int lastSearch = pageScrollIdx;
             setBufferText("");
             if (lastSearch > 0) {
-                it += lines.size() - lastSearch;
-                for (uint j = 0; it < lines.rend(); it++, j++)
+                it += lines->size() - lastSearch;
+                for (uint j = 0; it < lines->rend(); it++, j++)
                 {
                     if ((std::string (*it)).find(lastSearchStr) != string::npos)
                     {
-                        pageScrollIdx = lastSearch - j - 1;
-                        gc->descriptionStr = _("Search backward");
-                        gc->descriptionStr += ": " + lastSearchStr;
-                        return;
+                        if (--N < 1) { // skip N matches
+                            pageScrollIdx = lastSearch - j - 1;
+                            gc->descriptionStr = _("Search backward");
+                            gc->descriptionStr += ": " + lastSearchStr;
+                            return;
+                        }
                     }
                 }
             }
+            N = -1;
             gc->descriptionStr = _("Pattern not found: ") + lastSearchStr;
             return;
         } else {
@@ -2898,26 +2950,29 @@ void PagerInteractive::charEntered(const char *c_p, int modifiers)
     {
         if (c == '\n' || c == '\r') {
             state = PG_NOP;
-            vector<std::string>::const_iterator it = lines.begin();
+            vector<std::string>::const_iterator it = lines->begin();
             if (getBufferText() != "")
             {
                 lastSearchStr = getBufferText();
             }
             int lastSearch = pageScrollIdx + 1;
             setBufferText("");
-            if (lastSearch < lines.size()) {
+            if (lastSearch < (int) lines->size()) {
                 it += lastSearch;
-                for (uint j = 0; it < lines.end(); it++, j++)
+                for (uint j = 0; it < lines->end(); it++, j++)
                 {
                     if ((std::string (*it)).find(lastSearchStr) != string::npos)
                     {
-                        pageScrollIdx = lastSearch + j;
-                        gc->descriptionStr = _("Search forward");
-                        gc->descriptionStr += ": " + lastSearchStr;
-                        return;
+                        if (--N < 1) { // skip N matches
+                            pageScrollIdx = lastSearch + j;
+                            gc->descriptionStr = _("Search forward");
+                            gc->descriptionStr += ": " + lastSearchStr;
+                            return;
+                        }
                     }
                 }
             }
+            N = -1;
             gc->descriptionStr = _("Pattern not found: ") + lastSearchStr;
             return;
         } else {
@@ -2930,8 +2985,8 @@ void PagerInteractive::charEntered(const char *c_p, int modifiers)
 
     if (leftScrollIdx < 0)
         leftScrollIdx = 0;
-    if (pageScrollIdx >= (int) lines.size())
-        pageScrollIdx = lines.size() - 1;
+    if (pageScrollIdx >= (int) lines->size())
+        pageScrollIdx = lines->size() - 1;
     if (pageScrollIdx < 0)
         pageScrollIdx = 0;
 }
@@ -2939,7 +2994,7 @@ void PagerInteractive::charEntered(const char *c_p, int modifiers)
 // Commands are based on both more and vi. Commands may be preceded by
 // a decimal number, called N in.
 // N = -1 is default
-void PagerInteractive::charEntered(const char *c_p, int modifiers, int N)
+void PagerInteractive::processChar(const char *c_p, int modifiers)
 {
     char c = *c_p;
 
@@ -2957,7 +3012,7 @@ void PagerInteractive::charEntered(const char *c_p, int modifiers, int N)
         } else if (c == '>' || c == 'G') {
             // Go to line N in the file, default the end of the file.
             if (N < 0) // default
-                pageScrollIdx = lines.size() - scrollSize;
+                pageScrollIdx = lines->size() - scrollSize;
             else
                 pageScrollIdx = N;
             leftScrollIdx = 0;
@@ -2966,7 +3021,7 @@ void PagerInteractive::charEntered(const char *c_p, int modifiers, int N)
             if (N < 0) // default
                 pageScrollIdx = 0;
             else
-                pageScrollIdx = lines.size() * N / 100;
+                pageScrollIdx = lines->size() * N / 100;
             leftScrollIdx = 0;
         } else if (c == ' ' || c == 'f' || c == CTRL_V) {
             // Scroll forward N lines, default one window
@@ -3022,18 +3077,36 @@ void PagerInteractive::charEntered(const char *c_p, int modifiers, int N)
             if (N > 0)
                 halfWindowSize = N;
             forward(-getHalfWindowSize());
-        } else if (c == 'l') {
-            if (N > 0)
-                chopLine = N;
-            leftScrollIdx -= getChopLine() * gc->getCompletionFont()->getWidth("X");
         } else if (c == 'r') {
             if (N > 0)
                 chopLine = N;
+            leftScrollIdx -= getChopLine() * gc->getCompletionFont()->getWidth("X");
+        } else if (c == 'l') {
+            if (N > 0)
+                chopLine = N;
             leftScrollIdx += getChopLine() * gc->getCompletionFont()->getWidth("X");
-        } else if (c == 'q')
-            GCInteractive::charEntered("\r", 0); // quit
+        } else if (c == 'q' || c == 'Q') {
+            if (lines != &helpText) // quit from interactive (finish)
+                GCInteractive::charEntered("\r", 0);
+            else { // quit from help
+                lines = &text;
+                pageScrollIdx = 0; leftScrollIdx = 0;
+            }
+        } else if (c == 'h' || c == 'H') { // help
+            lines = &helpText;
+            pageScrollIdx = 0; leftScrollIdx = 0;
+        } else if (c == 'n') { // Repeat previous search (for N-th occurrence)
+            state = PG_SEARCH_FWD;
+            charEntered("\n", 0);
+            return; // dont contine (N must be not reset)
+        } else if (c == 'N') { // search prev
+            state = PG_SEARCH_BWD;
+            charEntered("\n", 0);
+            return;
+        }
         break;
     }
+    N = -1;
 }
 
 void PagerInteractive::renderCompletion(float height, float width)
@@ -3041,7 +3114,7 @@ void PagerInteractive::renderCompletion(float height, float width)
     TextureFont *font = gc->getCompletionFont();
     float fwidth = font->getWidth("X");
     float fh = font->getHeight();
-    vector<std::string>::const_iterator it = lines.begin();
+    vector<std::string>::const_iterator it = lines->begin();
     uint nb_lines = height / (fh + 1); // +1 because overlay margin be-twin '\n' is 1 pixel
     scrollSize = nb_lines;
     this->width = width;
@@ -3053,10 +3126,10 @@ void PagerInteractive::renderCompletion(float height, float width)
 
     glColor4ubv(clCompletionFnt->rgba);
     glPushMatrix();
-    gc->getOverlay()->beginText();
     glTranslatef((float) -leftScrollIdx, 0.0f, 0.0f);
+    gc->getOverlay()->beginText();
     uint j;
-    for (j= 0; it < lines.end() && j < nb_lines; it++, j++)
+    for (j= 0; it < lines->end() && j < nb_lines; it++, j++)
     {
         *gc->getOverlay() << *it;
         *gc->getOverlay() << "\n";
@@ -3070,8 +3143,10 @@ void PagerInteractive::renderCompletion(float height, float width)
     glPopMatrix();
     // render scroll
     uint scrolled_perc = 0;
-    if ((lines.size() - nb_lines) > 0)
-        scrolled_perc = 100 * pageScrollIdx / (lines.size() - nb_lines);
+    if ((lines->size() - nb_lines) > 0)
+        scrolled_perc = 100 * pageScrollIdx / (lines->size() - nb_lines);
+    if (scrolled_perc > 100)
+        scrolled_perc = 100;
 
     gc->getOverlay()->beginText();
     {
@@ -3085,7 +3160,7 @@ void PagerInteractive::renderCompletion(float height, float width)
         glPopMatrix();
 
         // scrollbar
-        if (lines.size())
+        if (lines->size() > nb_lines)
         {
             float scrollH = height + fh - 2;
             glTranslatef(width - scrollW - 2.0f, -height, 0.0f);
@@ -3093,11 +3168,11 @@ void PagerInteractive::renderCompletion(float height, float width)
             gc->getOverlay()->rect(0.0f, 0.0f, scrollW, scrollH);
             // bar
             float scrollHInner = scrollH - 2;
-            float scrollSize = scrollHInner / ((float)lines.size() / nb_lines);
+            float scrollSize = scrollHInner / ((float)lines->size() / nb_lines);
             if (scrollSize < 2.0f)
                 scrollSize = 2.0f;
             float offsetY = scrollHInner -
-                pageScrollIdx * scrollHInner / lines.size() - scrollSize + 1;
+                pageScrollIdx * scrollHInner / lines->size() - scrollSize + 1;
             glColor4ubv(clCompletionFnt->rgba);
             gc->getOverlay()->rect(1.0f, offsetY, scrollW - 2.0f, scrollSize);
         }

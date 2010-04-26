@@ -222,13 +222,13 @@ public:
 class PagerInteractive: public GCInteractive
 {
 public:
-    PagerInteractive(std::string name):GCInteractive(name, false) {};
+    PagerInteractive(std::string name);
     void Interact(GeekConsole *_gc, string historyName);
     void charEntered(const char *c_p, int modifiers);
     void renderCompletion(float height, float width);
     void renderInteractive();
     void setText(std::string text);
-    void appendText(std::string text);
+    void appendText(std::string text); // append with text \n before
     void setText(std::vector<std::string> text);
     enum {
         PG_NOP = 0,
@@ -239,9 +239,11 @@ public:
     };
 private:
     void forward(int);
-    //
-    void charEntered(const char *c_p, int modifiers, int N);
-    std::vector<std::string> lines;
+
+    void processChar(const char *c_p, int modifiers);
+    std::vector<std::string> *lines;
+    std::vector<std::string> text;
+    std::vector<std::string> helpText; // help for display
     int pageScrollIdx;
     int leftScrollIdx; //  scroll
     uint scrollSize;
@@ -249,6 +251,7 @@ private:
     int state;
     int width;
     std::string lastSearchStr;
+    int N;
 
     int chopLine;
     int windowSize;
