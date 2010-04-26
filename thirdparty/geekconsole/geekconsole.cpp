@@ -3541,11 +3541,39 @@ static int describebindKey(GeekConsole *gc, int state, std::string value)
         GeekBind *gb = gc->getGeekBind(bindspace);
         if (gb)
         {
-            gc->getCelCore()->flash(gb->getBindDescr(value), 6);
-            gc->finish();
+            std::stringstream ss;
+            gc->setInteractive(pagerInteractive, "", _("Describe bind key:"));
+            ss << value << _(" runs the command \"");
+            ss << gb->getFunName(value) << "\"";
+
+            if (gb->getParams(value) != "")
+                ss << _("\nwith params \"") << gb->getParams(value);
+            ss << "\"\n\n";
+
+            ss << _("It is bound to ") << gb->getBinds(gb->getFunName(value)) << ".\n\n";
+            GCFunc *f = gc->getFunctionByName(gb->getFunName(value));
+            if (f)
+            {
+                std::string s = f->getInfo();
+                if (s != "")
+                    ss << f->getInfo() << "\n";
+                if (f->getType() == GCFunc::Alias) {
+                    ss << _("It is alias to ") << "\"" << f->getAliasFun() << "\"";
+                    if (f->getAliasParams() != "")
+                        ss << _("\nwith params \"") << f->getAliasParams() << "\"";
+
+                }
+            } else {
+                ss << _("Function not defined\n");
+            }
+
+            pagerInteractive->setText(ss.str());
         }
         break;
     }
+    case 3:
+        gc->finish();
+        break;
     default:
         break;
     }

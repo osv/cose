@@ -296,8 +296,11 @@ public:
                                                                                info(doc){};
     int call(GeekConsole *gc, int state, std::string value);
 
+    GCFuncType const getType() { return type; }
+    std::string const getAliasFun() { return aliasfun; }
     std::string const getAliasParams() { return params; }
     std::string const getInfo() { return info; }
+
 private:
     GCFuncType type;
     CFunc cFun;

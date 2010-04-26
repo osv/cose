@@ -204,6 +204,36 @@ std::string GeekBind::getBindDescr(std::string keybind)
     return "";
 }
 
+std::string GeekBind::getFunName(std::string keybind)
+{
+    std::vector<KeyBind>::iterator it;
+    KeyBind k;
+    k.set(keybind.c_str());
+    std::string str = k.keyToStr();
+    for (it = binds.begin();
+         it != binds.end(); it++)
+    {
+        if (str == it->keyToStr())
+            return it->gcFunName;
+    }
+    return "";
+}
+
+std::string GeekBind::getParams(std::string keybind)
+{
+    std::vector<KeyBind>::iterator it;
+    KeyBind k;
+    k.set(keybind.c_str());
+    std::string str = k.keyToStr();
+    for (it = binds.begin();
+         it != binds.end(); it++)
+    {
+        if (str == it->keyToStr())
+            return it->params;
+    }
+    return "";
+}
+
 std::vector<std::string> GeekBind::getAllBinds()
 {
     std::vector<std::string> kb;

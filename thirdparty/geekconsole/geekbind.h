@@ -44,6 +44,8 @@ public:
     // coma sep. list of k. binds for specified fun
     std::string getBinds(std::string funName);
     std::string getBindDescr(std::string keybind);
+    std::string getFunName(std::string keybind);
+    std::string getParams(std::string keybind);
     std::vector<std::string> getAllBinds();
     const std::vector<KeyBind>& getBinds()
         {return binds;}
