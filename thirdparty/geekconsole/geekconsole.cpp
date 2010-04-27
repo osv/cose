@@ -3257,10 +3257,14 @@ static int execFunction(GeekConsole *gc, int state, std::string value)
     switch (state)
     {
     case 0:
+    {
         gc->setInteractive(listInteractive, "exec-function", "M-x", "Exec function");
-        listInteractive->setCompletion(gc->getFunctionsNames());
+        std::vector<std::string> v = gc->getFunctionsNames();
+        std::sort(v.begin(), v.end());
+        listInteractive->setCompletion(v);
         listInteractive->setMatchCompletion(true);
         break;
+    }
     case -1:
     {
         // describe key binds for this function
@@ -3550,7 +3554,22 @@ static int describebindKey(GeekConsole *gc, int state, std::string value)
                 ss << _("\nwith params \"") << gb->getParams(value);
             ss << "\"\n\n";
 
-            ss << _("It is bound to ") << gb->getBinds(gb->getFunName(value)) << ".\n\n";
+            ss << _("It is bound to");
+            // all binds of function
+            const std::vector<GeekBind *> &gbs = gc->getGeekBinds();
+            std::vector<string> completion;
+
+            std::string function = gb->getFunName(value);
+            for (std::vector<GeekBind *>::const_iterator it = gbs.begin();
+                 it != gbs.end(); it++)
+            {
+                GeekBind *b = *it;
+                std::string binds = b->getBinds(function);
+                if (!binds.empty())
+                    ss << " \"" << b->getName() << "\": " << binds;
+            }
+            ss << ".\n\n";
+
             GCFunc *f = gc->getFunctionByName(gb->getFunName(value));
             if (f)
             {

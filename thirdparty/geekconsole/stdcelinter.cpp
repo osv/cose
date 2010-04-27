@@ -359,25 +359,41 @@ static flags_s *flagsToSet = renderflags;
 static int setFlag(GeekConsole *gc, int state, std::string value)
 {
     static uint32 var; // flag here
-    static bool setUnset; // true set flag, flase - unset
+    enum {
+        SET = 1,
+        UNSET = 2,
+        TOGGLE =3
+    };
+    static int setUnset; // true set flag, flase - unset
     std::stringstream ss;
 
     switch(state)
     {
     case 0:
-        gc->setInteractive(listInteractive, "set-unset", _("Show/Hide objects"));
-        listInteractive->setCompletionFromSemicolonStr("show;hide");
+        gc->setInteractive(listInteractive, "set-unset", _("Show/Hide/Toggle objects"));
+        listInteractive->setCompletionFromSemicolonStr("show;hide;toggle");
         listInteractive->setMatchCompletion(true);
         break;
     case 1:
         if (value == "show")
-            setUnset = true;
-        else
-            setUnset = false;
-        ss << (setUnset ? _("Show") : _("Hide"));
+        {
+            ss << _("Show");
+            setUnset = SET;
+        } else if (value == "hide")
+        {
+            ss << _("Hide");
+            setUnset = UNSET;
+        } else
+        {
+            ss << _("Toggle");
+            setUnset = TOGGLE;
+        }
+
         gc->setInteractive(listInteractive, "flag-type", ss.str(),
-                           setUnset ?
-                           _("Which type of flag to set") : _("Which type of flag to unset"));
+                           setUnset == SET ?
+                           _("Which type of flag to set") :
+                           setUnset == UNSET ? _("Which type of flag to unset") :
+                           _("Which type of flag to Toggle"));
         listInteractive->setCompletionFromSemicolonStr("objects;labels;orbits");
         listInteractive->setMatchCompletion(true);
         break;
@@ -402,20 +418,23 @@ static int setFlag(GeekConsole *gc, int state, std::string value)
         while(flagsToSet[j].name != NULL)
         {
             // add only if flag not set currently if need to set flag and so on
-            if (setUnset)
+            if (setUnset == SET)
             {
                 if (!(var & flagsToSet[j].mask))
                     completion.push_back(flagsToSet[j].name);
-            } else
+            } else if (setUnset == UNSET)
+            {
                 if ((var & flagsToSet[j].mask))
                     completion.push_back(flagsToSet[j].name);
+            } else
+                completion.push_back(flagsToSet[j].name);
             j++;
         }
 
-        ss << (setUnset ? _("Show") : _("Hide")) << " " << value;
+        ss << (setUnset == SET ? _("Show") :
+               setUnset == UNSET ? _("Hide") : _("Toggle")) << " " << value;
         gc->setInteractive(flagInteractive, "flag-" + value, ss.str());
         flagInteractive->setCompletion(completion);
-        flagInteractive->setColumns(5);
         flagInteractive->setMatchCompletion(true);
         break;
     }
@@ -437,10 +456,12 @@ static int setFlag(GeekConsole *gc, int state, std::string value)
                 string s = *it;
                 if(s == flagsToSet[j].name )
                 {
-                    if (setUnset)
+                    if (setUnset == SET)
                         var |= flagsToSet[j].mask;
-                    else
+                    else if (setUnset == UNSET)
                         var &= ~ flagsToSet[j].mask;
+                    else // toggle
+                        var ^= flagsToSet[j].mask;
                     break;
                 }
                 j++;
@@ -552,4 +573,7 @@ void initGCStdInteractivsFunctions(GeekConsole *gc)
                          "show objects");
     gc->registerFunction(GCFunc("celestia options", "@hide", _("Select objects, labels or orbits to hide")),
                          "hide objects");
+    gc->registerFunction(GCFunc("celestia options", "@toggle", _("Select objects, labels or orbits to toggle")),
+                         "toggle objects");
+
 }
