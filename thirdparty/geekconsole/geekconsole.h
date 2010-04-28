@@ -80,7 +80,7 @@ public:
     virtual void setDefaultValue(std::string v);
     /* set to buffer str from last value in history
      */
-    void setLastFromHistory();
+    virtual void setLastFromHistory();
 protected:
     GeekConsole *gc;
     std::string separatorChars; // additional separator chars
@@ -100,7 +100,7 @@ private:
     typedef std::map<std::string, std::vector<std::string>, CompareIgnoringCasePredicate> History;
     History history;
     std::string curHistoryName;
-    uint typedHistoryCompletionIdx;
+    int typedHistoryCompletionIdx;
 };
 
 
@@ -230,6 +230,7 @@ public:
     void setText(std::string text);
     void appendText(std::string text); // append with text \n before
     void setText(std::vector<std::string> text);
+    void setLastFromHistory() {};
     enum {
         PG_NOP = 0,
         PG_ENTERDIGIT = 1,
@@ -424,6 +425,7 @@ private:
 };
 
 extern Color getColorFromText(const string &text);
+extern Color32 getColor32FromText(const string &text);
 
 /* Init/destroy interactives */
 
@@ -447,6 +449,7 @@ extern CelBodyInteractive *celBodyInteractive;
 extern ColorChooserInteractive *colorChooserInteractive;
 extern FlagInteractive *flagInteractive;
 extern FileInteractive *fileInteractive;
+extern PagerInteractive *pagerInteractive;
 
 /* describeselection is used celestia body interactive.
    You can setup own describer
