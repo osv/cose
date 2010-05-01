@@ -30,12 +30,23 @@ noinst_HEADERS = \
 openspace_client_LDADD = \
 	../celestia/libcelestia.a \
 	../celengine/libcelengine.a \
+	../celephem/libcelephem.a \
+	../celmodel/libcelmodel.a \
 	../celtxf/libceltxf.a \
 	../cel3ds/libcel3ds.a \
 	../celmath/libcelmath.a \
 	../celutil/libcelutil.a \
 	$(SPICELIB) \
 	$(INTLLIBS) 
+
+# ../celephem/libcelephem.a 
+# ../celmodel/libcelmodel.a \
+# ../celestia/libcelestia.a \
+# ../celengine/libcelengine.a \
+# ../celtxf/libceltxf.a \
+# ../cel3ds/libcel3ds.a \
+# ../celmath/libcelmath.a \
+# ../celutil/libcelutil.a 
 
 openspace_client_SOURCES = \
 	agarmain.cpp \

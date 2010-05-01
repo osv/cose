@@ -14,7 +14,6 @@ if ENABLE_CGAME
 noinst_LIBRARIES = libcelestia.a
 
 
-#	celestiacore.cpp 
 COMMONSOURCES = \
 	configfile.cpp \
 	destination.cpp \
@@ -23,25 +22,6 @@ COMMONSOURCES = \
 	imagecapture.cpp \
 	url.cpp \
 	celestiacore.cpp 	
-
-WINSOURCES = \
-	avicapture.cpp \
-	ODMenu.cpp \
-	scriptmenu.cpp \
-	wglext.cpp \
-	winbookmarks.cpp \
-	windatepicker.cpp \
-	wineclipses.cpp \
-	wingotodlg.cpp \
-	winhyperlinks.cpp \
-	winlocations.cpp \
-	winmain.cpp \
-	winsplash.cpp \
-	winssbrowser.cpp \
-	winstarbrowser.cpp \
-	wintime.cpp \
-	wintourguide.cpp \
-	winviewoptsdlg.cpp
 
 if ENABLE_CELX
 CELXSOURCES = \
@@ -66,8 +46,7 @@ endif
 
 EXTRA_DIST = \
 	Celestia.dsp \
-	celestia.mak \
-	$(WINSOURCES)
+	celestia.mak
 
 # celestia_LDADD = \
 # 	../celengine/libcelengine.a \
@@ -91,32 +70,19 @@ noinst_HEADERS = \
 	celx_frame.h \
 	configfile.h \
 	url.h \
-	winlocations.h \
-	wintime.h \
-	wintourguide.h \
 	celx_gl.h \
 	avicapture.h \
 	celx.h \
 	moviecapture.h \
 	scriptmenu.h \
-	wglext.h \
-	winssbrowser.h \
 	celx_object.h \
 	celx_position.h \
-	wingotodlg.h \
 	favorites.h \
 	celx_internal.h \
 	oggtheoracapture.h \
-	winviewoptsdlg.h \
-	winsplash.h \
-	wineclipses.h \
-	winhyperlinks.h \
-	ODMenu.h \
 	celx_vector.h \
 	eclipsefinder.h \
-	winbookmarks.h \
 	celx_rotation.h \
-	winstarbrowser.h \
 	celx_observer.h \
 	celestiacore.h \
 	destination.h \

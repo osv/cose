@@ -1,4 +1,5 @@
-SUBDIRS = celutil celmath cel3ds celtxf celengine celestia common cgame cellserv cmserver
+SUBDIRS = celutil celmath cel3ds celtxf celengine celephem celmodel celestia \
+	common cgame cellserv cmserver
 
 DEFS = -DHIP_DATA_DIR='"$(HIPDIR)"' @DEFS@
 

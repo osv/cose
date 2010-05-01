@@ -1102,21 +1102,21 @@ bool LuaState::tick(double dt)
 
         if (getTime() > timeout)
         {
-            appCore->showText("WARNING:\n\nThis script requests permission to read/write files\n"
+            appCore->showText(_("WARNING:\n\nThis script requests permission to read/write files\n"
                               "and execute external programs. Allowing this can be\n"
                               "dangerous.\n"
                               "Do you trust the script and want to allow this?\n\n"
-                              "y = yes, ESC = cancel script, any other key = no",
+                              "y = yes, ESC = cancel script, any other key = no"),
                               0, 0,
                               -15, 5, 5);
             appCore->setTextEnterMode(appCore->getTextEnterMode() | CelestiaCore::KbPassToScript);
         }
         else
         {
-            appCore->showText("WARNING:\n\nThis script requests permission to read/write files\n"
+            appCore->showText(_("WARNING:\n\nThis script requests permission to read/write files\n"
                               "and execute external programs. Allowing this can be\n"
                               "dangerous.\n"
-                              "Do you trust the script and want to allow this?",
+                              "Do you trust the script and want to allow this?"),
                               0, 0,
                               -15, 5, 5);
             appCore->setTextEnterMode(appCore->getTextEnterMode() & ~CelestiaCore::KbPassToScript);
@@ -2121,6 +2121,40 @@ static int celestia_getoverlayelements(lua_State* l)
     }
     return 1;
 }
+
+
+static int celestia_settextcolor(lua_State* l)
+{
+    Celx_CheckArgs(l, 4, 4, "Three arguments expected for celestia:settextcolor()");
+    CelestiaCore* appCore = this_celestia(l);
+
+    Color color;
+    double red     = Celx_SafeGetNumber(l, 2, WrongType, "settextcolor: color values must be numbers", 1.0);
+    double green   = Celx_SafeGetNumber(l, 3, WrongType, "settextcolor: color values must be numbers", 1.0);
+    double blue    = Celx_SafeGetNumber(l, 4, WrongType, "settextcolor: color values must be numbers", 1.0);
+
+    // opacity currently not settable
+    double opacity = 1.0;
+
+    color = Color((float) red, (float) green, (float) blue, (float) opacity);
+    appCore->setTextColor(color);
+
+    return 0;
+}
+
+static int celestia_gettextcolor(lua_State* l)
+{
+    Celx_CheckArgs(l, 1, 1, "No arguments expected for celestia:getgalaxylightgain()");
+    CelestiaCore* appCore = this_celestia(l);
+
+    Color color = appCore->getTextColor();
+    lua_pushnumber(l, color.red());
+    lua_pushnumber(l, color.green());
+    lua_pushnumber(l, color.blue());
+
+    return 3;
+}
+
 
 static int celestia_setlabelcolor(lua_State* l)
 {
@@ -3302,6 +3336,33 @@ static int celestia_getscriptpath(lua_State* l)
     return 1;
 }
 
+static int celestia_runscript(lua_State* l)
+{
+    Celx_CheckArgs(l, 2, 2, "One argument expected for celestia:runscript");
+    string scriptfile = Celx_SafeGetString(l, 2, AllErrors, "Argument to celestia:runscript must be a string");
+
+    lua_Debug ar;
+    lua_getstack(l, 1, &ar);
+    lua_getinfo(l, "S", &ar);
+    string base_dir = ar.source; // Script file from which we are called
+    if (base_dir[0] == '@') base_dir = base_dir.substr(1);
+#ifdef _WIN32
+    // Replace all backslashes with forward in base dir path
+    size_t pos = base_dir.find('\\');
+    while (pos != string::npos)
+    {
+        base_dir.replace(pos, 1, "/");
+        pos = base_dir.find('\\');
+    }
+#endif
+    // Remove script filename from path
+    base_dir = base_dir.substr(0, base_dir.rfind('/')) + '/';
+
+    CelestiaCore* appCore = this_celestia(l);
+    appCore->runScript(base_dir + scriptfile);
+    return 0;
+}
+
 static int celestia_tostring(lua_State* l)
 {
     lua_pushstring(l, "[Celestia]");
@@ -3396,6 +3457,8 @@ static void CreateCelestiaMetaTable(lua_State* l)
     Celx_RegisterMethod(l, "getlabelcolor", celestia_getlabelcolor);
     Celx_RegisterMethod(l, "setlinecolor",  celestia_setlinecolor);
     Celx_RegisterMethod(l, "getlinecolor",  celestia_getlinecolor);
+    Celx_RegisterMethod(l, "settextcolor",  celestia_settextcolor);
+    Celx_RegisterMethod(l, "gettextcolor",  celestia_gettextcolor);
     Celx_RegisterMethod(l, "getoverlayelements", celestia_getoverlayelements);
     Celx_RegisterMethod(l, "setoverlayelements", celestia_setoverlayelements);
     Celx_RegisterMethod(l, "getfaintestvisible", celestia_getfaintestvisible);
@@ -3448,6 +3511,7 @@ static void CreateCelestiaMetaTable(lua_State* l)
     Celx_RegisterMethod(l, "createcelscript", celestia_createcelscript);
     Celx_RegisterMethod(l, "requestsystemaccess", celestia_requestsystemaccess);
     Celx_RegisterMethod(l, "getscriptpath", celestia_getscriptpath);
+    Celx_RegisterMethod(l, "runscript", celestia_runscript);
     Celx_RegisterMethod(l, "registereventhandler", celestia_registereventhandler);
     Celx_RegisterMethod(l, "geteventhandler", celestia_geteventhandler);
     Celx_RegisterMethod(l, "stars", celestia_stars);

@@ -13,9 +13,9 @@
 #define MAX_CONSTELLATIONS 100
 
 #include <iostream>
-#include <celutil/color.h>
 #include <celengine/execenv.h>
 #include <celengine/astro.h>
+#include <celutil/color.h>
 
 
 class Command
@@ -654,6 +654,17 @@ class CommandSetLabelColor : public InstantaneousCommand
 
  private:
     std::string item;
+    Color color;
+};
+
+
+class CommandSetTextColor : public InstantaneousCommand
+{
+ public:
+    CommandSetTextColor(Color);
+    void process(ExecutionEnvironment&);
+
+ private:
     Color color;
 };
 

@@ -860,24 +860,37 @@ bool StarDatabase::createStar(Star* star,
     bool hasRotationModel = (rm != NULL);
 
     Vector3d semiAxes = Vector3d::Ones();
-    bool hasSemiAxes = starData->getVector("SemiAxes", semiAxes);
+    bool hasSemiAxes = starData->getLengthVector("SemiAxes", semiAxes);
     bool hasBarycenter = false;
     Eigen::Vector3f barycenterPosition;
 
     double radius;
-    bool hasRadius = starData->getNumber("Radius", radius);
+    bool hasRadius = starData->getLength("Radius", radius);
     
+    double temperature;
+    bool hasTemperature = starData->getNumber("Temperature", temperature);
+    // disallow unphysical temperature values
+    if (temperature <= 0.0)
+    {
+        hasTemperature = false;
+    }
+
+    double bolometricCorrection;
+    bool hasBolometricCorrection = starData->getNumber("BoloCorrection", bolometricCorrection);
+
     string infoURL;
     bool hasInfoURL = starData->getString("InfoURL", infoURL);
 
     Orbit* orbit = CreateOrbit(Selection(), starData, path, true);
 
-    if (hasTexture      ||
-        hasModel        ||
-        orbit != NULL   ||
-        hasSemiAxes     ||
-        hasRadius       ||
-        hasRotationModel ||
+    if (hasTexture              ||
+        hasModel                ||
+        orbit != NULL           ||
+        hasSemiAxes             ||
+        hasRadius               ||
+        hasTemperature          ||
+        hasBolometricCorrection ||
+        hasRotationModel        ||
         hasInfoURL)
     {
         // If the star definition has extended information, clone the
@@ -909,6 +922,31 @@ bool StarDatabase::createStar(Star* star,
             details->addKnowledge(StarDetails::KnowRadius);
         }
         
+        if (hasTemperature)
+        {
+            details->setTemperature((float) temperature);
+
+            if (!hasBolometricCorrection)
+            {
+                // if we change the temperature, recalculate the bolometric
+                // correction using formula from formula for main sequence
+                // stars given in B. Cameron Reed (1998), "The Composite
+                // Observational-Theoretical HR Diagram", Journal of the Royal
+                // Astronomical Society of Canada, Vol 92. p36.
+
+                double logT = log10(temperature) - 4;
+                double bc = -8.499 * pow(logT, 4) + 13.421 * pow(logT, 3)
+                            - 8.131 * logT * logT - 3.901 * logT - 0.438;
+
+                details->setBolometricCorrection((float) bc);
+            }
+        }
+
+        if (hasBolometricCorrection)
+        {
+            details->setBolometricCorrection((float) bolometricCorrection);
+        }
+
         if (hasInfoURL)
         {
             details->setInfoURL(infoURL);
@@ -984,6 +1022,7 @@ bool StarDatabase::createStar(Star* star,
         double ra = 0.0;
         double dec = 0.0;
         double distance = 0.0;
+        
         if (disposition == ModifyStar)
         {
             Vector3f pos = star->getPosition();
@@ -996,13 +1035,17 @@ bool StarDatabase::createStar(Star* star,
             if (distance > 0.0)
             {
                 v.normalize();
-                ra = radToDeg(std::atan2(v.y(), v.x()));
+                ra = radToDeg(std::atan2(v.y(), v.x())) / DEG_PER_HRA;
                 dec = radToDeg(std::asin(v.z()));
             }
         }
         
         bool modifyPosition = false;
-        if (!starData->getNumber("RA", ra))
+        if (starData->getAngle("RA", ra, DEG_PER_HRA, 1.0))
+        {
+            modifyPosition = true;
+        }
+        else
         {
             if (disposition != ModifyStar)
             {
@@ -1010,12 +1053,12 @@ bool StarDatabase::createStar(Star* star,
                 return false;
             }
         }
-        else
+
+        if (starData->getAngle("Dec", dec))
         {
             modifyPosition = true;
         }
-
-        if (!starData->getNumber("Dec", dec))
+        else
         {
             if (disposition != ModifyStar)
             {
@@ -1023,12 +1066,12 @@ bool StarDatabase::createStar(Star* star,
                 return false;
             }
         }
-        else
+
+        if (starData->getLength("Distance", distance, KM_PER_LY))
         {
             modifyPosition = true;
         }
-
-        if (!starData->getNumber("Distance", distance))
+        else
         {
             if (disposition != ModifyStar)
             {
@@ -1036,17 +1079,13 @@ bool StarDatabase::createStar(Star* star,
                 return false;
             }
         }
-        else
-        {
-            modifyPosition = true;
-        }
 
         // Truncate to floats to match behavior of reading from binary file.
         // The conversion to rectangular coordinates is still performed at
         // double precision, however.
         if (modifyPosition)
         {
-            float raf = ((float) (ra * 24.0 / 360.0));
+            float raf = ((float) ra);
             float decf = ((float) dec);
             float distancef = ((float) distance);
             Vector3d pos = astro::equatorialToCelestialCart((double) raf, (double) decf, (double) distancef);

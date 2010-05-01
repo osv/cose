@@ -10,18 +10,16 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#include <cstdio>
-#include <cmath>
-#include <celmath/intersect.h>
+#include "render.h"
 #include "visibleregion.h"
 #include "body.h"
 #include "selection.h"
-#include <GL/glew.h>
 #include "vecgl.h"
-#include "render.h"
-#include <celmath/geomutil.h>
+#include <celmath/intersect.h>
 #include <Eigen/Core>
 #include <Eigen/Geometry>
+#include <cstdio>
+#include <cmath>
 
 using namespace Eigen;
 
@@ -211,7 +209,7 @@ VisibleRegion::render(Renderer* /* renderer */,
     // Pick two orthogonal axes both normal to the light direction
     Vector3d lightDirNorm = lightDir.normalized();
 
-    Vector3d uAxis = OrthogonalUnitVector(lightDirNorm);
+    Vector3d uAxis = lightDirNorm.unitOrthogonal();
     Vector3d vAxis = uAxis.cross(lightDirNorm);
 
     Vector3d recipSemiAxes = maxSemiAxis * semiAxes.cast<double>().cwise().inverse();

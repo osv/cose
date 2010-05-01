@@ -13,6 +13,30 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
+#include "celestiacore.h"
+#include "favorites.h"
+#include "url.h"
+#include <celengine/astro.h>
+#include <celengine/asterism.h>
+#include <celengine/boundaries.h>
+#include <celengine/overlay.h>
+#include <celengine/console.h>
+#include <celengine/execution.h>
+#include <celengine/cmdparser.h>
+#include <celengine/multitexture.h>
+#include <celephem/spiceinterface.h>
+#include <celengine/axisarrow.h>
+#include <celengine/planetgrid.h>
+#include <celengine/visibleregion.h>
+#include <celengine/eigenport.h>
+#include <celmath/geomutil.h>
+#include <celutil/util.h>
+#include <celutil/filetype.h>
+#include <celutil/directory.h>
+#include <celutil/formatnum.h>
+#include <celutil/debug.h>
+#include <celutil/utf8.h>
+#include <GL/glew.h>
 #include <cstdio>
 #include <iostream>
 #include <fstream>
@@ -23,33 +47,9 @@
 #include <cstring>
 #include <cassert>
 #include <ctime>
-#include <GL/glew.h>
-#include <celutil/util.h>
-#include <celutil/filetype.h>
-#include <celutil/directory.h>
-#include <celutil/formatnum.h>
-#include <celengine/astro.h>
-#include <celengine/asterism.h>
-#include <celengine/boundaries.h>
-#include <celengine/overlay.h>
-#include <celengine/console.h>
-#include <celengine/execution.h>
-#include <celengine/cmdparser.h>
-#include <celengine/multitexture.h>
-#include <celengine/spiceinterface.h>
-#include <celengine/axisarrow.h>
-#include <celengine/planetgrid.h>
-#include <celengine/visibleregion.h>
-#include "favorites.h"
-#include "celestiacore.h"
-#include <celmath/geomutil.h>
-#include <celutil/debug.h>
-#include <celutil/utf8.h>
-#include "url.h"
-#include <celengine/eigenport.h>
 
 #ifdef CELX
-#include <celengine/scriptobject.h>
+#include <celephem/scriptobject.h>
 #endif
 
 #ifdef _WIN32
@@ -313,6 +313,7 @@ CelestiaCore::CelestiaCore() :
     messageVOffset(0),
     messageStart(0.0),
     messageDuration(0.0),
+    textColor(Color(1.0f, 1.0f, 1.0f)),
     typedText(""),
     typedTextCompletionIdx(-1),
     textEnterMode(KbNormal),
@@ -827,6 +828,11 @@ void CelestiaCore::mouseWheel(float motion, int modifiers)
 /// x and y are the pixel coordinates relative to the widget.
 void CelestiaCore::mouseMove(float x, float y)
 {
+#ifdef CELX
+    if (luaHook && luaHook->callLuaHook(this, "mousemove", x, y))
+        return;
+#endif
+
     if (views.size() > 1 && cursorHandler != NULL)
     {
         /*View* v1 = 0;     Unused*/
@@ -2951,7 +2957,7 @@ static void displayDuration(Overlay& overlay, double days)
     else if (days > 1.0 / (24.0 * 60.0))
         overlay << FormattedNumber(days * 24.0 * 60.0, 3, FormattedNumber::GroupThousands) << _(" minutes");
     else
-        overlay << FormattedNumber(days * 24.0 * 60.0 * 60.0, 3, FormattedNumber::GroupThousands) << " seconds";
+        overlay << FormattedNumber(days * 24.0 * 60.0 * 60.0, 3, FormattedNumber::GroupThousands) << _(" seconds");
 }
 
 
@@ -3309,7 +3315,7 @@ static void displayPlanetInfo(Overlay& overlay,
 			sunVec.normalize();
 			double cosPhaseAngle = sunVec.dot(viewVec.normalized());
 			double phaseAngle = acos(cosPhaseAngle);
-			overlay.oprintf("Phase angle: %.1f%s\n", radToDeg(phaseAngle), UTF8_DEGREE_SIGN);
+			overlay.oprintf(_("Phase angle: %.1f%s\n"), radToDeg(phaseAngle), UTF8_DEGREE_SIGN);
 		}
 	}
 
@@ -3648,7 +3654,7 @@ void CelestiaCore::renderOverlay()
 
         // Field of view
         float fov = radToDeg(sim->getActiveObserver()->getFOV());
-        overlay->oprintf(_("FOV: "));
+        *overlay << _("FOV: ");
         displayAngle(*overlay, fov);
         overlay->oprintf(" (%.2f%s)\n", (*activeView)->zoom,
                         UTF8_MULTIPLICATION_SIGN);
@@ -3917,7 +3923,7 @@ void CelestiaCore::renderOverlay()
         float alpha = 1.0f;
         if (currentTime > messageStart + messageDuration - 0.5)
             alpha = (float) ((messageStart + messageDuration - currentTime) / 0.5);
-        glColor4f(1.0f, 1.0f, 1.0f, alpha);
+        glColor4f(textColor.red(), textColor.green(), textColor.blue(), alpha);
         glTranslatef((float) x, (float) y, 0.0f);
         overlay->beginText();
         *overlay << _(messageText.c_str());
@@ -4713,6 +4719,18 @@ void CelestiaCore::setHudDetail(int newHudDetail)
     hudDetail = newHudDetail%3;
     notifyWatchers(VerbosityLevelChanged);
 }
+
+
+Color CelestiaCore::getTextColor()
+{
+    return textColor;
+}
+
+void CelestiaCore::setTextColor(Color newTextColor)
+{
+    textColor = newTextColor;
+}
+
 
 astro::Date::Format CelestiaCore::getDateFormat() const
 {

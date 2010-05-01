@@ -11,23 +11,23 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
+#include "celestia.h"
+#include "astro.h"
+#include "render.h"
+#include "globular.h"
+#include "vecgl.h"
+#include "texture.h"
+#include <celmath/mathlib.h>
+#include <celmath/perlin.h>
+#include <celmath/intersect.h>
+#include <celutil/util.h>
+#include <celutil/debug.h>
+#include <GL/glew.h>
+#include <cmath>
 #include <fstream>
 #include <algorithm>
 #include <cstdio>
 #include <cassert>
-#include "celestia.h"
-#include <celmath/mathlib.h>
-#include <celmath/perlin.h>
-#include <celmath/intersect.h>
-#include "astro.h"
-#include "globular.h"
-#include <celutil/util.h>
-#include <celutil/debug.h>
-#include <GL/glew.h>
-#include "vecgl.h"
-#include "render.h"
-#include "texture.h"
-#include <math.h>
 #include "eigenport.h"
 
 using namespace Eigen;
@@ -302,17 +302,21 @@ bool Globular::load(AssociativeArray* params, const string& resPath)
     if (!ok)
 		return false;
 
-    if(params->getNumber("Detail", detail))
+    if (params->getNumber("Detail", detail))
     	setDetail((float) detail);
 			
 	string customTmpName;
-	if(params->getString("CustomTemplate", customTmpName ))
+	if (params->getString("CustomTemplate", customTmpName ))
 		setCustomTmpName(customTmpName);
-			
-	if(params->getNumber("CoreRadius", r_c))
+    
+    double coreRadius;
+	if (params->getAngle("CoreRadius", coreRadius, 1.0 / MINUTES_PER_DEG))
+    {
+        r_c = coreRadius;
 		setCoreRadius(r_c);
+    }
 			
-	if(params->getNumber("KingConcentration", c))
+	if (params->getNumber("KingConcentration", c))
 		setConcentration(c);
 	
     return true;

@@ -1,3 +1,5 @@
-EXTRA_DIST = celestia-svn-revision checkout-svn.sh commit-svn.sh
+EXTRA_DIST = celestia-svn-revision \
+	merge-master.tcl \
+	merge.cfg
 
 

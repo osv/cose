@@ -10,6 +10,7 @@
 
 #define DEBUG_COALESCE               0
 #define DEBUG_SECONDARY_ILLUMINATION 0
+#define DEBUG_ORBIT_CACHE            0
 
 //#define DEBUG_HDR
 #ifdef DEBUG_HDR
@@ -33,12 +34,15 @@ std::ofstream hdrlog;
 //#define USE_BLOOM_LISTS
 #endif
 
+// #define ENABLE_SELF_SHADOW
+
 #ifndef _WIN32
 #ifndef TARGET_OS_MAC
 #include <config.h>
 #endif
 #endif /* _WIN32 */
 
+#include "render.h"
 #include "boundaries.h"
 #include "asterism.h"
 #include "astro.h"
@@ -47,18 +51,18 @@ std::ofstream hdrlog;
 #include "shadermanager.h"
 #include "spheremesh.h"
 #include "lodspheremesh.h"
-#include "model.h"
+#include "geometry.h"
 #include "regcombine.h"
 #include "vertexprog.h"
 #include "texmanager.h"
 #include "meshmanager.h"
-#include "render.h"
 #include "renderinfo.h"
 #include "renderglsl.h"
 #include "axisarrow.h"
 #include "frametree.h"
 #include "timelinephase.h"
 #include "skygrid.h"
+#include "modelgeometry.h"
 #include <celutil/debug.h>
 #include <celmath/frustum.h>
 #include <celmath/distance.h>
@@ -77,6 +81,7 @@ std::ofstream hdrlog;
 #include <iomanip>
 #include "eigenport.h"
 
+using namespace cmod;
 using namespace Eigen;
 using namespace std;
 
@@ -237,6 +242,11 @@ Color Renderer::HorizonGridColor        (0.38f,  0.38f,  0.38f);
 Color Renderer::EclipticColor           (0.5f,   0.1f,   0.1f);
 
 Color Renderer::SelectionCursorColor    (1.0f,   0.0f,   0.0f);
+
+
+#if ENABLE_SELF_SHADOW
+static FramebufferObject* shadowFbo = NULL;
+#endif
 
 
 // Some useful unit conversions
@@ -1133,6 +1143,18 @@ bool Renderer::init(GLContext* _context,
         genSceneTexture();
         genBlurTextures();
 #endif
+
+#if ENABLE_SELF_SHADOW
+        if (GLEW_EXT_framebuffer_object)
+        {
+            shadowFbo = new FramebufferObject(1024, 1024, FramebufferObject::DepthAttachment);
+            if (!shadowFbo->isValid())
+            {
+                clog << "Error creating shadow FBO.\n";
+            }
+        }
+#endif
+
         commonDataInitialized = true;
     }
 
@@ -1737,21 +1759,40 @@ static void disableSmoothLines()
 class OrbitSampler : public OrbitSampleProc
 {
 public:
-    CurvePlot* m_orbitPath;
+    vector<CurvePlotSample> samples;
 
-    OrbitSampler(CurvePlot* orbitPath) : m_orbitPath(orbitPath) {};
+    OrbitSampler()
+    {
+    }
+
     void sample(double t, const Vector3d& position, const Vector3d& velocity)
     {
         CurvePlotSample samp;
+        samp.t = t;
         samp.position = position;
         samp.velocity = velocity;
-        samp.t = t;
-        m_orbitPath->addSample(samp);
-    };
+        samples.push_back(samp);
+    }
+
+    void insertForward(CurvePlot* plot)
+    {
+        for (vector<CurvePlotSample>::const_iterator iter = samples.begin(); iter != samples.end(); ++iter)
+        {
+            plot->addSample(*iter);
+        }
+    }
+
+    void insertBackward(CurvePlot* plot)
+    {
+        for (vector<CurvePlotSample>::const_reverse_iterator iter = samples.rbegin(); iter != samples.rend(); ++iter)
+        {
+            plot->addSample(*iter);
+        }
+    }
 };
 
 
-void renderOrbitColor(const Body *body, bool selected, float opacity)
+Vector4f renderOrbitColor(const Body *body, bool selected, float opacity)
 {
     Color orbitColor;
 
@@ -1803,9 +1844,9 @@ void renderOrbitColor(const Body *body, bool selected, float opacity)
     }
 
 #ifdef USE_HDR
-    glColor(orbitColor, 1.f - opacity * orbitColor.alpha());
+    return Vector4f(orbitColor.red(), orbitColor.green(), orbitColor.blue(), 1.0f - opacity * orbitColor.alpha());
 #else
-    glColor(orbitColor, opacity * orbitColor.alpha());
+    return Vector4f(orbitColor.red(), orbitColor.green(), orbitColor.blue(), opacity * orbitColor.alpha());
 #endif
 }
 
@@ -1872,17 +1913,17 @@ void Renderer::renderOrbit(const OrbitPathListEntry& orbitPath,
         }
         else
         {
-            startTime = t - orbit->getPeriod() / 2.0;
+            startTime = t - orbit->getPeriod();
         }
 
         cachedOrbit = new CurvePlot();
         cachedOrbit->setLastUsed(frameCount);
 
-        OrbitSampler sampler(cachedOrbit);
+        OrbitSampler sampler;
         orbit->sample(startTime,
-                      orbit->getPeriod(),
-                      nSamples,
+                      startTime + orbit->getPeriod(),
                       sampler);
+        sampler.insertForward(cachedOrbit);
 
         // If the orbit cache is full, first try and eliminate some old orbits
         if (orbitCache.size() > OrbitCacheCullThreshold)
@@ -1909,42 +1950,73 @@ void Renderer::renderOrbit(const OrbitPathListEntry& orbitPath,
     if (cachedOrbit->empty())
         return;
 
+    //*** Orbit rendering parameters
+
+    // The 'window' is the interval of time for which the orbit will be drawn.
+
+    // End of the orbit window relative to the current simulation time. Units
+    // are orbital periods.
+    const double OrbitWindowEnd     = 0.5;
+
+    // Number of orbit periods shown. The orbit window is:
+    //    [ t + (OrbitWindowEnd - OrbitPeriodsShown) * T, t + OrbitWindowEnd * T ]
+    // where t is the current simulation time and T is the orbital period.
+    const double OrbitPeriodsShown  = 1.0;
+
+    // Fraction of the window over which the orbit fades from opaque to transparent.
+    // Fading is disabled when this value is zero.
+    const double LinearFadeFraction = 0.0;
+
+    // Extra size of the internal sample cache.
+    const double WindowSlack        = 0.2;
+
+    //***
+
     // 'Periodic' orbits are generally not strictly periodic because of perturbations
     // from other bodies. Here we update the trajectory samples to make sure that the
     // orbit covers a time range centered at the current time and covering a full revolution.
     if (orbit->isPeriodic())
     {
-        double startTime = t - orbit->getPeriod() / 2.0;
-        double endTime = t + orbit->getPeriod() / 2.0;
-        double dt = orbit->getPeriod() / detailOptions.orbitPathSamplePoints;
+        double period = orbit->getPeriod();
+        double endTime = t + period * OrbitWindowEnd;
+        double startTime = endTime - period * OrbitPeriodsShown;
 
-        if (startTime < cachedOrbit->startTime())
+        double currentWindowStart = cachedOrbit->startTime();
+        double currentWindowEnd = cachedOrbit->endTime();
+        double newWindowStart = startTime - period * WindowSlack;
+        double newWindowEnd = endTime + period * WindowSlack;
+
+        if (startTime < currentWindowStart)
         {
-            cachedOrbit->removeSamplesAfter(endTime + dt);
+            // Remove samples at the end of the time window
+            cachedOrbit->removeSamplesAfter(newWindowEnd);
 
-            double orbitStartTime = cachedOrbit->empty() ? endTime : cachedOrbit->startTime() - dt;
-            do {
-                CurvePlotSample sample;
-                sample.t = orbitStartTime;
-                sample.position = orbit->positionAtTime(orbitStartTime);
-                sample.velocity = orbit->velocityAtTime(orbitStartTime);
-                cachedOrbit->addSample(sample);
-                orbitStartTime -= dt;
-            } while (orbitStartTime > startTime);
+            // Trim the first sample (because it will be duplicated when we sample the orbit.)
+            cachedOrbit->removeSamplesBefore(cachedOrbit->startTime() * (1.0 + 1.0e-15));
+
+            // Add the new samples
+            OrbitSampler sampler;
+            orbit->sample(newWindowStart, min(currentWindowStart, newWindowEnd), sampler);
+            sampler.insertBackward(cachedOrbit);
+#if DEBUG_ORBIT_CACHE
+            clog << "new sample count: " << cachedOrbit->sampleCount() << endl;
+#endif
         }
-        else if (endTime > cachedOrbit->endTime())
+        else if (endTime > currentWindowEnd)
         {
-            cachedOrbit->removeSamplesBefore(startTime - dt);
+            // Remove samples at the beginning of the time window
+            cachedOrbit->removeSamplesBefore(newWindowStart);
 
-            double orbitEndTime = cachedOrbit->empty() ? startTime : cachedOrbit->endTime() + dt;
-            do {
-                CurvePlotSample sample;
-                sample.t = orbitEndTime;
-                sample.position = orbit->positionAtTime(orbitEndTime);
-                sample.velocity = orbit->velocityAtTime(orbitEndTime);
-                cachedOrbit->addSample(sample);
-                orbitEndTime += dt;
-            } while (orbitEndTime < endTime);
+            // Trim the last sample (because it will be duplicated when we sample the orbit.)
+            cachedOrbit->removeSamplesAfter(cachedOrbit->endTime() * (1.0 - 1.0e-15));
+
+            // Add the new samples
+            OrbitSampler sampler;
+            orbit->sample(max(currentWindowEnd, newWindowStart), newWindowEnd, sampler);
+            sampler.insertForward(cachedOrbit);
+#if DEBUG_ORBIT_CACHE
+            clog << "new sample count: " << cachedOrbit->sampleCount() << endl;
+#endif
         }
     }
 
@@ -1970,7 +2042,8 @@ void Renderer::renderOrbit(const OrbitPathListEntry& orbitPath,
         highlight = highlightObject.body() == body;
     else
         highlight = highlightObject.star() == orbitPath.star;
-    renderOrbitColor(body, highlight, orbitPath.opacity);
+    Vector4f orbitColor = renderOrbitColor(body, highlight, orbitPath.opacity);
+    glColor4fv(orbitColor.data());
 
 #ifdef STIPPLED_LINES
     glLineStipple(3, 0x5555);
@@ -1987,10 +2060,28 @@ void Renderer::renderOrbit(const OrbitPathListEntry& orbitPath,
 
     if (orbit->isPeriodic())
     {
-        cachedOrbit->render(modelview,
-                            nearZ, farZ, viewFrustumPlaneNormals,
-                            subdivisionThreshold,
-                            t - orbit->getPeriod() / 2.0, t + orbit->getPeriod() / 2.0);
+        double period = orbit->getPeriod();
+        double windowEnd = t + period * OrbitWindowEnd;
+        double windowStart = windowEnd - period * OrbitPeriodsShown;
+        double windowDuration = windowEnd - windowStart;
+
+        if (LinearFadeFraction == 0.0f)
+        {
+            cachedOrbit->render(modelview,
+                                nearZ, farZ, viewFrustumPlaneNormals,
+                                subdivisionThreshold,
+                                windowStart, windowEnd);
+        }
+        else
+        {
+            cachedOrbit->renderFaded(modelview,
+                                     nearZ, farZ, viewFrustumPlaneNormals,
+                                     subdivisionThreshold,
+                                     windowStart, windowEnd,
+                                     orbitColor,
+                                     windowStart,
+                                     windowEnd - windowDuration * (1.0 - LinearFadeFraction));
+        }
     }
     else
     {
@@ -4926,7 +5017,7 @@ static void renderModelDefault(Geometry* geometry,
                                ResourceHandle texOverride)
 {
     FixedFunctionRenderContext rc;
-    Mesh::Material m;
+    Material m;
 
     rc.setLighting(lit);
 
@@ -4944,16 +5035,19 @@ static void renderModelDefault(Geometry* geometry,
 
     if (ri.baseTex != NULL)
     {
-        m.diffuse = ri.color;
-        m.specular = ri.specularColor;
+        m.diffuse = Material::Color(ri.color.red(), ri.color.green(), ri.color.blue());
+        m.specular = Material::Color(ri.specularColor.red(), ri.specularColor.green(), ri.specularColor.blue());
         m.specularPower = ri.specularPower;
-        m.maps[Mesh::DiffuseMap] = texOverride;
+
+        CelestiaTextureResource textureResource(texOverride);
+        m.maps[Material::DiffuseMap] = &textureResource;
+
         rc.setMaterial(&m);
         rc.lock();
     }
 
     geometry->render(rc);
-    if (geometry->usesTextureType(Mesh::EmissiveMap))
+    if (geometry->usesTextureType(Material::EmissiveMap))
     {
         glDisable(GL_LIGHTING);
         glEnable(GL_BLEND);
@@ -4966,6 +5060,7 @@ static void renderModelDefault(Geometry* geometry,
 
         glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
     }
+    m.maps[Material::DiffuseMap] = NULL; // prevent Material destructor from deleting the texture resource
 
     // Reset the material
     float black[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
@@ -6058,7 +6153,7 @@ static void renderRings(RingSystem& rings,
 
 static void
 renderEclipseShadows(Geometry* geometry,
-                     vector<EclipseShadow>& eclipseShadows,
+                     LightingState::EclipseShadowVector& eclipseShadows,
                      RenderInfo& ri,
                      float planetRadius,
                      Quaternionf& planetOrientation,
@@ -6072,7 +6167,7 @@ renderEclipseShadows(Geometry* geometry,
     if (geometry != NULL)
         return;
 
-    for (vector<EclipseShadow>::iterator iter = eclipseShadows.begin();
+    for (LightingState::EclipseShadowVector::iterator iter = eclipseShadows.begin();
          iter != eclipseShadows.end(); iter++)
     {
         EclipseShadow shadow = *iter;
@@ -6192,7 +6287,7 @@ renderEclipseShadows(Geometry* geometry,
 
 static void
 renderEclipseShadows_Shaders(Geometry* geometry,
-                             vector<EclipseShadow>& eclipseShadows,
+                             LightingState::EclipseShadowVector& eclipseShadows,
                              RenderInfo& ri,
                              float planetRadius,
                              const Quaternionf& planetOrientation,
@@ -6216,7 +6311,7 @@ renderEclipseShadows_Shaders(Geometry* geometry,
     Vector4f shadowParams[4];
 
     int n = 0;
-    for (vector<EclipseShadow>::iterator iter = eclipseShadows.begin();
+    for (LightingState::EclipseShadowVector::iterator iter = eclipseShadows.begin();
          iter != eclipseShadows.end() && n < 4; iter++, n++)
     {
         EclipseShadow shadow = *iter;
@@ -6700,7 +6795,8 @@ setupObjectLighting(const vector<LightSource>& suns,
         ls.nLights++;
     }
 
-    ls.eyePos_obj = m * -(objPosition_eye.cwise() / objScale);
+    Matrix3f invScale = objScale.cwise().inverse().asDiagonal();
+    ls.eyePos_obj = invScale * m * -objPosition_eye;
     ls.eyeDir_obj = (m * -objPosition_eye).normalized();
 
     // When the camera is very far from the object, some view-dependent
@@ -6732,8 +6828,7 @@ void Renderer::renderObject(const Vector3f& pos,
     RenderInfo ri;
 
     float altitude = distance - obj.radius;
-    float discSizeInPixels = obj.radius /
-        (max(nearPlaneDistance, altitude) * pixelSize);
+    float discSizeInPixels = obj.radius / (max(nearPlaneDistance, altitude) * pixelSize);
 
     ri.sunDir_eye = Vector3f::UnitY();
     ri.sunDir_obj = Vector3f::UnitY();
@@ -6889,12 +6984,11 @@ void Renderer::renderObject(const Vector3f& pos,
                         Vec4f(planetMat.col(1).x(), planetMat.col(1).y(), planetMat.col(1).z(), planetMat.col(1).w()),
                         Vec4f(planetMat.col(2).x(), planetMat.col(2).y(), planetMat.col(2).z(), planetMat.col(2).w()),
                         Vec4f(planetMat.col(3).x(), planetMat.col(3).y(), planetMat.col(3).z(), planetMat.col(3).w()));
-                        
+
     Mat4f invMV = (fromEigen(cameraOrientation).toMatrix4() *
-                   Mat4f::translation(Point3f(-pos.x(), -pos.y(), -pos.z())) *
-                   planetMat_old *
-                   Mat4f::scaling(1.0f / radius));
-    
+                   Mat4f::translation(Point3f(-pos.x() / radius, -pos.y() / radius, -pos.z() / radius)) *
+                   planetMat_old);
+
     // The sphere rendering code uses the view frustum to determine which
     // patches are visible. In order to avoid rendering patches that can't
     // be seen, make the far plane of the frustum as close to the viewer
@@ -6935,10 +7029,13 @@ void Renderer::renderObject(const Vector3f& pos,
     }
 
     // Transform the frustum into object coordinates using the
-    // inverse model/view matrix.
+    // inverse model/view matrix. The frustum is scaled to a
+    // normalized coordinate system where the 1 unit = 1 planet
+    // radius (for an ellipsoidal planet, radius is taken to be
+    // largest semiaxis.)
     Frustum viewFrustum(degToRad(fov),
                         (float) windowWidth / (float) windowHeight,
-                        nearPlaneDistance, frustumFarPlane);
+                        nearPlaneDistance / radius, frustumFarPlane / radius);
     viewFrustum.transform(invMV);
 
     // Get cloud layer parameters
@@ -6967,12 +7064,12 @@ void Renderer::renderObject(const Vector3f& pos,
             switch (context->getRenderPath())
             {
             case GLContext::GLPath_GLSL:
-                renderSphere_GLSL(ri, ls, obj.rings,
-                                  const_cast<Atmosphere*>(obj.atmosphere), cloudTexOffset,
-                                  obj.radius,
-                                  textureResolution,
-                                  renderFlags,
-                                  obj.orientation, viewFrustum, *context);
+                renderEllipsoid_GLSL(ri, ls,
+                                     const_cast<Atmosphere*>(obj.atmosphere), cloudTexOffset,
+                                     scaleFactors,
+                                     textureResolution,
+                                     renderFlags,
+                                     obj.orientation, viewFrustum, *context);
                 break;
 
             case GLContext::GLPath_NV30:
@@ -7185,8 +7282,7 @@ void Renderer::renderObject(const Vector3f& pos,
                                       cloudTex,
                                       cloudNormalMap,
                                       cloudTexOffset,
-                                      obj.rings,
-                                      radius,
+                                      scaleFactors,
                                       textureResolution,
                                       renderFlags,
                                       obj.orientation,
@@ -7332,10 +7428,14 @@ void Renderer::renderObject(const Vector3f& pos,
 
 bool Renderer::testEclipse(const Body& receiver,
                            const Body& caster,
-                           const DirectionalLight& light,
-                           double now,
-                           vector<EclipseShadow>& shadows)
+                           LightingState& lightingState,
+                           unsigned int lightIndex,
+                           double now)
 {
+    const DirectionalLight& light = lightingState.lights[lightIndex];
+    LightingState::EclipseShadowVector& shadows = *lightingState.shadows[lightIndex];
+    bool isReceiverShadowed = false;
+    
     // Ignore situations where the shadow casting body is much smaller than
     // the receiver, as these shadows aren't likely to be relevant.  Also,
     // ignore eclipses where the caster is not an ellipsoid, since we can't
@@ -7411,16 +7511,65 @@ bool Renderer::testEclipse(const Body& receiver,
             shadow.umbraRadius = caster.getRadius() *
                 (appOccluderRadius - appSunRadius) / appOccluderRadius;
             shadow.maxDepth = std::min(1.0f, square(appOccluderRadius / appSunRadius));
+            shadow.caster = &caster;
 
             // Ignore transits that don't produce a visible shadow.
             if (shadow.maxDepth > 1.0f / 256.0f)
                 shadows.push_back(shadow);
 
-            return true;
+            isReceiverShadowed = true;
+        }
+        
+        // If the caster has a ring system, see if it casts a shadow on the receiver.
+        // Ring shadows are only supported in the OpenGL 2.0 path.
+        if (caster.getRings() && context->getRenderPath() == GLContext::GLPath_GLSL)
+        {
+            bool shadowed = false;
+            
+            // The shadow volume of the rings is an oblique circular cylinder
+            if (dist < caster.getRings()->outerRadius + receiver.getRadius())
+            {
+                // Possible intersection, but it depends on the orientation of the
+                // rings.
+                Quaterniond casterOrientation = caster.getOrientation(now);
+                Vector3d ringPlaneNormal = casterOrientation * Vector3d::UnitY();                
+                Vector3d shadowDirection = lightToCasterDir.normalized();                
+                Vector3d v = ringPlaneNormal.cross(shadowDirection);
+                if (v.squaredNorm() < 1.0e-6)
+                {
+                    // Shadow direction is nearly coincident with ring plane normal, so
+                    // the shadow cross section is close to circular. No additional test
+                    // is required.
+                    shadowed = true;
+                }
+                else
+                {
+                    // minDistance is the cross section of the ring shadows in the plane
+                    // perpendicular to the ring plane and containing the light direction.
+                    Vector3d shadowPlaneNormal = v.normalized().cross(shadowDirection);
+                    Hyperplane<double, 3> shadowPlane(shadowPlaneNormal, posCaster - posReceiver);
+                    double minDistance = receiver.getRadius() + 
+                        caster.getRings()->outerRadius * ringPlaneNormal.dot(shadowDirection);
+                    if (abs(shadowPlane.signedDistance(Vector3d::Zero())) < minDistance)
+                    {
+                        // TODO: Implement this test and only set shadowed to true if it passes
+                    }
+                    shadowed = true;
+                }
+
+                if (shadowed)
+                {
+                    RingShadow& shadow = lightingState.ringShadows[lightIndex];
+                    shadow.origin = dir.cast<float>();
+                    shadow.direction = shadowDirection.cast<float>();
+                    shadow.ringSystem = caster.getRings();
+                    shadow.casterOrientation = casterOrientation.cast<float>();
+                }
+            }                        
         }
     }
 
-    return false;
+    return isReceiverShadowed;
 }
 
 
@@ -7511,6 +7660,18 @@ void Renderer::renderPlanet(Body& body,
         }
 
 
+        // Add ring shadow records for each light
+        if (body.getRings() && ShowRingShadows)
+        {
+            for (unsigned int li = 0; li < lights.nLights; li++)
+            {
+                lights.ringShadows[li].ringSystem = body.getRings();
+                lights.ringShadows[li].casterOrientation = q.cast<float>();
+                lights.ringShadows[li].origin = Vector3f::Zero();
+                lights.ringShadows[li].direction = -lights.lights[li].position.normalized().cast<float>();
+            }
+        }
+        
         // Calculate eclipse circumstances
         if ((renderFlags & ShowEclipseShadows) != 0 &&
             body.getSystem() != NULL)
@@ -7532,9 +7693,7 @@ void Renderer::renderPlanet(Body& body,
                         {
                             for (int i = 0; i < nSatellites; i++)
                             {
-                                testEclipse(body, *satellites->getBody(i),
-                                            lights.lights[li],
-                                            now, *lights.shadows[li]);
+                                testEclipse(body, *satellites->getBody(i), lights, li, now);
                             }
                         }
                     }
@@ -7554,8 +7713,7 @@ void Renderer::renderPlanet(Body& body,
                         Body* planet = system->getPrimaryBody();
                         while (planet != NULL)
                         {
-                            testEclipse(body, *planet, lights.lights[li],
-                                        now, *lights.shadows[li]);
+                            testEclipse(body, *planet, lights, li, now);
                             if (planet->getSystem() != NULL)
                                 planet = planet->getSystem()->getPrimaryBody();
                             else
@@ -7567,12 +7725,99 @@ void Renderer::renderPlanet(Body& body,
                         {
                             if (system->getBody(i) != &body)
                             {
-                                testEclipse(body, *system->getBody(i),
-                                            lights.lights[li],
-                                            now, *lights.shadows[li]);
+                                testEclipse(body, *system->getBody(i), lights, li, now);
                             }
                         }
                     }
+                }
+            }
+        }
+
+        // Sort out the ring shadows; only one ring shadow source is supported right now. This means
+        // that exotic cases with shadows from two ring different ring systems aren't handled.
+        for (unsigned int li = 0; li < lights.nLights; li++)
+        {
+            if (lights.ringShadows[li].ringSystem != NULL)
+            {
+                RingSystem* rings = lights.ringShadows[li].ringSystem;
+
+                // Use the first set of ring shadows found (shadowing the brightest light
+                // source.)
+                if (lights.shadowingRingSystem == NULL)
+                {
+                    lights.shadowingRingSystem = rings;
+                    lights.ringPlaneNormal = (rp.orientation * lights.ringShadows[li].casterOrientation.conjugate()) * Vector3f::UnitY();
+                    lights.ringCenter = rp.orientation * lights.ringShadows[li].origin;
+                }
+
+                // Light sources have a finite size, which causes some blurring of the texture. Simulate
+                // this effect by using a lower LOD (i.e. a smaller mipmap level, indicated somewhat
+                // confusingly by a _higher_ LOD value.
+                float ringWidth = rings->outerRadius - rings->innerRadius;
+                float projectedRingSize = std::abs(lights.lights[li].direction_obj.dot(lights.ringPlaneNormal)) * ringWidth;
+                float projectedRingSizeInPixels = projectedRingSize / (max(nearPlaneDistance, altitude) * pixelSize);
+                Texture* ringsTex = rings->texture.find(textureResolution);
+                if (ringsTex)
+                {
+                    // Calculate the approximate distance from the shadowed object to the rings
+                    Hyperplane<float, 3> ringPlane(lights.ringPlaneNormal, lights.ringCenter);
+                    float cosLightAngle = lights.lights[li].direction_obj.dot(ringPlane.normal());
+                    float approxRingDistance = rings->innerRadius;
+                    if (abs(cosLightAngle) < 0.99999f)
+                    {
+                        approxRingDistance = abs(ringPlane.offset() / cosLightAngle);
+                    }
+                    if (lights.ringCenter.norm() < rings->innerRadius)
+                    {
+                        approxRingDistance = max(approxRingDistance, rings->innerRadius - lights.ringCenter.norm());
+                    }
+
+                    // Calculate the LOD based on the size of the smallest
+                    // ring feature relative to the apparent size of the light source.
+                    float ringTextureWidth = ringsTex->getWidth();
+                    float ringFeatureSize = (projectedRingSize / ringTextureWidth) / approxRingDistance;
+                    float relativeFeatureSize = lights.lights[li].apparentSize / ringFeatureSize;
+                    //float areaLightLod = log(max(relativeFeatureSize, 1.0f)) / log(2.0f);
+                    float areaLightLod = celmath::log2(max(relativeFeatureSize, 1.0f));
+
+                    // Compute the LOD that would be automatically used by the GPU.
+                    float texelToPixelRatio = ringTextureWidth / projectedRingSizeInPixels;
+                    float gpuLod = celmath::log2(texelToPixelRatio);
+
+                    //float lod = max(areaLightLod, log(texelToPixelRatio) / log(2.0f));
+                    float lod = max(areaLightLod, gpuLod);
+
+                    // maxLOD is the index of the smallest mipmap (or close to it for non-power-of-two
+                    // textures.) We can't make the lod larger than this.
+                    float maxLod = celmath::log2((float) ringsTex->getWidth());
+                    if (maxLod > 1.0f)
+                    {
+                        // Avoid using the 1x1 mipmap, as it appears to cause 'bleeding' when
+                        // the light source is very close to the ring plane. This is probably
+                        // a numerical precision issue from calculating the intersection of
+                        // between a ray and plane that are nearly parallel.
+                        maxLod -= 1.0f;
+                    }
+                    lod = min(lod, maxLod);
+
+                    // Not all hardware/drivers support GLSL's textureXDLOD instruction, which lets
+                    // us explicitly set the LOD. But, they do all have an optional lodBias parameter
+                    // for the textureXD instruction. The bias is just the difference between the
+                    // area light LOD and the approximate GPU calculated LOD.
+                    float lodBias = max(0.0f, lod - gpuLod);
+
+                    if (GLEW_ARB_shader_texture_lod)
+                    {
+                        lights.ringShadows[li].texLod = lod;
+                    }
+                    else
+                    {
+                        lights.ringShadows[li].texLod = lodBias;
+                    }
+                }
+                else
+                {
+                    lights.ringShadows[li].texLod = 0.0f;
                 }
             }
         }
@@ -7838,7 +8083,7 @@ void Renderer::renderCometTail(const Body& body,
     // two are chose orthogonal to each other and the primary axis.
     Vector3f v = (cometPoints[1] - cometPoints[0]).normalized();
     Quaternionf q = body.getEclipticToEquatorial(t).cast<float>();
-    Vector3f u = OrthogonalUnitVector(v);
+    Vector3f u = v.unitOrthogonal();
     Vector3f w = u.cross(v);
 
     glColor4f(0.0f, 1.0f, 1.0f, 0.5f);
@@ -9819,7 +10064,7 @@ void Renderer::labelConstellations(const AsterismList& asterisms,
 
                 Vector3f rpos = avg - observerPos;
 
-                if ((observer.getOrientationf().conjugate() * rpos).z() < 0)
+                if ((observer.getOrientationf() * rpos).z() < 0)
                 {
                     // We'll linearly fade the labels as a function of the
                     // observer's distance to the origin of coordinates:
