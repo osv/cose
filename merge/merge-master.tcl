@@ -69,39 +69,38 @@ if {[lindex $::argv 0] == "co" ||
     # checkout
     #-----------------------------------------------
     
-    #rm -rf ./work
-    # catch {file delete -force work}
-    # file mkdir work
+    catch {file delete -force work}
+    file mkdir work
     
-    # puts $SEPAR
+    puts $SEPAR
     
     set svn_rev [exec cat $svn_revision_file]
-    # puts "Checkout last revision - $svn_rev"
+    puts "Checkout last revision - $svn_rev"
 
-    # cd work
-    # foreach chk $srcdirs {
-    # 	puts $SEPAR
-    # 	puts "Checkout celestia/$chk ..." 
-    # 	puts [exec svn co http://celestia.svn.sourceforge.net/svnroot/celestia/trunk/celestia/$chk -r $svn_rev]
-    # }
-    # cd ..
+    cd work
+    foreach chk $srcdirs {
+    	puts $SEPAR
+    	puts "Checkout celestia/$chk ..." 
+    	puts [exec svn co http://celestia.svn.sourceforge.net/svnroot/celestia/trunk/celestia/$chk -r $svn_rev]
+    }
+    cd ..
 
-    # puts $SEPAR
+    puts $SEPAR
 
-    # puts "Copy actual files to work dir"
-    # foreach {dir name depth} $mcopy {
-    # 	puts "$dir/ $name"
-    # 	set files [exec find ../$dir -maxdepth $depth -name "$name"]
-    # 	foreach f $files {
-    # 	    # skip "../"
-    # 	    set f [string range $f 3 end]
-    # 	    if {![file isdirectory ../$f]} {
-    # 		file copy -force ../$f work/[file dirname $f]/
-    # 	    } else {
-    # 		catch {file mkdir work/$f}
-    # 	    }	
-    # 	}
-    # }
+    puts "Copy actual files to work dir"
+    foreach {dir name depth} $mcopy {
+    	puts "$dir/ $name"
+    	set files [exec find ../$dir -maxdepth $depth -name "$name"]
+    	foreach f $files {
+    	    # skip "../"
+    	    set f [string range $f 3 end]
+    	    if {![file isdirectory ../$f]} {
+    		file copy -force ../$f work/[file dirname $f]/
+    	    } else {
+    		catch {file mkdir work/$f}
+    	    }	
+    	}
+    }
 
     puts $SEPAR
     # write diff file before updating
