@@ -22,6 +22,7 @@ Commands:
     git-add               Copy some file from work/ and do git add
     copy-again            Recopy files from work
     makefile              Compare make files for including *.cpp sources
+    cpp                   List of cpp files in your Makefile.am
     help                  Print help.
 
 Usual you need do `checkout' first, than `git-move', and `apply'.
@@ -342,6 +343,22 @@ if {[lindex $::argv 0] == "co" ||
 	    if {![in $src1 $f1]} {
 		puts "+ $f1"
 	    }	    
+	}
+
+    }    
+} elseif {[lindex $::argv 0] == "cpp" } {
+    set dirs {}
+    foreach {dir name depth} $mcopy {
+	lappend dirs $dir
+    }
+
+    set dirs [lrmdups $dirs]
+
+    foreach dir $dirs {
+	set src {}
+	catch {set src [exec sh -c "grep .cpp ../$dir/Makefile.am | sed -e 's/\\\\//' | sed -e 's/.*=\\(.*\\)/\\1/'"]}
+	foreach f $src {
+	    puts $dir/$f	    
 	}
 
     }    
