@@ -326,7 +326,9 @@ static void BG_ResizeWithMenu()
         w = wDisp;
         h = hDisp - (AGWIDGET(agAppMenuWin)->h);
     }
-    Resize(w, h);
+    BG_Resize(w, h);
+    if (geekConsole)
+        geekConsole->resize(wDisp, hDisp);
 }
 
 void BG_GainFocus()
