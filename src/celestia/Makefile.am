@@ -38,9 +38,7 @@ CELXSOURCES = \
         
 endif
 
-if ENABLE_THEORA
 THEORASOURCES = oggtheoracapture.cpp
-endif
 
 # celestia_SOURCES = $(COMMONSOURCES) $(CELXSOURCES) $(GLUTSOURCES) $(THEORASOURCES)
 

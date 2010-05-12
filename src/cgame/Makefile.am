@@ -36,6 +36,7 @@ openspace_client_LDADD = \
 	../cel3ds/libcel3ds.a \
 	../celmath/libcelmath.a \
 	../celutil/libcelutil.a \
+	../sound/libsound.a \
 	$(SPICELIB) \
 	$(INTLLIBS) 
 
