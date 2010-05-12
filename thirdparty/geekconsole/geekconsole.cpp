@@ -90,6 +90,7 @@ int _somefun(GeekConsole *gc, int state, std::string value)
   C-w............... Kill backword
   C-u............... Kill whole line
   TAB............... Try complete or scroll completion
+  C-TAB............. Scroll back completion
   M-/............... Expand next
   M-?............... Expand prev
   M-c............... cel object promt: select & center view
@@ -2214,23 +2215,39 @@ void ListInteractive::charEntered(const char *c_p, int modifiers)
     UTF8Decode(c_p, 0, strlen(c_p), wc);
 
     char C = toupper((char)wc);
-    if  (C == '\t') // TAB - expand and scroll if many items to expand found
+    if  (C == '\t' && modifiers == 0) // TAB - expand and scroll if many items to expand found
     {
         if (!tryComplete())
         {
             // scroll
             pageScrollIdx += scrollSize;
-            if (pageScrollIdx > typedTextCompletion.size())
+            if (pageScrollIdx >= typedTextCompletion.size())
                 pageScrollIdx = 0;
             char buff[128];
+            int pages = (((int)typedTextCompletion.size() - 1 <= 0) ?
+                         0 : (typedTextCompletion.size() - 1) / scrollSize) +1;
             sprintf(buff,_("%i of %i pages, M-/ next expand, M-? prev expand"), (pageScrollIdx / scrollSize) + 1,
-                    (typedTextCompletion.size() / scrollSize) + 1);
+                    pages);
             gc->descriptionStr = buff;
             gc->appendDescriptionStr(_(ctrlZDescr));
-            completedIdx = pageScrollIdx;
+            completedIdx = -1;
             return;
         }
-
+    } else if (C == '\t' && modifiers == GeekBind::CTRL) { // ctrl + TAB
+            pageScrollIdx -= scrollSize;
+            if (pageScrollIdx < 0)
+                pageScrollIdx = typedTextCompletion.size() - scrollSize;
+            if (pageScrollIdx < 0)
+                pageScrollIdx = 0;
+            char buff[128];
+            int pages = (((int)typedTextCompletion.size() - 1 <= 0) ?
+                         0 : (typedTextCompletion.size() - 1) / scrollSize) +1;
+            sprintf(buff,_("%i of %i pages, M-/ next expand, M-? prev expand"), (pageScrollIdx / scrollSize) + 1,
+                    pages);
+            gc->descriptionStr = buff;
+            gc->appendDescriptionStr(_(ctrlZDescr));
+            completedIdx = -1;
+            return;
     }
     // expand completion on M-/
     else if (((modifiers & GeekBind::META) != 0) && C == '/')
@@ -2239,6 +2256,8 @@ void ListInteractive::charEntered(const char *c_p, int modifiers)
         {
             vector<std::string>::const_iterator it = typedTextCompletion.begin();
             completedIdx++;
+            if (completedIdx < pageScrollIdx)
+                completedIdx = pageScrollIdx;
             if (completedIdx >= typedTextCompletion.size())
                 completedIdx = pageScrollIdx;
             if (completedIdx > pageScrollIdx + scrollSize - 1)

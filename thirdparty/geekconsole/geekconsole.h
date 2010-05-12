@@ -125,7 +125,7 @@ public:
 protected:
     virtual void updateTextCompletion();
     std::vector<std::string> completionList;
-    uint pageScrollIdx;
+    int pageScrollIdx;
     uint scrollSize; // number of compl. items to scroll
     int completedIdx;
     uint cols;
