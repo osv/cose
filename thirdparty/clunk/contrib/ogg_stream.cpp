@@ -1,5 +1,5 @@
 #include "ogg_stream.h"
-#include "clunk/sample.h"
+#include "../sample.h"
 #include <assert.h>
 #include <stdexcept>
 

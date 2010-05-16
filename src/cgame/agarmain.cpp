@@ -18,6 +18,8 @@
 #include <agar/core/types.h>
 #include "ui_theme.h"
 
+#include <sound/mixer.h>
+
 using namespace std;
 
 GameCore *appGame = NULL;
@@ -837,6 +839,7 @@ void gameTerminate()
     // memory leak 
     Core::removeAllSolSys();
     AG_ConfigSave();
+    mixerShutdown();
     freeCfg();
     AG_Quit();
 }
@@ -854,6 +857,8 @@ static void usage()
           "   -d, --debug  n            Turn debugging on.\n"
           "   --ag-primitive style      Set GUI primitive style\n"
           "                             [transparent-full|transparent-simple|default]\n"
+          "   --no-sound                Turn off sound\n"
+          "   --sf                      Sample frequency: 44 (default) or 22\n"
           "\n"
             ));
 }
@@ -880,8 +885,12 @@ int main(int argc, char* argv[])
     // parse command line
     char *s;
     bool loadCfgFile = true;
+    bool noSound = false;
     static int32 agPrimitive;
     cVarBindInt32Hex("render.agar.primitive", &agPrimitive, UI::FullTransparent);
+    static int32 skhz = 44;
+    cVarBindInt32("mixer.s_khz", &skhz, skhz);
+
     for (i = 1; i < argc; ++i)
     {
         s = argv[i];
@@ -927,6 +936,10 @@ int main(int argc, char* argv[])
         }
         else if (strcmp(s, "reset") == 0 || strcmp(s, "r") == 0)
             loadCfgFile = false;
+        else if (strcmp(s, "no-sound") == 0)
+            noSound = true;
+        else if (strcmp(s, "sf") == 0 && i < argc - 1)
+            skhz = atoi(argv[++i]);
         else
         {
             printf(_("Bad arg: %s\n"), argv[i]);
@@ -937,6 +950,10 @@ int main(int argc, char* argv[])
 
     if (loadCfgFile)
         loadCfg();
+
+    // init sound
+    if (!noSound)
+        mixerInit();
 
     /* Pass AG_VIDEO_OPENGL flag to require an OpenGL display. */
     AG_InitGraphics("sdlgl");

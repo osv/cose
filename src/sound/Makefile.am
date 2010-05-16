@@ -1,3 +1,7 @@
+noinst_HEADERS = \
+	samplemanager.h \
+	snd_local.h \
+	mixer.h
 
 INCLUDES = -I.. -I$(top_srcdir)/thirdparty/clunk
 
@@ -23,10 +27,14 @@ libsound_a_SOURCES = $(top_srcdir)/thirdparty/clunk/buffer.cpp \
 	$(top_srcdir)/thirdparty/clunk/source.cpp \
 	$(top_srcdir)/thirdparty/clunk/stream.cpp \
 	$(top_srcdir)/thirdparty/clunk/kemar.c	\
+	$(top_srcdir)/thirdparty/clunk/contrib/ogg_stream.cpp \
+	mixer.cpp \
+	samplemanager.cpp \
 	$(SSESOURCES)
 
 endif
 
 AM_CXXFLAGS = @CXXFLAGS@ \
 	@SDL_CFLAGS@ \
+	@SND_CXXFLAGS@ \
 	$(SSEFLAGS)
