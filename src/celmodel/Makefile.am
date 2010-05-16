@@ -11,3 +11,7 @@ libcelmodel_a_SOURCES = \
 	mesh.cpp \
 	model.cpp \
 	modelfile.cpp
+
+AM_CXXFLAGS = @CXXFLAGS@\
+	@CELESTIA_CXXFLAGS@
+

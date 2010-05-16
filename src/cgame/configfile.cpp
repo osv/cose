@@ -1,7 +1,10 @@
-#include "../celestia/celestiacore.h"
 #include "configfile.h"
 #include <libconfig.h>
 #include <stdint.h>
+
+#include <vector>
+#include <iostream>
+using namespace std;
 
 // for some version of inttypes.h need to define it for macros PRIi32...
 #ifndef __STDC_FORMAT_MACROS

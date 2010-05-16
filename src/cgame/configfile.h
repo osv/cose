@@ -1,6 +1,9 @@
 #ifndef _CONFIG_FILE_H_
 #define _CONFIG_FILE_H_
 
+#include <string>
+#include <celutil/basictypes.h>
+
 /*
   Simple wrapper to libconfig for binding poiters of int32(64), float,
   bool, double, flag (uint32), with reset(default) value.
@@ -14,8 +17,8 @@ extern void loadCfg();
 
 // Load and save vars from/to file with
 // specified name space (variable must match with namespace at begin)
-extern void loadCfg(const string &filename, const char *namesp);
-extern void saveCfg(const string &filename, const char *namesp);
+extern void loadCfg(const std::string &filename, const char *namesp);
+extern void saveCfg(const std::string &filename, const char *namesp);
 
 // free all variables (mem clr)
 extern void freeCfg();
@@ -27,32 +30,32 @@ struct i32flags {
 };
 
 // bind and save in hex format
-extern void cVarBindInt32Hex(string name, int32 *var, const int32 resetval);
-extern void cVarBindInt64Hex(string name, int64 *var, const int64 resetval);
+extern void cVarBindInt32Hex(std::string name, int32 *var, const int32 resetval);
+extern void cVarBindInt64Hex(std::string name, int64 *var, const int64 resetval);
 
 //binds
-extern void cVarBindInt32(string name, int32 *var, const int32 resetval);
-extern void cVarBindInt64(string name, int64 *var, const int64 resetval);
-extern void cVarBindBool(string name, bool *var, const bool resetval);
-extern void cVarBindFloat(string name, double *var, const double resetval);
-extern void cVarBindFlags(string name, i32flags *flagtbl,
+extern void cVarBindInt32(std::string name, int32 *var, const int32 resetval);
+extern void cVarBindInt64(std::string name, int64 *var, const int64 resetval);
+extern void cVarBindBool(std::string name, bool *var, const bool resetval);
+extern void cVarBindFloat(std::string name, double *var, const double resetval);
+extern void cVarBindFlags(std::string name, i32flags *flagtbl,
                           uint32 *var, const uint32 resetval);
 
 // binds with string reset
-extern void cVarBindInt32S(string name, int32 *var, const char *resetval);
-extern void cVarBindInt64S(string name, int64 *var, const char *resetval);
-extern void cVarBindBoolS(string name, bool *var, const char *resetval);
-extern void cVarBindFloatS(string name, double *var, const char *resetval);
-extern void cVarBindFlagsS(string name, i32flags *flagtbl,
+extern void cVarBindInt32S(std::string name, int32 *var, const char *resetval);
+extern void cVarBindInt64S(std::string name, int64 *var, const char *resetval);
+extern void cVarBindBoolS(std::string name, bool *var, const char *resetval);
+extern void cVarBindFloatS(std::string name, double *var, const char *resetval);
+extern void cVarBindFlagsS(std::string name, i32flags *flagtbl,
                            uint32 *var, const char *resetval);
 // string bind
-extern void cVarBindStringS(string name, string *var, const char *resetval);
+extern void cVarBindStringS(std::string name, std::string *var, const char *resetval);
 
-extern int32 cVarGetInt32(string name);
-extern int64 cVarGetInt64(string name);
-extern bool cVarGetBool(string name);
-extern double cVarGetFloat(string name);
-extern string cVarGetString(string name);
+extern int32 cVarGetInt32(std::string name);
+extern int64 cVarGetInt64(std::string name);
+extern bool cVarGetBool(std::string name);
+extern double cVarGetFloat(std::string name);
+extern std::string cVarGetString(std::string name);
 
-extern void cVarReset(string name);
+extern void cVarReset(std::string name);
 #endif // _CONFIGFILE_H_
