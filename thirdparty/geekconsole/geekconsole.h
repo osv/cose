@@ -320,6 +320,12 @@ class GeekConsole
     friend class GCFunc;
 
 public:
+    // beep callbacks
+    struct Beep {
+        virtual void beep() {};
+        virtual void match() {};
+    };
+
     enum ConsoleType
     {
         Tiny = 1,
@@ -388,6 +394,11 @@ public:
     void appendCurrentMacro(std::string);
     void appendDescriptionStr(std::string);
 
+    void setBeeper(Beep *);
+    Beep *getBeeper()
+        { return beeper; }
+    void beep();
+    
     // descript. prefix in before interactive prompt
     std::string InteractivePrefixStr;
     // bottom description str
@@ -422,6 +433,7 @@ private:
     bool isMacroRecording;
     uint maxMacroLevel;
     uint curMacroLevel;
+    Beep *beeper;
 };
 
 extern Color getColorFromText(const string &text);

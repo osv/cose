@@ -59,6 +59,18 @@ static void ToggleFullscreen();
 static bool handleSpecialKey(int key, int state, bool down);
 static void BG_Display(void);
 
+struct GCSounds : public GeekConsole::Beep
+{
+    void beep() {
+        playUISound(BEEP);
+    };
+    void match() {
+        playUISound(MATCH);
+    };
+};
+
+GCSounds gcsounds;
+
 static void startTogVidRecord()
 {
     if (celAppCore->isCaptureActive())
@@ -971,6 +983,7 @@ int main(int argc, char* argv[])
 
     // init geek console
     geekConsole = new GeekConsole(celAppCore);
+    geekConsole->setBeeper(&gcsounds);
 
     initGCInteractives(geekConsole);
     initGCStdInteractivsFunctions(geekConsole);

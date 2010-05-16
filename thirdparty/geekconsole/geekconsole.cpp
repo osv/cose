@@ -1072,7 +1072,8 @@ GeekConsole::GeekConsole(CelestiaCore *celCore):
     curInteractive(NULL),
     curFun(NULL),
     isMacroRecording(false),
-    maxMacroLevel(64)
+    maxMacroLevel(64),
+    beeper(NULL)
 {
     overlay = new Overlay();
     *overlay << setprecision(6);
@@ -1767,6 +1768,17 @@ void GeekConsole::appendDescriptionStr(std::string text)
         descriptionStr = text;
 }
 
+void GeekConsole::setBeeper(Beep *b)
+{
+    beeper = b;
+}
+
+void GeekConsole::beep()
+{
+    if (beeper)
+        beeper->beep();
+}
+
 /******************************************************************
  *  Interactives
  ******************************************************************/
@@ -1883,7 +1895,6 @@ void GCInteractive::charEntered(const char *c_p, int modifiers)
             return;
         }
     case '\020':  // Ctrl+P prev history
-        cout << " prev befor index " << typedHistoryCompletionIdx << "\t size: " << typedHistoryCompletion.size()<< "\n";
         if (typedHistoryCompletion.empty())
             return;
         rit = typedHistoryCompletion.rbegin() + typedHistoryCompletionIdx;
@@ -1892,10 +1903,8 @@ void GCInteractive::charEntered(const char *c_p, int modifiers)
             typedHistoryCompletionIdx = 0;
         buf = *rit;
         gc->appendDescriptionStr(_(ctrlZDescr));
-        cout << " prev after index " << typedHistoryCompletionIdx << "\n";
         return;
     case '\016':  // Ctrl+N forw history
-        cout << " next befor index " << typedHistoryCompletionIdx << "\t size: " << typedHistoryCompletion.size()<< "\n";
         if (typedHistoryCompletion.empty())
             return;
         it = typedHistoryCompletion.begin() + typedHistoryCompletionIdx;
@@ -1904,7 +1913,6 @@ void GCInteractive::charEntered(const char *c_p, int modifiers)
             typedHistoryCompletionIdx = typedHistoryCompletion.size() - 1;
         buf = *it;
         gc->appendDescriptionStr(_(ctrlZDescr));
-        cout << " next after index " << typedHistoryCompletionIdx << "\n";
         return;
     case '\032':  // Ctrl+Z
         if (bufSizeBeforeHystory == buf.size())
@@ -2309,6 +2317,8 @@ void ListInteractive::charEntered(const char *c_p, int modifiers)
                     return;
                 }
             }
+            // not matching
+            gc->beep();
             return;
         }
     }
@@ -2336,6 +2346,7 @@ void ListInteractive::charEntered(const char *c_p, int modifiers)
         if (typedTextCompletion.empty())
         {
             setBufferText(oldBufText); // revert old text
+            gc->beep();
         }
     }
 
@@ -2411,6 +2422,27 @@ void ListInteractive::update()
 {
     GCInteractive::update();
     updateTextCompletion();
+
+    // play sound if matched
+    GeekConsole::Beep *b = gc->getBeeper();
+    if(mustMatch && b)
+    {
+        std::string buftext = getRightText();
+        std::vector<std::string>::iterator it;
+
+        // is righttext in completion list
+        for (it = typedTextCompletion.begin();
+             it != typedTextCompletion.end(); it++)
+        {
+            if (*it == buftext)
+            {
+                if (b)
+                    b->match();
+
+                return;
+            }
+        }
+    }
 }
 
 void ListInteractive::setCompletion(std::vector<std::string> completion)
@@ -2517,8 +2549,10 @@ void CelBodyInteractive::charEntered(const char *c_p, int modifiers)
         // allow finish only if selection found
         Selection sel = celApp->getSimulation()->findObjectFromPath(GCInteractive::getBufferText(), true);
         if (sel.empty()) // dont continue if not match any obj
+        {
+            gc->beep();
             return;
-
+        }
         // if custom completion present
         if (completionList.size()) {
             vector<std::string>::const_iterator it;
@@ -2562,6 +2596,9 @@ void CelBodyInteractive::update()
     {
         gc->setInfoText(desc);
         gc->descriptionStr = gc->descriptionStr + _(", M-c - Select. ");
+        GeekConsole::Beep *b = gc->getBeeper();
+        if (b)
+            b->match();
     }
     // mark selected
     MarkerRepresentation markerRep(MarkerRepresentation::Crosshair);
@@ -2869,10 +2906,16 @@ void PagerInteractive::forward(int fwdby)
         {
             pageScrollIdx += fwdby;
             if (pageScrollIdx > (int) lines->size() - (int) scrollSize)
+            { // end exceed
                 pageScrollIdx = lines->size() - scrollSize;
-        }
+            }
+        } else
+            gc->beep();
     } else
-        pageScrollIdx += fwdby;
+        if (pageScrollIdx == 0)
+            gc->beep();
+        else
+            pageScrollIdx += fwdby;
 }
 
 int PagerInteractive::getChopLine()
@@ -3040,7 +3083,7 @@ void PagerInteractive::processChar(const char *c_p, int modifiers)
             if (N < 0) // default
                 pageScrollIdx = lines->size() - scrollSize;
             else
-                pageScrollIdx = N;
+                pageScrollIdx = lines->size() - scrollSize - N;
             leftScrollIdx = 0;
         } else if (c == 'p' || c == '%') {
             // Go to a position N percent
@@ -3129,6 +3172,8 @@ void PagerInteractive::processChar(const char *c_p, int modifiers)
             state = PG_SEARCH_BWD;
             charEntered("\n", 0);
             return;
+        } else {
+            gc->beep();
         }
         break;
     }
@@ -3572,7 +3617,7 @@ static int describebindKey(GeekConsole *gc, int state, std::string value)
         if (gb)
         {
             std::stringstream ss;
-            gc->setInteractive(pagerInteractive, "", _("Describe bind key:"));
+            gc->setInteractive(pagerInteractive, "", _("Describe bind key"));
             ss << value << _(" runs the command \"");
             ss << gb->getFunName(value) << "\"";
 
