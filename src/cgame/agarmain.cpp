@@ -352,6 +352,9 @@ void BG_GainFocus()
     if (!agMainMenuSticky)
         AG_WindowHide(agAppMenuWin);
     BG_ResizeWithMenu();
+
+    ContextMenu::hidePopupMenu();
+
     celAppCore->flashFrame();
     AG_DelTimeout(NULL, &toDelay);
     AG_DelTimeout(NULL, &toRepeat);

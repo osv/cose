@@ -24,6 +24,9 @@ namespace ContextMenu
 {
     // context menu callback
     void menuContext(float x, float y, Selection sel);
+
+    // called when BG gain focus
+    void hidePopupMenu();
 }
 
 #endif // _UI_H_
