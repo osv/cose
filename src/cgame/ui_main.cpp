@@ -24,10 +24,22 @@
  * UI subsystem
  **/
 
-static AG_Menu   *celMenu;
-
 namespace UI
 {
+    static AG_Menu   *celMenu; // main menu
+
+    static void playSnd(AG_Event *event)
+    {
+        int uisnd = (int ) AG_INT(1);
+        if (uisnd >= 0 && uisnd < LASTUISND)
+            playUISound((StdUiSounds) uisnd);
+    }
+
+    void addSndEvent(AG_Object *obj, const char *event_name, StdUiSounds snd)
+    {
+        AG_AddEvent(obj, event_name, playSnd, "%i", (int) snd);
+    }
+
     /*  We need flagsets for menu binds
      *  there are several *Flags
      *  
@@ -182,6 +194,7 @@ namespace UI
         AG_ButtonText(btns[1], _("No"));
         AG_SetEvent(btns[0], "button-pushed", gameQuit, NULL);
         AG_SetEvent(btns[1], "button-pushed", AGWINDETACH(wDlg));
+        addSndEvent((AG_Object *) btns[1], "button-pushed", BTNCLICK);
     }
 
     namespace RenderCfgDial
@@ -437,6 +450,8 @@ namespace UI
             double  *ambientLevel = &renderCfg->ambientLight;
             double  *galaxyLight = &renderCfg->galaxyLight;
             AG_NotebookTab *ntab;
+            AG_Button *btn;
+
             ntab = AG_NotebookAddTab(nb, tabName.c_str(), AG_BOX_VERT);
             {
                 AG_Box *hBox, *hBox2, *vBox;
@@ -492,10 +507,12 @@ namespace UI
                         AG_CheckboxNewFlag (vBox, 0, _("Spacecraft"), labelFlagCel, Renderer::SpacecraftLabels);
                         AG_CheckboxNewFlag (vBox, 0, _("Locations"), labelFlagCel, Renderer::LocationLabels);
                         AG_CheckboxNewFlag (vBox, 0, _("I18nConstellation"), labelFlagCel, Renderer::I18nConstellationLabels);
-                        AG_ButtonNewFn(vBox, 0, _("Show Body labels"),
+                        btn = AG_ButtonNewFn(vBox, 0, _("Show Body labels"),
                                        setBodyLabelsCelCfg, "%p", labelFlagCel);
-                        AG_ButtonNewFn(vBox, 0, _("Disable labels"),
+                        addSndEvent((AG_Object *) btn, "button-pushed", BTNCLICK);
+                        btn = AG_ButtonNewFn(vBox, 0, _("Disable labels"),
                                        resetLabelCelCfg, "%p", labelFlagCel);
+                        addSndEvent((AG_Object *) btn, "button-pushed", BTNCLICK);
                         AG_SeparatorNew(vBox, AG_SEPARATOR_HORIZ);
                         //label = AG_LabelNewString (vBox, 0, _("Show Orbits:"));
                         AG_CheckboxNewFlag(vBox, 0, _("Show orbits"), renderFlag, Renderer::ShowOrbits);
@@ -510,8 +527,9 @@ namespace UI
                     }
                     hBox2 = AG_BoxNewHoriz(ntab, AG_BOX_HFILL|AG_BOX_HOMOGENOUS);
                     {
-                        AG_ButtonNewFn(hBox2, 0, _("Reset"),
+                        btn = AG_ButtonNewFn(hBox2, 0, _("Reset"),
                                        resetCelCfg, "%i", qualy);
+                        addSndEvent((AG_Object *) btn, "button-pushed", BTNCLICK);
                         AG_Radio *radTextureRes;
                         const char *radioItems[] = {
                             _("Low Texture resolution"),
@@ -520,6 +538,7 @@ namespace UI
                             NULL
                         };
                         radTextureRes = AG_RadioNew(hBox2, 0, radioItems);
+                        addSndEvent((AG_Object *) radTextureRes, "radio-changed", BTNSWICH);
                         AG_BindInt(radTextureRes, "value", &renderCfg->textureRes);
                     }
                 }
@@ -532,6 +551,7 @@ namespace UI
         {
             int i;
             AG_NotebookTab *tab;
+            AG_Button *btn;
 
             celCfgWin = AG_WindowNewNamed(0, "cel pref");
             AG_WindowSetCaption(celCfgWin, _("Celestia's render preference"));
@@ -543,7 +563,8 @@ namespace UI
                 AG_LabelNewStatic(hBox, 0, _("Set current as preset:"));
                 for (i = 1; i < 6; i++)
                 {
-                    AG_Button *btn = AG_ButtonNewFn(hBox, 0, NULL, setCurrentAsPreset, "%p", &renderCfgSets[i]);
+                    btn = AG_ButtonNewFn(hBox, 0, NULL, setCurrentAsPreset, "%p", &renderCfgSets[i]);
+                    addSndEvent((AG_Object *) btn, "button-pushed", BTNCLICK);
                     AG_ButtonText(btn, "%i", i);
                 }                               
             }
@@ -557,8 +578,9 @@ namespace UI
                                       &renderCfgSets[i], i);
                 std::string str = std::string(_("To set this preference use C-x r "))+ buff;
                 AG_SeparatorNew(tab, AG_SEPARATOR_HORIZ);
-                AG_ButtonNewFn(tab, 0, str.c_str(), 
+                btn = AG_ButtonNewFn(tab, 0, str.c_str(), 
                                setPreset, "%i", i);
+                addSndEvent((AG_Object *) btn, "button-pushed", BTNCLICK);
                 sprintf(buff,"C-x r %d @%d", i, i);
                 geekConsole->bind("Global", buff,
                                   "set render preset");
@@ -1089,6 +1111,7 @@ namespace UI
 
         void createStarBrwWindow()
         {
+            AG_Button *btn;
             starBrowWin = AG_WindowNewNamed(0, "cel star browser");
             starBrowser.setSimulation(celAppCore->getSimulation());
             AG_WindowSetCaption(starBrowWin, _("Star browser"));
@@ -1128,8 +1151,9 @@ namespace UI
             }
             hBox = AG_BoxNewHoriz(starBrowWin, AG_BOX_HFILL| AG_BOX_HOMOGENOUS);
             {
-                AG_ButtonNewFn(hBox, 0, _("Refresh"),
+                btn = AG_ButtonNewFn(hBox, 0, _("Refresh"),
                                actUpdateTable, NULL);
+                addSndEvent((AG_Object *) btn, "button-pushed", BTNCLICK);
                 const char *radioItems[] = {
                     _("Nearest"),
                     _("Brightest (App.)"),
@@ -1139,7 +1163,7 @@ namespace UI
                 };
                                 
                 radStarEntry = AG_RadioNewFn(hBox, 0, radioItems, radioChanged, NULL);
-                                
+                addSndEvent((AG_Object *) radStarEntry, "radio-changed", BTNSWICH);
             }
 
         }

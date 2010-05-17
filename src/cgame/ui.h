@@ -5,6 +5,7 @@
 #include <agar/gui.h>
 
 #include "../celestia/celestiacore.h"
+#include "sound/mixer.h"
 
 namespace UI
 {
@@ -15,6 +16,8 @@ namespace UI
     void syncRenderFromAgar(); // sync render flags and other from agar ui sys
     void syncRenderToAgar(); // sync render flags and other to agar ui sys
     void riseUI(); // Show ui and take focus
+
+    void addSndEvent(AG_Object *, const char event_name, StdUiSounds snd);
 }
 
 namespace ContextMenu
