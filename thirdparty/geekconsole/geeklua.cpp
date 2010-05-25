@@ -92,7 +92,7 @@ static int setListInteractive(lua_State* l)
     const char *history = celx.safeGetString(2, AllErrors, "argument 2 to gc.listInteractive must be a string");
     const char *prefix = celx.safeGetString(3, AllErrors, "argument 3 to gc.listInteractive must be a string");
     const char *descr = celx.safeGetString(4, AllErrors, "argument 4 to gc.listInteractive must be a string");
-    int isMustMatch = celx.safeGetNumber(5, WrongType, "argument 5 to gc.listInteractive must be a number", 0);
+    bool isMustMatch = celx.safeGetBoolean(5, WrongType, "argument 5 to gc.listInteractive must be a number", false);
     geekConsole->setInteractive(listInteractive, history, prefix, descr);
     listInteractive->setCompletionFromSemicolonStr(completion);
     listInteractive->setMatchCompletion(isMustMatch);
@@ -142,7 +142,7 @@ static int setFlagInteractive(lua_State* l)
     const char *history = celx.safeGetString(2, AllErrors, "argument 2 to gc.flagInteractive must be a string");
     const char *prefix = celx.safeGetString(3, AllErrors, "argument 3 to gc.flagInteractive must be a string");
     const char *descr = celx.safeGetString(4, AllErrors, "argument 4 to gc.flagInteractive must be a string");
-    int isMustMatch = celx.safeGetNumber(5, WrongType, "argument 5 to gc.flagInteractive must be a number", 0);
+    bool isMustMatch = celx.safeGetBoolean(5, WrongType, "argument 5 to gc.flagInteractive must be a boolean", true);
     const char *delim = celx.safeGetString(6, WrongType, "argument 6 to gc.flagInteractive must be a string");
     geekConsole->setInteractive(flagInteractive, history, prefix, descr);
     flagInteractive->setCompletionFromSemicolonStr(completion);
@@ -160,7 +160,7 @@ static int setFileInteractive(lua_State* l)
     const char *history = celx.safeGetString(1, AllErrors, "argument 1 to gc.flagInteractive must be a string");
     const char *prefix = celx.safeGetString(2, AllErrors, "argument 2 to gc.flagInteractive must be a string");
     const char *descr = celx.safeGetString(3, AllErrors, "argument 3 to gc.flagInteractive must be a string");
-    int isMustMatch = celx.safeGetNumber(4, WrongType, "argument 4 to gc.flagInteractive must be a number", 0);
+    bool isMustMatch = celx.safeGetBoolean(4, WrongType, "argument 4 to gc.flagInteractive must be a number", false);
     const char *dir = celx.safeGetString(5, WrongType, "argument 5 to gc.flagInteractive must be a string");
     const char *rootDir = celx.safeGetString(6, WrongType, "argument 6 to gc.flagInteractive must be a string");
     const char *fileExt = celx.safeGetString(7, WrongType, "argument 7 to gc.flagInteractive must be a string");
@@ -294,7 +294,7 @@ static int setLastFromHistory(lua_State* l)
 static int gcBindKey(lua_State* l)
 {
     CelxLua celx(l);
-    celx.checkArgs(2, 3, "Two or three arguments expected for gc.bind(sKeyAndARGS, sFunName, [sNamseSpace])");
+    celx.checkArgs(2, 3, "Two or three arguments expected for gc.bind(sKeyAndARGS, sFunName, [sNameSpace])");
     const char *key = celx.safeGetString(1, AllErrors, "argument 1 to gc.bind must be a string");
     const char *fun = celx.safeGetString(2, AllErrors, "argument 2 to gc.bind must be a string");
     const char *namesp = celx.safeGetString(3, WrongType, "argument 3 to gc.bind must be a string");

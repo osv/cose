@@ -1385,7 +1385,7 @@ bool GeekConsole::charEntered(const char sym, const char *c_p, int modifiers)
     if (curInteractive)
     {
         curInteractive->charEntered(c_p, modifiers);
-        if (isVisible)
+        if (isVisible && curInteractive)
             curInteractive->update();
     }
     return true;

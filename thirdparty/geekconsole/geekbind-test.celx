@@ -65,7 +65,7 @@ gc.unbind("C-c C-x")
 --                 [number:must-match])
 function listTest (state, s)
    if state == 0 then
-      gc.listInteractive("class O;class B;class A;class F;class G;class K;class M","test-list", "Spectral class: ","Type spectral class", 1);
+      gc.listInteractive("class O;class B;class A;class F;class G;class K;class M","test-list", "Spectral class: ","Type spectral class", true);
    elseif state == -1 then
       -- describer for 0 state (i.e -1-state)
       gc.setInfoText("You can describe current prompt by gc.setInfoText\n" ..
@@ -119,7 +119,7 @@ end
 function flagTest (state, s)
    if state == 0 then
       gc.flagInteractive("stars;planets;galaxy;clouds;atmospheres",
-			 "test-flag", "Select flag (use ';/' as delimiter)", "Select object")
+			 "test-flag", "Select flag (use ';/' as delimiter)", "Select object", true)
    elseif state == 1 then
       celestia:flash(s)
       gc.finish()
@@ -133,7 +133,7 @@ end
 function fileTest (state, s)
    if state == 0 then
       gc.fileInteractive("test-file", "Choose texture", "Select texture (.png, .jpg, .dds) ",
-			 1, "textures/", "./", ".png;.dds;.jpg")
+			 true, "textures/", "./", ".png;.dds;.jpg")
       gc.setColumns(3)
       gc.setLastFromHistory()
    elseif state == 1 then
