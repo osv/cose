@@ -80,7 +80,6 @@ namespace UI{
         case 1:
             AG_MkPath(thmDir.c_str());
             saveCfg(thmDir + value + ".thm", "render.color.");
-            gc->finish();
             break;
         case 0:
         {
@@ -117,7 +116,6 @@ namespace UI{
         {
         case 1:
             loadCfg(thmDir + value + ".thm", "render.color.");
-            gc->finish();
             break;
         case 0:
         {

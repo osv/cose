@@ -599,7 +599,6 @@ namespace UI
                 int i = atoi(value.c_str());
                 if (i > 0 && i <= 5 )
                     copyRenderFlag(&renderFlags, &renderCfgSets[i]);
-                gc->finish();
                 break;
             }
             case 0:
@@ -614,7 +613,6 @@ namespace UI
         int GCShowCelPreference(GeekConsole *gc, int state, std::string value)
         {
             showCelPreference(NULL);
-            gc->finish();
             riseUI();
             return state;
         }
@@ -936,7 +934,6 @@ namespace UI
         int GCBrowseNearestSolarSystem(GeekConsole *gc, int state, std::string value)
         {
             browseNearestSolarSystem(NULL);
-            gc->finish();
             riseUI();
             return state;
         }
@@ -1172,7 +1169,6 @@ namespace UI
         int GCShowStarBrowser(GeekConsole *gc, int state, std::string value)
         {
             showStarBrowser(NULL);
-            gc->finish();
             riseUI();
             return state;
         }
@@ -1360,7 +1356,6 @@ namespace UI
                     }
                 AG_ObjectUnlock(win);
             }
-            gc->finish();
             break;
         default:
             break;
@@ -1375,8 +1370,6 @@ namespace UI
         case 1:
             if (value == "yes")
                 gameTerminate();
-            else
-                gc->finish();
             break;
         case 0:
             gc->setInteractive(listInteractive, "quit", "Are You Sure?", "Quit from game");

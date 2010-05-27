@@ -1556,6 +1556,8 @@ int GeekConsole::call(const std::string &value, bool params)
 {
     if(!curFun) return 0;
 
+    finish();
+
     if (isMacroRecording && !params)
     {
         // zero state must be skipped
@@ -1586,8 +1588,7 @@ void GeekConsole::InteractFinished(std::string value)
     funState++;
 
     // some interactives may need do some clean
-    if (curInteractive)
-        curInteractive->cancelInteractive();
+    finish();
     call(value);
 }
 
@@ -1595,8 +1596,6 @@ void GeekConsole::InteractFinished(std::string value)
 void GeekConsole::finish()
 {
     isVisible = false;
-//    curFun = NULL;
-//    curFunName.clear();
     if (curInteractive)
         curInteractive->cancelInteractive();
     curInteractive = NULL;
@@ -2644,6 +2643,7 @@ void CelBodyInteractive::cancelInteractive()
     sel = gc->getCelCore()->
         getSimulation()->findObjectFromPath(firstSelection, true);
     celApp->getSimulation()->setSelection(sel);
+    firstSelection.clear();
 }
 
 /* Flag interactive
@@ -3456,7 +3456,6 @@ static int saveMacro(GeekConsole *gc, int state, std::string value)
     } else if (state == 5) // finish
     {
         gc->bind(bindspace, value, svmFunName);
-        gc->finish();
     }
 
     return state;
@@ -3511,7 +3510,6 @@ static int bindKey(GeekConsole *gc, int state, std::string value)
         break;
     case 3:
         gc->bind(bindspace, keybind, value);
-        gc->finish();
         break;
     default:
         break;
@@ -3562,7 +3560,6 @@ static int unBindKey(GeekConsole *gc, int state, std::string value)
     }
     case 2:
         gc->unbind(bindspace, value);
-        gc->finish();
         break;
     default:
         break;
@@ -3661,9 +3658,6 @@ static int describebindKey(GeekConsole *gc, int state, std::string value)
         }
         break;
     }
-    case 3:
-        gc->finish();
-        break;
     default:
         break;
     }

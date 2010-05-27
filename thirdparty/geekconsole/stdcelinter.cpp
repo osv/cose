@@ -14,7 +14,6 @@ static int gotoBody(GeekConsole *gc, int state, std::string value)
     if (sim->getFrame()->getCoordinateSystem() == ObserverFrame::Universal)
         sim->follow();
     sim->gotoSelection(5.0, Vector3f::UnitY(), ObserverFrame::ObserverLocal);
-    gc->finish();
     return state;
 }
 
@@ -27,7 +26,6 @@ static int gotoBodyGC(GeekConsole *gc, int state, std::string value)
         gc->getCelCore()->getSimulation()->getSelection(),
         5.0, 0.0, 0.5,
         Vector3f::UnitY(), ObserverFrame::ObserverLocal);
-    gc->finish();
     return state;
 }
 
@@ -37,7 +35,6 @@ static int selectBody(GeekConsole *gc, int state, std::string value)
     {
     case 1:
     {
-        gc->finish();
         Selection sel = gc->getCelCore()->getSimulation()->findObjectFromPath(value, true);
         if (!sel.empty())
         {
@@ -105,13 +102,11 @@ static int selectStar(GeekConsole *gc, int state, std::string value)
         vector<const Star*> *stars = starBrowser.listStars(numListStars);
         if (!stars)
         {
-            gc->finish();
             break;
         }
         int currentLength = (*stars).size();
         if (currentLength == 0)
         {
-            gc->finish();
             break;
         }
         sim->setSelection(Selection((Star *)(*stars)[0]));
@@ -129,7 +124,6 @@ static int selectStar(GeekConsole *gc, int state, std::string value)
     }
     case 3: // finish
     {
-        gc->finish();
         Selection sel = gc->getCelCore()->getSimulation()->findObjectFromPath(value, true);
         if (!sel.empty())
         {
@@ -147,7 +141,6 @@ static int unmarkAll(GeekConsole *gc, int state, std::string value)
 {
     Simulation* sim = gc->getCelCore()->getSimulation();
     sim->getUniverse()->unmarkAll();
-    gc->finish();
     return state;
 }
 
@@ -274,7 +267,6 @@ static int openScript(GeekConsole *gc, int state, std::string value)
         break;
     case 1:
         gc->getCelCore()->runScript("./" + value);
-        gc->finish();
         break;
     }
     return state;
@@ -474,7 +466,6 @@ static int setFlag(GeekConsole *gc, int state, std::string value)
         else if (flagsToSet == orbitflag)
             r->setOrbitMask(var);
         }
-        gc->finish();
         break;
     }
     return state;
@@ -494,7 +485,6 @@ static int toggleReferenceMark(GeekConsole *gc, int state, std::string value)
         break;
     case 1:
     {
-        gc->finish();
         Selection sel = gc->getCelCore()->
             getSimulation()->getSelection();
         if (sel.empty())
@@ -523,7 +513,6 @@ static int toggleReferenceMark(GeekConsole *gc, int state, std::string value)
 
 static int disableReferenceMark(GeekConsole *gc, int state, std::string value)
 {
-    gc->finish();
     Selection sel = gc->getCelCore()->
         getSimulation()->getSelection();
 

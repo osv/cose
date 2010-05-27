@@ -1,3 +1,4 @@
+-- -*- mode: lua -*-
 -- lua unit tests for geekconsole
 -- Better load this file from luahook
 
@@ -32,7 +33,6 @@ gc.registerAlias("lua alias test", "select object", "sol/Earth/moon@*EXEC*@goto 
 gc.registerFunction("lua reregister test",
 		  function (state, s)
 		     celestia:flash("not redefine")
-		     gc.finish()
 		  end)
 -- .. also test gc.isFunction
 if gc.isFunction("lua reregister test") then
@@ -41,7 +41,6 @@ if gc.isFunction("lua reregister test") then
 			    "Use gc.reRegisterFunction to redefine",
 			 function (state, s)
 			    celestia:flash("Redefined")
-			    gc.finish()
 			 end)
 end
 
@@ -72,6 +71,8 @@ function listTest (state, s)
 		     "Typed: \"" .. s .. "\"")
    elseif state == 1 then
       celestia:flash(s)
+      -- you  don't so  need  call  this, just  indicate  that end  of
+      -- interactive
       gc.finish()
    end
    return state
@@ -83,7 +84,6 @@ function passwdTest (state, s)
       gc.passwdInteractive("Password", " Password test");
    elseif state == 1 then
       celestia:flash(s)
-      gc.finish()
    end
    return state
 end
@@ -96,7 +96,6 @@ function colorChooserTest (state, s)
       gc.setColumns(1)
    elseif state == 1 then
       celestia:flash("Hex color: " .. gc.color2HexRGB(s) .. ", Alpha: " .. gc.alphaFromColor(s), 5)
-      gc.finish()
    end
    return state
 end
@@ -108,7 +107,6 @@ function celBodyTest (state, s)
       gc.setColumns(5)
    elseif state == 1 then
       celestia:flash(s)
-      gc.finish()
    end
    return state
 end
@@ -122,7 +120,6 @@ function flagTest (state, s)
 			 "test-flag", "Select flag (use ';/' as delimiter)", "Select object", true)
    elseif state == 1 then
       celestia:flash(s)
-      gc.finish()
    end
    return state
 end
@@ -138,7 +135,6 @@ function fileTest (state, s)
       gc.setLastFromHistory()
    elseif state == 1 then
       celestia:flash("Texture " .. s)
-      gc.finish()
    end
    return state
 end
@@ -150,8 +146,6 @@ function pagerTest (state, s)
 			  "gc.pagerInteractive can be used to show text information.\n" ..
 			  "To navigate use key like in `less` command.\n" ..
 			  "Press 'h' to display more help.")
-   elseif state == 1 then
-      gc.finish()
    end
    return state
 end
@@ -163,7 +157,6 @@ function customBodySet (state, s)
       obs = celestia:getobserver()
       myObject = celestia:find(s)
       celestia:select(myObject)
-      gc.finish()
    end
    return state
 end
@@ -196,10 +189,10 @@ gc.registerFunction("lua mark and goto",
 			  color = gc.color2HexRGB(s)
 			  sel:mark(color, "diamond", 15)
 			  celestia:flash(color)			  
-			  -- gc.call will finish do gc.finish() first
+			  -- gc.call  will  finish  current inter.  do
+			  -- gc.finish() first
 			  gc.call("goto object")
 		       end
-
 		       return state
 		    end
 		 )
