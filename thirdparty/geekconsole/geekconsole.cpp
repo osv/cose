@@ -1,3 +1,24 @@
+// Copyright (C) 2010 Olexandr Sydorchuk <olexandr_syd [at] users.sourceforge.net>
+//
+// geekconsole is free software; you can redistribute it and/or modify
+// it  under the terms  of the  GNU Lesser  General Public  License as
+// published by the Free Software  Foundation; either version 2 of the
+// License, or (at your option) any later version.
+//
+// Alternatively, you  can redistribute it and/or modify  it under the
+// terms of  the GNU General Public  License as published  by the Free
+// Software Foundation; either  version 2 of the License,  or (at your
+// option) any later version.
+//
+// geekconsole is distributed in the  hope that it will be useful, but
+// WITHOUT  ANY  WARRANTY;  without   even  the  implied  warranty  of
+// MERCHANTABILITY or  FITNESS FOR A  PARTICULAR PURPOSE. See  the GNU
+// Lesser General Public License or the GNU General Public License for
+// more details.
+//
+// You should  have received a copy  of the GNU  Lesser General Public
+// License. If not, see <http://www.gnu.org/licenses/>.
+
 /*
   GeekConsole
 
@@ -10,8 +31,6 @@ int _somefun(GeekConsole *gc, int state, std::string value)
     case 1:
         if (value == "yes")
             exit(1);
-        else
-            gc->finish(); // *finish* interacting and hide console
     case 0:
         // setup interactive
         gc->setInteractive(listInteract, "quit", "Are You Sure?", "Quit from game");
@@ -21,30 +40,32 @@ int _somefun(GeekConsole *gc, int state, std::string value)
     return state;
 }
 
+geekConsole->registerFunction(GCFunc(_somefun), "quit");
+
   Or you can create simple "void" callback:
 
-  void toggleFullScreen()
-  {
+void toggleFullScreen()
+{
   // ... just toggle, no need geekconsole.finish() or other.
-  }
+}
 
   and register this
 
-  geekConsole->registerFunction(GCFunc(ToggleFullscreen), "toggle fullscreen");
+geekConsole->registerFunction(GCFunc(ToggleFullscreen), "toggle fullscreen");
 
   To set key bind for some func use bind:
 
-  geekConsole->bind("Global", "M-RET",
+geekConsole->bind("Global", "M-RET",
   "toggle fullscreen");
 
   or register and bind at once:
 
-  geekConsole->registerAndBind("Global", "C-x f",
+eekConsole->registerAndBind("Global", "C-x f",
   GCFunc(ToggleFullscreen), "toggle fullscreen");
 
   you can use void bindspace that's mean "Global":
 
-  geekConsole->bind("", "M-RET",
+geekConsole->bind("", "M-RET",
   "toggle fullscreen");
 
   For key bind there are some emacs's suggestion:
@@ -60,14 +81,14 @@ int _somefun(GeekConsole *gc, int state, std::string value)
   You can pass same parameter to interactive using keybind or alias function
   Example:
 
-  geekConsole->bind("", "C-x C-g e @Sol/Earth@*EXEC*@goto object@",
-                    "select object"); // some test
+geekConsole->bind("", "C-x C-g e @Sol/Earth@*EXEC*@goto object@",
+                    "select object");
 
   Here binded key "C-x C-g e" to select Sol/Earth end execute other
   interactive "goto object" (by passing parameter *EXEC* before).
   Alias example:
 
-  geekConsole->registerFunction(GCFunc("quit", "@yes@"), "force quit");
+geekConsole->registerFunction(GCFunc("quit", "@yes@"), "force quit");
 
   Special parameters:
   - *ESC* stop current interactive;
@@ -76,7 +97,7 @@ int _somefun(GeekConsole *gc, int state, std::string value)
 
   For first exec of fun state is 0.
   To describe current entered text, callback is called with state (-currentState - 1)
-  State will inc by 1 before GCInteractive finished.
+  State will inc by 1 when GCInteractive is finished
 
   Key binds:
   C-s C-S-s......... Change size of console
