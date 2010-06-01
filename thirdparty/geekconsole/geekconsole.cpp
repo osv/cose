@@ -2328,8 +2328,8 @@ void ListInteractive::charEntered(const char *c_p, int modifiers)
             std::vector<std::string>::iterator it;
 
             // is righttext in completion list
-            for (it = typedTextCompletion.begin();
-                 it != typedTextCompletion.end(); it++)
+            for (it = completionList.begin();
+                 it != completionList.end(); it++)
             {
                 if (*it == buftext)
                 {
@@ -2469,7 +2469,7 @@ void ListInteractive::setCompletion(std::vector<std::string> completion)
 {
     completionList = completion;
     pageScrollIdx = 0;
-    typedTextCompletion =  completion;
+    updateTextCompletion();
 }
 
 void ListInteractive::setMatchCompletion(bool _mustMatch)

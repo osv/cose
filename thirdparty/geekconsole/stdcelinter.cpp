@@ -23,6 +23,16 @@
 #include <celengine/starbrowser.h>
 #include <celengine/marker.h>
 #include <celengine/eigenport.h>
+
+// some redefs from celestiacore.cpp
+#ifdef _WIN32
+#define TIMERATE_PRINTF_FORMAT "%.12g"
+#else
+#define TIMERATE_PRINTF_FORMAT "%'.12g"
+#endif
+static const double MaximumTimeRate = 1.0e15;
+static const double MinimumTimeRate = 1.0e-15;
+
 using namespace Eigen;
 
 // referenceMarkNames maybe  different for celestia and OS  project, so it
@@ -550,6 +560,43 @@ static int disableReferenceMark(GeekConsole *gc, int state, std::string value)
     return state;
 }
 
+/* pass to celestia core some chars */
+static int celCharEntered(GeekConsole *gc, int state, std::string value)
+{
+    if (state == 0)
+        gc->setInteractive(listInteractive, "");
+    else if (state == 1)
+        gc->getCelCore()->charEntered(value.c_str());
+    return state;
+}
+
+static int celTimeScaleIncr(GeekConsole *gc, int state, std::string value)
+{
+    if (state == 0)
+        gc->setInteractive(listInteractive, "", "time-scale", "Increase time scale");
+    else if (state == 1)
+    {
+        Simulation *sim = gc->getCelCore()->getSimulation();
+        if (abs(sim->getTimeScale()) > MinimumTimeRate &&
+            abs(sim->getTimeScale()) < MaximumTimeRate)
+        {
+            float scale = atof(value.c_str());
+            if (scale != 0 &&
+                abs(scale) > MinimumTimeRate / 2 &&
+                abs(scale) < MaximumTimeRate / 2)
+            {
+                sim->setTimeScale(sim->getTimeScale() * scale);
+                char buf[128];
+                setlocale(LC_NUMERIC, "");
+                sprintf(buf, "%s: " TIMERATE_PRINTF_FORMAT,  _("Time rate"), sim->getTimeScale());
+                setlocale(LC_NUMERIC, "C");
+                gc->getCelCore()->flash(buf);
+            }
+        }
+    }
+    return state;
+}
+
 /* init */
 
 void initGCStdInteractivsFunctions(GeekConsole *gc)
@@ -586,4 +633,69 @@ void initGCStdInteractivsFunctions(GeekConsole *gc)
     gc->registerFunction(GCFunc("celestia options", "@toggle", _("Select objects, labels or orbits to toggle")),
                          "toggle objects");
 
+    gc->registerFunction(GCFunc(celCharEntered,  _("Send chars to celestia core.\n"
+                                    "You usually don't need use it")),
+                         ".!charEnter");
+    gc->registerFunction(GCFunc(celTimeScaleIncr,  _("Increase time scale.\n")),
+                         ".time scale increment");
+    struct std_cel_key_t {
+        const char *key;
+        const char *funname;
+        const char *descript;
+    } std_cel_key[] = {
+        {"a", ".increase velocity", _("Increase velocity")},
+        {"c", ".center on selected", _("Center on selected object")},
+        {"d", ".run demo.cel", _("Run demo script (demo.cel)")},
+        {"f", ".follow selected object", _("Follow selected object")},
+        {"h", ".select our sun", _("Select our sun (Home)")},
+        {"j", ".toggle forw/rev time", _("Toggle Forward/Reverse time")},
+        {"q", ".reverse direction", _("Reverse direction")},
+        {"r", ".lower texture res", _("Lower texture resolution")},
+        {"s", ".stop motion", _("Stop motion")},
+        {"t", ".track selected", _("Track selected object (keep selected object centered in view)")},
+        {"v", ".toggle verbosity", _("Toggle verbosity of information text")},
+        {"x", ".movement toward center", _("Set movement direction toward center of screen")},
+        {"y", ".sync orbit", _("Sync Orbit the selected object, at a rate synced to its rotation")},
+        {"z", ".decrease velocity", _("Decrease velocity")},
+        {"C", ".center on selected CO", _("Center/orbit--center the selected object without changing the position\n of the reference object.")},
+        {"R", ".raise texture res", _("Raise texture resolution")},
+        {"`", ".toggle fps", _("Show frames rendered per second")},
+        {"~", ".toggle load info", _("Display file loading info")},
+        {"!", ".set time to current", _("Set time to current date and time")},
+        {"@", ".edit mode", _("Edit Mode")},
+        {"%", ".toggle star color tbl", _("Toggle star color tables")},
+        {"*", ".look back", _("Look back")},
+        {"(", ".decrease galaxy brightness", _("Decrease galaxy brightness independent of star brightness")},
+        {")", ".increase galaxy brightness", _("Increase galaxy brightness independent of star brightness")},
+        {"-", ".subtract light-travel delay", _("(hyphen) Subtract light-travel delay from current simulation time")},
+        {"+", ".toggle limit of knowledge", _("Switch between artistic and limit of knowledge planet textures")},
+        {"[", ".decrease limiting magnitude", _("If autoMag ON :\n Decrease limiting magnitude at 45 deg field of view\n"
+                                                "If autoMag OFF:\n Decrease limiting magnitude (fewer stars visible)")},
+        {"]", ".Increase limiting magnitude", _("If autoMag ON :\n Increase limiting magnitude at 45 deg field of view\n"
+                                                "If autoMag OFF:\n Increase limiting magnitude (more stars visible)")},
+        {"{", ".decrease ambient illumination", _("Decrease ambient illumination")},
+        {"}", ".increase ambient illumination", _("Increase ambient illumination")},
+        {";", ".earth equat coord sphere", _("Show an earth-based equatorial coordinate sphere")},
+        {":", ".lock 2 object as one", _("Lock two objects together as one.\n"
+                                         "Select #1, \"follow selected\", select #2, \"lock 2 object\".\n"
+                                         "(If use default keys: select #1, \"f\", select #2, \":\")")},
+        {"\"", ".chase selected", _("Chase selected object\n(orientation is based on selection's velocity)")},
+        {",", ".FOV narrow", _("Narrow field of view (FOV)")},
+        {".", ".FOV widen", _("Widen field of view (FOV)")},
+        {"<", "brightness increase", _("Decrease brightness")},
+        {">", "brightness decrease", _("Increase brightness")},
+        {"?", ".toggle light-travel delay", _("Display light-travel delay between observer and selected object")},
+        {"\\", ".real time", _("Real time (cancels x factors and backward time)")},
+        {"|", ".toggle bloom", _("Toggle bloom")},
+        {NULL}
+    };
+
+    int i = 0;
+    while (std_cel_key[i].key != NULL )
+    {
+        gc->registerFunction(GCFunc(".!charEnter", std_cel_key[i].key,
+                                    std_cel_key[i].descript),
+                             std_cel_key[i].funname);
+        i++;
+    }
 }
