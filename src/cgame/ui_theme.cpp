@@ -558,8 +558,8 @@ namespace UI{
         AG_WindowHide(winThemeCfg);
         themeInit = true;
 
-        geekConsole->registerFunction(GCFunc(loadColorTheme), "load color theme");
-        geekConsole->registerFunction(GCFunc(saveColorTheme), "save color theme");
+        getGeekConsole()->registerFunction(GCFunc(loadColorTheme), "load color theme");
+        getGeekConsole()->registerFunction(GCFunc(saveColorTheme), "save color theme");
     }
 
     void setupThemeStyle(PrimitiveStyle primitiveStyle)

@@ -52,6 +52,10 @@
 #include <celephem/scriptobject.h>
 #endif
 
+#ifndef NO_GEEKCONSOLE
+#include "geekconsole.h"
+#endif
+
 #ifdef _WIN32
 #define TIMERATE_PRINTF_FORMAT "%.12g"
 #else
@@ -387,6 +391,10 @@ CelestiaCore::CelestiaCore() :
     clog.rdbuf(console.rdbuf());
     cerr.rdbuf(console.rdbuf());
     console.setWindowHeight(ConsolePageRows);
+
+#ifndef NO_GEEKCONSOLE
+    initGeekConsole(this);
+#endif
 }
 
 CelestiaCore::~CelestiaCore()
@@ -406,6 +414,9 @@ CelestiaCore::~CelestiaCore()
 
     delete execEnv;
 
+#ifndef NO_GEEKCONSOLE
+    shutdownGeekconsole();
+#endif
 
 }
 
@@ -1234,16 +1245,16 @@ static bool getKeyName(const char* c, int modifiers, char* keyName, unsigned int
 }
 #endif
 
-void CelestiaCore::charEntered(char c, int modifiers)
+void CelestiaCore::charEntered(char c, int modifiers, bool gc)
 {
     setViewChanged();
     char C[2];
     C[0] = c;
     C[1] = '\0';
-    charEntered(C, modifiers);
+    charEntered(C, modifiers, gc);
 }
 
-void CelestiaCore::charEntered(const char *c_p, int modifiers)
+void CelestiaCore::charEntered(const char *c_p, int modifiers, bool gc)
 {
     setViewChanged();
 
@@ -1251,6 +1262,20 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
 
     char c = *c_p;
 
+#ifndef NO_GEEKCONSOLE
+    if (gc)
+    {
+        int mod = 0;
+        if (modifiers & CelestiaCore::ControlKey)
+            mod |=  GeekBind::CTRL;
+        if (modifiers & CelestiaCore::ShiftKey)
+            mod |=  GeekBind::SHIFT;
+        if (modifiers & CelestiaCore::AltKey)
+            mod |=  GeekBind::META;
+        getGeekConsole()->charEntered(c_p, mod);
+        return;
+    }
+#endif
 
 #ifdef CELX
     if (celxScript != NULL && (textEnterMode & KbPassToScript))
@@ -2515,6 +2540,11 @@ void CelestiaCore::draw()
         console.end();
     }
 
+#if !defined(NO_GEEKCONSOLE) && !defined(EMBED_GEEKCONSOLE)
+    if (getGeekConsole())
+        getGeekConsole()->render();
+#endif
+
     if (toggleAA)
         glEnable(GL_MULTISAMPLE_ARB);
 
@@ -2558,6 +2588,11 @@ void CelestiaCore::resize(GLsizei w, GLsizei h)
 #ifdef CELX
     if (luaHook && luaHook->callLuaHook(this,"resize", (float) w, (float) h))
         return;
+#endif
+
+#ifndef NO_GEEKCONSOLE
+    if (getGeekConsole())
+        getGeekConsole()->resize(w, h);
 #endif
 }
 

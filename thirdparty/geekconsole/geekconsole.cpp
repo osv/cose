@@ -845,6 +845,43 @@ static FormattedNumber SigDigitNum(double v, int digits)
                            FormattedNumber::SignificantDigits);
 }
 
+// Convert Ctrl-Key to key, I can't find same in std.
+char removeCtrl(char ckey)
+{
+    switch (ckey)
+    {
+    case CTRL_A: return 'a';
+    case CTRL_B: return 'b';
+    case CTRL_C: return 'c';
+    case CTRL_D: return 'd';
+    case CTRL_E: return 'e';
+    case CTRL_F: return 'f';
+    case CTRL_G: return 'g';
+    case CTRL_H: return 'h';
+    case CTRL_I: return 'i';
+    case CTRL_J: return 'j';
+    case CTRL_K: return 'k';
+    case CTRL_L: return 'l';
+    case CTRL_M: return 'm';
+    case CTRL_N: return 'n';
+    case CTRL_O: return 'o';
+    case CTRL_P: return 'p';
+    case CTRL_Q: return 'q';
+    case CTRL_R: return 'r';
+    case CTRL_S: return 's';
+    case CTRL_T: return 't';
+    case CTRL_U: return 'u';
+    case CTRL_V: return 'v';
+    case CTRL_W: return 'w';
+    case CTRL_X: return 'x';
+    case CTRL_Y: return 'y';
+    case CTRL_Z: return 'z';
+    default:
+        break;
+    }
+    return ckey;
+}
+
 static void distance2Sstream(std::stringstream &ss, double distance)
 {
     const char* units = "";
@@ -1269,14 +1306,15 @@ std::vector<std::string> GeekConsole::getFunctionsNames()
    Process key event for interactive if visible console, if not, than
    check hot keys
  */
-bool GeekConsole::charEntered(const char sym, const char *c_p, int modifiers)
+bool GeekConsole::charEntered(const char *c_p, int modifiers)
 {
-    wchar_t wc = 0;
-    UTF8Decode(c_p, 0, strlen(c_p), wc);
+    char sym = removeCtrl(*c_p);
+    if (!sym)
+        return false;
 
     if (!isVisible)
     {
-        curKey.c[curKey.len] = sym;
+        curKey.c[curKey.len] = tolower(sym);
         curKey.mod[curKey.len] = modifiers;
         curKey.len++;
         if (modifiers & GeekBind::SHIFT)
@@ -1989,7 +2027,7 @@ void GCInteractive::renderInteractive()
 {
     glColor4ubv(clInteractiveFnt->rgba);
     *gc->getOverlay() << string(buf, 0, bufSizeBeforeHystory);
-    if (bufSizeBeforeHystory <= buf.size())
+    if (bufSizeBeforeHystory < buf.size())
     {
         glColor4ubv(clInteractiveExpand->rgba);
     	std::string s = string(buf, bufSizeBeforeHystory, buf.size() - bufSizeBeforeHystory);
@@ -2260,7 +2298,8 @@ void ListInteractive::charEntered(const char *c_p, int modifiers)
             gc->appendDescriptionStr(_(ctrlZDescr));
             completedIdx = -1;
             return;
-        }
+        } else
+            playMatch();
     } else if (C == '\t' && modifiers == GeekBind::CTRL) { // ctrl + TAB
             pageScrollIdx -= scrollSize;
             if (pageScrollIdx < 0)
@@ -2295,6 +2334,7 @@ void ListInteractive::charEntered(const char *c_p, int modifiers)
             setRightText(*it);
             bufSizeBeforeHystory = oldBufSizeBeforeHystory;
             gc->appendDescriptionStr(_(ctrlZDescr));
+            playMatch();
             return;
         }
     }
@@ -2309,13 +2349,14 @@ void ListInteractive::charEntered(const char *c_p, int modifiers)
             completedIdx--;
             if (completedIdx < pageScrollIdx)
                 completedIdx = pageScrollIdx + scrollSize - 1;
-            if (completedIdx > typedTextCompletion.size())
+            if (completedIdx > typedTextCompletion.size() - 1)
                 completedIdx = typedTextCompletion.size() - 1;
             it += completedIdx;
             uint oldBufSizeBeforeHystory = bufSizeBeforeHystory;
             setRightText(*it);
             bufSizeBeforeHystory = oldBufSizeBeforeHystory;
             gc->appendDescriptionStr(_(ctrlZDescr));
+            playMatch();
             return;
         }
     }
@@ -2368,6 +2409,8 @@ void ListInteractive::charEntered(const char *c_p, int modifiers)
             setBufferText(oldBufText); // revert old text
             gc->beep();
         }
+        else
+            playMatch();
     }
 
     // show unique match
@@ -2442,7 +2485,10 @@ void ListInteractive::update()
 {
     GCInteractive::update();
     updateTextCompletion();
+}
 
+void ListInteractive::playMatch()
+{
     // play sound if matched
     GeekConsole::Beep *b = gc->getBeeper();
     if(mustMatch && b)
@@ -2458,7 +2504,6 @@ void ListInteractive::update()
             {
                 if (b)
                     b->match();
-
                 return;
             }
         }
@@ -3739,3 +3784,21 @@ void destroyGCInteractives()
     delete pagerInteractive;
 }
 
+void initGeekConsole(CelestiaCore *celApp)
+{
+    geekConsole = new GeekConsole(celApp);
+
+    initGCInteractives(geekConsole);
+    initGCStdInteractivsFunctions(geekConsole);
+}
+
+void shutdownGeekconsole()
+{
+    destroyGCInteractives();
+    delete geekConsole;
+}
+
+GeekConsole *getGeekConsole()
+{
+    return geekConsole;
+}

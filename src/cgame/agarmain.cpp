@@ -27,6 +27,10 @@
 
 #include <sound/mixer.h>
 
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
+
 using namespace std;
 
 GameCore *appGame = NULL;
@@ -119,15 +123,15 @@ static void ToggleFullscreen()
 
 static void registerAndBindKeys()
 {
-    geekConsole->registerFunction(GCFunc(startTogVidRecord), "toggle video record");
-    geekConsole->registerFunction(GCFunc(stopVidRecord), "stop video record");
-    geekConsole->registerAndBind("", "M-RET", GCFunc(ToggleFullscreen), "toggle fullscreen");
-    geekConsole->bind("", "C-x C-g e @Earth@*EXEC*@goto object@", "select object");
+    getGeekConsole()->registerFunction(GCFunc(startTogVidRecord), "toggle video record");
+    getGeekConsole()->registerFunction(GCFunc(stopVidRecord), "stop video record");
+    getGeekConsole()->registerAndBind("", "M-RET", GCFunc(ToggleFullscreen), "toggle fullscreen");
+    getGeekConsole()->bind("", "C-x C-g e @Earth@*EXEC*@goto object@", "select object");
 
-    GeekBind *geekBindCel = geekConsole->createGeekBind("Celestia");
+    GeekBind *geekBindCel = getGeekConsole()->createGeekBind("Celestia");
     geekBindCel->bind("C-x C-m", "quit");
 
-    cVarBindInt32("geekconsole.type", &geekConsole->consoleType, geekConsole->consoleType);
+    cVarBindInt32("geekconsole.type", &getGeekConsole()->consoleType, getGeekConsole()->consoleType);
 }
 
 static void BG_Display(void)
@@ -320,8 +324,8 @@ static void BG_Resize(unsigned int w, unsigned int h)
 static void Resize(unsigned int w, unsigned int h)
 {
     BG_Resize(w, h);
-    if (geekConsole)
-        geekConsole->resize(w, h);
+    if (getGeekConsole())
+        getGeekConsole()->resize(w, h);
 }
 
 // resize with menu,
@@ -348,8 +352,8 @@ static void BG_ResizeWithMenu()
         h = hDisp - (AGWIDGET(agAppMenuWin)->h);
     }
     BG_Resize(w, h);
-    if (geekConsole)
-        geekConsole->resize(wDisp, hDisp);
+    if (getGeekConsole())
+        getGeekConsole()->resize(wDisp, hDisp);
 }
 
 void BG_GainFocus()
@@ -365,7 +369,7 @@ void BG_GainFocus()
     celAppCore->flashFrame();
     AG_DelTimeout(NULL, &toDelay);
     AG_DelTimeout(NULL, &toRepeat);
-    GeekBind *gb = geekConsole->getGeekBind("Celestia");
+    GeekBind *gb = getGeekConsole()->getGeekBind("Celestia");
     if (gb)
         gb->isActive = true;
 }
@@ -378,7 +382,7 @@ void BG_LostFocus()
     BG_ResizeWithMenu();
     AG_DelTimeout(NULL, &toDelay);
     AG_DelTimeout(NULL, &toRepeat);
-    GeekBind *gb = geekConsole->getGeekBind("Celestia");
+    GeekBind *gb = getGeekConsole()->getGeekBind("Celestia");
     if (gb)
         gb->isActive = false;
 }
@@ -400,8 +404,20 @@ static int BG_ProcessEvent(AG_DriverEvent *dev)
     {
         UI::syncRenderFromAgar();
 
-        if (!handleSpecialKey(repeatKey.sym, repeatKey.mod, true))
-            celAppCore->charEntered((char) repeatKey.uch);
+        int mod = 0;
+        if (repeatKey.mod & AG_KEYMOD_CTRL)
+            mod |=  CelestiaCore::ControlKey;
+        if (repeatKey.mod & AG_KEYMOD_SHIFT)
+            mod |=  CelestiaCore::ShiftKey;
+        if (repeatKey.mod & AG_KEYMOD_ALT)
+            mod |=  CelestiaCore::AltKey;
+
+        char utf_c[8];
+        UTF8Encode(repeatKey.uch, utf_c);
+
+        if (repeatKey.uch)
+            if (!handleSpecialKey(repeatKey.sym, repeatKey.mod, true))
+                celAppCore->charEntered(utf_c, mod, true);
         UI::syncRenderToAgar();
         return 1;
     }
@@ -525,22 +541,21 @@ static int BG_ProcessEvent(AG_DriverEvent *dev)
 static Uint32
 RepeatTimeout(void *obj, Uint32 ival, void *arg)
 {
-    if (geekConsole)
+    if (getGeekConsole())
     {
         int mod = 0;
         if (repeatKey.mod & AG_KEYMOD_CTRL)
-            mod |=  GeekBind::CTRL;
+            mod |=  CelestiaCore::ControlKey;
         if (repeatKey.mod & AG_KEYMOD_SHIFT)
-            mod |=  GeekBind::SHIFT;
+            mod |=  CelestiaCore::ShiftKey;
         if (repeatKey.mod & AG_KEYMOD_ALT)
-            mod |=  GeekBind::META;
+            mod |=  CelestiaCore::AltKey;
 
         char utf_c[8];
         UTF8Encode(repeatKey.uch, utf_c);
-
-        if (repeatKey.uch && !geekConsole->charEntered(repeatKey.sym, utf_c, mod))
+        if (repeatKey.uch)
             if (!handleSpecialKey(repeatKey.sym, repeatKey.mod, true))
-                celAppCore->charEntered((char) repeatKey.uch);
+                celAppCore->charEntered(utf_c, mod, true);
             else
                 return 0;
         return (agKbdRepeat);
@@ -619,8 +634,9 @@ int CL_ProcessEvent(AG_DriverEvent *dev)
         repeatKey.sym = dev->data.key.ks;
         repeatKey.mod = drv->kbd->modState;
         repeatKey.uch = dev->data.key.ucs;
+        AG_ScheduleTimeout(NULL, &toDelay, agKbdDelay);
 
-        if (geekConsole)
+        if (getGeekConsole())
         {
             if (repeatKey.mod & AG_KEYMOD_CTRL)
                 mod |=  GeekBind::CTRL;
@@ -628,21 +644,18 @@ int CL_ProcessEvent(AG_DriverEvent *dev)
                 mod |=  GeekBind::SHIFT;
             if (repeatKey.mod & AG_KEYMOD_ALT)
                 mod |=  GeekBind::META;
-            // if repeatUnicode = 0 then just mod key pressed
+
             if (repeatKey.uch)
             {
                 char utf_c[8];
                 UTF8Encode(repeatKey.uch, utf_c);
 
-                if (geekConsole->charEntered(repeatKey.sym, utf_c, mod))
+                if (getGeekConsole()->charEntered(utf_c, mod))
                 {
-                    AG_ScheduleTimeout(NULL, &toDelay, agKbdDelay);
                     return My_PostEventCallback();
                 }
             }
         }
-        if (bgFocuse || !UI::showUI) // no key repeat if agar focused
-            AG_ScheduleTimeout(NULL, &toDelay, agKbdDelay);
         goto def;
     case AG_DRIVER_KEY_UP:
         if (repeatKey.sym == dev->data.key.ks) {
@@ -795,6 +808,7 @@ void MyEventLoop(void)
                     }
                 }
 
+#if defined(EMBED_GEEKCONSOLE)
                 glMatrixMode(GL_TEXTURE);
                 glPushMatrix();
 
@@ -805,8 +819,8 @@ void MyEventLoop(void)
                 glPushMatrix();
                 glPushAttrib(GL_ALL_ATTRIB_BITS );
 
-                if (geekConsole)
-                    geekConsole->render();
+                if (getGeekConsole())
+                    getGeekConsole()->render();
                 glPopAttrib();
                 glMatrixMode(GL_MODELVIEW);
                 glPopMatrix();
@@ -814,7 +828,7 @@ void MyEventLoop(void)
                 glPopMatrix();
                 glMatrixMode(GL_PROJECTION);
                 glPopMatrix();
-
+#endif
                 AG_EndRendering(agDriverSw);
                 //SDL_GL_SwapBuffers();
             }
@@ -855,13 +869,11 @@ void gameTerminate()
     saveCfg();
     if (fullscreen)
         ToggleFullscreen();
-    if (geekConsole)
-        delete geekConsole;
-    destroyGCInteractives();
     // memory leak 
     Core::removeAllSolSys();
     AG_ConfigSave();
     mixerShutdown();
+    delete celAppCore;
     freeCfg();
     AG_Quit();
 }
@@ -991,13 +1003,8 @@ int main(int argc, char* argv[])
 
     celAppCore = new CelestiaCore();
 
-    // init geek console
-    geekConsole = new GeekConsole(celAppCore);
-    geekConsole->setBeeper(&gcsounds);
-
-    initGCInteractives(geekConsole);
-    initGCStdInteractivsFunctions(geekConsole);
-
+    // setup geek console
+    getGeekConsole()->setBeeper(&gcsounds);
     registerAndBindKeys();
 
     UI::Init();

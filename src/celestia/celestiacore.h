@@ -90,6 +90,7 @@ class CelestiaCore // : public Watchable<CelestiaCore>
         RightButton  = 0x04,
         ShiftKey     = 0x08,
         ControlKey   = 0x10,
+        AltKey       = 0x20
     };
 
     enum CursorShape {
@@ -222,8 +223,8 @@ class CelestiaCore // : public Watchable<CelestiaCore>
     void setHistoryCurrent(std::vector<Url*>::size_type curr);
 
     // event processing methods
-    void charEntered(const char*, int modifiers = 0);
-    void charEntered(char, int modifiers = 0);
+    void charEntered(const char*, int modifiers = 0, bool gc = false);
+    void charEntered(char, int modifiers = 0, bool gc = false);
     void keyDown(int key, int modifiers = 0);
     void keyUp(int key, int modifiers = 0);
     void mouseWheel(float, int);

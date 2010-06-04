@@ -138,6 +138,7 @@ public:
     void charEntered(const char *c_p, int modifiers);
     virtual void renderCompletion(float height, float width);
     void update();
+    void playMatch(); // play match snd if textbuffer is in completion list
     void setCompletion(std::vector<std::string> completion);
     void setMatchCompletion(bool mustMatch); // true - result must be matched in completion. Default false
     void setCompletionFromSemicolonStr(std::string); // add completion by str like "yes;no"
@@ -368,7 +369,7 @@ public:
     void reRegisterFunction(GCFunc fun, std::string name);
     GCFunc *getFunctionByName(std::string);
     std::vector<std::string> getFunctionsNames();
-    bool charEntered(const char sym, const char *c_p, int modifiers);
+    bool charEntered(const char *c_p, int modifiers);
     void resize(int w, int h)
         {
             overlay->setWindowSize(w, h);
@@ -458,6 +459,13 @@ private:
     Beep *beeper;
 };
 
+// init geekconsole
+extern void initGeekConsole(CelestiaCore *celApp);
+
+extern void shutdownGeekconsole();
+
+extern GeekConsole *getGeekConsole();
+
 extern Color getColorFromText(const string &text);
 extern Color32 getColor32FromText(const string &text);
 
@@ -471,9 +479,6 @@ extern void initGCStdInteractivsFunctions(GeekConsole *gc);
 
 /* Setup lua api for working with geekconsole */
 extern void LoadLuaGeekConsoleLibrary(lua_State* l);
-
-/* geekConsole sample */
-extern GeekConsole *geekConsole;
 
 /* Interactives */
 
@@ -492,7 +497,7 @@ typedef std::string (*CustomDescribeSelection)(Selection sel,
                                                CelestiaCore *celAppCore);
 
 /* Describe selection.
-   doCustomDescribe - use custom describer if exist*/
+   @param doCustomDescribe use custom describer if exist */
 extern std::string describeSelection(Selection sel, CelestiaCore *celAppCore, bool doCustomDescribe = true);
 
 extern CustomDescribeSelection customDescribeSelection;
