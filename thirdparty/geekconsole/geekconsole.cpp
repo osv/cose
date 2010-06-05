@@ -2799,6 +2799,30 @@ void FileInteractive::charEntered(const char *c_p, int modifiers)
             return;
 
     }
+    // can't dispatch to ListInteractive, because different completion types used
+    else if ((wc == '\n' || wc == '\r'))
+    {
+        if(mustMatch)
+        {
+            tryComplete(); // complite if only matching enable
+            std::string buftext = getRightText();
+            std::vector<std::string>::iterator it;
+
+            // is righttext in completion list
+            for (it = typedTextCompletion.begin();
+                 it != typedTextCompletion.end(); it++)
+            {
+                if (*it == buftext)
+                {
+                    GCInteractive::charEntered(c_p, modifiers);
+                    return;
+                }
+            }
+            // not matching
+            gc->beep();
+            return;
+        }
+    }
     ListInteractive::charEntered(c_p, modifiers);
 }
 
