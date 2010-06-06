@@ -1263,7 +1263,7 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers, bool gc)
     char c = *c_p;
 
 #ifndef NO_GEEKCONSOLE
-    if (gc)
+    if (gc && (textEnterMode == KbNormal))
     {
         int mod = 0;
         if (modifiers & CelestiaCore::ControlKey)

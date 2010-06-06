@@ -23,6 +23,7 @@
 #include <celengine/starbrowser.h>
 #include <celengine/marker.h>
 #include <celengine/eigenport.h>
+#include <celestia/url.h>
 
 // some redefs from celestiacore.cpp
 #ifdef _WIN32
@@ -41,10 +42,18 @@ std::vector<std::string> referenceMarkNames;
 
 static int gotoBody(GeekConsole *gc, int state, std::string value)
 {
-    Simulation *sim = gc->getCelCore()->getSimulation();
-    if (sim->getFrame()->getCoordinateSystem() == ObserverFrame::Universal)
-        sim->follow();
-    sim->gotoSelection(5.0, Vector3f::UnitY(), ObserverFrame::ObserverLocal);
+    if (state == 0)
+        gc->setInteractive(listInteractive, "duration", "Duration");
+    else if (state == 1)
+    {
+        Simulation *sim = gc->getCelCore()->getSimulation();
+        float dur = atof(value.c_str());
+        if (dur <= 0.01)
+            dur = 5.0f;
+        if (sim->getFrame()->getCoordinateSystem() == ObserverFrame::Universal)
+            sim->follow();
+        sim->gotoSelection(dur, Vector3f::UnitY(), ObserverFrame::ObserverLocal);
+    }
     return state;
 }
 
@@ -69,6 +78,7 @@ static int selectBody(GeekConsole *gc, int state, std::string value)
         Selection sel = gc->getCelCore()->getSimulation()->findObjectFromPath(value, true);
         if (!sel.empty())
         {
+            gc->getCelCore()->addToHistory();
             gc->getCelCore()->getSimulation()->setSelection(sel);
         }
     }
@@ -158,6 +168,7 @@ static int selectStar(GeekConsole *gc, int state, std::string value)
         Selection sel = gc->getCelCore()->getSimulation()->findObjectFromPath(value, true);
         if (!sel.empty())
         {
+            gc->getCelCore()->addToHistory();
             gc->getCelCore()->getSimulation()->setSelection(sel);
         }
         break;
@@ -328,7 +339,7 @@ flags_s renderflags[] = {
     {"Comet Tails",  0x8000},
     {"Markers",     0x10000},
     {"Partial Trajectories", 0x20000},
-    {"Nebulae",     0x40000},
+    {"Nebula",     0x40000},
     {"Open Clusters", 0x80000},
     {"Globulars",   0x100000},
     {"Cloud Shadows", 0x200000},
@@ -464,6 +475,7 @@ static int setFlag(GeekConsole *gc, int state, std::string value)
     case 3:
     {
         Renderer *r = gc->getCelCore()->getRenderer();
+        CelestiaCore *c = gc->getCelCore();
         // split flags
         std::vector<std::string> strArray =
             splitString(value, flagInteractive->getDefaultDelim());
@@ -491,13 +503,22 @@ static int setFlag(GeekConsole *gc, int state, std::string value)
             }
         }
         if (flagsToSet == renderflags)
+        {
             r->setRenderFlags(var);
+            c->notifyWatchers(CelestiaCore::RenderFlagsChanged);
+        }
         else if (flagsToSet == labelflags)
+        {
             r->setLabelMode(var);
+            c->notifyWatchers(CelestiaCore::LabelFlagsChanged);
+        }
         else if (flagsToSet == orbitflag)
+        {
             r->setOrbitMask(var);
+            c->notifyWatchers(CelestiaCore::RenderFlagsChanged);
         }
         break;
+    } // case 3:
     }
     return state;
 }
@@ -570,10 +591,42 @@ static int celCharEntered(GeekConsole *gc, int state, std::string value)
     return state;
 }
 
+/* pass to celestia core some chars with Ctrl mod key*/
+static int celCtrlCharEntered(GeekConsole *gc, int state, std::string value)
+{
+    if (state == 0)
+        gc->setInteractive(listInteractive, "");
+    else if (state == 1)
+    {
+        if (!value.empty())
+        {
+            value = toCtrl(value[0]);
+            gc->getCelCore()->charEntered(value.c_str(),
+                                          CelestiaCore::ControlKey);
+        }
+    }
+    return state;
+}
+
+static void addToHistory()
+{
+    getGeekConsole()->getCelCore()->addToHistory();
+}
+
+static void historyBack()
+{
+    getGeekConsole()->getCelCore()->back();
+}
+
+static void historyForward()
+{
+    getGeekConsole()->getCelCore()->forward();
+}
+
 static int celTimeScaleIncr(GeekConsole *gc, int state, std::string value)
 {
     if (state == 0)
-        gc->setInteractive(listInteractive, "", "time-scale", "Increase time scale");
+        gc->setInteractive(listInteractive, "time-scale", _("Increase time scale"));
     else if (state == 1)
     {
         Simulation *sim = gc->getCelCore()->getSimulation();
@@ -610,9 +663,12 @@ void initGCStdInteractivsFunctions(GeekConsole *gc)
     referenceMarkNames.push_back("planetographic grid");
     referenceMarkNames.push_back("terminator");
 
-    gc->registerAndBind("", "C-RET",
+    gc->registerAndBind("", "C-m",
                         GCFunc(selectBody), "select object");
-    gc->registerFunction(GCFunc(gotoBody), "goto object");
+    gc->registerFunction(GCFunc(gotoBody, _("Goto an object")),
+                         ".goto object");
+    gc->registerFunction(GCFunc(".goto object", "@5.0", _("Goto an object with duration 5 sec")),
+                         "goto object");
     gc->registerAndBind("", "C-c g",
                         GCFunc(gotoBodyGC, _("Goto object with greate circle")), "goto object gc");
     gc->registerFunction(GCFunc(selectStar), "select star");
@@ -636,66 +692,262 @@ void initGCStdInteractivsFunctions(GeekConsole *gc)
     gc->registerFunction(GCFunc(celCharEntered,  _("Send chars to celestia core.\n"
                                     "You usually don't need use it")),
                          ".!charEnter");
-    gc->registerFunction(GCFunc(celTimeScaleIncr,  _("Increase time scale.\n")),
+    gc->registerFunction(GCFunc(celCtrlCharEntered,  _("Send chars to celestia core with Ctrl.\n"
+                                    "You usually don't need use it")),
+                         ".!charEnterCtrl");
+    gc->registerFunction(GCFunc(celTimeScaleIncr,  _("Increase time scale")),
                          ".time scale increment");
+    gc->registerFunction(GCFunc(addToHistory,  _("Push to history current url")),
+                         ".history add");
+    gc->registerFunction(GCFunc(historyBack,  _("Back history")),
+                         ".history back");
+    gc->registerFunction(GCFunc(historyForward,  _("Forward history")),
+                         ".history forward");
+
+    // celestia core have many usefull binds, so map to him
+
     struct std_cel_key_t {
-        const char *key;
+        const char key;
         const char *funname;
         const char *descript;
-    } std_cel_key[] = {
-        {"a", ".increase velocity", _("Increase velocity")},
-        {"c", ".center on selected", _("Center on selected object")},
-        {"d", ".run demo.cel", _("Run demo script (demo.cel)")},
-        {"f", ".follow selected object", _("Follow selected object")},
-        {"h", ".select our sun", _("Select our sun (Home)")},
-        {"j", ".toggle forw/rev time", _("Toggle Forward/Reverse time")},
-        {"q", ".reverse direction", _("Reverse direction")},
-        {"r", ".lower texture res", _("Lower texture resolution")},
-        {"s", ".stop motion", _("Stop motion")},
-        {"t", ".track selected", _("Track selected object (keep selected object centered in view)")},
-        {"v", ".toggle verbosity", _("Toggle verbosity of information text")},
-        {"x", ".movement toward center", _("Set movement direction toward center of screen")},
-        {"y", ".sync orbit", _("Sync Orbit the selected object, at a rate synced to its rotation")},
-        {"z", ".decrease velocity", _("Decrease velocity")},
-        {"C", ".center on selected CO", _("Center/orbit--center the selected object without changing the position\n of the reference object.")},
-        {"R", ".raise texture res", _("Raise texture resolution")},
-        {"`", ".toggle fps", _("Show frames rendered per second")},
-        {"~", ".toggle load info", _("Display file loading info")},
-        {"!", ".set time to current", _("Set time to current date and time")},
-        {"@", ".edit mode", _("Edit Mode")},
-        {"%", ".toggle star color tbl", _("Toggle star color tables")},
-        {"*", ".look back", _("Look back")},
-        {"(", ".decrease galaxy brightness", _("Decrease galaxy brightness independent of star brightness")},
-        {")", ".increase galaxy brightness", _("Increase galaxy brightness independent of star brightness")},
-        {"-", ".subtract light-travel delay", _("(hyphen) Subtract light-travel delay from current simulation time")},
-        {"+", ".toggle limit of knowledge", _("Switch between artistic and limit of knowledge planet textures")},
-        {"[", ".decrease limiting magnitude", _("If autoMag ON :\n Decrease limiting magnitude at 45 deg field of view\n"
+    };
+    std_cel_key_t std_cel_key[] = {
+        {'a', ".increase velocity", _("Increase velocity")},
+        {'c', ".center on selected", _("Center on selected object")},
+        {'d', ".run demo.cel", _("Run demo script (demo.cel)")},
+        {'f', ".follow selected object", _("Follow selected object")},
+        {'h', ".select our sun", _("Select our sun (Home)")},
+        {'j', ".toggle forw/rev time", _("Toggle Forward/Reverse time")},
+        {'q', ".reverse direction", _("Reverse direction")},
+        {'r', ".lower texture res", _("Lower texture resolution")},
+        {'s', ".stop motion", _("Stop motion")},
+        {'t', ".track selected", _("Track selected object (keep selected object centered in view)")},
+        {'o', ".toggle orbits", _("Toggle planet orbits")},
+        {'v', ".toggle verbosity", _("Toggle verbosity of information text")},
+        {'x', ".movement toward center", _("Set movement direction toward center of screen")},
+        {'y', ".sync orbit", _("Sync Orbit the selected object, at a rate synced to its rotation")},
+        {'z', ".decrease velocity", _("Decrease velocity")},
+        {'C', ".center on selected CO", _("Center/orbit--center the selected object without changing the position\n of the reference object.")},
+        {'R', ".raise texture res", _("Raise texture resolution")},
+        {'`', ".toggle fps", _("Show frames rendered per second")},
+        {'~', ".toggle load info", _("Display file loading info")},
+        {'!', ".set time to current", _("Set time to current date and time")},
+        {'@', ".edit mode", _("Edit Mode")},
+        {'%', ".toggle star color tbl", _("Toggle star color tables")},
+        {'*', ".look back", _("Look back")},
+        {'(', ".decrease galaxy brightness", _("Decrease galaxy brightness independent of star brightness")},
+        {')', ".increase galaxy brightness", _("Increase galaxy brightness independent of star brightness")},
+        {'-', ".subtract light-travel delay", _("(hyphen) Subtract light-travel delay from current simulation time")},
+        {'+', ".toggle limit of knowledge", _("Switch between artistic and limit of knowledge planet textures")},
+        {'[', ".decrease limiting magnitude", _("If autoMag ON :\n Decrease limiting magnitude at 45 deg field of view\n"
                                                 "If autoMag OFF:\n Decrease limiting magnitude (fewer stars visible)")},
-        {"]", ".Increase limiting magnitude", _("If autoMag ON :\n Increase limiting magnitude at 45 deg field of view\n"
+        {']', ".Increase limiting magnitude", _("If autoMag ON :\n Increase limiting magnitude at 45 deg field of view\n"
                                                 "If autoMag OFF:\n Increase limiting magnitude (more stars visible)")},
-        {"{", ".decrease ambient illumination", _("Decrease ambient illumination")},
-        {"}", ".increase ambient illumination", _("Increase ambient illumination")},
-        {";", ".earth equat coord sphere", _("Show an earth-based equatorial coordinate sphere")},
-        {":", ".lock 2 object as one", _("Lock two objects together as one.\n"
+        {'{', ".decrease ambient illumination", _("Decrease ambient illumination")},
+        {'}', ".increase ambient illumination", _("Increase ambient illumination")},
+        {';', ".earth equat coord sphere", _("Show an earth-based equatorial coordinate sphere")},
+        {':', ".lock 2 object as one", _("Lock two objects together as one.\n"
                                          "Select #1, \"follow selected\", select #2, \"lock 2 object\".\n"
                                          "(If use default keys: select #1, \"f\", select #2, \":\")")},
-        {"\"", ".chase selected", _("Chase selected object\n(orientation is based on selection's velocity)")},
-        {",", ".FOV narrow", _("Narrow field of view (FOV)")},
-        {".", ".FOV widen", _("Widen field of view (FOV)")},
-        {"<", "brightness increase", _("Decrease brightness")},
-        {">", "brightness decrease", _("Increase brightness")},
-        {"?", ".toggle light-travel delay", _("Display light-travel delay between observer and selected object")},
-        {"\\", ".real time", _("Real time (cancels x factors and backward time)")},
-        {"|", ".toggle bloom", _("Toggle bloom")},
+        {'"', ".chase selected", _("Chase selected object\n(orientation is based on selection's velocity)")},
+        {',', ".FOV narrow", _("Narrow field of view (FOV)")},
+        {'.', ".FOV widen", _("Widen field of view (FOV)")},
+        {'<', ".brightness increase", _("Decrease brightness")},
+        {'>', ".brightness decrease", _("Increase brightness")},
+        {'?', ".toggle light-travel delay", _("Display light-travel delay between observer and selected object")},
+        {'\\', ".real time", _("Real time (cancels x factors and backward time)")},
+        {'|', ".toggle bloom", _("Toggle bloom")},
+        {'\033', ".cancel script and travel", _("Cancel script and travel")},
+        {' ', ".pause/restart time and script", _("Pause/Restart time and scripts")},
+        {'\b', ".select parent", _("If the selection is a star, clears the selection\n"
+                                   "If the selection is a body, selects the parent body or star\n"
+                                   "If the selection is a location, selects the parent body")},
+        {'\t', ".cycle views", _("Cycle through currently active views")},
+        {'\n', ".select object (cel)", _("Select a star or planet by typing its name")},
+        {NULL}
+    };
+
+    // ctrl+
+    std_cel_key_t std_ctrl_cel_key[] = {
+        {'d', ".single view", _("Single View")},
+        {'f', ".toggle alt-azimuth mode", _("Toggle Alt-Azimuth mode (used with Ctrl-g Go to surface)\n"
+                                            "Changes Left and Right Arrow keys to Yaw Left / Right")},
+        {'g', ".goto surface", _("Go to surface of selected object")},
+        {'k', ".toggle markers", _("Toggle display of object markers")},
+        {'p', ".mark selected", _("Mark selected object")},
+        {'r', ".split view vert", ("Split view vertically")},
+        {'s', ".cycle star style", ("Cycle the star style between:\n"
+                                    "- fuzzy discs\n- points\n- scaled discs")},
+        {'u', ".split view horiz", ("Split view horizontally")},
+        {'v', ".cycle OpenGL render parent", _("Cycle between supported OpenGL render paths")},
+        {'w', ".toggle wireframe", _("Toggle wireframe mode")},
+        {'x', ".toggle antialias", _("Toggle antialias lines")},
+        {'y', ".toggle automag", _("Toggle AutoMag = auto adaptation of star visibility to field of view")},
+        {NULL}
+    };
+
+    int i = 0;
+    char param[2];
+    param[1]='\0';
+    while (std_cel_key[i].funname != NULL )
+    {
+        param[0]=std_cel_key[i].key;
+        gc->registerFunction(GCFunc(".!charEnter",
+                                    param,
+                                    std_cel_key[i].descript),
+                             std_cel_key[i].funname);
+        i++;
+    }
+
+    i = 0;
+    while (std_ctrl_cel_key[i].funname != NULL )
+    {
+        param[0]=std_ctrl_cel_key[i].key;
+        gc->registerFunction(GCFunc(".!charEnterCtrl",
+                                    param,
+                                    std_ctrl_cel_key[i].descript),
+                             std_ctrl_cel_key[i].funname);
+        i++;
+    }
+
+}
+
+void initGCStdCelBinds(GeekConsole *gc, const char *bindspace)
+{
+    struct std_cel_key_t {
+        const char *key;
+        const char *fun;
+    } std_cel_key[] = {
+        {"a",       ".increase velocity"}, // Increase velocity
+        {"b @toggle objects@labels@Star", ""}, // Toggle star labels
+        {"S-b @toggle objects@labels@Star", ""}, // Toggle star labels
+        {"c",       ".center on selected"}, // Center on selected object
+        {"d",       ".run demo.cel"}, // Run demo script (demo.cel)
+        {"S-d",     ".run demo.cel"}, // Run demo script (demo.cel)
+        {"e @toggle objects@labels@Galaxy", ""}, // Toggle galaxy labels
+        {"S-e @toggle objects@labels@Galaxy", ""}, // Toggle galaxy labels
+        {"f",       ".follow selected object"}, // Follow selected object
+        {"S-f",     ".follow selected object"}, // Follow selected object
+        {"g",       "goto object"}, // Go to selected object
+        {"S-g",     "goto object"}, // Go to selected object
+        {"h",       ".select our sun"}, // Select our sun (Home)
+        {"S-h",     ".select our sun"}, // Select our sun (Home)
+        {"i @toggle objects@objects@Cloud Maps", ""}, // Toggle cloud textures
+        {"S-i @toggle objects@objects@Cloud Maps", ""}, // Toggle cloud textures
+        {"j",       ".toggle forw/rev time"}, // Toggle Forward/Reverse time
+        {"S-j",     ".toggle forw/rev time"}, // Toggle Forward/Reverse time
+        {"k @.time scale increment@10", ""}, // Time 10x slower
+        {"l @.time scale increment@0.1", ""}, // Time 10x faster
+        {"m @toggle objects@labels@Moon", ""}, // Toggle moon labels
+        {"S-m @toggle objects@labels@MinorMoon", ""}, // Toggle moon labels
+        {"n @toggle objects@labels@Spacecraft", ""}, // Toggle spacecraft labels
+        {"S-n @toggle objects@labels@Spacecraft", ""}, // Toggle spacecraft labels
+        {"o",       ".toggle orbits"}, // Toggle planet orbits
+        {"S-o",     ".toggle orbits"}, // Toggle planet orbits
+        {"p @toggle objects@labels@Planet", ""}, // Toggle planet labels
+        {"S-p @toggle objects@labels@Planet", ""}, // Toggle planet labels
+        {"q",       ".reverse direction"}, // Reverse direction
+        {"S-q",     ".reverse direction"}, // Reverse direction
+        {"r",       ".lower texture res"}, // Lower texture resolution
+        {"s",       ".stop motion"}, // Stop motion
+        {"S-s",     ".stop motion"}, // Stop motion
+        {"t",       ".track selected"}, // Track selected object (keep selected object centered in view)
+        {"S-t",     ".track selected"}, // Track selected object (keep selected object centered in view)
+        {"u @toggle objects@objects@Galaxies", ""}, // Toggle galaxy rendering
+        {"S-u @toggle objects@objects@Galaxies", ""}, // Toggle galaxy rendering
+        {"v",       ".toggle verbosity"}, // Toggle verbosity of information text
+        {"S-v",     ".toggle verbosity"}, // Toggle verbosity of information text
+        {"w @toggle objects@labels@Asteroid", ""}, // Toggle asteroid labels
+        {"x",       ".movement toward center"}, // Set movement direction toward center of screen
+        {"S-x",     ".movement toward center"}, // Set movement direction toward center of screen
+        {"y",       ".sync orbit"}, // Sync Orbit the selected object, at a rate synced to its rotation
+        {"S-y",     ".sync orbit"}, // Sync Orbit the selected object, at a rate synced to its rotation
+        {"z",       ".decrease velocity"}, // Decrease velocity
+        {"S-c",     ".center on selected CO"}, // Center/orbit--center the selected object without changing the position of the reference object.
+        {"S-k @.time scale increment@0.5", ""}, // Time 2x slower
+        {"S-l @.time scale increment@2", ""}, // Time 2x faster
+        {"S-r",     ".raise texture res"}, // Raise texture resolution
+        {"S-w @toggle objects@labels@Comet", ""}, // Toggle comet labels
+        {"`",       ".toggle fps"}, // Show frames rendered per second
+        {"~",       ".toggle load info"}, // Display file loading info
+        {"!",       ".set time to current"}, // Set time to current date and time
+        {"@",       ".edit mode"}, // Edit Mode
+        {"%",       ".toggle star color tbl"}, // Toggle star color tables
+        {"^ @toggle objects@objects@Nebula", ""}, // Toggle nebula rendering
+        {"& @toggle objects@labels@Location", ""}, // Toggle location labels
+        {"*",       ".look back"}, // Look back
+        {"(",       ".decrease galaxy brightness"}, // Decrease galaxy brightness independent of star brightness
+        {")",       ".increase galaxy brightness"}, // Increase galaxy brightness independent of star brightness
+        {"-",       ".subtract light-travel delay"}, // (hyphen) Subtract light-travel delay from current simulation time
+        {"= @toggle objects@labels@Constellation", ""}, // Toggle constellation labels
+        {"+",       ".toggle limit of knowledge"}, // Switch between artistic and limit of knowledge planet textures
+        {"[",       ".decrease limiting magnitude"}, // Decrease limiting magnitude
+        {"[",       ".Increase limiting magnitude"}, // Increase Decrease limiting
+        {"{",       ".decrease ambient illumination"}, // Decrease ambient illumination
+        {"}",       ".increase ambient illumination"}, // Increase ambient illumination
+        {";",       ".earth equat coord sphere"}, // Show an earth-based equatorial coordinate sphere
+        {":",       ".lock 2 object as one"}, // Lock two objects together as one (select #1, "f", select #2, ":")
+        {"\"",      ".chase selected"}, // Chase selected object (orientation is based on selection's velocity)
+        {",",       ".FOV narrow"}, // Narrow field of view (FOV--also Shift+Left Drag)
+        {".",       ".FOV widen"}, // Widen field of view (FOV--also Shift+Left Drag)
+        {"/ @toggle objects@objects@Diagrams", ""}, // Toggle constellation diagrams
+        {"<",       ".brightness increase"}, //
+        {">",       ".brightness decrease"}, //
+        {"?",       ".toggle light-travel delay"}, // Display light-travel delay between observer and selected object
+        {"\\",      ".real time"}, // Real time (cancels x factors and backward time)
+        {"|",       ".toggle bloom"}, //
+        {"ESC",     ".cancel script and travel"},
+        {"TAB",     ".cycle views"},
+        {"S-TAB",   ".single view"},
+        {"RET",     ".select object (cel)"},
+        {"C-a @toggle objects@objects@Atmospheres", ""},//  (BROKEN--increases velocity--see Ctrl+A) Toggle atmospheres
+        {"S-C-a @toggle objects@objects@Atmospheres", ""},
+        {"C-b @toggle objects@objects@Boundaries", ""}, // Toggle constellation boundaries
+        {"S-C-b @toggle objects@objects@Boundaries", ""},
+        {"C-d",     ".single view"}, // Single View (Multi-View--also Shift+Tab)
+        {"S-C-d",   ".single view"},
+        {"C-e @toggle objects@objects@Eclipse Shadows", ""}, //  Toggle eclipse shadow rendering
+        {"S-C-e @toggle objects@objects@Eclipse Shadows", ""},
+        {"C-f",     ".toggle alt-azimuth mode"}, //  Non-KDE: Toggle Alt-Azimuth mode (used with Ctrl+g Go to surface)
+        {"S-C-f",   ".toggle alt-azimuth mode"},
+        {"C-g",     ".goto surface"}, //  Non-KDE: Go to surface of selected object
+        {"S-C-g",   ".goto surface"},
+        {"C-h",     ".select our sun"}, //  DUP (h and H) Select our sun (Home)
+        {"S-C-h",   ".select our sun"},
+        {"C-j",     ".select object (cel)"}, //  DUP Select a star or planet by typing it's name
+        {"S-C-j",   ".select object (cel)"},
+        {"C-k",     ".toggle markers"}, //  Toggle display of object markers
+        {"S-C-k",   ".toggle markers"},
+        {"C-l @toggle objects@objects@Night Maps", ""}, //  Toggle night side planet maps (light pollution)
+        {"S-C-l @toggle objects@objects@Night Maps", ""},
+// C-m now "select object"
+//        {"C-m",     ".select object (cel)"}, //  DUP Select a star or planet by typing it's name
+        {"S-C-m",   ".select object (cel)"},
+        {"C-p",     ".mark selected"}, //  Non-GLUT: Mark selected object (Marker display must be active)
+        {"S-C-p",   ".mark selected"},
+        {"C-r",     ".split view vert"}, //  Split view vertically
+        {"S-C-u",   ".split view vert"},
+        {"C-s",     ".cycle star style"}, //  Cycle the star style between fuzzy discs, points, and scaled discs
+        {"C-t @toggle objects@objects@Comet Tails", ""}, //  Toggle rendering of comet tails
+        {"C-u",     ".split view horiz"}, //  Split view horizontally
+        {"S-C-r",   ".split view horiz"},
+        {"C-v",     ".cycle OpenGL render parent"}, //  Cycle between supported OpenGL render paths
+        {"S-C-v",   ".cycle OpenGL render parent"},
+        {"C-w",     ".toggle wireframe"}, //  Toggle wireframe mode
+        {"S-C-w",   ".toggle wireframe"},
+// C-x reserved as prefix key!
+//        {"C-x",     ".toggle antialias"}, //  Toggle antialias lines
+        {"S-C-x",   ".toggle antialias"},
+        {"C-y",     ".toggle automag"}, //  Toggle AutoMag = auto adaptation of star visibility to field of view
+        {"S-C-y",   ".toggle automag"},
         {NULL}
     };
 
     int i = 0;
     while (std_cel_key[i].key != NULL )
     {
-        gc->registerFunction(GCFunc(".!charEnter", std_cel_key[i].key,
-                                    std_cel_key[i].descript),
-                             std_cel_key[i].funname);
+        gc->bind(bindspace, std_cel_key[i].key, std_cel_key[i].fun);
         i++;
     }
+
 }

@@ -882,6 +882,43 @@ char removeCtrl(char ckey)
     return ckey;
 }
 
+// Convert to ctrl key
+char toCtrl(char key)
+{
+    switch (key)
+    {
+    case 'a': return CTRL_A;
+    case 'b': return CTRL_B;
+    case 'c': return CTRL_C;
+    case 'd': return CTRL_D;
+    case 'e': return CTRL_E;
+    case 'f': return CTRL_F;
+    case 'g': return CTRL_G;
+    case 'h': return CTRL_H;
+    case 'i': return CTRL_I;
+    case 'j': return CTRL_J;
+    case 'k': return CTRL_K;
+    case 'l': return CTRL_L;
+    case 'm': return CTRL_M;
+    case 'n': return CTRL_N;
+    case 'o': return CTRL_O;
+    case 'p': return CTRL_P;
+    case 'q': return CTRL_Q;
+    case 'r': return CTRL_R;
+    case 's': return CTRL_S;
+    case 't': return CTRL_T;
+    case 'u': return CTRL_U;
+    case 'v': return CTRL_V;
+    case 'w': return CTRL_W;
+    case 'x': return CTRL_X;
+    case 'y': return CTRL_Y;
+    case 'z': return CTRL_Z;
+    default:
+        break;
+    }
+    return key;
+}
+
 static void distance2Sstream(std::stringstream &ss, double distance)
 {
     const char* units = "";
@@ -1308,7 +1345,12 @@ std::vector<std::string> GeekConsole::getFunctionsNames()
  */
 bool GeekConsole::charEntered(const char *c_p, int modifiers)
 {
-    char sym = removeCtrl(*c_p);
+    char sym;
+    if (modifiers & GeekBind::CTRL)
+        sym = removeCtrl(*c_p);
+    else
+        sym = *c_p;
+
     if (!sym)
         return false;
 
@@ -1316,6 +1358,9 @@ bool GeekConsole::charEntered(const char *c_p, int modifiers)
     {
         curKey.c[curKey.len] = tolower(sym);
         curKey.mod[curKey.len] = modifiers;
+        // clear shit for some spec chars
+        if (strchr(nonShiftChars, curKey.c[curKey.len]))
+            curKey.mod[curKey.len] &= ~GeekBind::SHIFT;
         curKey.len++;
         if (modifiers & GeekBind::SHIFT)
             curKey.mod[curKey.len] |= GeekBind::SHIFT;
@@ -1352,22 +1397,25 @@ bool GeekConsole::charEntered(const char *c_p, int modifiers)
                 if (eq)
                     if (curKey.len == it->len)
                     {
-                        if (getFunctionByName(it->gcFunName))
+                        std::string fun = it->gcFunName;
+                        if(fun.empty())
+                            fun = "exec function";
+                        if (getFunctionByName(fun))
                         {
                             if (curKey.len > 1)
-                                getCelCore()->flash(curKey.keyToStr() + " (" + it->gcFunName + 
+                                getCelCore()->flash(curKey.keyToStr() + " (" + fun +
                                                     ") " + it->params, 2.5);
                             if (isMacroRecording)
                             {
-                                appendCurrentMacro("@*EXEC*@" + it->gcFunName);
+                                appendCurrentMacro("@*EXEC*@" + fun);
                                 if (!it->params.empty())
                                     appendCurrentMacro(it->params);
                             }
-                            execFunction(it->gcFunName, it->params);
+                            execFunction(fun, it->params);
                         }
                         else
                         {
-                            getCelCore()->flash(curKey.keyToStr() + " (" + it->gcFunName +
+                            getCelCore()->flash(curKey.keyToStr() + " (" + fun +
                                                     ") not defined", 1.5);
                         }
                         curKey.len = 0;
@@ -1698,7 +1746,9 @@ bool GeekConsole::bind(std::string bindspace, std::string bindkey, std::string f
     if (bindspace.empty())
         bindspace = "Global";
     GeekBind *gb = getGeekBind(bindspace);
-    if (gb)
+    if (!gb)
+        gb = createGeekBind(bindspace);
+    if(gb)
         return gb->bind(bindkey.c_str(), function);
     return false;
 }

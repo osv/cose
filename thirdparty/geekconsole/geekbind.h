@@ -82,4 +82,7 @@ private:
     std::string name;
 };
 
+// keys that can not be shifted like ~!@...
+extern const char *nonShiftChars;
+
 #endif // _GEEKBIND_H_

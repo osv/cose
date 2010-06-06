@@ -23,6 +23,8 @@
 #include "geekbind.h"
 #include <cstdlib>
 
+const char *nonShiftChars="~!@#$%^&*()_+|{}><?:\"";
+
 static int skipWhiteSpace(const char *str, int offset)
 {
     while (str[offset] && str[offset] == ' ')
@@ -48,6 +50,8 @@ static const struct key_names
     {"BACKSPACE", 8},
     {"RET", 13},
     {"TAB", '\t'},
+    {"DEL", 127},
+    {"DELELETE", 127},
     {NULL, NULL}
 };
 
@@ -128,6 +132,9 @@ bool GeekBind::KeyBind::set(const char *keybind)
                 c[len] = tolower(c[len]);
                 mod[len] |= SHIFT;
             }
+            // clear shit for some spec chars
+            if (strchr(nonShiftChars, c[len]))
+                mod[len] &= ~GeekBind::SHIFT;
         }
         else // key name
         {

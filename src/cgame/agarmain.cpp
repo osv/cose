@@ -123,6 +123,7 @@ static void ToggleFullscreen()
 
 static void registerAndBindKeys()
 {
+    initGCStdCelBinds(getGeekConsole(), "Celestia");
     getGeekConsole()->registerFunction(GCFunc(startTogVidRecord), "toggle video record");
     getGeekConsole()->registerFunction(GCFunc(stopVidRecord), "stop video record");
     getGeekConsole()->registerAndBind("", "M-RET", GCFunc(ToggleFullscreen), "toggle fullscreen");
@@ -645,12 +646,15 @@ int CL_ProcessEvent(AG_DriverEvent *dev)
             if (repeatKey.mod & AG_KEYMOD_ALT)
                 mod |=  GeekBind::META;
 
-            if (repeatKey.uch)
+            if (!(bgFocuse &&
+                  handleSpecialKey(repeatKey.sym, repeatKey.mod, true))
+                && repeatKey.uch)
             {
                 char utf_c[8];
                 UTF8Encode(repeatKey.uch, utf_c);
 
-                if (getGeekConsole()->charEntered(utf_c, mod))
+                if (celAppCore->getTextEnterMode() == CelestiaCore::KbNormal &&
+                    getGeekConsole()->charEntered(utf_c, mod))
                 {
                     return My_PostEventCallback();
                 }

@@ -394,7 +394,7 @@ public:
     void finish(); // hide console
     CelestiaCore *getCelCore() const
         {return celCore;}
-    GeekBind *createGeekBind(std::string bindspace);
+    GeekBind *createGeekBind(std::string bindspace); // return existen or new binder
     GeekBind *getGeekBind(std::string bindspace);
     void registerAndBind(std::string bindspace, const char *bindkey,
                          GCFunc fun, const char *funname);
@@ -468,6 +468,8 @@ extern GeekConsole *getGeekConsole();
 
 extern Color getColorFromText(const string &text);
 extern Color32 getColor32FromText(const string &text);
+extern char removeCtrl(char ckey);
+extern char toCtrl(char key);
 
 /* Init/destroy interactives */
 
@@ -476,6 +478,8 @@ extern void destroyGCInteractives();
 
 /* Setup celestia's interactive's functions */
 extern void initGCStdInteractivsFunctions(GeekConsole *gc);
+/* Setup default celestia binds */
+extern void initGCStdCelBinds(GeekConsole *gc, const char *bindspace = "global");
 
 /* Setup lua api for working with geekconsole */
 extern void LoadLuaGeekConsoleLibrary(lua_State* l);
