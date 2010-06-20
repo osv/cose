@@ -174,8 +174,13 @@ Color32 *clInfoTextBrd = &clInfoTextBrdD;
 
 GeekConsole *geekConsole = NULL;
 const char *ctrlZDescr = "C-z Unexpand";
+const char *applySelected = "S-RET - set completion";
+const char *ret4Finish = "RET - apply";
+const char *scrollPages = "%i of %i pages, M-/ next expand, M-? prev expand";
 
 std::string historyDir("history/");
+
+int completionStyle = ListInteractive::Fast;
 
 #define CTRL_A '\001'
 #define CTRL_B '\002'
@@ -802,7 +807,7 @@ Color32 getColor32FromText(const string &text)
         int i = 0;
         while (colorTable[i].colorName)
         {
-            if (color == colorTable[i].colorName)
+            if (UTF8StringCompare(color, colorTable[i].colorName) == 0)
             {
                 c = getColor32FromHexText(colorTable[i].colorHexName);
                 c.rgba[3] = 255;
@@ -1493,7 +1498,7 @@ bool GeekConsole::charEntered(const char *c_p, int modifiers)
     {
         curInteractive->charEntered(c_p, modifiers);
         if (isVisible && curInteractive)
-            curInteractive->update();
+            curInteractive->update(curInteractive->getBufferText());
     }
     return true;
 }
@@ -2082,9 +2087,9 @@ void GCInteractive::renderInteractive()
         glColor4ubv(clInteractiveExpand->rgba);
     	std::string s = string(buf, bufSizeBeforeHystory, buf.size() - bufSizeBeforeHystory);
     	*gc->getOverlay() << s;
-        glColor4ubv(clInteractiveFnt->rgba);
-        *gc->getOverlay() << "|";
     }
+    glColor4ubv(clInteractiveFnt->rgba);
+    *gc->getOverlay() << "|";
 }
 
 void GCInteractive::prepareHistoryCompletion()
@@ -2108,15 +2113,15 @@ void GCInteractive::renderCompletion(float height, float width)
 
 }
 
-void GCInteractive::update()
+void GCInteractive::update(const std::string &buftext)
 {
-    gc->describeCurText(getBufferText());
+    gc->describeCurText(buftext);
 }
 
 void GCInteractive::setDefaultValue(std::string v)
 {
     setBufferText(v);
-    update();
+    update(getBufferText());
 }
 
 void GCInteractive::setLastFromHistory()
@@ -2131,6 +2136,7 @@ void GCInteractive::setLastFromHistory()
     typedHistoryCompletionIdx++;
     buf = *rit;
     gc->appendDescriptionStr(_(ctrlZDescr));
+    update(getBufferText());
 }
 
 void PasswordInteractive::renderInteractive()
@@ -2228,26 +2234,60 @@ void ListInteractive::Interact(GeekConsole *_gc, string historyName)
     pageScrollIdx = 0;
     completedIdx = -1;
     setColumns(4);
+    canFinish = false;
 }
 
 void ListInteractive::updateTextCompletion()
 {
-    std::string buftext = string(getBufferText(), 0, bufSizeBeforeHystory);
-    std::vector<std::string>::iterator it;
     typedTextCompletion.clear();
-    int buf_length = UTF8Length(buftext);
-    // Search through all string in base completion list
-    for (it = completionList.begin();
-         it != completionList.end(); it++)
+    if (completionStyle != Filter) // add items that matched with first chars of buftext
     {
-        // hide item that start from "." like files in *nix systems
-        if ((*it)[0] == '.' && buftext[0] != '.')
-            continue;
-        if (buf_length == 0 ||
-            (UTF8StringCompare(*it, buftext, buf_length) == 0))
+        std::string buftext = string(getBufferText(), 0, bufSizeBeforeHystory);
+        int buf_length = UTF8Length(buftext);
+        std::vector<std::string>::iterator it;
+        // Search through all string in base completion list
+        for (it = completionList.begin();
+             it != completionList.end(); it++)
+        {
+            // hide item that start from "." like files in *nix systems
+            if ((*it)[0] == '.' && buftext[0] != '.')
+                continue;
+            if (buf_length == 0 ||
+                (UTF8StringCompare(*it, buftext, buf_length) == 0))
+                typedTextCompletion.push_back(*it);
+        }
+    }
+    else // Filter
+        filterCompletion(completionList, getBufferText());
+}
+
+void ListInteractive::filterCompletion(std::vector<std::string> completion, std::string filter)
+{
+    int flt_length = UTF8Length(filter);
+    
+    // split buffer to str for match
+    vector<string> parts = splitString(filter, " ");
+    std::vector<std::string>::iterator it, pit;
+    bool skip;
+    for (it = completion.begin();
+             it != completion.end(); it++)
+    {
+        skip = false;
+        if (flt_length != 0)
+            for (pit = parts.begin();
+                 pit != parts.end(); pit++)
+            {
+                if (UTF8StrStr(*it, *pit) == -1)
+                {
+                    skip = true;
+                    break;
+                }
+            }
+        if (!skip)
             typedTextCompletion.push_back(*it);
     }
 }
+
 
 bool ListInteractive::tryComplete()
 {
@@ -2325,12 +2365,47 @@ void ListInteractive::setRightText(std::string text)
     }
 }
 
+std::string ListInteractive::getLeftText() const
+{
+    if (separatorChars.empty())
+        return GCInteractive::getBufferText();
+    else
+    {
+        string str = GCInteractive::getBufferText();
+        string::size_type pos = str.find_last_of(separatorChars, str.length());
+        if (pos != string::npos)
+            return string(str, 0, pos + 1);
+        else
+            return str;
+    }
+}
+
 void ListInteractive::charEntered(const char *c_p, int modifiers)
 {
     wchar_t wc = 0;
     UTF8Decode(c_p, 0, strlen(c_p), wc);
 
     char C = toupper((char)wc);
+    if (C == 'I' && (modifiers & GeekBind::META))
+    {
+        if (completionStyle == Standart)
+            completionStyle = Fast;
+        else if (completionStyle == Fast)
+            completionStyle = Filter;
+        else
+            completionStyle = Standart;
+        gc->appendDescriptionStr(_("Completion type: "));
+        switch (completionStyle)
+        {
+        case Standart: gc->descriptionStr += "\"Standart\""; break;
+        case Fast: gc->descriptionStr += "\"Fast complete\""; break;
+        case Filter: gc->descriptionStr += "\"Filter\""; break;
+        }
+        return;
+    }
+    if (completionStyle == Filter)
+        return charEnteredFilter(c_p, modifiers);
+
     if  (C == '\t' && modifiers == 0) // TAB - expand and scroll if many items to expand found
     {
         if (!tryComplete())
@@ -2339,10 +2414,10 @@ void ListInteractive::charEntered(const char *c_p, int modifiers)
             pageScrollIdx += scrollSize;
             if (pageScrollIdx >= typedTextCompletion.size())
                 pageScrollIdx = 0;
-            char buff[128];
+            char buff[256];
             int pages = (((int)typedTextCompletion.size() - 1 <= 0) ?
                          0 : (typedTextCompletion.size() - 1) / scrollSize) +1;
-            sprintf(buff,_("%i of %i pages, M-/ next expand, M-? prev expand"), (pageScrollIdx / scrollSize) + 1,
+            sprintf(buff,_(scrollPages), (pageScrollIdx / scrollSize) + 1,
                     pages);
             gc->descriptionStr = buff;
             gc->appendDescriptionStr(_(ctrlZDescr));
@@ -2356,10 +2431,10 @@ void ListInteractive::charEntered(const char *c_p, int modifiers)
                 pageScrollIdx = typedTextCompletion.size() - scrollSize;
             if (pageScrollIdx < 0)
                 pageScrollIdx = 0;
-            char buff[128];
+            char buff[256];
             int pages = (((int)typedTextCompletion.size() - 1 <= 0) ?
                          0 : (typedTextCompletion.size() - 1) / scrollSize) +1;
-            sprintf(buff,_("%i of %i pages, M-/ next expand, M-? prev expand"), (pageScrollIdx / scrollSize) + 1,
+            sprintf(buff,_(scrollPages), (pageScrollIdx / scrollSize) + 1,
                     pages);
             gc->descriptionStr = buff;
             gc->appendDescriptionStr(_(ctrlZDescr));
@@ -2443,7 +2518,7 @@ void ListInteractive::charEntered(const char *c_p, int modifiers)
         pageScrollIdx = 0;
 
     // if must_always_match with completion items - try complete
-    if(mustMatch && buftext.length() > oldBufText.length())
+    if(mustMatch && buftext.length() > oldBufText.length() && completionStyle == Fast)
         tryComplete();
 
     // Refresh completion (text to complete is only text before bufSizeBeforeHystory)
@@ -2451,9 +2526,11 @@ void ListInteractive::charEntered(const char *c_p, int modifiers)
 
     // if match on - complete again
     // and if no any item to expand than revert to old text but when text increased
-    if(mustMatch && buftext.length() > oldBufText.length())
+    if(mustMatch &&
+       buftext.length() > oldBufText.length())
     {
-        tryComplete();
+        if (completionStyle == Fast)
+            tryComplete();
         if (typedTextCompletion.empty())
         {
             setBufferText(oldBufText); // revert old text
@@ -2470,7 +2547,174 @@ void ListInteractive::charEntered(const char *c_p, int modifiers)
     }
 }
 
+void ListInteractive::charEnteredFilter(const char *c_p, int modifiers)
+{
+    wchar_t wc = 0;
+    UTF8Decode(c_p, 0, strlen(c_p), wc);
+
+    char C = toupper((char)wc);
+    if  (C == '\t' && modifiers == 0) // TAB - expand and scroll if many items to expand found
+    {
+        // scroll
+        pageScrollIdx += scrollSize;
+        if (pageScrollIdx >= typedTextCompletion.size())
+            pageScrollIdx = 0;
+        char buff[256];
+        int pages = (((int)typedTextCompletion.size() - 1 <= 0) ?
+                     0 : (typedTextCompletion.size() - 1) / scrollSize) +1;
+        sprintf(buff,_(scrollPages), (pageScrollIdx / scrollSize) + 1,
+                pages);
+        gc->descriptionStr = buff;
+        completedIdx = -1;
+        return;
+    } else if (C == '\t' && modifiers == GeekBind::CTRL) { // ctrl + TAB
+        pageScrollIdx -= scrollSize;
+        if (pageScrollIdx < 0)
+            pageScrollIdx = typedTextCompletion.size() - scrollSize;
+        if (pageScrollIdx < 0)
+            pageScrollIdx = 0;
+        char buff[256];
+        int pages = (((int)typedTextCompletion.size() - 1 <= 0) ?
+                     0 : (typedTextCompletion.size() - 1) / scrollSize) +1;
+        sprintf(buff,_(scrollPages), (pageScrollIdx / scrollSize) + 1,
+                pages);
+        gc->descriptionStr = buff;
+        completedIdx = -1;
+        return;
+    }
+    // expand completion on M-/
+    else if (((modifiers & GeekBind::META) != 0) && C == '/')
+    {
+        if (!typedTextCompletion.empty())
+        {
+            vector<std::string>::const_iterator it = typedTextCompletion.begin();
+            completedIdx++;
+            if (completedIdx < pageScrollIdx)
+                completedIdx = pageScrollIdx;
+            if (completedIdx >= typedTextCompletion.size())
+                completedIdx = pageScrollIdx;
+            if (completedIdx > pageScrollIdx + scrollSize - 1)
+                completedIdx = pageScrollIdx;
+            playMatch();
+            gc->appendDescriptionStr(_(applySelected));
+            return;
+        }
+    }
+    // revers expand completion on M-? ( i.e. S-M-/)
+    else if (((modifiers & GeekBind::META ) != 0) && C == '?')
+    {
+        if (!typedTextCompletion.empty())
+        {
+            vector<std::string>::const_iterator it = typedTextCompletion.begin();
+            if (completedIdx <= 0)
+                completedIdx = pageScrollIdx + scrollSize;
+            completedIdx--;
+            if (completedIdx < pageScrollIdx)
+                completedIdx = pageScrollIdx + scrollSize - 1;
+            if (completedIdx > typedTextCompletion.size() - 1)
+                completedIdx = typedTextCompletion.size() - 1;
+            gc->appendDescriptionStr(_(applySelected));
+            playMatch();
+            return;
+        }
+    }
+    else if ((C == '\n' || C == '\r'))
+    {
+        if (canFinish && modifiers != GeekBind::SHIFT) // finish it
+            return GCInteractive::charEntered(c_p, modifiers);
+
+        if (mustMatch || modifiers == GeekBind::SHIFT)
+        {
+            vector<std::string>::const_iterator it = typedTextCompletion.begin();
+            if (typedTextCompletion.size() != 1)
+                if (completedIdx >= 0)
+                    it += completedIdx;
+                else
+                    return gc->beep();
+            if (it < typedTextCompletion.end())
+            {
+                string::size_type pos = getBufferText().find_last_of(
+                    separatorChars, getBufferText().length());
+                setRightText(*it);
+                if (pos != string::npos)
+                    bufSizeBeforeHystory = pos + 1;
+                else
+                    bufSizeBeforeHystory = 0;
+            }
+            else
+                return gc->beep();
+            playMatch();
+            completedIdx = -1;
+        }
+        canFinish = true;
+        gc->appendDescriptionStr(_(ret4Finish));
+        return;
+    }
+
+    if (!mustMatch)
+            gc->appendDescriptionStr(_(applySelected));
+
+    gc->appendDescriptionStr(_("M-i - Cycle completion type"));
+
+    std::string oldBufText = getBufferText();
+
+    GCInteractive::charEntered(c_p, modifiers);
+
+    std::string buftext = getBufferText();
+
+    canFinish = false;
+
+    // reset page scroll only if text changed
+    if (oldBufText != buftext)
+        pageScrollIdx = 0;
+
+    // If match on - complete  again if completion type is "Fast", and
+    // if no any  item to expand than revert to old  text but when was
+    // text increased (changed), and beep.
+    if(mustMatch &&
+       buftext.length() > oldBufText.length())
+    {
+        if (completionStyle == Fast)
+            tryComplete();
+        if (typedTextCompletion.empty())
+        {
+            setBufferText(oldBufText); // revert old text
+            gc->beep();
+        }
+        else
+            playMatch();
+    }
+}
+
+void ListInteractive::renderInteractive()
+{
+    GCInteractive::renderInteractive();
+
+    if (completionStyle == Filter)
+    {
+        vector<std::string>::const_iterator it = typedTextCompletion.begin();
+        if (completedIdx >=0)
+        {
+            it += completedIdx;
+            if (it < typedTextCompletion.end())
+            {
+                glColor4ubv(clInteractiveExpand->rgba);
+                *gc->getOverlay() << '{' << *it <<  '}';
+            }
+        }
+    }
+}
+
+
 void ListInteractive::renderCompletion(float height, float width)
+{
+    if (completionStyle == Filter)
+        renderCompletionFilter(height, width);
+    else
+        renderCompletionStandart(height, width);
+}
+
+void ListInteractive::renderCompletionStandart(float height, float width)
 {
     TextureFont *font = gc->getCompletionFont();
     float fh = font->getHeight();
@@ -2488,6 +2732,8 @@ void ListInteractive::renderCompletion(float height, float width)
     vector<std::string>::const_iterator it = typedTextCompletion.begin();
     int shiftx = width/nb_cols;
     it += pageScrollIdx;
+    wchar_t c;
+
     for (uint i=0; it < typedTextCompletion.end() && i < nb_cols; i++)
     {
         glPushMatrix();
@@ -2501,7 +2747,7 @@ void ListInteractive::renderCompletion(float height, float width)
                 // border of current completion
                 glColor4ubv(clCompletionExpandBg->rgba);
                 gc->getOverlay()->rect(0.0f, 0.0f - 2,
-                                       (float)shiftx, fh);
+                                       (float)shiftx, fh + 1);
             }
             // completion item (only text before match char)
             glColor4ubv(clCompletionFnt->rgba);
@@ -2509,19 +2755,19 @@ void ListInteractive::renderCompletion(float height, float width)
             // match char background
             if (s.size() >= buf_length)
             {
-                if (clCompletionMatchCharBg->rgba[3] > 0)
-                {
-                    std::string text(s, buf_length, 1);
-                    glColor4ubv(clCompletionMatchCharBg->rgba);
-                    gc->getOverlay()->rect(font->getWidth(string(s, 0, buf_length)), 0.0f - 2,
-                                           font->getWidth(text), fh);
-                    glColor4ubv(clCompletionMatchCharFnt->rgba);
-                    *gc->getOverlay() << text;
-                }
+                if (!UTF8Decode(s, buf_length, c))
+                    continue; //something wrong
+
+                std::string text(s, buf_length, UTF8EncodedSize(c));
+                glColor4ubv(clCompletionMatchCharBg->rgba);
+                gc->getOverlay()->rect(font->getWidth(string(s, 0, buf_length)), 0.0f - 2,
+                                       font->getWidth(text), fh);
+                glColor4ubv(clCompletionMatchCharFnt->rgba);
+                *gc->getOverlay() << text;
                 // rest text of item from match char
                 glColor4ubv(clCompletionAfterMatch->rgba);
                 if (s.size() > buf_length)
-                    *gc->getOverlay() << string(s, buf_length + 1, 255);
+                    *gc->getOverlay() << string(s, buf_length + 1, 128);
                 *gc->getOverlay() << "\n";
             }
         }
@@ -2531,9 +2777,128 @@ void ListInteractive::renderCompletion(float height, float width)
     }
 }
 
-void ListInteractive::update()
+void ListInteractive::renderCompletionFilter(float height, float width)
 {
-    GCInteractive::update();
+    TextureFont *font = gc->getCompletionFont();
+    float fh = font->getHeight();
+    uint nb_lines = height / (fh + 1); // +1 because overlay margin be-twin '\n' is 1 pixel
+    uint nb_cols = cols;
+    scrollSize = nb_cols * nb_lines;
+
+    // Find size of right part (expanded part is excluded)
+    std::string buftext(GCInteractive::getBufferText(), 0, bufSizeBeforeHystory);
+    string::size_type pos = buftext.find_last_of(separatorChars, buftext.length());
+    if (pos != string::npos)
+        buftext = string(buftext, pos + 1);
+    uint buf_length = buftext.size();
+
+    std::vector<string> parts = splitString(buftext, " ");
+    vector<std::string>::const_iterator pit;
+    size_t f;
+    size_t sz;
+
+    bool fg[128];
+
+    vector<std::string>::const_iterator it = typedTextCompletion.begin();
+    int shiftx = width/nb_cols;
+    it += pageScrollIdx;
+    for (uint i=0; it < typedTextCompletion.end() && i < nb_cols; i++)
+    {
+        glPushMatrix();
+        gc->getOverlay()->beginText();
+        for (uint j = 0; it < typedTextCompletion.end() && j < nb_lines; it++, j++)
+        {
+            std::string s = *it;
+            glColor4ubv(clCompletionFnt->rgba);
+            if (i * nb_lines + j == completedIdx - pageScrollIdx)
+            {
+                // border of current completion
+                glColor4ubv(clCompletionExpandBg->rgba);
+                gc->getOverlay()->rect(0.0f, 0.0f - 2,
+                                       (float)shiftx, fh + 1);
+            }
+
+            memset(fg, 0, 128 * sizeof(bool));
+
+            for (pit = parts.begin();
+                 pit != parts.end(); pit++)
+            {
+                f = UTF8StrStr(*it, *pit);
+                if (f != -1)
+                {
+                    sz = f + ((std::string (*pit)).size());
+                    if (sz > 128)
+                        sz = 128;
+                    for(int indx = f; indx < sz; indx++)
+                        fg[indx] = true;
+                }
+            }
+
+            int max = s.size() > 128?
+                128 : s.size();
+            bool matchbg = false;
+            int start = 0;
+            int indx;
+            for (indx = 0; indx < max; indx++)
+            {
+                if (fg[indx] == matchbg)
+                    continue;
+
+                string str(s, start, indx - start);
+                if (matchbg)
+                {
+                    glColor4ubv(clCompletionMatchCharBg->rgba);
+                     gc->getOverlay()->rect(font->getWidth(string(s, 0, start)), 0.0f - 2,
+                                            font->getWidth(str), fh);
+                    glColor4ubv(clCompletionMatchCharFnt->rgba);
+                }
+                else
+                    glColor4ubv(clCompletionFnt->rgba);
+                *gc->getOverlay() << str;
+
+                matchbg = fg[indx];
+                start = indx;
+            }
+            string str(s, start, indx - start);
+            if (matchbg)
+            {
+                glColor4ubv(clCompletionMatchCharBg->rgba);
+                gc->getOverlay()->rect(font->getWidth(string(s, 0, start)), 0.0f - 2,
+                                       font->getWidth(str), fh);
+                glColor4ubv(clCompletionMatchCharFnt->rgba);
+            }
+            else
+                glColor4ubv(clCompletionFnt->rgba);
+            *gc->getOverlay() << str;
+
+            *gc->getOverlay() << "\n";
+        }
+        gc->getOverlay()->endText();
+        glPopMatrix();
+        glTranslatef((float) shiftx, 0.0f, 0.0f);
+    }
+}
+
+void ListInteractive::update(const std::string &buftext)
+{
+    if (completionStyle == Filter)
+    {
+        // try update for current buffer if ready for finish
+        if (canFinish)
+            GCInteractive::update(getBufferText());
+        else // otherwise update for current selected item
+        {
+            vector<std::string>::const_iterator it = typedTextCompletion.begin();
+            if (completedIdx >=0)
+            {
+                it += completedIdx;
+                if (it < typedTextCompletion.end())
+                    GCInteractive::update(*it);
+            }
+        }
+    }
+    else
+        GCInteractive::update(buftext);
     updateTextCompletion();
 }
 
@@ -2541,7 +2906,7 @@ void ListInteractive::playMatch()
 {
     // play sound if matched
     GeekConsole::Beep *b = gc->getBeeper();
-    if(mustMatch && b)
+    if(b)
     {
         std::string buftext = getRightText();
         std::vector<std::string>::iterator it;
@@ -2551,11 +2916,7 @@ void ListInteractive::playMatch()
              it != typedTextCompletion.end(); it++)
         {
             if (*it == buftext)
-            {
-                if (b)
-                    b->match();
-                return;
-            }
+                return b->match();
         }
     }
 }
@@ -2608,24 +2969,49 @@ void CelBodyInteractive::updateTextCompletion()
     //skip update for some history and expand action
     if (str.length() != bufSizeBeforeHystory)
         return;
-
-    if (completionList.size()) {
-        std::string buftext = string(getBufferText(), 0, bufSizeBeforeHystory);
-        std::vector<std::string>::iterator it;
-        typedTextCompletion.clear();
-        int buf_length = UTF8Length(buftext);
-        // Search through all string in base completion list
-        for (it = completionList.begin();
-             it != completionList.end(); it++)
+    typedTextCompletion.clear();
+    if (completionStyle != Filter)
+    {
+        if (completionList.size()) {
+            std::string buftext = string(getBufferText(), 0, bufSizeBeforeHystory);
+            std::vector<std::string>::iterator it;
+            int buf_length = UTF8Length(buftext);
+            // Search through all string in base completion list
+            for (it = completionList.begin();
+                 it != completionList.end(); it++)
+            {
+                if (buf_length == 0 ||
+                    (UTF8StringCompare(*it, buftext, buf_length) == 0))
+                    typedTextCompletion.push_back(*it);
+            }
+        } else // if no completion list take it from simulation
+            typedTextCompletion = celApp->getSimulation()->
+                getObjectCompletion(str,
+                                    (celApp->getRenderer()->getLabelMode() & Renderer::LocationLabels) != 0);
+    }
+    else // Filter
+    {
+        if (completionList.size())
         {
-            if (buf_length == 0 ||
-                (UTF8StringCompare(*it, buftext, buf_length) == 0))
-                typedTextCompletion.push_back(*it);
+            filterCompletion(completionList, str);
         }
-    } else // if no completion list take it from simulation
-        typedTextCompletion = celApp->getSimulation()->
-            getObjectCompletion(str,
-                                (celApp->getRenderer()->getLabelMode() & Renderer::LocationLabels) != 0);
+        else
+        {
+            string::size_type pos = str.find_last_of(separatorChars, str.length());
+            string filter = str;
+            string complStr = str;
+            if (pos != string::npos)
+            {
+                filter = string(str, pos + 1);
+                complStr = string(str, 0, pos + 1);
+            }
+            filterCompletion(celApp->getSimulation()->
+                             getObjectCompletion(complStr,
+                                                 (celApp->getRenderer()->getLabelMode()
+                                                  & Renderer::LocationLabels) != 0),
+                             filter);
+        }
+    }
 }
 
 void CelBodyInteractive::Interact(GeekConsole *_gc, string historyName)
@@ -2637,7 +3023,7 @@ void CelBodyInteractive::Interact(GeekConsole *_gc, string historyName)
 
     firstSelection = gc->getCelCore()->
         getSimulation()->getSelection().getName();
-    update();
+    update(getBufferText());
     completionList.clear();
     typedTextCompletion.clear();
     ListInteractive::setColumns(4);
@@ -2661,6 +3047,31 @@ void CelBodyInteractive::charEntered(const char *c_p, int modifiers)
     }
     else if ((C == '\n' || C == '\r'))
     {
+        if (mustMatch || modifiers == GeekBind::SHIFT)
+        {
+            vector<std::string>::const_iterator it = typedTextCompletion.begin();
+            if (completedIdx >=0)
+                it += completedIdx;
+            else if (typedTextCompletion.size() > 1)
+                return gc->beep();
+            if (it < typedTextCompletion.end())
+            {
+                string::size_type pos = getBufferText().
+                    find_last_of(separatorChars, getBufferText().length());
+                setRightText(*it);
+                if (pos != string::npos)
+                    bufSizeBeforeHystory = pos + 1;
+                else
+                    bufSizeBeforeHystory = 0;
+            }
+            else
+                gc->beep();
+            playMatch();
+            completedIdx = -1;
+            gc->appendDescriptionStr(_(ret4Finish));
+            return;
+        }
+
         // allow finish only if selection found
         Selection sel = celApp->getSimulation()->findObjectFromPath(GCInteractive::getBufferText(), true);
         if (sel.empty()) // dont continue if not match any obj
@@ -2695,22 +3106,17 @@ void CelBodyInteractive::charEntered(const char *c_p, int modifiers)
     }
 }
 
-void CelBodyInteractive::renderCompletion(float height, float width)
-{
-    ListInteractive::renderCompletion(height, width);
-}
-
 /* Mark obj if found
  */
-void CelBodyInteractive::update()
+void CelBodyInteractive::update(const std::string &buftext)
 {
-    Selection sel = celApp->getSimulation()->findObjectFromPath(GCInteractive::getBufferText(), true);
+    Selection sel = celApp->getSimulation()->findObjectFromPath(buftext, true);
     std::string desc = describeSelection(sel, celApp);
 
     if (!desc.empty())
     {
         gc->setInfoText(desc);
-        gc->descriptionStr = gc->descriptionStr + _(", M-c - Select. ");
+        gc->appendDescriptionStr(_("M-c - Select"));
         GeekConsole::Beep *b = gc->getBeeper();
         if (b)
             b->match();
@@ -2728,10 +3134,9 @@ void CelBodyInteractive::update()
 
     celApp->getSimulation()->
         getUniverse()->markObject(sel, markerRep, 3);
-    lastCompletionSel = GCInteractive::getBufferText();
+    lastCompletionSel = buftext;
 
-    GCInteractive::update();
-    updateTextCompletion();
+    ListInteractive::update(buftext);
 };
 
 void CelBodyInteractive::setCompletion(std::vector<std::string> completion)
@@ -2769,7 +3174,7 @@ void FlagInteractive::Interact(GeekConsole *_gc, string historyName)
     ListInteractive::Interact(_gc, historyName);
     setColumns(4);
     separatorChars = defDelim;
-    update();
+    update(getBufferText());
 }
 
 void FlagInteractive::setSeparatorChars(std::string s)
@@ -2783,18 +3188,23 @@ void FlagInteractive::updateTextCompletion()
     string::size_type pos = buftext.find_last_of(separatorChars, buftext.length());
     if (pos != string::npos)
         buftext = string(buftext, pos + 1);
-
-    std::vector<std::string>::iterator it;
     typedTextCompletion.clear();
-    int buf_length = UTF8Length(buftext);
-
-    for (it = completionList.begin();
-         it != completionList.end(); it++)
+    if (completionStyle != Filter)
     {
-        if (buf_length == 0 ||
-            (UTF8StringCompare(*it, buftext, buf_length) == 0))
+        // add items that matched with first chars of buftext
+        std::vector<std::string>::iterator it;
+        int buf_length = UTF8Length(buftext);
+
+        for (it = completionList.begin();
+             it != completionList.end(); it++)
+        {
+            if (buf_length == 0 ||
+                (UTF8StringCompare(*it, buftext, buf_length) == 0))
                 typedTextCompletion.push_back(*it);
+        }
     }
+    else
+        filterCompletion(completionList, buftext);
 }
 
 /* File chooser interactive */
@@ -2806,7 +3216,8 @@ void FileInteractive::Interact(GeekConsole *_gc, string historyName)
     separatorChars = "/";
     fileExt.clear();
     dirCache.clear();
-    update();
+    lastPath = "_"; // foo dir, for rebuild dir cache
+    update(getBufferText());
 }
 
 void FileInteractive::setFileExtenstion(std::string ext)
@@ -2823,12 +3234,12 @@ void FileInteractive::setRightText(std::string text)
     ListInteractive::setRightText(text);
 }
 
-void FileInteractive::update()
+void FileInteractive::update(const std::string &buftext)
 {
     // TODO: more info in file interactive?
     if (IsDirectory(dirEntire + getBufferText()))
         gc->descriptionStr = _("[Directory]");
-    GCInteractive::update();
+    ListInteractive::update(buftext);
     updateTextCompletion();
 }
 
@@ -2837,11 +3248,12 @@ void FileInteractive::charEntered(const char *c_p, int modifiers)
     wchar_t wc = 0;
     UTF8Decode(c_p, 0, strlen(c_p), wc);
 
+    std::string buf = getBufferText();
+    int end = buf.length() - 1;
+
     // don't go outside of current chdir ie. prevent '../'
     if (wc == '/')
     {
-        std::string buf = getBufferText();
-        int end = buf.length() - 1;
         if (!modifiers && buf.length() > 1 && buf[end] =='.' && buf[end - 1] == '.' )
             return;
         // dont allow double //
@@ -2852,7 +3264,18 @@ void FileInteractive::charEntered(const char *c_p, int modifiers)
     // can't dispatch to ListInteractive, because different completion types used
     else if ((wc == '\n' || wc == '\r'))
     {
-        if(mustMatch)
+        // special case for filter completion style:
+        // Shift+Return for expand completion
+        if (completionStyle == Filter &&
+            modifiers == GeekBind::SHIFT)
+            return ListInteractive::charEnteredFilter(c_p, modifiers);
+
+        // don't allow select directory!
+        if (IsDirectory(dirEntire + getBufferText()))
+            return gc->beep();
+
+        // if no filter style dispatch
+        if(mustMatch && completionStyle != Filter)
         {
             tryComplete(); // complite if only matching enable
             std::string buftext = getRightText();
@@ -2891,7 +3314,7 @@ void FileInteractive::updateTextCompletion()
     }
 
     Directory* dir = OpenDirectory(path);
-    if (dir != NULL)
+    if (dir != NULL && lastPath != path)
     {
         std::string filename;
         dirCache.clear();
@@ -2928,20 +3351,25 @@ void FileInteractive::updateTextCompletion()
             }
         }
         delete dir;
+        lastPath = path;
     }
 
     // filter for expand
     std::vector<std::string>::iterator it;
 
     int buf_length = UTF8Length(fileToExpand);
-
-    for (it = dirCache.begin();
-         it != dirCache.end(); it++)
+    if (completionStyle != Filter)
     {
-        if (buf_length == 0 ||
-            (UTF8StringCompare(*it, fileToExpand, buf_length) == 0))
-            typedTextCompletion.push_back(*it);
+        for (it = dirCache.begin();
+             it != dirCache.end(); it++)
+        {
+            if (buf_length == 0 ||
+                (UTF8StringCompare(*it, fileToExpand, buf_length) == 0))
+                typedTextCompletion.push_back(*it);
+        }
     }
+    else
+        filterCompletion(dirCache, getRightText());
 }
 
 void FileInteractive::setDir(std::string dir, std::string entire)

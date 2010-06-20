@@ -92,16 +92,19 @@ public:
     /* render with default font gc->getCompletionFont()
      */
     virtual void renderCompletion(float height, float width);
-    /* Update descibe str completion, etc.
+    /* Update: describe current buftext.
        Will called after charEntered
      */
-    virtual void update();
+    virtual void update(const std::string &buftext);
     /* set def value in buffer
      */
     virtual void setDefaultValue(std::string v);
     /* set to buffer str from last value in history
      */
     virtual void setLastFromHistory();
+    std::string getBufferText()const
+        {return buf;}
+
 protected:
     GeekConsole *gc;
     std::string separatorChars; // additional separator chars
@@ -111,8 +114,6 @@ protected:
     //size of buf without expanded part (by history or completion)
     uint bufSizeBeforeHystory;
     void setBufferText(std::string str);
-    std::string getBufferText()const
-        {return buf;}
 private:
     void prepareHistoryCompletion();
     std::string buf;
@@ -129,15 +130,27 @@ private:
 class ListInteractive: public GCInteractive
 {
 public:
+    enum CompletionType
+    {
+        Standart,
+        Fast,
+        Filter
+    };
+
     ListInteractive(std::string name):GCInteractive(name, true), cols(4)
         {};
     void Interact(GeekConsole *_gc, string historyName);
     virtual void setRightText(std::string str);
-    virtual std::string getRightText()const; // return text before after 
+    // return text that start after last separator chars
+    virtual std::string getRightText()const;
+    // return text before last separator chars
+    virtual std::string getLeftText()const;
     bool tryComplete();
     void charEntered(const char *c_p, int modifiers);
+    void charEnteredFilter(const char *c_p, int modifiers);
+    virtual void renderInteractive();
     virtual void renderCompletion(float height, float width);
-    void update();
+    void update(const std::string &buftext);
     void playMatch(); // play match snd if textbuffer is in completion list
     void setCompletion(std::vector<std::string> completion);
     void setMatchCompletion(bool mustMatch); // true - result must be matched in completion. Default false
@@ -146,6 +159,8 @@ public:
         {cols = c; if (cols < 1) cols = 1; if (cols > 8) cols = 8;}
 protected:
     virtual void updateTextCompletion();
+    // set typedHistoryCompletion by filtering completion
+    void filterCompletion(std::vector<std::string> completion, std::string filter);
     std::vector<std::string> completionList;
     int pageScrollIdx;
     uint scrollSize; // number of compl. items to scroll
@@ -153,6 +168,13 @@ protected:
     uint cols;
     std::vector<std::string> typedTextCompletion;
     bool mustMatch; // if true - on RET key finish promt only if matched in completionList
+private:
+    // render completion: standart incremental
+    void renderCompletionStandart(float height, float width);
+    // filtered renderer of completion
+    void renderCompletionFilter(float height, float width);
+    // only for Filter type, indicate that inter may be finished by RET key
+    bool canFinish;
 };
 
 // celestia's object prompter
@@ -162,8 +184,7 @@ public:
     CelBodyInteractive(std::string name, CelestiaCore *celApp);
     void Interact(GeekConsole *_gc, string historyName);
     void charEntered(const char *c_p, int modifiers);
-    void renderCompletion(float height, float width);
-    void update();
+    void update(const std::string &buftext);
     void setCompletion(std::vector<std::string> completion);
     void setCompletionFromSemicolonStr(std::string);
     void cancelInteractive();
@@ -208,7 +229,7 @@ public:
     void Interact(GeekConsole *_gc, string historyName);
     void setFileExtenstion(std::string);
     void setRightText(std::string str);
-    void update();
+    void update(const std::string &buftext);
     void charEntered(const char *c_p, int modifiers);
     /* Set dir, entire - root dir; use it in inter-callback */
     void setDir(std::string dir, std::string entire = "./");
@@ -217,6 +238,7 @@ private:
     std::vector<std::string> fileExt;
     std::string dirEntire; // root dir entire (not show for user)
     std::vector<std::string> dirCache;
+    std::string lastPath;
 };
 
 // no history + ****** Interactive
@@ -526,5 +548,8 @@ extern Color32 *clCompletionExpandBg;
 extern Color32 *clInfoTextFnt;
 extern Color32 *clInfoTextBg;
 extern Color32 *clInfoTextBrd;
+
+// global completion style for Listinteractive and other
+extern int completionStyle;
 
 #endif // _GEEKCONSOLE_H_
