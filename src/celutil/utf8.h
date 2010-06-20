@@ -24,6 +24,7 @@ bool UTF8Decode(const char* str, int pos, int length, wchar_t& ch);
 int UTF8Encode(wchar_t ch, char* s);
 int UTF8StringCompare(const std::string& s0, const std::string& s1);
 int UTF8StringCompare(const std::string& s0, const std::string& s1, size_t length);
+int UTF8StrStr(const std::string& s0, const std::string& s1, unsigned int startpos = 0);
 
 class UTF8StringOrderingPredicate
 {

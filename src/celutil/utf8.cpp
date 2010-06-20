@@ -594,6 +594,38 @@ int UTF8StringCompare(const std::string& s0, const std::string& s1, size_t n)
         return 0;
 }
 
+//! Return the position of the first  occurrence of s1 in s0, or -1 if
+//! s1 is not part of s0. Ignore case.
+int UTF8StrStr(const std::string& s0, const std::string& s1, unsigned int startpos)
+{
+    if (s1.empty())
+        return -1;	// Empty string case
+
+    // get first wchar of s1
+    wchar_t c;
+    if (!UTF8Decode(s1, 0, c))
+        return -1;
+
+    if ((int) startpos > (int) s0.length() - (int) s1.length() + 1)
+        return -1;
+
+    std::string str(s1, UTF8EncodedSize(c));
+    c = UTF8Normalize(c);
+    int len1 = str.length();
+    int i0 = startpos;
+    wchar_t sc = 0;
+    do {
+        wchar_t scn;
+        do {
+            if (!UTF8Decode(s0, i0, sc))
+                return -1;
+            i0 += UTF8EncodedSize(sc);
+            scn = UTF8Normalize(sc);
+        } while (scn != c);
+    } while (UTF8StringCompare(std::string(s0, i0, len1), str) != 0);
+
+    return i0 - UTF8EncodedSize(sc);
+}
 
 //! Currently incomplete, but could be a helpful class for dealing with
 //! UTF-8 streams
