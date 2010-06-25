@@ -588,7 +588,7 @@ namespace UI
                 btn = AG_ButtonNewFn(tab, 0, str.c_str(), 
                                setPreset, "%i", i);
                 addSndEvent((AG_Object *) btn, "button-pushed", BTNCLICK);
-                sprintf(buff,"C-x r %d @%d", i, i);
+                sprintf(buff,"C-x r %d #%d", i, i);
                 getGeekConsole()->bind("Global", buff,
                                   "set render preset");
             }

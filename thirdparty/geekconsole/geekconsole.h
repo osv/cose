@@ -275,7 +275,9 @@ public:
     void setText(std::string text);
     void appendText(std::string text); // append with text \n before
     void setText(std::vector<std::string> text);
+    void appendText(std::vector<std::string> text);
     void setLastFromHistory() {};
+    string makeSpace(string s1, int spaces, string s2, string base = "X");
     enum {
         PG_NOP = 0,
         PG_ENTERDIGIT = 1,
@@ -408,7 +410,7 @@ public:
     Overlay* getOverlay() const
         {return overlay;}
     void setInteractive(GCInteractive *Interactive,
-                        std::string historyName,  // if empty - dont use history
+                        std::string historyName = "",  // if empty - dont use history
                         std::string InteractiveStr = "", // str before prompt
                         std::string descrStr = ""); // describe str (bottom)
     // on "ENTER" press event

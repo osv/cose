@@ -81,14 +81,14 @@ geekConsole->bind("", "M-RET",
   You can pass same parameter to interactive using keybind or alias function
   Example:
 
-geekConsole->bind("", "C-x C-g e @Sol/Earth@*EXEC*@goto object@",
+geekConsole->bind("", "C-x C-g e ##Sol/Earth#*EXEC*#goto object#",
                     "select object");
 
   Here binded key "C-x C-g e" to select Sol/Earth end execute other
   interactive "goto object" (by passing parameter *EXEC* before).
   Alias example:
 
-geekConsole->registerFunction(GCFunc("quit", "@yes@"), "force quit");
+geekConsole->registerFunction(GCFunc("quit", "#yes#"), "force quit");
 
   Special parameters:
   - *ESC* stop current interactive;
@@ -1206,7 +1206,7 @@ int GeekConsole::execFunction(std::string funName)
     // if not called from other function
     if (f && isMacroRecording && !curFun)
     {
-        appendCurrentMacro("@*EXEC*@" + funName);
+        appendCurrentMacro("#*EXEC*#" + funName);
     }
     finish();
     curFun = f;
@@ -1233,14 +1233,14 @@ int GeekConsole::execFunction(std::string funName, std::string param)
         isVisible = true;
         call("", true);
 
-        if (param[param.size() - 1] == '@')
+        if (param[param.size() - 1] == '#')
             param.resize(param.size() - 1);
-        if (param[0] == '@')
+        if (param[0] == '#')
             param.erase(0, 1);
 
         vector<string> params;
         uint cutAt;
-        while( (cutAt = param.find_first_of( "@" )) != param.npos )
+        while( (cutAt = param.find_first_of( "#" )) != param.npos )
         {
             if( cutAt > 0 )
             {
@@ -1373,7 +1373,7 @@ bool GeekConsole::charEntered(const char *c_p, int modifiers)
             curKey.mod[curKey.len] |= GeekBind::CTRL;
         if (modifiers & GeekBind::META)
             curKey.mod[curKey.len] |= GeekBind::META;
-        bool isKeyPrefix = false;
+
         std::vector<GeekBind::KeyBind>::const_iterator it;
         std::vector<GeekBind *>::iterator gb;
         for (gb  = geekBinds.begin();
@@ -1412,7 +1412,7 @@ bool GeekConsole::charEntered(const char *c_p, int modifiers)
                                                     ") " + it->params, 2.5);
                             if (isMacroRecording)
                             {
-                                appendCurrentMacro("@*EXEC*@" + fun);
+                                appendCurrentMacro("#*EXEC*#" + fun);
                                 if (!it->params.empty())
                                     appendCurrentMacro(it->params);
                             }
@@ -1427,25 +1427,22 @@ bool GeekConsole::charEntered(const char *c_p, int modifiers)
                         return true;
                     }
                     else
-                        isKeyPrefix = true;
+                    {
+                        getCelCore()->flash(curKey.keyToStr() + "-", 15.0);
+                        return true; // key prefix
+                    }
             }
         }
-        if (!isKeyPrefix || curKey.len >= MAX_KEYBIND_LEN)
+        // for key length 1 dont flash messg.
+        if (curKey.len > 1)
         {
-            // for key length 1 dont flash messg.
-            if (curKey.len > 1)
-            {
-                getCelCore()->flash(curKey.keyToStr() + " is undefined");
-                curKey.len = 0;
-                // true because we dont want to continue passing key event
-                return true;
-            }
+            getCelCore()->flash(curKey.keyToStr() + " is undefined");
             curKey.len = 0;
-            return false;
+            // true because we dont want to continue passing key event
+            return true;
         }
-        else
-            getCelCore()->flash(curKey.keyToStr() + "-", 15.0);
-        return true;
+        curKey.len = 0;
+        return false;
     } // !isVisible
 
     if (isMacroRecording)
@@ -1485,12 +1482,12 @@ bool GeekConsole::charEntered(const char *c_p, int modifiers)
         if (isMacroRecording) // append macro
             if (isShift && c == 'g') // C-S-g
             { // last macro command is cancel command
-                appendCurrentMacro("@*EXEC*@end macro");
+                appendCurrentMacro("#*EXEC*#end macro");
                 setMacroRecord(false);
                 descriptionStr = _("Macro defining stopped");
             }
             else
-                appendCurrentMacro("@*ESC*");
+                appendCurrentMacro("#*ESC*");
         finish();
     }
 
@@ -1678,11 +1675,11 @@ int GeekConsole::call(const std::string &value, bool params)
         {
             if (value == "")
             {
-                appendCurrentMacro("@*NILL*");
+                appendCurrentMacro("#*NILL*");
             }
             else
             {
-                appendCurrentMacro("@" + value);
+                appendCurrentMacro("#" + value);
             }
         }
     }
@@ -1797,7 +1794,7 @@ void GeekConsole::clearInfoText()
 
 void GeekConsole::setMacroRecord(bool enable, bool quiet)
 {
-    std::string execkey = "@*EXEC*";
+    std::string execkey = "#*EXEC*";
 
     if (enable)
     {
@@ -1827,8 +1824,8 @@ void GeekConsole::setMacroRecord(bool enable, bool quiet)
         if( found != string::npos )
             currentMacro = currentMacro.substr(0, found);
 
-        // replace unusefull *EXEC*@exec function into *EXEC*
-        std::string key = "@*EXEC*@exec function";
+        // replace unusefull *EXEC*#exec function into *EXEC*
+        std::string key = "#*EXEC*#exec function";
         found = currentMacro.find(key);
         while (found != string::npos) {
             currentMacro.replace(found, key.length(), execkey);
@@ -1836,7 +1833,7 @@ void GeekConsole::setMacroRecord(bool enable, bool quiet)
         }
 
         // remove all nill execs
-        key = "@*EXEC*@*ESC*";
+        key = "#*EXEC*#*ESC*";
         found = currentMacro.find(key);
         while (found != string::npos) {
             currentMacro.replace(found, key.length(), execkey);
@@ -2012,20 +2009,34 @@ void GCInteractive::charEntered(const char *c_p, int modifiers)
             return;
         rit = typedHistoryCompletion.rbegin() + typedHistoryCompletionIdx;
         typedHistoryCompletionIdx++;
-        if (typedHistoryCompletionIdx > typedHistoryCompletion.size() - 1)
+        if (rit >= typedHistoryCompletion.rbegin() &&
+            rit < typedHistoryCompletion.rend())
+        {
+            buf = *rit;
+            gc->appendDescriptionStr(_(ctrlZDescr));
+        }
+        else
+        {
+            gc->beep();
             typedHistoryCompletionIdx = 0;
-        buf = *rit;
-        gc->appendDescriptionStr(_(ctrlZDescr));
+        }
         return;
     case '\016':  // Ctrl+N forw history
         if (typedHistoryCompletion.empty())
             return;
         it = typedHistoryCompletion.begin() + typedHistoryCompletionIdx;
         typedHistoryCompletionIdx--;
-        if (typedHistoryCompletionIdx < 0)
+        if (it >= typedHistoryCompletion.begin() &&
+            it < typedHistoryCompletion.end())
+        {
+            buf = *it;
+            gc->appendDescriptionStr(_(ctrlZDescr));
+        }
+        else
+        {
+            gc->beep();
             typedHistoryCompletionIdx = typedHistoryCompletion.size() - 1;
-        buf = *it;
-        gc->appendDescriptionStr(_(ctrlZDescr));
+        }
         return;
     case '\032':  // Ctrl+Z
         if (bufSizeBeforeHystory == buf.size())
@@ -2753,11 +2764,10 @@ void ListInteractive::renderCompletionStandart(float height, float width)
             glColor4ubv(clCompletionFnt->rgba);
             *gc->getOverlay() << std::string(s, 0, buf_length);
             // match char background
-            if (s.size() >= buf_length)
+            if (s.size() > buf_length)
             {
                 if (!UTF8Decode(s, buf_length, c))
                     continue; //something wrong
-
                 std::string text(s, buf_length, UTF8EncodedSize(c));
                 glColor4ubv(clCompletionMatchCharBg->rgba);
                 gc->getOverlay()->rect(font->getWidth(string(s, 0, buf_length)), 0.0f - 2,
@@ -2768,8 +2778,8 @@ void ListInteractive::renderCompletionStandart(float height, float width)
                 glColor4ubv(clCompletionAfterMatch->rgba);
                 if (s.size() > buf_length)
                     *gc->getOverlay() << string(s, buf_length + 1, 128);
-                *gc->getOverlay() << "\n";
             }
+            *gc->getOverlay() << "\n";
         }
         gc->getOverlay()->endText();
         glPopMatrix();
@@ -3116,7 +3126,7 @@ void CelBodyInteractive::update(const std::string &buftext)
     if (!desc.empty())
     {
         gc->setInfoText(desc);
-        gc->appendDescriptionStr(_("M-c - Select"));
+        gc->appendDescriptionStr(_("M-c - Center"));
         GeekConsole::Beep *b = gc->getBeeper();
         if (b)
             b->match();
@@ -3446,6 +3456,26 @@ void PagerInteractive::setText(std::vector<std::string> t)
     text = t;
 }
 
+void PagerInteractive::appendText(std::vector<std::string> _text)
+{
+    text.insert(text.end(), _text.begin(), _text.end());
+}
+
+/// Create spaces between s1 and s2 with max @spaces
+// Good to create pseudo table with non-fixed width fonts
+string PagerInteractive::makeSpace(string s1, int spaces, string s2, string base)
+{
+    TextureFont *font = gc->getCompletionFont();
+    // TODO: implement TextureFont::getWidth(char)
+    int basesz = font->getWidth(base);
+    int sz1 = (int) font->getWidth(s1);
+    int spacesz = (int) font->getWidth(" ");
+    int n = (spaces * basesz - sz1) / spacesz;
+    if (n <= 0)
+        n = 1;
+    return s1 + string(n, ' ') + s2;
+}
+
 void PagerInteractive::Interact(GeekConsole *_gc, string historyName)
 {
     GCInteractive::Interact(_gc, historyName);
@@ -3489,7 +3519,7 @@ void PagerInteractive::forward(int fwdby)
 int PagerInteractive::getChopLine()
 {
     if (chopLine == -1)
-        return width;
+        return width / gc->getCompletionFont()->getWidth("X");
     else
         return chopLine;
 }
@@ -3770,7 +3800,10 @@ void PagerInteractive::renderCompletion(float height, float width)
     uint j;
     for (j= 0; it < lines->end() && j < nb_lines; it++, j++)
     {
-        *gc->getOverlay() << *it;
+        if (*it == "---")
+            gc->getOverlay()->rect(0, 0, 100.0 * width, 1);
+        else
+            *gc->getOverlay() << *it;
         *gc->getOverlay() << "\n";
     }
     for (; j < nb_lines; j++)
@@ -3966,7 +3999,7 @@ static int saveMacro(GeekConsole *gc, int state, std::string value)
             gc->setInteractive(listInteractive, "yes-no", _("Are you sure to overwrite?"), "\"" + value + "\" " + _("already defined."));
             listInteractive->setCompletionFromSemicolonStr("yes;no");
             listInteractive->setMatchCompletion(true);
-            gc->setInfoText(string(_("Info about")) + "\"" + value + "\":\n" + gc->getFunctionByName(value)->getInfo());
+            gc->setInfoText(string(_("Info about")) + " \"" + value + "\":\n" + gc->getFunctionByName(value)->getInfo());
         }
         else // register function
             state = 3; // skip next state
@@ -4008,7 +4041,7 @@ static int saveMacro(GeekConsole *gc, int state, std::string value)
     if (state == 4 ) // ask for key
     {
         bindspace = value;
-        gc->setInteractive(listInteractive, "bindkey-key", _("Key bind"), _("Choose key bind, and parameters. Example: C-c g @param 1@"));
+        gc->setInteractive(listInteractive, "bindkey-key", _("Key bind"), _("Choose key bind, and parameters. Example: C-c g #param 1#"));
         GeekBind *gb = gc->getGeekBind(value);
         if (gb)
         {
@@ -4020,7 +4053,7 @@ static int saveMacro(GeekConsole *gc, int state, std::string value)
     {
         GeekBind *gb = gc->getGeekBind(bindspace);
         if (gb)
-            gc->descriptionStr = gb->getBindDescr(value);
+            gc->setInfoText(gb->getBindDescr(value));
     } else if (state == 5) // finish
     {
         gc->bind(bindspace, value, svmFunName);
@@ -4054,7 +4087,7 @@ static int bindKey(GeekConsole *gc, int state, std::string value)
     case 1:
     {
         bindspace = value;
-        gc->setInteractive(listInteractive, "bindkey-key", _("Key bind"), _("Choose key bind, and parameters. Example: C-c g @param 1@"));
+        gc->setInteractive(listInteractive, "bindkey-key", _("Key bind"), _("Choose key bind, and parameters. Example: C-c g #param 1#"));
         GeekBind *gb = gc->getGeekBind(value);
         if (gb)
         {
@@ -4067,7 +4100,7 @@ static int bindKey(GeekConsole *gc, int state, std::string value)
     {
         GeekBind *gb = gc->getGeekBind(bindspace);
         if (gb)
-            gc->descriptionStr = gb->getBindDescr(value);
+            gc->setInfoText(gb->getBindDescr(value));
         break;
     }
     case 2:
@@ -4123,7 +4156,7 @@ static int unBindKey(GeekConsole *gc, int state, std::string value)
     {
         GeekBind *gb = gc->getGeekBind(bindspace);
         if (gb)
-            gc->descriptionStr = gb->getBindDescr(value);
+            gc->setInfoText(gb->getBindDescr(value));
         break;
     }
     case 2:
@@ -4135,7 +4168,148 @@ static int unBindKey(GeekConsole *gc, int state, std::string value)
     return state;
 }
 
-static int describebindKey(GeekConsole *gc, int state, std::string value)
+static int describeBindings(GeekConsole *gc, int state, std::string value)
+{
+    if (state == 0)
+    {
+        gc->setInteractive(pagerInteractive);
+        std::stringstream ss;
+        ss << _("Key translations:\n");
+
+        std::vector<GeekBind::KeyBind>::iterator it;
+
+        const std::vector<GeekBind *> &gbs = gc->getGeekBinds();
+        std::vector<GeekBind *>::const_iterator gb;
+        std::vector<std::string> temp;
+        for (gb = gbs.begin();
+             gb != gbs.end(); gb++)
+        {
+            ss << "---\n"
+               << _("Bind space ") << "\"" <<
+                (*gb)->getName() << "\" (";
+            if ((*gb)->isActive)
+                ss << _("Active");
+            else
+                ss << _("Inactive");
+            ss << "):\n";
+            ss << "---\n";
+
+            std::vector<GeekBind::KeyBind> binds = (*gb)->getBinds();
+            for (it = binds.begin();
+                 it != binds.end(); it++)
+            {
+                ss << pagerInteractive->makeSpace(
+                    pagerInteractive->makeSpace((*it).keyToStr(), 12,
+                                                (*it).gcFunName),
+                    34, (*it).params) << "\n";
+            }
+            ss << "\n";
+        }
+        pagerInteractive->setText(ss.str());
+    }
+    return state;
+}
+
+/// return info about function, his binds
+static std::string _describeFunction(GeekConsole *gc, std::string function)
+{
+    std::stringstream ss;
+
+    // all binds of function
+    const std::vector<GeekBind *> &gbs = gc->getGeekBinds();
+    std::vector<string> completion;
+
+    GCFunc *f = gc->getFunctionByName(function);
+    ss << _("  Function") << " `" << function << "'\n\n";
+    if (f)
+    {
+        std::string s = f->getInfo();
+        if (s != "")
+            ss << f->getInfo() << "\n";
+        if (f->getType() == GCFunc::Alias) {
+            ss << "---\n"
+               << _("It is alias to") << " \"" << f->getAliasFun() << "\"\n";
+            if (f->getAliasParams() != "")
+                ss << _("with params \"") << f->getAliasParams() << "\"\n";
+
+        }
+    }
+
+    int bindx = 0;
+    for (std::vector<GeekBind *>::const_iterator it = gbs.begin();
+         it != gbs.end(); it++)
+    {
+        GeekBind *b = *it;
+        std::vector<GeekBind::KeyBind> binds= b->getAllBinds(function);
+        std::vector<GeekBind::KeyBind>::iterator bit;
+        if (!binds.empty())
+        {
+            if (bindx == 0)
+                ss << _("It is bound to:\n");
+            bindx ++;
+            ss << _("Bind space") << " \"" << b->getName() << "\": "
+               << b->getBinds(function) << "\n";
+
+            for (bit = binds.begin(); bit < binds.end(); bit++)
+            {
+                ss << pagerInteractive->makeSpace(
+                    pagerInteractive->makeSpace((*bit).keyToStr(), 12,
+                                                (*bit).gcFunName),
+                    34, (*bit).params) << "\n";
+            }
+        }
+    }
+    ss << "\n";
+
+    return ss.str();
+}
+
+static int describeFunction(GeekConsole *gc, int state, std::string value)
+{
+    switch (state)
+    {
+    case 0:
+    {
+        gc->setInteractive(listInteractive, "exec-function", _("Function"));
+        std::vector<std::string> v = gc->getFunctionsNames();
+        std::sort(v.begin(), v.end());
+        listInteractive->setCompletion(v);
+        listInteractive->setMatchCompletion(true);
+        break;
+    }
+    case -1:
+    {
+        // describe key binds for this function
+        GCFunc *f = gc->getFunctionByName(value);
+        if (!f)
+            break;
+        gc->setInfoText(f->getInfo());
+        const std::vector<GeekBind *>& gbs = gc->getGeekBinds();
+        std::string bindstr;
+        for (std::vector<GeekBind *>::const_iterator it = gbs.begin();
+             it != gbs.end(); it++)
+        {
+            GeekBind *gb = *it;
+            std::string str = gb->getBinds(value);
+            if (!str.empty())
+                bindstr += ' ' + gb->getName() + ": " + str;
+        }
+        if (!bindstr.empty())
+            gc->descriptionStr += " [Matched;" + bindstr + ']';
+        break;
+    }
+    case 1:
+    {
+        gc->setInteractive(pagerInteractive);
+        pagerInteractive->setText(
+            _describeFunction(gc, value));
+    }
+    }
+    return state;
+}
+
+
+static int describeBindKey(GeekConsole *gc, int state, std::string value)
 {
     static string bindspace;
 
@@ -4173,7 +4347,7 @@ static int describebindKey(GeekConsole *gc, int state, std::string value)
     {
         GeekBind *gb = gc->getGeekBind(bindspace);
         if (gb)
-            gc->descriptionStr = gb->getBindDescr(value);
+            gc->setInfoText(gb->getBindDescr(value));
         break;
     }
     case 2:
@@ -4184,43 +4358,16 @@ static int describebindKey(GeekConsole *gc, int state, std::string value)
             std::stringstream ss;
             gc->setInteractive(pagerInteractive, "", _("Describe bind key"));
             ss << value << _(" runs the command \"");
-            ss << gb->getFunName(value) << "\"";
+            ss << gb->getFunName(value) << "\"\n";
 
             if (gb->getParams(value) != "")
-                ss << _("\nwith params \"") << gb->getParams(value);
-            ss << "\"\n\n";
-
-            ss << _("It is bound to");
-            // all binds of function
-            const std::vector<GeekBind *> &gbs = gc->getGeekBinds();
-            std::vector<string> completion;
+                ss << _("with params \"") << gb->getParams(value)
+                   << "\"\n";
 
             std::string function = gb->getFunName(value);
-            for (std::vector<GeekBind *>::const_iterator it = gbs.begin();
-                 it != gbs.end(); it++)
-            {
-                GeekBind *b = *it;
-                std::string binds = b->getBinds(function);
-                if (!binds.empty())
-                    ss << " \"" << b->getName() << "\": " << binds;
-            }
-            ss << ".\n\n";
-
-            GCFunc *f = gc->getFunctionByName(gb->getFunName(value));
-            if (f)
-            {
-                std::string s = f->getInfo();
-                if (s != "")
-                    ss << f->getInfo() << "\n";
-                if (f->getType() == GCFunc::Alias) {
-                    ss << _("It is alias to ") << "\"" << f->getAliasFun() << "\"";
-                    if (f->getAliasParams() != "")
-                        ss << _("\nwith params \"") << f->getAliasParams() << "\"";
-
-                }
-            } else {
-                ss << _("Function not defined\n");
-            }
+            if (function.empty())
+                function = gb->getFirstParam(value);
+            ss << "\n" << _describeFunction(gc, function);
 
             pagerInteractive->setText(ss.str());
         }
@@ -4251,7 +4398,16 @@ void initGCInteractives(GeekConsole *gc)
                         GCFunc(execFunction), "exec function");
     gc->registerFunction(GCFunc(bindKey), "bind");
     gc->registerFunction(GCFunc(unBindKey), "unbind");
-    gc->registerFunction(GCFunc(describebindKey), "describe key");
+    gc->registerAndBind("", "C-h b",
+                        GCFunc(describeBindings, _("Display all key bindings")),
+                        "describe bindings");
+    gc->registerAndBind("", "C-h f",
+                        GCFunc(describeFunction, _("Display documentation for the given function.")),
+                        "describe function");
+    gc->registerAndBind("", "C-h k",
+                        GCFunc(describeBindKey, _("Display the documentation for the key sequence.")),
+                        "describe key");
+
     gc->registerAndBind("", "C-x C-k s",
                         GCFunc(startMacro, _("Define macro.\n"
                                              "Record subsequent keyboard input (only for geekconsole binds),\n"

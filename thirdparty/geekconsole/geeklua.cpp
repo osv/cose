@@ -273,9 +273,9 @@ static int callFun(lua_State* l)
         return 0;
 
     // append macro
-    getGeekConsole()->appendCurrentMacro(string("@*EXEC*@") + funName);
+    getGeekConsole()->appendCurrentMacro(string("#*EXEC*#") + funName);
     if (args)
-        getGeekConsole()->appendCurrentMacro(args);
+        getGeekConsole()->appendCurrentMacro(string("#") + args);
 
     if (args)
         getGeekConsole()->execFunction(funName, args);

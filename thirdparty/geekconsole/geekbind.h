@@ -26,14 +26,19 @@
    Hot key are linked to geekconsole function
    example of hot-key binding:
 
-   bind("C-x C-g e @Earth", "select object");
+   bind("C-x C-g e #Earth", "select object");
+
+   or
+
+   bind("C-x C-g e #select object#Earth", "");
 
    - Here "C-" is Control key, and as like in emacs here is S-, M- (Alt only, not ESC!)
-   - "@Earth" is value passed to function-interactive "select object".
+   - "#Earth" is value passed to function-interactive "select object".
 
-   GeekConsole allow multiple call of interactives by using @EXEC value. Example:
+   GeekConsole allow  multiple call of interactives  by using #*EXEC*#
+   value. Example:
 
-   bind(C-x M-x @select object@Earth/Moon@EXEC@goto, "exec function");
+   bind(C-x M-x #select object#Earth/Moon#*EXEC*#goto, "exec function");
  */
 
 #ifndef MAX_KEYBIND_LEN
@@ -53,11 +58,15 @@ public:
     {
         char c[MAX_KEYBIND_LEN];
         int  mod[MAX_KEYBIND_LEN];
+        /// function name, may be empty and than firstParam is function
         std::string gcFunName;
+        // first param of splited param by '#' char
+        std::string firstParam;
         std::string params;
         int len;
-        std::string keyToStr();
+        std::string keyToStr() const;
         bool set(const char *bind);
+        bool operator<(const KeyBind&) const;
     };
     GeekBind(std::string name);
     ~GeekBind() {};
@@ -66,10 +75,12 @@ public:
     std::string getBinds(std::string funName);
     std::string getBindDescr(std::string keybind);
     std::string getFunName(std::string keybind);
+    std::string getFirstParam(std::string keybind);
     std::string getParams(std::string keybind);
     std::vector<std::string> getAllBinds();
-    const std::vector<KeyBind>& getBinds()
-        {return binds;}
+    /// return bind for function
+    std::vector<KeyBind> getAllBinds(std::string funName);
+    const std::vector<KeyBind>& getBinds();
     const std::string getName()
         { return name;}
     bool bind(const char *keybind, std::string funName);
@@ -80,6 +91,7 @@ private:
     std::vector<KeyBind> binds;
     KeyBind curKey;
     std::string name;
+    bool needSort;
 };
 
 // keys that can not be shifted like ~!@...

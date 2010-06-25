@@ -55,7 +55,7 @@ static const struct key_names
     {NULL, NULL}
 };
 
-std::string GeekBind::KeyBind::keyToStr()
+std::string GeekBind::KeyBind::keyToStr() const
 {
     std::string str;
     std::string key;
@@ -115,7 +115,9 @@ bool GeekBind::KeyBind::set(const char *keybind)
             i+=2;
         }
         i = skipWhiteSpace(keybind, i);
-        if (keybind[i] == '@') //is params
+        if (keybind[i] == '#' && //is params
+            keybind[i+1] != ' ' && // no '#'
+            keybind[i+1] != '\0')
         {
             if (len == 0) // params w/o keybind
                 return false;
@@ -140,15 +142,19 @@ bool GeekBind::KeyBind::set(const char *keybind)
         {
             int ii=0;
             const char *str = keybind + i;
+            bool found = false;
             while(keyNames[ii].keyName)
             {
                 if (!strncmp(keyNames[ii].keyName, str, strlen(keyNames[ii].keyName)))
                 {
                     c[len] = keyNames[ii].ckey;
+                    found = true;
                     break;
                 }
                 ii++;
             }
+            if (!found)
+                return false;
         }
         if (len == MAX_KEYBIND_LEN)
             break;
@@ -165,11 +171,17 @@ bool GeekBind::KeyBind::set(const char *keybind)
     return true;
 }
 
+bool GeekBind::KeyBind::operator<(const GeekBind::KeyBind& a) const
+{
+    return keyToStr() < a.keyToStr();
+}
+
 GeekBind::GeekBind(std::string _name):
     isActive(true),
     name(_name)
 {
     curKey.len = 0;
+    needSort = false;
 }
 
 bool GeekBind::isBinded(KeyBind b)
@@ -207,7 +219,8 @@ std::string GeekBind::getBinds(std::string funName)
     for (it = binds.begin();
          it != binds.end(); it++)
     {
-        if (funName == it->gcFunName && it->params.empty())
+        if (funName == it->gcFunName ||
+            (funName == it->firstParam && it->gcFunName.empty()))
             if (str.empty())
                 str = it->keyToStr();
             else
@@ -236,6 +249,7 @@ std::string GeekBind::getFunName(std::string keybind)
 {
     std::vector<KeyBind>::iterator it;
     KeyBind k;
+
     k.set(keybind.c_str());
     std::string str = k.keyToStr();
     for (it = binds.begin();
@@ -243,6 +257,22 @@ std::string GeekBind::getFunName(std::string keybind)
     {
         if (str == it->keyToStr())
             return it->gcFunName;
+    }
+    return "";
+}
+
+std::string GeekBind::getFirstParam(std::string keybind)
+{
+    std::vector<KeyBind>::iterator it;
+    KeyBind k;
+
+    k.set(keybind.c_str());
+    std::string str = k.keyToStr();
+    for (it = binds.begin();
+         it != binds.end(); it++)
+    {
+        if (str == it->keyToStr())
+            return it->firstParam;
     }
     return "";
 }
@@ -274,14 +304,49 @@ std::vector<std::string> GeekBind::getAllBinds()
     return kb;
 }
 
+std::vector<GeekBind::KeyBind> GeekBind::getAllBinds(std::string funName)
+{
+    std::vector<GeekBind::KeyBind> kb;
+    std::vector<GeekBind::KeyBind>::iterator it;
+    for (it = binds.begin();
+         it != binds.end(); it++)
+    {
+        if (funName == it->gcFunName ||
+            (funName == it->firstParam && it->gcFunName.empty()))
+            kb.push_back(*it);
+    }
+    return kb;
+}
+
+const std::vector<GeekBind::KeyBind>& GeekBind::getBinds()
+{
+    if (needSort)
+        sort(binds.begin(), binds.end());
+    needSort = false;
+    return binds;
+}
+
 bool GeekBind::bind(const char *keybind, std::string funName)
 {
     KeyBind k;
     if (!k.set(keybind))
         return false;
     k.gcFunName = funName;
+
+    // get first param of params of keybind
+    string::size_type startpos = 0, endpos;
+    if (!k.params.empty())
+    {
+        if (k.params[0] == '#')
+            startpos = k.params.find_first_not_of('#');
+        if (startpos != string::npos)
+            endpos = k.params.find_first_of('#', startpos);
+        k.firstParam = string(k.params, startpos, endpos - 1);
+    }
+
     unbind(keybind);
     binds.push_back(k);
+    needSort = true;
     return true;
 }
 

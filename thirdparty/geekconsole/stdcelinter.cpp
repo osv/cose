@@ -650,8 +650,25 @@ static int celTimeScaleIncr(GeekConsole *gc, int state, std::string value)
     return state;
 }
 
-/* init */
+static int selectPlanet(GeekConsole *gc, int state, std::string value)
+{
+    if (state == 0)
+        gc->setInteractive(listInteractive, "select-planet",
+                           _("Select planet by number"));
+    else if (state == 1)
+    {
+        Simulation *sim = gc->getCelCore()->getSimulation();
+        if (abs(sim->getTimeScale()) > MinimumTimeRate &&
+            abs(sim->getTimeScale()) < MaximumTimeRate)
+        {
+            uint planet = atoi(value.c_str());
+            sim->selectPlanet(planet);
+        }
+    }
+    return state;
+}
 
+/* init */
 void initGCStdInteractivsFunctions(GeekConsole *gc)
 {
     referenceMarkNames.push_back("body axes");
@@ -667,7 +684,7 @@ void initGCStdInteractivsFunctions(GeekConsole *gc)
                         GCFunc(selectBody), "select object");
     gc->registerFunction(GCFunc(gotoBody, _("Goto an object")),
                          ".goto object");
-    gc->registerFunction(GCFunc(".goto object", "@5.0", _("Goto an object with duration 5 sec")),
+    gc->registerFunction(GCFunc(".goto object", "#5.0", _("Goto an object with duration 5 sec")),
                          "goto object");
     gc->registerAndBind("", "C-c g",
                         GCFunc(gotoBodyGC, _("Goto object with greate circle")), "goto object gc");
@@ -682,11 +699,11 @@ void initGCStdInteractivsFunctions(GeekConsole *gc)
     gc->registerFunction(GCFunc(disableReferenceMark, _("Disable all reference marks for selected object")),
                          "disable ref marks");
     // aliases
-    gc->registerFunction(GCFunc("celestia options", "@show", _("Select objects, labels or orbits to show")),
+    gc->registerFunction(GCFunc("celestia options", "#show", _("Select objects, labels or orbits to show")),
                          "show objects");
-    gc->registerFunction(GCFunc("celestia options", "@hide", _("Select objects, labels or orbits to hide")),
+    gc->registerFunction(GCFunc("celestia options", "#hide", _("Select objects, labels or orbits to hide")),
                          "hide objects");
-    gc->registerFunction(GCFunc("celestia options", "@toggle", _("Select objects, labels or orbits to toggle")),
+    gc->registerFunction(GCFunc("celestia options", "#toggle", _("Select objects, labels or orbits to toggle")),
                          "toggle objects");
 
     gc->registerFunction(GCFunc(celCharEntered,  _("Send chars to celestia core.\n"
@@ -703,6 +720,8 @@ void initGCStdInteractivsFunctions(GeekConsole *gc)
                          ".history back");
     gc->registerFunction(GCFunc(historyForward,  _("Forward history")),
                          ".history forward");
+    gc->registerFunction(GCFunc(selectPlanet, _("Select planet by number")),
+                         ".select planet");
 
     // celestia core have many usefull binds, so map to him
 
@@ -819,33 +838,35 @@ void initGCStdCelBinds(GeekConsole *gc, const char *bindspace)
         const char *fun;
     } std_cel_key[] = {
         {"a",       ".increase velocity"}, // Increase velocity
-        {"b @toggle objects@labels@Star", ""}, // Toggle star labels
-        {"S-b @toggle objects@labels@Star", ""}, // Toggle star labels
+        {"b #toggle objects#labels#Star", ""}, // Toggle star labels
+        {"S-b #toggle objects#labels#Star", ""}, // Toggle star labels
         {"c",       ".center on selected"}, // Center on selected object
         {"d",       ".run demo.cel"}, // Run demo script (demo.cel)
         {"S-d",     ".run demo.cel"}, // Run demo script (demo.cel)
-        {"e @toggle objects@labels@Galaxy", ""}, // Toggle galaxy labels
-        {"S-e @toggle objects@labels@Galaxy", ""}, // Toggle galaxy labels
+        {"e #toggle objects#labels#Galaxy", ""}, // Toggle galaxy labels
+        {"S-e #toggle objects#labels#Galaxy", ""}, // Toggle galaxy labels
+        {"g", ""}, // Goto selected object
         {"f",       ".follow selected object"}, // Follow selected object
         {"S-f",     ".follow selected object"}, // Follow selected object
         {"g",       "goto object"}, // Go to selected object
-        {"S-g",     "goto object"}, // Go to selected object
         {"h",       ".select our sun"}, // Select our sun (Home)
         {"S-h",     ".select our sun"}, // Select our sun (Home)
-        {"i @toggle objects@objects@Cloud Maps", ""}, // Toggle cloud textures
-        {"S-i @toggle objects@objects@Cloud Maps", ""}, // Toggle cloud textures
+        {"i #toggle objects#objects#Cloud Maps", ""}, // Toggle cloud textures
+        {"S-i #toggle objects#objects#Cloud Maps", ""}, // Toggle cloud textures
         {"j",       ".toggle forw/rev time"}, // Toggle Forward/Reverse time
         {"S-j",     ".toggle forw/rev time"}, // Toggle Forward/Reverse time
-        {"k @.time scale increment@10", ""}, // Time 10x slower
-        {"l @.time scale increment@0.1", ""}, // Time 10x faster
-        {"m @toggle objects@labels@Moon", ""}, // Toggle moon labels
-        {"S-m @toggle objects@labels@MinorMoon", ""}, // Toggle moon labels
-        {"n @toggle objects@labels@Spacecraft", ""}, // Toggle spacecraft labels
-        {"S-n @toggle objects@labels@Spacecraft", ""}, // Toggle spacecraft labels
+        {"SPACE",   ".pause/restart time and script"}, // Pause/Resume the flow of time and scripts (toggle)
+        {"BACKSPACE", ".select parent"}, // Selects the parent
+        {"k #.time scale increment#0.1", ""}, // Time 10x slower
+        {"l #.time scale increment#10", ""}, // Time 10x faster
+        {"m #toggle objects#labels#Moon", ""}, // Toggle moon labels
+        {"S-m #toggle objects#labels#MinorMoon", ""}, // Toggle moon labels
+        {"n #toggle objects#labels#Spacecraft", ""}, // Toggle spacecraft labels
+        {"S-n #toggle objects#labels#Spacecraft", ""}, // Toggle spacecraft labels
         {"o",       ".toggle orbits"}, // Toggle planet orbits
         {"S-o",     ".toggle orbits"}, // Toggle planet orbits
-        {"p @toggle objects@labels@Planet", ""}, // Toggle planet labels
-        {"S-p @toggle objects@labels@Planet", ""}, // Toggle planet labels
+        {"p #toggle objects#labels#Planet", ""}, // Toggle planet labels
+        {"S-p #toggle objects#labels#Planet", ""}, // Toggle planet labels
         {"q",       ".reverse direction"}, // Reverse direction
         {"S-q",     ".reverse direction"}, // Reverse direction
         {"r",       ".lower texture res"}, // Lower texture resolution
@@ -853,36 +874,36 @@ void initGCStdCelBinds(GeekConsole *gc, const char *bindspace)
         {"S-s",     ".stop motion"}, // Stop motion
         {"t",       ".track selected"}, // Track selected object (keep selected object centered in view)
         {"S-t",     ".track selected"}, // Track selected object (keep selected object centered in view)
-        {"u @toggle objects@objects@Galaxies", ""}, // Toggle galaxy rendering
-        {"S-u @toggle objects@objects@Galaxies", ""}, // Toggle galaxy rendering
+        {"u #toggle objects#objects#Galaxies", ""}, // Toggle galaxy rendering
+        {"S-u #toggle objects#objects#Galaxies", ""}, // Toggle galaxy rendering
         {"v",       ".toggle verbosity"}, // Toggle verbosity of information text
         {"S-v",     ".toggle verbosity"}, // Toggle verbosity of information text
-        {"w @toggle objects@labels@Asteroid", ""}, // Toggle asteroid labels
+        {"w #toggle objects#labels#Asteroid", ""}, // Toggle asteroid labels
         {"x",       ".movement toward center"}, // Set movement direction toward center of screen
         {"S-x",     ".movement toward center"}, // Set movement direction toward center of screen
         {"y",       ".sync orbit"}, // Sync Orbit the selected object, at a rate synced to its rotation
         {"S-y",     ".sync orbit"}, // Sync Orbit the selected object, at a rate synced to its rotation
         {"z",       ".decrease velocity"}, // Decrease velocity
         {"S-c",     ".center on selected CO"}, // Center/orbit--center the selected object without changing the position of the reference object.
-        {"S-k @.time scale increment@0.5", ""}, // Time 2x slower
-        {"S-l @.time scale increment@2", ""}, // Time 2x faster
+        {"S-k #.time scale increment#0.5", ""}, // Time 2x slower
+        {"S-l #.time scale increment#2", ""}, // Time 2x faster
         {"S-r",     ".raise texture res"}, // Raise texture resolution
-        {"S-w @toggle objects@labels@Comet", ""}, // Toggle comet labels
+        {"S-w #toggle objects#labels#Comet", ""}, // Toggle comet labels
         {"`",       ".toggle fps"}, // Show frames rendered per second
         {"~",       ".toggle load info"}, // Display file loading info
         {"!",       ".set time to current"}, // Set time to current date and time
         {"@",       ".edit mode"}, // Edit Mode
         {"%",       ".toggle star color tbl"}, // Toggle star color tables
-        {"^ @toggle objects@objects@Nebula", ""}, // Toggle nebula rendering
-        {"& @toggle objects@labels@Location", ""}, // Toggle location labels
+        {"^ #toggle objects#objects#Nebula", ""}, // Toggle nebula rendering
+        {"& #toggle objects#labels#Location", ""}, // Toggle location labels
         {"*",       ".look back"}, // Look back
         {"(",       ".decrease galaxy brightness"}, // Decrease galaxy brightness independent of star brightness
         {")",       ".increase galaxy brightness"}, // Increase galaxy brightness independent of star brightness
         {"-",       ".subtract light-travel delay"}, // (hyphen) Subtract light-travel delay from current simulation time
-        {"= @toggle objects@labels@Constellation", ""}, // Toggle constellation labels
+        {"= #toggle objects#labels#Constellation", ""}, // Toggle constellation labels
         {"+",       ".toggle limit of knowledge"}, // Switch between artistic and limit of knowledge planet textures
         {"[",       ".decrease limiting magnitude"}, // Decrease limiting magnitude
-        {"[",       ".Increase limiting magnitude"}, // Increase Decrease limiting
+        {"]",       ".Increase limiting magnitude"}, // Increase Decrease limiting
         {"{",       ".decrease ambient illumination"}, // Decrease ambient illumination
         {"}",       ".increase ambient illumination"}, // Increase ambient illumination
         {";",       ".earth equat coord sphere"}, // Show an earth-based equatorial coordinate sphere
@@ -890,7 +911,7 @@ void initGCStdCelBinds(GeekConsole *gc, const char *bindspace)
         {"\"",      ".chase selected"}, // Chase selected object (orientation is based on selection's velocity)
         {",",       ".FOV narrow"}, // Narrow field of view (FOV--also Shift+Left Drag)
         {".",       ".FOV widen"}, // Widen field of view (FOV--also Shift+Left Drag)
-        {"/ @toggle objects@objects@Diagrams", ""}, // Toggle constellation diagrams
+        {"/ #toggle objects#objects#Diagrams", ""}, // Toggle constellation diagrams
         {"<",       ".brightness increase"}, //
         {">",       ".brightness decrease"}, //
         {"?",       ".toggle light-travel delay"}, // Display light-travel delay between observer and selected object
@@ -900,14 +921,14 @@ void initGCStdCelBinds(GeekConsole *gc, const char *bindspace)
         {"TAB",     ".cycle views"},
         {"S-TAB",   ".single view"},
         {"RET",     ".select object (cel)"},
-        {"C-a @toggle objects@objects@Atmospheres", ""},//  (BROKEN--increases velocity--see Ctrl+A) Toggle atmospheres
-        {"S-C-a @toggle objects@objects@Atmospheres", ""},
-        {"C-b @toggle objects@objects@Boundaries", ""}, // Toggle constellation boundaries
-        {"S-C-b @toggle objects@objects@Boundaries", ""},
+        {"C-a #toggle objects#objects#Atmospheres", ""},//  (BROKEN--increases velocity--see Ctrl+A) Toggle atmospheres
+        {"S-C-a #toggle objects#objects#Atmospheres", ""},
+        {"C-b #toggle objects#objects#Boundaries", ""}, // Toggle constellation boundaries
+        {"S-C-b #toggle objects#objects#Boundaries", ""},
         {"C-d",     ".single view"}, // Single View (Multi-View--also Shift+Tab)
         {"S-C-d",   ".single view"},
-        {"C-e @toggle objects@objects@Eclipse Shadows", ""}, //  Toggle eclipse shadow rendering
-        {"S-C-e @toggle objects@objects@Eclipse Shadows", ""},
+        {"C-e #toggle objects#objects#Eclipse Shadows", ""}, //  Toggle eclipse shadow rendering
+        {"S-C-e #toggle objects#objects#Eclipse Shadows", ""},
         {"C-f",     ".toggle alt-azimuth mode"}, //  Non-KDE: Toggle Alt-Azimuth mode (used with Ctrl+g Go to surface)
         {"S-C-f",   ".toggle alt-azimuth mode"},
         {"C-g",     ".goto surface"}, //  Non-KDE: Go to surface of selected object
@@ -918,8 +939,8 @@ void initGCStdCelBinds(GeekConsole *gc, const char *bindspace)
         {"S-C-j",   ".select object (cel)"},
         {"C-k",     ".toggle markers"}, //  Toggle display of object markers
         {"S-C-k",   ".toggle markers"},
-        {"C-l @toggle objects@objects@Night Maps", ""}, //  Toggle night side planet maps (light pollution)
-        {"S-C-l @toggle objects@objects@Night Maps", ""},
+        {"C-l #toggle objects#objects#Night Maps", ""}, //  Toggle night side planet maps (light pollution)
+        {"S-C-l #toggle objects#objects#Night Maps", ""},
 // C-m now "select object"
 //        {"C-m",     ".select object (cel)"}, //  DUP Select a star or planet by typing it's name
         {"S-C-m",   ".select object (cel)"},
@@ -928,7 +949,7 @@ void initGCStdCelBinds(GeekConsole *gc, const char *bindspace)
         {"C-r",     ".split view vert"}, //  Split view vertically
         {"S-C-u",   ".split view vert"},
         {"C-s",     ".cycle star style"}, //  Cycle the star style between fuzzy discs, points, and scaled discs
-        {"C-t @toggle objects@objects@Comet Tails", ""}, //  Toggle rendering of comet tails
+        {"C-t #toggle objects#objects#Comet Tails", ""}, //  Toggle rendering of comet tails
         {"C-u",     ".split view horiz"}, //  Split view horizontally
         {"S-C-r",   ".split view horiz"},
         {"C-v",     ".cycle OpenGL render parent"}, //  Cycle between supported OpenGL render paths
@@ -939,15 +960,27 @@ void initGCStdCelBinds(GeekConsole *gc, const char *bindspace)
 //        {"C-x",     ".toggle antialias"}, //  Toggle antialias lines
         {"S-C-x",   ".toggle antialias"},
         {"C-y",     ".toggle automag"}, //  Toggle AutoMag = auto adaptation of star visibility to field of view
-        {"S-C-y",   ".toggle automag"},
         {NULL}
     };
 
     int i = 0;
     while (std_cel_key[i].key != NULL )
     {
+        cout << std_cel_key[i].fun << "\n";
         gc->bind(bindspace, std_cel_key[i].key, std_cel_key[i].fun);
         i++;
     }
+
+    // other
+    gc->bind(bindspace, "0 #0", ".select planet");
+    gc->bind(bindspace, "1 #1", ".select planet");
+    gc->bind(bindspace, "2 #2", ".select planet");
+    gc->bind(bindspace, "3 #3", ".select planet");
+    gc->bind(bindspace, "4 #4", ".select planet");
+    gc->bind(bindspace, "5 #5", ".select planet");
+    gc->bind(bindspace, "6 #6", ".select planet");
+    gc->bind(bindspace, "7 #7", ".select planet");
+    gc->bind(bindspace, "8 #8", ".select planet");
+    gc->bind(bindspace, "9 #9", ".select planet");
 
 }

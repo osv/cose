@@ -127,7 +127,6 @@ static void registerAndBindKeys()
     getGeekConsole()->registerFunction(GCFunc(startTogVidRecord), "toggle video record");
     getGeekConsole()->registerFunction(GCFunc(stopVidRecord), "stop video record");
     getGeekConsole()->registerAndBind("", "M-RET", GCFunc(ToggleFullscreen), "toggle fullscreen");
-    getGeekConsole()->bind("", "C-x C-g e @Earth@*EXEC*@goto object@", "select object");
 
     GeekBind *geekBindCel = getGeekConsole()->createGeekBind("Celestia");
     geekBindCel->bind("C-x C-m", "quit");
