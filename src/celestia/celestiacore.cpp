@@ -2540,6 +2540,7 @@ void CelestiaCore::draw()
         console.end();
     }
 
+// geekconsole may be rendered after CelestiaCore::draw() if EMBED_GEEKCONSOLE
 #if !defined(NO_GEEKCONSOLE) && !defined(EMBED_GEEKCONSOLE)
     if (getGeekConsole())
         getGeekConsole()->render();
@@ -2585,14 +2586,15 @@ void CelestiaCore::resize(GLsizei w, GLsizei h)
     height = h;
 
     setFOVFromZoom();
-#ifdef CELX
-    if (luaHook && luaHook->callLuaHook(this,"resize", (float) w, (float) h))
-        return;
-#endif
 
 #ifndef NO_GEEKCONSOLE
     if (getGeekConsole())
         getGeekConsole()->resize(w, h);
+#endif
+
+#ifdef CELX
+    if (luaHook && luaHook->callLuaHook(this,"resize", (float) w, (float) h))
+        return;
 #endif
 }
 

@@ -1850,7 +1850,7 @@ void GeekConsole::setMacroRecord(bool enable, bool quiet)
 void GeekConsole::callMacro()
 {
     setMacroRecord(false);
-    celCore->flash(_("Call macro"));
+    celCore->flash(string(_("Call macro")) + " " + lastMacro);
     execFunction("exec function", lastMacro);
 }
 
@@ -4429,6 +4429,7 @@ void initGCInteractives(GeekConsole *gc)
                                                   "ending it first if currently being defined.\n"
                                                   "Also bind to key")),
                         "macro end and call");
+    initGCStdCelBinds(getGeekConsole(), "Celestia");
 }
 
 void destroyGCInteractives()

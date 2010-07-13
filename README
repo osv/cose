@@ -1,0 +1,33 @@
+# -*- mode: org; fill-column:65 -*-
+
+This  is COSE  (celestia open  space engine)  - game  engine  based on
+celestia engine.
+
+* Building under Linux, FreeBSD
+
+  Obtain the dependent libraries, then build with:
+
+  #+begin_example
+  ./configure
+  make
+  make install
+  #+end_example
+
+* Build under Windows
+
+  No MSVS project files jet.
+
+* Run client
+
+  #+begin_example
+  ./openspace_client -g /path/to/celestia's_files
+  #+end_example
+
+  
+
+#+TITLE:    COSE
+#+STARTUP:  showall
+#+OPTIONS:  author:nil title:nil
+#+STYLE: <base href="http://orgmode.org/index.html" />
+#+STYLE: <link rel="stylesheet" href="http://orgmode.org/org.css" type="text/css" />
+

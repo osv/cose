@@ -123,7 +123,6 @@ static void ToggleFullscreen()
 
 static void registerAndBindKeys()
 {
-    initGCStdCelBinds(getGeekConsole(), "Celestia");
     getGeekConsole()->registerFunction(GCFunc(startTogVidRecord), "toggle video record");
     getGeekConsole()->registerFunction(GCFunc(stopVidRecord), "stop video record");
     getGeekConsole()->registerAndBind("", "M-RET", GCFunc(ToggleFullscreen), "toggle fullscreen");
