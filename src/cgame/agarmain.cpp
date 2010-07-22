@@ -874,6 +874,7 @@ void gameTerminate()
     // memory leak 
     Core::removeAllSolSys();
     AG_ConfigSave();
+    getGeekConsole()->createAutogen();
     mixerShutdown();
     delete celAppCore;
     freeCfg();

@@ -338,16 +338,19 @@ public:
     GCFunc(const int callBackRef, lua_State* l, std::string doc = ""): type(Lua), luaCallBack(callBackRef),
                                                                        lua(l), info(doc){};
     // constructor for alias to function with some preset parameters
-    GCFunc(const char *aliasTo, const char *parameters, std::string doc = ""): type(Alias),
-                                                                               aliasfun(aliasTo),
-                                                                               params(parameters),
-                                                                               info(doc){};
+    GCFunc(const char *aliasTo, const char *parameters, std::string doc = "", bool arch = false):
+        type(Alias),
+        aliasfun(aliasTo),
+        params(parameters),
+        info(doc),
+        archive(arch){};
     int call(GeekConsole *gc, int state, std::string value);
 
     GCFuncType const getType() { return type; }
     std::string const getAliasFun() { return aliasfun; }
     std::string const getAliasParams() { return params; }
     std::string const getInfo() { return info; }
+    bool const isAliasArchive () { return archive; }
 
 private:
     GCFuncType type;
@@ -359,6 +362,7 @@ private:
     string aliasfun; // alias to function
     string params; // parameters to alias functions
     string info; // documentation of this function
+    bool archive; // alias may be saved by GeekConsole::createAutogen
 };
 
 
@@ -382,9 +386,7 @@ public:
 
     GeekConsole(CelestiaCore *celCore);
     ~GeekConsole();
-
-    void addPromter(std::string name,
-                    GCInteractive *Interactive);
+    void createAutogen(const char *filename = "gcautogen.celx", bool update = true);
     int execFunction(std::string funName);
     int execFunction(std::string funName, std::string param);
     // call callback fun for describe interactive text with state (-funstate - 1)
@@ -424,7 +426,7 @@ public:
                          GCFunc fun, const char *funname);
     const std::vector<GeekBind *>& getGeekBinds()
         { return geekBinds;}
-    bool bind(std::string bindspace, std::string bindkey, std::string function);
+    bool bind(std::string bindspace, std::string bindkey, std::string function, bool archive = false);
     void unbind(std::string bindspace, std::string bindkey);
     GCInteractive *getCurrentInteractive() const
         {return curInteractive;}
@@ -482,6 +484,9 @@ private:
     uint curMacroLevel;
     Beep *beeper;
 };
+
+// convert control, '"', '\' chars to \X or \DDD i.e. to readable lua string
+extern string normalLuaStr(string);
 
 // init geekconsole
 extern void initGeekConsole(CelestiaCore *celApp);

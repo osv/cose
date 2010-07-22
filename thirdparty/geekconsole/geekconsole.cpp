@@ -850,6 +850,50 @@ static FormattedNumber SigDigitNum(double v, int digits)
                            FormattedNumber::SignificantDigits);
 }
 
+string normalLuaStr(string text)
+{
+    int i = 0;
+    wchar_t c;
+    std::string result;
+    char buf[8];
+    int csz;
+    while (i < text.length())
+    {
+        if (!UTF8Decode(text, i, c))
+        {
+            c = text[i];
+            csz = 1;
+        }
+        else
+        {
+            csz = UTF8EncodedSize(c);
+        }
+        switch (c)
+        {
+        case '\a': result.append("\\a"); break;
+        case '\b': result.append("\\b"); break;
+        case '\f': result.append("\\f"); break;
+        case '\n': result.append("\\n"); break;
+        case '\r': result.append("\\r"); break;
+        case '\t': result.append("\\t"); break;
+        case '\v': result.append("\\v"); break;
+        case '\\': result.append("\\\\"); break;
+        case '"':  result.append("\\\""); break;
+        case '\'': result.append("\\'"); break;
+        default:
+            if (c >= ' ')
+                result.append(string(text, i, csz));
+            else
+            {
+                sprintf(buf, "\\%03d", (int)c);
+                result.append(buf);
+            }
+        }
+        i += csz;
+    }
+    return result;
+}
+
 // Convert Ctrl-Key to key, I can't find same in std.
 char removeCtrl(char ckey)
 {
@@ -1188,6 +1232,115 @@ GeekConsole::~GeekConsole()
 {
     for_each(geekBinds.begin(), geekBinds.end(), deleteFunc<GeekBind*>());;
     delete overlay;
+}
+
+/// create/update lua autogen file where aliases, binds will be saved
+// remove text only from "begin_autogen" to "end_autogen" if @update.
+void GeekConsole::createAutogen(const char *filename, bool update)
+{
+    const char tag_begin[] = "begin_autogen";
+    const char tag_end[] = "end_autogen";
+
+    std::stringstream before, after;
+    if (update)
+    {
+        std::string line;
+        std::ifstream infile(filename, ifstream::in);
+
+        while (getline(infile, line, '\n') &&
+               line.find(tag_begin) == string::npos)
+        {
+            before << line << '\n';
+        }
+
+        while (getline(infile, line, '\n') &&
+               line.find(tag_end) == string::npos)
+        {
+            // skip lines between tags
+        }
+
+        while (getline(infile, line, '\n'))
+        {
+            after << line << '\n';
+        }
+
+        infile.close();
+    }
+    std::ofstream file(filename, ifstream::out);
+
+    file << before.str();
+    file << "-- " << tag_begin << endl;
+
+    // dump aliases
+    file << "-- \n-- aliases\n";
+    std::vector<std::string> names;
+    for (Functions::iterator iter = functions.begin();
+         iter != functions.end(); iter++)
+    {
+        GCFunc *f = &iter->second;
+        {
+            if(f->getType() == GCFunc::Alias && f->isAliasArchive())
+            {
+                const std::string& funname = iter->first;
+                file << "gc.registerAliasA(\"" << funname
+                     << "\", \"" << normalLuaStr(f->getAliasFun())
+                     << "\", \"" << normalLuaStr(f->getAliasParams())
+                     << "\"";
+                std::string doc = f->getInfo();
+                if (!doc.empty())
+                {
+                    file << ",\n";
+                    std::vector<std::string> text = splitString(doc, "\n");
+                    std::vector<std::string>::iterator it;
+                    bool first = true;
+                    for (it = text.begin();
+                         it != text.end(); it++) {
+                        if (!first)
+                            // some more margin
+                            file << "   ";
+                        else
+                            first = false;
+                        file << "                 \"" << normalLuaStr(*it) << "\\n\"";
+                        if (it+1 != text.end())
+                        {
+                            file << " ..";
+                            file << endl;
+                        }
+                    }
+                }
+                file << ")" << endl;
+            }
+        }
+    }
+
+    // dump archive binds
+    file << "\n-- binds\n";
+    std::vector<GeekBind::KeyBind>::const_iterator it;
+    std::vector<GeekBind *>::iterator gb;
+    for (gb  = geekBinds.begin();
+         gb != geekBinds.end(); gb++)
+    {
+        std::vector<GeekBind::KeyBind> binds = (*gb)->getBinds();
+        for (it = binds.begin();
+             it != binds.end(); it++)
+        {
+            if (it->archive)
+            {
+                file << "gc.bindA(\"" << normalLuaStr(it->keyToStr());
+                if (!it->params.empty())
+                    file << " ";
+                file << it->params
+                     << "\", \"" << normalLuaStr(it->gcFunName)
+                     << "\", \"" << (*gb)->getName()
+                     << "\")\n";
+            }
+        }
+    }
+    file << endl;
+
+    file << "-- " << tag_end << endl;
+    file << after.str();
+    file.close();
 }
 
 int GeekConsole::execFunction(GCFunc *fun)
@@ -1743,7 +1896,8 @@ void GeekConsole::registerAndBind(std::string bindspace, const char *bindkey,
         gb->bind(bindkey, funname);
 }
 
-bool GeekConsole::bind(std::string bindspace, std::string bindkey, std::string function)
+//! bind key
+bool GeekConsole::bind(std::string bindspace, std::string bindkey, std::string function, bool archive)
 {
     if (bindspace.empty())
         bindspace = "Global";
@@ -1751,7 +1905,7 @@ bool GeekConsole::bind(std::string bindspace, std::string bindkey, std::string f
     if (!gb)
         gb = createGeekBind(bindspace);
     if(gb)
-        return gb->bind(bindkey.c_str(), function);
+        return gb->bind(bindkey.c_str(), function, archive);
     return false;
 }
 
@@ -4020,7 +4174,8 @@ static int saveMacro(GeekConsole *gc, int state, std::string value)
 
     if (state == 3) // register function and ask for bind space
     {
-        gc->reRegisterFunction(GCFunc("exec function", gc->getCurrentMacro().c_str()), svmFunName);
+        // create alias for archive
+        gc->reRegisterFunction(GCFunc("exec function", gc->getCurrentMacro().c_str(), "", true), svmFunName);
         // TODO: maybe good to save macro in cfg file for load it at startup
         gc->setInteractive(listInteractive, "bindkey-space", _("BindSpace"), _("Bind key: Select bindspace"));
         gc->setInfoText(svmFunName + "\n" +
@@ -4056,7 +4211,61 @@ static int saveMacro(GeekConsole *gc, int state, std::string value)
             gc->setInfoText(gb->getBindDescr(value));
     } else if (state == 5) // finish
     {
-        gc->bind(bindspace, value, svmFunName);
+        // bind key (archive = true)
+        gc->bind(bindspace, value, svmFunName, true);
+    }
+
+    return state;
+}
+
+static int saveMacrosBind(GeekConsole *gc, int state, std::string value)
+{
+
+    static string svmFunName; // save fun name here
+    static string bindspace; // save name of bind space here
+
+    geekConsole->setMacroRecord(false, true);
+
+    if (state == 0)
+    {
+        // TODO: maybe good to save macro in cfg file for load it at startup
+        gc->setInteractive(listInteractive, "bindkey-space", _("BindSpace"), _("Bind key: Select bindspace"));
+        gc->setInfoText("Current macro:\n" + gc->getCurrentMacro());
+        const std::vector<GeekBind *> &gbs = gc->getGeekBinds();
+        std::vector<string> completion;
+        for (std::vector<GeekBind *>::const_iterator it = gbs.begin();
+             it != gbs.end(); it++)
+        {
+            GeekBind *gb = *it;
+            std::string name = gb->getName();
+            completion.push_back(name);
+        }
+        listInteractive->setCompletion(completion);
+        listInteractive->setMatchCompletion(true);
+    }
+
+    if (state == 1 ) // ask for key
+    {
+        bindspace = value;
+        gc->setInteractive(listInteractive, "bindkey-key", _("Key bind"), _("Choose key bind. Example: C-x c"));
+        GeekBind *gb = gc->getGeekBind(value);
+        if (gb)
+        {
+            listInteractive->setCompletion(gb->getAllBinds());
+            listInteractive->setMatchCompletion(false);
+        }
+        return 1;
+    }
+    else if (state == -1 -1) // describe current bind
+    {
+        GeekBind *gb = gc->getGeekBind(bindspace);
+        if (gb)
+            gc->setInfoText(gb->getBindDescr(value));
+    }
+    else if (state == 2) // finish
+    {
+        // bind key (archive = true)
+        gc->bind(bindspace, value + " " + gc->getCurrentMacro(), "", true);
     }
 
     return state;
@@ -4110,7 +4319,7 @@ static int bindKey(GeekConsole *gc, int state, std::string value)
         listInteractive->setMatchCompletion(true);
         break;
     case 3:
-        gc->bind(bindspace, keybind, value);
+        gc->bind(bindspace, keybind, value, true);
         break;
     default:
         break;
@@ -4422,8 +4631,13 @@ void initGCInteractives(GeekConsole *gc)
                         "macro end");
     gc->registerAndBind("", "C-x C-k n",
                         GCFunc(saveMacro, _("Assign name to last macro.\n"
-                                                  "Also bind you can bind key")),
+                                            "Also bind you can bind key")),
                         "macro save");
+    gc->registerAndBind("", "C-x C-k S-n",
+                        GCFunc(saveMacrosBind, _("Bind key for current macro.\n"
+                                                 "If you wish register name for this macro\n"
+                                                 "use \"macro save\" instead.")),
+                        "macro save as bind");
     gc->registerAndBind("", "C-x e",
                         GCFunc(endAndCallMacro, _("Call last macro, "
                                                   "ending it first if currently being defined.\n"

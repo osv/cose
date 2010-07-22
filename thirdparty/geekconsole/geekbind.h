@@ -58,7 +58,7 @@ public:
     {
         char c[MAX_KEYBIND_LEN];
         int  mod[MAX_KEYBIND_LEN];
-        /// function name, may be empty and than firstParam is function
+        /// function name, may be empty and than this.firstParam is function
         std::string gcFunName;
         // first param of splited param by '#' char
         std::string firstParam;
@@ -67,6 +67,7 @@ public:
         std::string keyToStr() const;
         bool set(const char *bind);
         bool operator<(const KeyBind&) const;
+        bool archive; // does bind must be saved
     };
     GeekBind(std::string name);
     ~GeekBind() {};
@@ -83,7 +84,7 @@ public:
     const std::vector<KeyBind>& getBinds();
     const std::string getName()
         { return name;}
-    bool bind(const char *keybind, std::string funName);
+    bool bind(const char *keybind, std::string funName, bool arch = false);
     void unbind(const char *keybind);
     // for using in geeckonsole to decide to where dispatch keydown even
     bool isActive;

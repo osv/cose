@@ -326,7 +326,7 @@ const std::vector<GeekBind::KeyBind>& GeekBind::getBinds()
     return binds;
 }
 
-bool GeekBind::bind(const char *keybind, std::string funName)
+bool GeekBind::bind(const char *keybind, std::string funName, bool arch)
 {
     KeyBind k;
     if (!k.set(keybind))
@@ -343,6 +343,7 @@ bool GeekBind::bind(const char *keybind, std::string funName)
             endpos = k.params.find_first_of('#', startpos);
         k.firstParam = string(k.params, startpos, endpos - 1);
     }
+    k.archive = arch;
 
     unbind(keybind);
     binds.push_back(k);

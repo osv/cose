@@ -105,6 +105,22 @@ static int registerAlias(lua_State* l)
     return 0;
 }
 
+// create alias (archive)
+static int registerAliasA(lua_State* l)
+{
+    CelxLua celx(l);
+    celx.checkArgs(3, 4, "Three arguments expected for gc.registerAliasA(string, string, string, [string])");
+    const char *gcFunName = celx.safeGetString(1, AllErrors, "argument 1 to gc.registerAlias must be a string");
+    const char *aliasName = celx.safeGetString(2, AllErrors, "argument 2 to gc.registerAlias must be a string");
+    const char *args = celx.safeGetString(3, AllErrors, "argument 3 to gc.registerAlias must be a string");
+    const char *doc = celx.safeGetString(4, WrongType, "argument 4 to gc.registerAlias must be a string");
+    if (doc)
+        getGeekConsole()->reRegisterFunction(GCFunc(aliasName, args, doc, true), gcFunName);
+    else
+        getGeekConsole()->reRegisterFunction(GCFunc(aliasName, args, "", true), gcFunName);
+    return 0;
+}
+
 static int setListInteractive(lua_State* l)
 {
     CelxLua celx(l);
@@ -326,6 +342,21 @@ static int gcBindKey(lua_State* l)
     return 0;
 }
 
+// create bind (archive)
+static int gcBindKeyA(lua_State* l)
+{
+    CelxLua celx(l);
+    celx.checkArgs(2, 3, "Two or three arguments expected for gc.bind(sKeyAndARGS, sFunName, [sNameSpace])");
+    const char *key = celx.safeGetString(1, AllErrors, "argument 1 to gc.bind must be a string");
+    const char *fun = celx.safeGetString(2, AllErrors, "argument 2 to gc.bind must be a string");
+    const char *namesp = celx.safeGetString(3, WrongType, "argument 3 to gc.bind must be a string");
+    if (namesp)
+        getGeekConsole()->bind(namesp, key, fun, true);
+    else
+        getGeekConsole()->bind("", key, fun, true);
+    return 0;
+}
+
 
 static int gcUnBindKey(lua_State* l)
 {
@@ -351,6 +382,7 @@ void LoadLuaGeekConsoleLibrary(lua_State* l)
     celx.registerMethod("isFunction", isFunctionRegistered);
     celx.registerMethod("setInfoText", setInfoText);
     celx.registerMethod("registerAlias", registerAlias);
+    celx.registerMethod("registerAliasA", registerAliasA);
     celx.registerMethod("listInteractive", setListInteractive);
     celx.registerMethod("passwdInteractive", setPasswdInteractive);
     celx.registerMethod("celBodyInteractive", setCelBodyInteractive);
@@ -365,6 +397,7 @@ void LoadLuaGeekConsoleLibrary(lua_State* l)
     celx.registerMethod("setColumns", setColumns);
     celx.registerMethod("setLastFromHistory", setLastFromHistory);
     celx.registerMethod("bind", gcBindKey);
+    celx.registerMethod("bindA", gcBindKeyA);
     celx.registerMethod("unbind", gcUnBindKey);
     lua_settable(l, LUA_GLOBALSINDEX);
 }
