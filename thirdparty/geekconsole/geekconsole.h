@@ -83,6 +83,11 @@ public:
      */
     virtual void Interact(GeekConsole *gc, string historyName);
     virtual void charEntered(const char *c_p, int modifiers);
+    virtual void mouseWheel(float motion, int modifiers);
+    virtual void mouseButtonDown(float x, float y, int button);
+    virtual void mouseMove(float dx, float dy, int modifiers);
+    virtual void mouseMove(float x, float y);
+
     // called by gc
     virtual void cancelInteractive();
     /* You must render Interactive by using GeekConsole's overlay
@@ -148,6 +153,9 @@ public:
     bool tryComplete();
     void charEntered(const char *c_p, int modifiers);
     void charEnteredFilter(const char *c_p, int modifiers);
+    void mouseWheel(float motion, int modifiers);
+    void mouseButtonDown(float x, float y, int button);
+    void mouseMove(float x, float y);
     virtual void renderInteractive();
     virtual void renderCompletion(float height, float width);
     void update(const std::string &buftext);
@@ -165,7 +173,7 @@ protected:
     int pageScrollIdx;
     uint scrollSize; // number of compl. items to scroll
     int completedIdx;
-    uint cols;
+    uint cols; // num of columns of completion (cached)
     std::vector<std::string> typedTextCompletion;
     bool mustMatch; // if true - on RET key finish promt only if matched in completionList
 private:
@@ -184,6 +192,8 @@ public:
     CelBodyInteractive(std::string name, CelestiaCore *celApp);
     void Interact(GeekConsole *_gc, string historyName);
     void charEntered(const char *c_p, int modifiers);
+    void mouseButtonDown(float, float, int);
+    void mouseMove(float, float);
     void update(const std::string &buftext);
     void setCompletion(std::vector<std::string> completion);
     void setCompletionFromSemicolonStr(std::string);
@@ -270,6 +280,7 @@ public:
     PagerInteractive(std::string name);
     void Interact(GeekConsole *_gc, string historyName);
     void charEntered(const char *c_p, int modifiers);
+    void mouseWheel(float motion, int modifiers);
     void renderCompletion(float height, float width);
     void renderInteractive();
     void setText(std::string text);
@@ -396,12 +407,20 @@ public:
     GCFunc *getFunctionByName(std::string);
     std::vector<std::string> getFunctionsNames();
     bool charEntered(const char *c_p, int modifiers);
+    bool mouseWheel(float motion, int modifiers);
+    bool mouseButtonDown(float x, float y, int button);
+    bool mouseButtonUp(float x, float y, int button);
+    bool mouseMove(float dx, float dy, int modifiers);
+    bool mouseMove(float x, float y);
+    float mouseYofCompl(float y); // return y for completion
     void resize(int w, int h)
         {
             overlay->setWindowSize(w, h);
             width = w; height = h;
         };
     int const getWidth() {return width;}
+    int const getHeight() {return height;}
+    int const getCmplLines(); // lines in completion that depend on size of console
     void render();
     bool isVisible;
     int32 consoleType;
@@ -442,7 +461,8 @@ public:
         { return currentMacro; }
     void appendCurrentMacro(std::string);
     void appendDescriptionStr(std::string);
-
+    GCInteractive *getCurInteractive()
+        { return curInteractive; }
     void setBeeper(Beep *);
     Beep *getBeeper()
         { return beeper; }
@@ -483,6 +503,7 @@ private:
     uint maxMacroLevel;
     uint curMacroLevel;
     Beep *beeper;
+    bool mouseDown;
 };
 
 // convert control, '"', '\' chars to \X or \DDD i.e. to readable lua string

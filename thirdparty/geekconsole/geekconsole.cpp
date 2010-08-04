@@ -1653,6 +1653,75 @@ bool GeekConsole::charEntered(const char *c_p, int modifiers)
     return true;
 }
 
+// return true if event procceed
+bool GeekConsole::mouseWheel(float motion, int modifiers)
+{
+    if (!isVisible)
+        return false;
+
+    descriptionStr.clear();
+    if (curInteractive)
+    {
+        curInteractive->mouseWheel(motion, modifiers);
+        curInteractive->update(curInteractive->getBufferText());
+    }
+    return true;
+}
+
+bool GeekConsole::mouseButtonDown(float x, float y, int button)
+{
+    if (!isVisible)
+        return false;
+
+    if (mouseYofCompl(y) < 0)
+        return true;
+
+    mouseDown = true;
+
+    descriptionStr.clear();
+    if (curInteractive)
+    {
+        curInteractive->mouseButtonDown(x, y, button);
+        if (curInteractive)
+            curInteractive->update(curInteractive->getBufferText());
+    }
+    return true;
+}
+
+bool GeekConsole::mouseButtonUp(float x, float y, int button)
+{
+    if (mouseDown)
+    {
+        mouseDown = false;
+        return true;
+    }
+    return false;
+}
+
+bool GeekConsole::mouseMove(float dx, float dy, int modifiers)
+{
+    if (!isVisible)
+        return false;
+
+    descriptionStr.clear();
+    if (curInteractive)
+    {
+        curInteractive->mouseMove(dx, dy, modifiers);
+    }
+    return true;
+}
+
+bool GeekConsole::mouseMove(float x, float y)
+{
+    if (!isVisible)
+        return false;
+
+    descriptionStr.clear();
+    if (curInteractive)
+        curInteractive->mouseMove(x, mouseYofCompl(y));
+    return true;
+}
+
 TextureFont* GeekConsole::getInteractiveFont()
 {
     if (titleFont == NULL)
@@ -1667,21 +1736,15 @@ TextureFont* GeekConsole::getCompletionFont()
     return font;
 }
 
-
-void GeekConsole::render()
+int const GeekConsole::getCmplLines()
 {
-    if (!isVisible || !curInteractive)
-        return;
     TextureFont* font = getCompletionFont();
     TextureFont* titleFont = getInteractiveFont();
-    if (font == NULL || titleFont == NULL)
-        return;
 
     float fontH = font->getHeight();
     float titleFontH = titleFont->getHeight();
+
     int nb_lines;
-    float complH; // height of completion area
-    float rectH; // height of console
     switch(consoleType)
     {
     case GeekConsole::Tiny:
@@ -1698,9 +1761,48 @@ void GeekConsole::render()
 
     if (nb_lines < 3)
         nb_lines = 3;
+    return nb_lines;
+}
+
+// return  Y of copmletion from screen size
+float GeekConsole::mouseYofCompl(float y)
+{
+    TextureFont* font = getCompletionFont();
+    TextureFont* titleFont = getInteractiveFont();
+
+    float fontH = font->getHeight();
+    float titleFontH = titleFont->getHeight();
+
+    float complH; // height of completion area
+    float rectH; // height of console
+
+    int nb_lines = getCmplLines();
 
     complH = (nb_lines+1) * (fontH + 1);
     rectH = complH + 2 * titleFontH;
+    return y - (height - rectH);
+}
+
+void GeekConsole::render()
+{
+    if (!isVisible || !curInteractive)
+        return;
+    TextureFont* font = getCompletionFont();
+    TextureFont* titleFont = getInteractiveFont();
+    if (font == NULL || titleFont == NULL)
+        return;
+
+    float fontH = font->getHeight();
+    float titleFontH = titleFont->getHeight();
+
+    int nb_lines = getCmplLines();
+
+    float complH; // height of completion area
+    float rectH; // height of console
+
+    complH = (nb_lines+1) * (fontH + 1);
+    rectH = complH + 2 * titleFontH;
+
     overlay->begin();
     glTranslatef(0.0f, BOTTOM_MARGIN, 0.0f); //little margin from bottom
 
@@ -2232,6 +2334,18 @@ void GCInteractive::charEntered(const char *c_p, int modifiers)
             }
         }
 }
+
+void GCInteractive::mouseWheel(float motion, int modifiers)
+{}
+
+void GCInteractive::mouseButtonDown(float x, float y, int button)
+{}
+
+void GCInteractive::mouseMove(float x, float y, int modifiers)
+{}
+
+void GCInteractive::mouseMove(float x, float y)
+{}
 
 void GCInteractive::cancelInteractive()
 {
@@ -2851,6 +2965,91 @@ void ListInteractive::charEnteredFilter(const char *c_p, int modifiers)
     }
 }
 
+void ListInteractive::mouseWheel(float motion, int modifiers)
+{
+    // gc->getCurInteractive() not null when this event passed
+    if (motion > 0.0)
+        gc->getCurInteractive()->charEntered("\t", 0);
+    else
+        gc->getCurInteractive()->charEntered("\t", GeekBind::CTRL);
+}
+
+void ListInteractive::mouseButtonDown(float x, float y, int button)
+{
+    if (button == CelestiaCore::LeftButton)
+        if (completionStyle != Filter)
+            gc->getCurInteractive()->charEntered("\n", 0);
+        else
+        {
+            gc->getCurInteractive()->charEntered("\n", GeekBind::SHIFT);
+            gc->getCurInteractive()->charEntered("\n", 0);
+        }
+    else if (button == CelestiaCore::RightButton)
+        if (!separatorChars.empty())
+        {
+            char buf[] = {separatorChars[0], 0};
+            if (completionStyle != Filter)
+                gc->getCurInteractive()->charEntered(buf, 0);
+            else
+            {
+                gc->getCurInteractive()->charEntered("\n", GeekBind::SHIFT);
+                gc->getCurInteractive()->charEntered(buf, 0);
+            }
+        }
+}
+
+void ListInteractive::mouseMove(float x, float y)
+{
+    TextureFont *font = gc->getCompletionFont();
+    float fh = font->getHeight();
+    uint nb_lines = gc->getCmplLines();
+    int cx = ceil(((int) x / (gc->getWidth() / cols)));
+    int cy = ceil((int)(y / (fh + 1)));
+    if (cy < 0 || cy > nb_lines * (fh + 1))
+        return;
+    int tmpCmplIdx = pageScrollIdx + nb_lines * (cx) + (cy - 1);
+    if (tmpCmplIdx < pageScrollIdx)
+        tmpCmplIdx = pageScrollIdx;
+    if (tmpCmplIdx >= typedTextCompletion.size())
+        return;
+    if (tmpCmplIdx > pageScrollIdx + scrollSize - 1)
+        tmpCmplIdx = pageScrollIdx;
+    completedIdx = tmpCmplIdx;
+    // For cmpl style Filter need append right text like it in
+    // charEntered for M-/ M-?
+    if (completionStyle != Filter)
+    {
+        vector<std::string>::const_iterator it = typedTextCompletion.begin();
+        it += completedIdx;
+        uint oldBufSizeBeforeHystory = bufSizeBeforeHystory;
+        setRightText(*it);
+        bufSizeBeforeHystory = oldBufSizeBeforeHystory;
+    }
+
+    gc->descriptionStr = _(ctrlZDescr);
+    gc->appendDescriptionStr(_("Mouse-1 or RET - apply"));
+    if (!separatorChars.empty())
+        gc->appendDescriptionStr(_("Mouse-3 append separator"));
+    if (completionStyle == Filter)
+    {
+        // try update for current buffer if ready for finish
+        if (canFinish)
+            gc->describeCurText(getBufferText());
+        else // otherwise update for current selected item
+        {
+            vector<std::string>::const_iterator it = typedTextCompletion.begin();
+            if (completedIdx >=0)
+            {
+                it += completedIdx;
+                if (it < typedTextCompletion.end())
+                    gc->describeCurText(*it);
+            }
+        }
+    }
+    else
+        gc->describeCurText(getBufferText());
+}
+
 void ListInteractive::renderInteractive()
 {
     GCInteractive::renderInteractive();
@@ -3270,6 +3469,30 @@ void CelBodyInteractive::charEntered(const char *c_p, int modifiers)
     }
 }
 
+void CelBodyInteractive::mouseButtonDown(float x, float y, int button)
+{
+    // middle mouse - center object (M-c)
+    if (button == CelestiaCore::MiddleButton)
+        charEntered("c", GeekBind::META);
+    else
+        ListInteractive::mouseButtonDown(x, y, button);
+}
+
+void CelBodyInteractive::mouseMove(float x, float y)
+{
+    ListInteractive::mouseMove(x,y);
+    gc->appendDescriptionStr(_("Mouse-2 center object"));
+
+    Selection sel = celApp->getSimulation()->findObjectFromPath(getBufferText(), true);
+    std::string desc = describeSelection(sel, celApp);
+
+    if (!desc.empty())
+    {
+        gc->setInfoText(desc);
+    }
+}
+
+
 /* Mark obj if found
  */
 void CelBodyInteractive::update(const std::string &buftext)
@@ -3343,7 +3566,8 @@ void FlagInteractive::Interact(GeekConsole *_gc, string historyName)
 
 void FlagInteractive::setSeparatorChars(std::string s)
 {
-    separatorChars = s;
+    if (!s.empty())
+        separatorChars = s;
 }
 
 void FlagInteractive::updateTextCompletion()
@@ -3810,6 +4034,15 @@ void PagerInteractive::charEntered(const char *c_p, int modifiers)
         pageScrollIdx = lines->size() - 1;
     if (pageScrollIdx < 0)
         pageScrollIdx = 0;
+}
+
+void PagerInteractive::mouseWheel(float motion, int modifiers)
+{
+    if (motion > 0.0)
+        charEntered("d", 0);
+    else
+        charEntered("u", GeekBind::CTRL);
+
 }
 
 // Commands are based on both more and vi. Commands may be preceded by

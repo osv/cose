@@ -662,6 +662,11 @@ bool checkMask(int modifiers, int mask)
 
 void CelestiaCore::mouseButtonDown(float x, float y, int button)
 {
+#if !defined(NO_GEEKCONSOLE) && !defined(EMBED_GEEKCONSOLE)
+    if (getGeekConsole()->mouseButtonDown(x, y, button))
+        return;
+#endif
+
     setViewChanged();
 
     mouseMotion = 0.0f;
@@ -731,6 +736,11 @@ void CelestiaCore::mouseButtonDown(float x, float y, int button)
 
 void CelestiaCore::mouseButtonUp(float x, float y, int button)
 {
+#if !defined(NO_GEEKCONSOLE) && !defined(EMBED_GEEKCONSOLE)
+    if (getGeekConsole()->mouseButtonUp(x, y, button))
+        return;
+#endif
+
     setViewChanged();
 
     // Four pixel tolerance for picking
@@ -816,6 +826,11 @@ void CelestiaCore::mouseButtonUp(float x, float y, int button)
 
 void CelestiaCore::mouseWheel(float motion, int modifiers)
 {
+#if !defined(NO_GEEKCONSOLE) && !defined(EMBED_GEEKCONSOLE)
+    if (getGeekConsole()->mouseWheel(motion, modifiers))
+        return;
+#endif
+
     setViewChanged();
 
     if (config->reverseMouseWheel) motion = -motion;
@@ -839,6 +854,11 @@ void CelestiaCore::mouseWheel(float motion, int modifiers)
 /// x and y are the pixel coordinates relative to the widget.
 void CelestiaCore::mouseMove(float x, float y)
 {
+#if !defined(NO_GEEKCONSOLE) && !defined(EMBED_GEEKCONSOLE)
+    if (getGeekConsole()->mouseMove(x, y))
+        return;
+#endif
+
 #ifdef CELX
     if (luaHook && luaHook->callLuaHook(this, "mousemove", x, y))
         return;
@@ -879,6 +899,11 @@ void CelestiaCore::mouseMove(float x, float y)
 
 void CelestiaCore::mouseMove(float dx, float dy, int modifiers)
 {
+#if !defined(NO_GEEKCONSOLE) && !defined(EMBED_GEEKCONSOLE)
+    if (getGeekConsole()->mouseMove(dx, dy, modifiers))
+        return;
+#endif
+
     if (modifiers != 0)
         setViewChanged();
 

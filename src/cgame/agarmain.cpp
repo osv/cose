@@ -528,7 +528,10 @@ static int BG_ProcessEvent(AG_DriverEvent *dev)
                 BG_ResizeWithMenu();
                 celAppCore->flashFrame();
             }
-        celAppCore->mouseMove(drv->mouse->xRel, drv->mouse->yRel, buttons);
+        if (buttons)
+            celAppCore->mouseMove(drv->mouse->xRel, drv->mouse->yRel, buttons);
+        else
+            celAppCore->mouseMove(dev->data.motion.x, dev->data.motion.y);
         return 1;
     }
 
@@ -588,6 +591,86 @@ int My_PostEventCallback()
 }
 
 /**
+   Mouse event for geekconsole which have highest prioritet
+   Return 0 if not passed (geekconsole not visible for ex.)
+ */
+static int GC_ProcessMouseEvent(AG_DriverEvent *dev)
+{
+    AG_Driver *drv;
+    AG_Keyboard *kbd;
+
+    if (!getGeekConsole())
+        return 0;
+
+	drv = (AG_Driver *) agDriverSw;
+    kbd = drv->kbd;
+    switch (dev->type) {
+    case AG_DRIVER_MOUSE_BUTTON_DOWN:
+    {
+        int x = dev->data.button.x;
+        int y = dev->data.button.y;
+
+        switch (dev->data.button.which) {
+        case AG_MOUSE_WHEELUP:
+            return getGeekConsole()->mouseWheel(-1.0f, 0);
+        case AG_MOUSE_WHEELDOWN:
+            return getGeekConsole()->mouseWheel(1.0f, 0);
+        case AG_MOUSE_RIGHT:
+            return getGeekConsole()->mouseButtonDown(x, y, CelestiaCore::RightButton);
+            break;
+        case AG_MOUSE_LEFT:
+            return getGeekConsole()->mouseButtonDown(x, y, CelestiaCore::LeftButton);
+            break;
+        case AG_MOUSE_MIDDLE:
+            return getGeekConsole()->mouseButtonDown(x, y, CelestiaCore::MiddleButton);
+        default:
+            break;
+        }
+        break;
+    }
+    case AG_DRIVER_MOUSE_BUTTON_UP:
+    {
+        int x = dev->data.button.x;
+        int y = dev->data.button.y;
+
+        switch (dev->data.button.which) {
+        case AG_MOUSE_RIGHT:
+            return getGeekConsole()->mouseButtonUp(x, y, CelestiaCore::RightButton);
+        case AG_MOUSE_LEFT:
+            return getGeekConsole()->mouseButtonUp(x, y, CelestiaCore::LeftButton);
+        case AG_MOUSE_MIDDLE:
+            return getGeekConsole()->mouseButtonUp(x, y, CelestiaCore::MiddleButton);
+        default:
+            break;
+        }
+        break;
+    }
+    case AG_DRIVER_MOUSE_MOTION:
+    {
+        int buttons = 0;
+        Uint mod = AG_GetModState(kbd);
+        if (leftButton)
+            buttons |= CelestiaCore::LeftButton;
+        if (rightButton)
+            buttons |= CelestiaCore::RightButton;
+        if (middleButton)
+            buttons |= CelestiaCore::MiddleButton;
+        if ((mod & AG_KEYMOD_SHIFT) != 0)
+            buttons |= CelestiaCore::ShiftKey;
+        if ((mod & AG_KEYMOD_CTRL) != 0)
+            buttons |= CelestiaCore::ControlKey;
+
+        if (buttons)
+            return getGeekConsole()->mouseMove(drv->mouse->xRel, drv->mouse->yRel, buttons);
+        else
+            return getGeekConsole()->mouseMove(dev->data.motion.x, dev->data.motion.y);
+        break;
+    }
+    } //switch
+    return 0;
+}
+
+/**
  * Process an AGAR event. Returns 1 if the event was processed in some
  * way, -1 if application is exiting.
  * At first process mouse event:
@@ -602,6 +685,12 @@ int CL_ProcessEvent(AG_DriverEvent *dev)
     int x,y;
     int mod = 0;
 	AG_Driver *drv;
+
+    // geekconsole have highest prioritet for mause event
+    // It cannot be passed just to CelestiaCore::mouse*,
+    // we need give event to libagar too
+    if (GC_ProcessMouseEvent(dev))
+        return 1;
 
     drv = (AG_Driver *) agDriverSw;
     switch (dev->type) {
