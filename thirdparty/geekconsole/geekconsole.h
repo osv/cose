@@ -33,6 +33,33 @@
 
 #define MAX_HISTORY_SYZE 128
 
+#define CTRL_A '\001'
+#define CTRL_B '\002'
+#define CTRL_C '\003'
+#define CTRL_D '\004'
+#define CTRL_E '\005'
+#define CTRL_F '\006'
+#define CTRL_G '\007'
+#define CTRL_H '\010'
+#define CTRL_I '\011'
+#define CTRL_J '\012'
+#define CTRL_K '\013'
+#define CTRL_L '\014'
+#define CTRL_M '\015'
+#define CTRL_N '\016'
+#define CTRL_O '\017'
+#define CTRL_P '\020'
+#define CTRL_Q '\021'
+#define CTRL_R '\022'
+#define CTRL_S '\023'
+#define CTRL_T '\024'
+#define CTRL_U '\025'
+#define CTRL_V '\026'
+#define CTRL_W '\027'
+#define CTRL_X '\030'
+#define CTRL_Y '\031'
+#define CTRL_Z '\032'
+
 inline vector<string> splitString( string str, string delim ){
     vector<string> result;
     uint cutAt;

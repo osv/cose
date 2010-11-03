@@ -64,6 +64,11 @@ class Overlay : public std::ostream
     void print(wchar_t);
     void print(char);
     void print(const char*);
+    const float getXoffset() const
+        {return xoffset;}
+    const float getYoffset() const
+        {return yoffset;}
+
 #ifndef _WIN32
     // Disable GCC format attribute specification requests. Only
     // the format string will be checked:

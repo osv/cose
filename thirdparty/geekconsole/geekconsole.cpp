@@ -118,6 +118,7 @@ geekConsole->registerFunction(GCFunc("quit", "#yes#"), "force quit");
 */
 
 #include "geekconsole.h"
+#include "infointer.h" // info interactive
 #include <celutil/directory.h>
 #include <celengine/starbrowser.h>
 #include <celengine/marker.h>
@@ -4258,6 +4259,7 @@ ColorChooserInteractive *colorChooserInteractive;
 FlagInteractive *flagInteractive;
 FileInteractive *fileInteractive;
 PagerInteractive *pagerInteractive;
+InfoInteractive *infoInteractive;
 
 /******************************************************************
  *  Functions
@@ -4821,7 +4823,28 @@ static int describeBindKey(GeekConsole *gc, int state, std::string value)
     return state;
 }
 
+static int info(GeekConsole *gc, int state, std::string value)
+{
+    if (state == 0)
+    {
+        gc->setInteractive(infoInteractive, "Info");
+        infoInteractive->setNode("Dir");
+    }
+    return state;
+}
+
+static int info_last_node(GeekConsole *gc, int state, std::string value)
+{
+    if (state == 0)
+    {
+        gc->setInteractive(infoInteractive, "Info");
+    }
+    return state;
+}
+
 static bool isInteractsInit = false;
+
+extern void initinfos();
 
 void initGCInteractives(GeekConsole *gc)
 {
@@ -4834,6 +4857,7 @@ void initGCInteractives(GeekConsole *gc)
         fileInteractive = new FileInteractive("file");
         colorChooserInteractive = new ColorChooserInteractive("colorch");
         pagerInteractive = new PagerInteractive("pager");
+        infoInteractive = new InfoInteractive("info");
         isInteractsInit = true;
     }
     gc->registerAndBind("", "M-x",
@@ -4876,6 +4900,8 @@ void initGCInteractives(GeekConsole *gc)
                                                   "ending it first if currently being defined.\n"
                                                   "Also bind to key")),
                         "macro end and call");
+    getGeekConsole()->registerFunction(GCFunc(info, _("Read Info documents")), "info");
+    getGeekConsole()->registerFunction(GCFunc(info_last_node), "info, last visited node");
     initGCStdCelBinds(getGeekConsole(), "Celestia");
 }
 
@@ -4888,6 +4914,7 @@ void destroyGCInteractives()
     delete flagInteractive;
     delete fileInteractive;
     delete pagerInteractive;
+    delete infoInteractive;
 }
 
 void initGeekConsole(CelestiaCore *celApp)

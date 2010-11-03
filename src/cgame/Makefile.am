@@ -6,6 +6,7 @@ AM_CXXFLAGS = @CXXFLAGS@ \
 INCLUDES = -I.. -I../celestia \
 	-I$(top_srcdir)/thirdparty/Eigen \
 	-I$(top_srcdir)/thirdparty/geekconsole \
+	-I$(top_srcdir)/thirdparty/geekconsole/gcinfo \
 	-I$(top_srcdir)/thirdparty/glew/include
 
 AM_CFLAGS = @CFLAGS@ \
@@ -15,6 +16,18 @@ LIBS = @LIBS@ \
 	@CGAME_LIBS@ \
 	@AGAR_LIBS@
 
+GEEKCONSOLESRC = \
+	$(top_srcdir)/thirdparty/geekconsole/geekconsole.cpp \
+	$(top_srcdir)/thirdparty/geekconsole/geekbind.cpp \
+	$(top_srcdir)/thirdparty/geekconsole/stdcelinter.cpp \
+	$(top_srcdir)/thirdparty/geekconsole/geeklua.cpp \
+	$(top_srcdir)/thirdparty/geekconsole/gcinfo/search.c \
+	$(top_srcdir)/thirdparty/geekconsole/gcinfo/nodes.c \
+	$(top_srcdir)/thirdparty/geekconsole/gcinfo/info-utils.c \
+	$(top_srcdir)/thirdparty/geekconsole/gcinfo/filesys.c \
+	$(top_srcdir)/thirdparty/geekconsole/gcinfo/dir.c \
+	$(top_srcdir)/thirdparty/geekconsole/gcinfo/tilde.c \
+	$(top_srcdir)/thirdparty/geekconsole/infointer.cpp
 
 if ENABLE_CGAME
 bin_PROGRAMS = openspace_client
@@ -57,10 +70,7 @@ openspace_client_SOURCES = \
 	videocapture.cpp \
 	cgame.cpp \
 	configfile.cpp \
-	$(top_srcdir)/thirdparty/geekconsole/geekconsole.cpp \
-	$(top_srcdir)/thirdparty/geekconsole/geekbind.cpp \
-	$(top_srcdir)/thirdparty/geekconsole/stdcelinter.cpp \
-	$(top_srcdir)/thirdparty/geekconsole/geeklua.cpp \
+	$(GEEKCONSOLESRC) \
 	ui_theme.cpp
 
 noinst_DATA = ../../openspace_client
