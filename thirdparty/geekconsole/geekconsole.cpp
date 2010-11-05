@@ -1303,12 +1303,14 @@ void GeekConsole::createAutogen(const char *filename, bool update)
                             file << "   ";
                         else
                             first = false;
-                        file << "                 \"" << normalLuaStr(*it) << "\\n\"";
+                        file << "                  \"" << normalLuaStr(*it);
                         if (it+1 != text.end())
                         {
-                            file << " ..";
+                            file << "\\n\" ..";
                             file << endl;
                         }
+                        else
+                            file << "\"";
                     }
                 }
                 file << ")" << endl;
