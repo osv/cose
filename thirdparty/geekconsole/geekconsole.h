@@ -137,6 +137,9 @@ public:
     std::string getBufferText()const
         {return buf;}
 
+    // get size of completion, -1 for need max as possible
+    virtual int getBestCompletionSizePx();
+
 protected:
     GeekConsole *gc;
     std::string separatorChars; // additional separator chars
@@ -192,6 +195,8 @@ public:
     void setCompletionFromSemicolonStr(std::string); // add completion by str like "yes;no"
     void setColumns(int c = 4)
         {cols = c; if (cols < 1) cols = 1; if (cols > 8) cols = 8;}
+    int getBestCompletionSizePx();
+
 protected:
     virtual void updateTextCompletion();
     // set typedHistoryCompletion by filtering completion
@@ -203,6 +208,7 @@ protected:
     uint cols; // num of columns of completion (cached)
     std::vector<std::string> typedTextCompletion;
     bool mustMatch; // if true - on RET key finish promt only if matched in completionList
+    uint nb_lines; // cached number of lines of completion (recalc when render)
 private:
     // render completion: standart incremental
     void renderCompletionStandart(float height, float width);
@@ -225,6 +231,8 @@ public:
     void setCompletion(std::vector<std::string> completion);
     void setCompletionFromSemicolonStr(std::string);
     void cancelInteractive();
+    int getBestCompletionSizePx()
+        { return -1;}
 private:
     void updateTextCompletion();
     CelestiaCore *celApp;
@@ -268,6 +276,8 @@ public:
     void setRightText(std::string str);
     void update(const std::string &buftext);
     void charEntered(const char *c_p, int modifiers);
+    int getBestCompletionSizePx()
+        { return -1;}
     /* Set dir, entire - root dir; use it in inter-callback */
     void setDir(std::string dir, std::string entire = "./");
 private:
@@ -439,15 +449,15 @@ public:
     bool mouseButtonUp(float x, float y, int button);
     bool mouseMove(float dx, float dy, int modifiers);
     bool mouseMove(float x, float y);
-    float mouseYofCompl(float y); // return y for completion
+    float mouseYofInter(float y); // return y for interactive
     void resize(int w, int h)
         {
             overlay->setWindowSize(w, h);
             width = w; height = h;
+            cachedCompletionH = -1;
         };
     int const getWidth() {return width;}
     int const getHeight() {return height;}
-    int const getCmplLines(); // lines in completion that depend on size of console
     void render();
     bool isVisible;
     int32 consoleType;
@@ -531,6 +541,10 @@ private:
     uint curMacroLevel;
     Beep *beeper;
     bool mouseDown;
+
+    int cachedCompletionH; // Height for renderer of completion
+    int cachedCompletionRectH; // Real completion rect height
+    int lastMX, lastMY; // last mouse coord
 };
 
 // convert control, '"', '\' chars to \X or \DDD i.e. to readable lua string

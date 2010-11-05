@@ -1218,7 +1218,9 @@ GeekConsole::GeekConsole(CelestiaCore *celCore):
     curFun(NULL),
     isMacroRecording(false),
     maxMacroLevel(64),
-    beeper(NULL)
+    beeper(NULL),
+    cachedCompletionH(-1),
+    lastMX(0),lastMY(0)
 {
     overlay = new Overlay();
     *overlay << setprecision(6);
@@ -1615,6 +1617,7 @@ bool GeekConsole::charEntered(const char *c_p, int modifiers)
         return true;
     } else if (isCtrl && c == 's') // C-s
     {
+        cachedCompletionH = -1;
         if (isShift)
         {
             if (consoleType <= Tiny)
@@ -1657,7 +1660,7 @@ bool GeekConsole::charEntered(const char *c_p, int modifiers)
 // return true if event procceed
 bool GeekConsole::mouseWheel(float motion, int modifiers)
 {
-    if (!isVisible)
+    if (!isVisible || mouseYofInter(lastMY) < 0)
         return false;
 
     descriptionStr.clear();
@@ -1671,11 +1674,8 @@ bool GeekConsole::mouseWheel(float motion, int modifiers)
 
 bool GeekConsole::mouseButtonDown(float x, float y, int button)
 {
-    if (!isVisible)
+    if (!isVisible || mouseYofInter(y) < 0)
         return false;
-
-    if (mouseYofCompl(y) < 0)
-        return true;
 
     mouseDown = true;
 
@@ -1691,6 +1691,8 @@ bool GeekConsole::mouseButtonDown(float x, float y, int button)
 
 bool GeekConsole::mouseButtonUp(float x, float y, int button)
 {
+    if (!isVisible || mouseYofInter(y) < 0)
+        return false;
     if (mouseDown)
     {
         mouseDown = false;
@@ -1701,7 +1703,7 @@ bool GeekConsole::mouseButtonUp(float x, float y, int button)
 
 bool GeekConsole::mouseMove(float dx, float dy, int modifiers)
 {
-    if (!isVisible)
+    if (!isVisible || !mouseDown)
         return false;
 
     descriptionStr.clear();
@@ -1714,12 +1716,15 @@ bool GeekConsole::mouseMove(float dx, float dy, int modifiers)
 
 bool GeekConsole::mouseMove(float x, float y)
 {
+    lastMX = x;
+    lastMY = y;
     if (!isVisible)
         return false;
 
     descriptionStr.clear();
-    if (curInteractive)
-        curInteractive->mouseMove(x, mouseYofCompl(y));
+    y = mouseYofInter(y);
+    if (curInteractive && y >= 0)
+        curInteractive->mouseMove(x, y);
     return true;
 }
 
@@ -1737,50 +1742,11 @@ TextureFont* GeekConsole::getCompletionFont()
     return font;
 }
 
-int const GeekConsole::getCmplLines()
+// return  Y of interactive rect from screen size
+float GeekConsole::mouseYofInter(float y)
 {
-    TextureFont* font = getCompletionFont();
     TextureFont* titleFont = getInteractiveFont();
-
-    float fontH = font->getHeight();
-    float titleFontH = titleFont->getHeight();
-
-    int nb_lines;
-    switch(consoleType)
-    {
-    case GeekConsole::Tiny:
-        nb_lines = 3;
-        break;
-    case GeekConsole::Medium:
-        nb_lines = (height * 0.5 - 3 * titleFontH - 10) / (fontH + 1);
-        break;
-    case GeekConsole::Big:
-    default:
-        nb_lines = ((height - 3 * titleFontH) / (fontH + 1)) - MAX_LINES_INFO - 1;
-        break;
-    }
-
-    if (nb_lines < 3)
-        nb_lines = 3;
-    return nb_lines;
-}
-
-// return  Y of copmletion from screen size
-float GeekConsole::mouseYofCompl(float y)
-{
-    TextureFont* font = getCompletionFont();
-    TextureFont* titleFont = getInteractiveFont();
-
-    float fontH = font->getHeight();
-    float titleFontH = titleFont->getHeight();
-
-    float complH; // height of completion area
-    float rectH; // height of console
-
-    int nb_lines = getCmplLines();
-
-    complH = (nb_lines+1) * (fontH + 1);
-    rectH = complH + 2 * titleFontH;
+    float rectH = cachedCompletionRectH;
     return y - (height - rectH);
 }
 
@@ -1796,13 +1762,43 @@ void GeekConsole::render()
     float fontH = font->getHeight();
     float titleFontH = titleFont->getHeight();
 
-    int nb_lines = getCmplLines();
+    int nb_lines;
+    switch(consoleType)
+    {
+    case GeekConsole::Tiny:
+        nb_lines = 3;
+        break;
+    case GeekConsole::Medium:
+        nb_lines = (height * 0.5 - 4 * titleFontH - 10) / (fontH + 1);
+        break;
+    case GeekConsole::Big:
+    default:
+        nb_lines = ((height - 3 * titleFontH) / (fontH + 1)) - MAX_LINES_INFO - 1;
+        break;
+    }
 
-    float complH; // height of completion area
-    float rectH; // height of console
+    if (nb_lines < 3)
+        nb_lines = 3;
 
-    complH = (nb_lines+1) * (fontH + 1);
-    rectH = complH + 2 * titleFontH;
+
+    // recalc only once height of completion area
+    if (-1 == cachedCompletionH)
+    {
+        cachedCompletionH = curInteractive->getBestCompletionSizePx();
+        int maxComplH = nb_lines * (fontH + 1);
+        if (-1 != cachedCompletionH) // -1 - max size need
+        {
+            if (cachedCompletionH > maxComplH)
+                cachedCompletionH = maxComplH;
+        } else
+            cachedCompletionH = maxComplH;
+        if (cachedCompletionH >0)
+            cachedCompletionH += fontH /2;
+    }
+
+    cachedCompletionRectH = cachedCompletionH +
+        2 * titleFontH + // 2 title lines
+        4; // little margin from bottom
 
     overlay->begin();
     glTranslatef(0.0f, BOTTOM_MARGIN, 0.0f); //little margin from bottom
@@ -1811,24 +1807,24 @@ void GeekConsole::render()
 
     // background
     glColor4ubv(clBackground->rgba);
-    overlay->rect(0.0f, 0.0f, width, rectH);
-    overlay->rect(0.0f, rectH, funNameWidth, titleFontH);
+    overlay->rect(0.0f, 0.0f, width, cachedCompletionRectH);
+    overlay->rect(0.0f, cachedCompletionRectH, funNameWidth, titleFontH);
 
     // Interactive & description rects
 
     glColor4ubv(clBgInteractive->rgba);
     overlay->rect(0.0f, 0.0f , width, titleFontH);
-    overlay->rect(0.0f, rectH - titleFontH , width, titleFontH);
-    overlay->rect(0.0f, rectH, funNameWidth, titleFontH);
+    overlay->rect(0.0f, cachedCompletionRectH - titleFontH , width, titleFontH);
+    overlay->rect(0.0f, cachedCompletionRectH, funNameWidth, titleFontH);
 
     glColor4ubv(clBgInteractiveBrd->rgba);
     overlay->rect(0.0f, 0.0f , width-1, titleFontH, false);
-    overlay->rect(0.0f, rectH - titleFontH , width-1, titleFontH, false);
-    overlay->rect(0.0f, rectH, funNameWidth, titleFontH, false);
+    overlay->rect(0.0f, cachedCompletionRectH - titleFontH , width-1, titleFontH, false);
+    overlay->rect(0.0f, cachedCompletionRectH, funNameWidth, titleFontH, false);
 
     // info text
     if (infoText.size()) {
-        float y = rectH + titleFontH;
+        float y = cachedCompletionRectH + titleFontH;
         glColor4ubv(clInfoTextBg->rgba);
         overlay->rect(0.0f, y,
                       infoWidth, fontH * infoText.size() + 2);
@@ -1859,7 +1855,7 @@ void GeekConsole::render()
     glPushMatrix();
     {
         overlay->setFont(titleFont);
-        glTranslatef(2.0f, rectH + 4, 0.0f);
+        glTranslatef(2.0f, cachedCompletionRectH + 4, 0.0f);
         overlay->beginText();
         glColor4ubv(clInteractivePrefixFnt->rgba);
         *overlay << curFunName << ":";
@@ -1871,7 +1867,7 @@ void GeekConsole::render()
     glPushMatrix();
     {
         overlay->setFont(titleFont);
-    	glTranslatef(2.0f, rectH - titleFontH + 4, 0.0f);
+    	glTranslatef(2.0f, cachedCompletionRectH - titleFontH + 4, 0.0f);
         overlay->beginText();
         glColor4ubv(clInteractivePrefixFnt->rgba);
     	*overlay << InteractivePrefixStr << " ";
@@ -1883,9 +1879,9 @@ void GeekConsole::render()
     // compl list
     glPushMatrix();
     {
-    	glTranslatef(2.0f, rectH - fontH - titleFontH, 0.0f);
+    	glTranslatef(2.0f, cachedCompletionRectH - fontH - titleFontH, 0.0f);
         overlay->setFont(font);
-        curInteractive->renderCompletion(complH - fontH, width-1);
+        curInteractive->renderCompletion(cachedCompletionH, width-1);
     }
     glPopMatrix();
 
@@ -1964,6 +1960,8 @@ void GeekConsole::finish()
     if (curInteractive)
         curInteractive->cancelInteractive();
     curInteractive = NULL;
+    // reset completion height
+    cachedCompletionH = -1;
 }
 
 GeekBind *GeekConsole::createGeekBind(std::string bindspace)
@@ -2419,6 +2417,11 @@ void GCInteractive::setLastFromHistory()
     update(getBufferText());
 }
 
+int GCInteractive::getBestCompletionSizePx()
+{
+    return 0;
+}
+
 void PasswordInteractive::renderInteractive()
 {
     glColor4ubv(clInteractiveFnt->rgba);
@@ -2469,6 +2472,8 @@ void ColorChooserInteractive::renderCompletion(float height, float width)
     TextureFont *font = gc->getCompletionFont();
     float fh = font->getHeight();
     uint nb_lines = height / (fh + 1); // +1 because overlay margin be-twin '\n' is 1 pixel
+    if (!nb_lines)
+        return;
 
     vector<std::string>::const_iterator it = typedTextCompletion.begin();
     it += pageScrollIdx;
@@ -2515,6 +2520,7 @@ void ListInteractive::Interact(GeekConsole *_gc, string historyName)
     completedIdx = -1;
     setColumns(4);
     canFinish = false;
+    nb_lines = 0;
 }
 
 void ListInteractive::updateTextCompletion()
@@ -3002,13 +3008,18 @@ void ListInteractive::mouseButtonDown(float x, float y, int button)
 void ListInteractive::mouseMove(float x, float y)
 {
     TextureFont *font = gc->getCompletionFont();
+    TextureFont *titleFont = gc->getInteractiveFont();
     float fh = font->getHeight();
-    uint nb_lines = gc->getCmplLines();
-    int cx = ceil(((int) x / (gc->getWidth() / cols)));
-    int cy = ceil((int)(y / (fh + 1)));
-    if (cy < 0 || cy > nb_lines * (fh + 1))
+    float titleFontH = titleFont->getHeight();
+
+    y -= titleFontH;
+    int cy = floor((int)(y / (fh + 1)));
+    if (cy < 0 || cy >= nb_lines)
         return;
-    int tmpCmplIdx = pageScrollIdx + nb_lines * (cx) + (cy - 1);
+
+    int cx = ceil(((int) x / (gc->getWidth() / cols)));
+
+    int tmpCmplIdx = pageScrollIdx + nb_lines * (cx) + (cy);
     if (tmpCmplIdx < pageScrollIdx)
         tmpCmplIdx = pageScrollIdx;
     if (tmpCmplIdx >= typedTextCompletion.size())
@@ -3083,9 +3094,14 @@ void ListInteractive::renderCompletionStandart(float height, float width)
 {
     TextureFont *font = gc->getCompletionFont();
     float fh = font->getHeight();
-    uint nb_lines = height / (fh + 1); // +1 because overlay margin be-twin '\n' is 1 pixel
+    nb_lines = height / (fh + 1); // +1 because overlay margin be-twin '\n' is 1 pixel
+    if (!nb_lines)
+        return;
+
     uint nb_cols = cols;
     scrollSize = nb_cols * nb_lines;
+    if (scrollSize == 0)
+        scrollSize = 1;
 
     // Find size of right part (expanded part is excluded)
     std::string buftext(GCInteractive::getBufferText(), 0, bufSizeBeforeHystory);
@@ -3145,9 +3161,14 @@ void ListInteractive::renderCompletionFilter(float height, float width)
 {
     TextureFont *font = gc->getCompletionFont();
     float fh = font->getHeight();
-    uint nb_lines = height / (fh + 1); // +1 because overlay margin be-twin '\n' is 1 pixel
+    nb_lines = height / (fh + 1); // +1 because overlay margin be-twin '\n' is 1 pixel
+    if (!nb_lines)
+        return;
+
     uint nb_cols = cols;
     scrollSize = nb_cols * nb_lines;
+    if (scrollSize == 0)
+        scrollSize = 1;
 
     // Find size of right part (expanded part is excluded)
     std::string buftext(GCInteractive::getBufferText(), 0, bufSizeBeforeHystory);
@@ -3320,6 +3341,18 @@ void ListInteractive::setCompletionFromSemicolonStr(std::string str)
     }
     pageScrollIdx = 0;
     typedTextCompletion = completionList;
+}
+
+int ListInteractive::getBestCompletionSizePx()
+{
+    TextureFont *font = gc->getCompletionFont();
+    float fh = font->getHeight();
+    if (cols > 0)
+    {
+        return ceil((float) completionList.size() * (fh +1) / (float) cols);
+    }
+    else
+        return 0;
 }
 
 CelBodyInteractive::CelBodyInteractive(std::string name, CelestiaCore *core):
@@ -4173,7 +4206,13 @@ void PagerInteractive::renderCompletion(float height, float width)
     float fh = font->getHeight();
     vector<std::string>::const_iterator it = lines->begin();
     uint nb_lines = height / (fh + 1); // +1 because overlay margin be-twin '\n' is 1 pixel
+    if (!nb_lines)
+        return;
+
     scrollSize = nb_lines;
+    if (scrollSize == 0)
+        scrollSize = 1;
+
     this->width = width;
 
     if (pageScrollIdx < 0)

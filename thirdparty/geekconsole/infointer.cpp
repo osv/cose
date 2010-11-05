@@ -905,7 +905,13 @@ void InfoInteractive::renderCompletion(float height, float width)
     float fwidth = font->getAdvance('X');
     float fh = font->getHeight();
     uint nb_lines = height / (fh + 1); // +1 because overlay margin be-twin '\n' is 1 pixel
+    if (!nb_lines)
+        return;
+
     scrollSize = nb_lines;
+    if (scrollSize == 0)
+        scrollSize = 1;
+
     this->width = width;
 
     if (pageScrollIdx < 0)

@@ -59,6 +59,8 @@ public:
     void setLastFromHistory() {};
     void setFont(TextureFont* _font);
     string makeSpace(string s1, int spaces, string s2, string base = "X");
+    int getBestCompletionSizePx()
+        { return -1;}
 
     // pager state
     enum {
