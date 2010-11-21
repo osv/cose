@@ -3400,7 +3400,11 @@ int ListInteractive::getBestCompletionSizePx()
     float fh = font->getHeight();
     if (cols > 0)
     {
-        return ceil((float) completionList.size() * (fh +1) / (float) cols);
+        int cls = ceil((float) completionList.size() * (fh +1) / (float) cols);
+        if (cls < fh)
+            return fh;
+        else
+            return cls;
     }
     else
         return 0;
