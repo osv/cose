@@ -118,6 +118,7 @@ geekConsole->registerFunction(GCFunc("quit", "#yes#"), "force quit");
 */
 
 #include "geekconsole.h"
+#include "gvar.h"
 #include "infointer.h" // info interactive
 #include <celutil/directory.h>
 #include <celengine/starbrowser.h>
@@ -178,6 +179,8 @@ const char *ctrlZDescr = "C-z Unexpand";
 const char *applySelected = "S-RET - set completion";
 const char *ret4Finish = "RET - apply";
 const char *scrollPages = "%i of %i pages, M-/ next expand, M-? prev expand";
+
+static int32 defaultColumns = 4;
 
 std::string historyDir("history/");
 
@@ -804,6 +807,10 @@ Color32 getColor32FromText(const string &text)
         {
             color = text.substr(0,cut);
             alphacolor = text.substr(cut + 1);
+            // trim left
+            alphacolor.erase(0, alphacolor.find_first_not_of(' '));
+            // trim right
+            alphacolor.erase(alphacolor.find_last_not_of(' ')+1);
         }
         int i = 0;
         while (colorTable[i].colorName)
@@ -842,6 +849,47 @@ Color getColorFromText(const string &text)
     Color32 c = getColor32FromText(text);
     return Color((float)c.rgba[0] / 255, (float)c.rgba[1] / 255,
                  (float)c.rgba[2] / 255, (float)c.rgba[3] / 255);
+}
+
+std::string getColorName(const Color32 &color)
+{
+    Color32 c;
+    int i = 0;
+    char buf[16];
+
+    sprintf(buf, "#%02X%02X%02X", color.rgba[0],
+            color.rgba[1], color.rgba[2]);
+    std::string hexColor = buf;
+    while (colorTable[i].colorName)
+    {
+        if (UTF8StringCompare(hexColor, colorTable[i].colorHexName) == 0)
+        {
+            c = getColor32FromHexText(colorTable[i].colorHexName);
+            if (c.rgba[0] == color.rgba[0] &&
+                c.rgba[1] == color.rgba[1] &&
+                c.rgba[2] == color.rgba[2])
+            {
+                std::string res = colorTable[i].colorName;
+                // maybe add alpha color
+                if (color.rgba[3] != 255)
+                {
+                    sprintf(buf, ",%i", (int)color.rgba[3]);
+                    res += buf;
+                }
+                return res;
+            }
+        }
+        i++;
+    }
+    // hex alpha
+    // maybe add alpha color
+    if (color.rgba[3] != 255)
+    {
+        sprintf(buf, "%02X", color.rgba[3]);
+        return hexColor + buf;
+    }
+    else
+        return hexColor;
 }
 
 static FormattedNumber SigDigitNum(double v, int digits)
@@ -2401,6 +2449,7 @@ void GCInteractive::update(const std::string &buftext)
 void GCInteractive::setDefaultValue(std::string v)
 {
     setBufferText(v);
+    bufSizeBeforeHystory = 0;
     update(getBufferText());
 }
 
@@ -2442,7 +2491,7 @@ void ColorChooserInteractive::Interact(GeekConsole *_gc, string historyName)
         completionList.push_back(colorTable[i].colorName);
         i++;
     }
-    ListInteractive::setColumns(4);
+    ListInteractive::setColumns(defaultColumns);
     typedTextCompletion = completionList;
 }
 
@@ -2520,7 +2569,7 @@ void ListInteractive::Interact(GeekConsole *_gc, string historyName)
     completionList.clear();
     pageScrollIdx = 0;
     completedIdx = -1;
-    setColumns(4);
+    setColumns(defaultColumns);
     canFinish = false;
     nb_lines = 0;
 }
@@ -3425,7 +3474,7 @@ void CelBodyInteractive::Interact(GeekConsole *_gc, string historyName)
     update(getBufferText());
     completionList.clear();
     typedTextCompletion.clear();
-    ListInteractive::setColumns(4);
+    ListInteractive::setColumns(defaultColumns);
     ListInteractive::separatorChars = "/";
 }
 
@@ -3595,7 +3644,7 @@ void CelBodyInteractive::cancelInteractive()
 void FlagInteractive::Interact(GeekConsole *_gc, string historyName)
 {
     ListInteractive::Interact(_gc, historyName);
-    setColumns(4);
+    setColumns(defaultColumns);
     separatorChars = defDelim;
     update(getBufferText());
 }
@@ -3636,7 +3685,7 @@ void FlagInteractive::updateTextCompletion()
 void FileInteractive::Interact(GeekConsole *_gc, string historyName)
 {
     ListInteractive::Interact(_gc, historyName);
-    setColumns(4);
+    setColumns(defaultColumns);
     separatorChars = "/";
     fileExt.clear();
     dirCache.clear();
@@ -4943,7 +4992,6 @@ void initGCInteractives(GeekConsole *gc)
                         "macro end and call");
     getGeekConsole()->registerFunction(GCFunc(info, _("Read Info documents")), "info");
     getGeekConsole()->registerFunction(GCFunc(info_last_node), "info, last visited node");
-    initGCStdCelBinds(getGeekConsole(), "Celestia");
 }
 
 void destroyGCInteractives()
@@ -4963,7 +5011,14 @@ void initGeekConsole(CelestiaCore *celApp)
     geekConsole = new GeekConsole(celApp);
 
     initGCInteractives(geekConsole);
+    // std cel
     initGCStdInteractivsFunctions(geekConsole);
+    initGCStdCelBinds(geekConsole, "Celestia");
+    // gvar
+    initGCVarInteractivsFunctions();
+
+    gVar.Bind("gc/completion columns", &defaultColumns, defaultColumns,
+              _("Number of columns for completion (1..8)"));
 }
 
 void shutdownGeekconsole()

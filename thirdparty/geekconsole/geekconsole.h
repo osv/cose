@@ -90,6 +90,13 @@ struct Color32
             rgba[2]= b;
             rgba[3]= a;
         }
+    Color32(GLubyte r, GLubyte g, GLubyte b)
+        {
+            rgba[0]= r;
+            rgba[1]= g;
+            rgba[2]= b;
+            rgba[3]= 255;
+        }
     Color32(): i(0) {};
     union
     {
@@ -559,6 +566,7 @@ extern GeekConsole *getGeekConsole();
 
 extern Color getColorFromText(const string &text);
 extern Color32 getColor32FromText(const string &text);
+extern std::string getColorName(const Color32 &color);
 extern char removeCtrl(char ckey);
 extern char toCtrl(char key);
 

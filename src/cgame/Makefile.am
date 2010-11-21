@@ -27,7 +27,8 @@ GEEKCONSOLESRC = \
 	$(top_srcdir)/thirdparty/geekconsole/gcinfo/filesys.c \
 	$(top_srcdir)/thirdparty/geekconsole/gcinfo/dir.c \
 	$(top_srcdir)/thirdparty/geekconsole/gcinfo/tilde.c \
-	$(top_srcdir)/thirdparty/geekconsole/infointer.cpp
+	$(top_srcdir)/thirdparty/geekconsole/infointer.cpp \
+	$(top_srcdir)/thirdparty/geekconsole/gvar.cpp
 
 if ENABLE_CGAME
 bin_PROGRAMS = openspace_client
