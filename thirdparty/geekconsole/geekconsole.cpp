@@ -770,10 +770,42 @@ static colortbl colorTable[] = {
     NULL
 };
 
+// color map for speedup search
+// pair of color (uint32) and his index in colorTable
+typedef pair <uint32, int> ctbl_c_i_t;
+// lower case color name -> ctbl_c_i_t
+std::map<std::string, ctbl_c_i_t> colors_name_2_c;
+// uint32 -> color name
+std::map<uint32, std::string> colorsUintStr;
+
+char easytolower(char in){
+  if(in<='Z' && in>='A')
+    return in-('Z'-'z');
+  return in;
+} 
+
+static void initColorTables()
+{
+    int i = 0;
+    while (colorTable[i].colorName)
+    {
+        string cname = colorTable[i].colorName;
+
+        // color name to lower case
+        std::transform(cname.begin(), cname.end(),
+                       cname.begin(), easytolower);
+
+        uint32 c = getColor32FromText(colorTable[i].colorHexName).i;
+        colors_name_2_c[cname] = ctbl_c_i_t(c, i);
+        colorsUintStr[c] = colorTable[i].colorName;
+        i++;
+    }
+}
+
 Color32 getColor32FromHexText(const string &text)
 {
     Color32 c(0,0,0,255);
-    if (text.empty())
+    if (text.size() < 1)
         return c;
     const char *str = text.c_str();
     int d = (text.length() - 1) / 2;
@@ -812,33 +844,39 @@ Color32 getColor32FromText(const string &text)
             // trim right
             alphacolor.erase(alphacolor.find_last_not_of(' ')+1);
         }
-        int i = 0;
-        while (colorTable[i].colorName)
+        if (colors_name_2_c.empty())
+            initColorTables();
+
+        // find in map color name, but first => lower case
+        std::transform(color.begin(), color.end(), color.begin(), easytolower);
+
+        std::map<std::string, ctbl_c_i_t>::iterator it;
+        it = colors_name_2_c.find(color);
+        if (it != colors_name_2_c.end())
         {
-            if (UTF8StringCompare(color, colorTable[i].colorName) == 0)
+            // first in pair of map value is uint32 color
+            c.i = it->second.first;
+            // default alpha
+            c.rgba[3] = 255;
+
+            // parse alpha
+            if (!alphacolor.empty())
             {
-                c = getColor32FromHexText(colorTable[i].colorHexName);
-                c.rgba[3] = 255;
-                // parse alpha
-                if (!alphacolor.empty())
-                {// check for float (otherwice it be 0-255 int)
-                    cut = alphacolor.find_first_of('.');
-                    if (cut != string::npos)
-                    {
-                        float a = atof(alphacolor.c_str());
-                        if (a > 1.0f) a = 1.0f;
-                        if (a < 0.0f) a = 0.0f;
-                        c.rgba[3] = a * 255;
-                    } else {
-                        int a = atoi(alphacolor.c_str());
-                        if (a > 255) a = 255;
-                        if (a < 0) a = 0;
-                        c.rgba[3] = a;
-                    }
+                // check for float (otherwice it be 0-255 int)
+                cut = alphacolor.find_first_of('.');
+                if (cut != string::npos)
+                {
+                    float a = atof(alphacolor.c_str());
+                    if (a > 1.0f) a = 1.0f;
+                    if (a < 0.0f) a = 0.0f;
+                    c.rgba[3] = a * 255;
+                } else {
+                    int a = atoi(alphacolor.c_str());
+                    if (a > 255) a = 255;
+                    if (a < 0) a = 0;
+                    c.rgba[3] = a;
                 }
-                break;
             }
-            i++;
         }
     }
     return c;
@@ -853,43 +891,38 @@ Color getColorFromText(const string &text)
 
 std::string getColorName(const Color32 &color)
 {
-    Color32 c;
-    int i = 0;
     char buf[16];
-
-    sprintf(buf, "#%02X%02X%02X", color.rgba[0],
-            color.rgba[1], color.rgba[2]);
-    std::string hexColor = buf;
-    while (colorTable[i].colorName)
+    Color32 c(color.rgba[0], color.rgba[1], color.rgba[2]);
+    if (colorsUintStr.empty())
+        initColorTables();
+    // search color name by his uint32 value
+    std::map<uint32, std::string>::iterator it;
+    it = colorsUintStr.find(c.i);
+    if (it != colorsUintStr.end())
     {
-        if (UTF8StringCompare(hexColor, colorTable[i].colorHexName) == 0)
+        std::string res = it->second;
+        // maybe add alpha color
+        if (color.rgba[3] != 255)
         {
-            c = getColor32FromHexText(colorTable[i].colorHexName);
-            if (c.rgba[0] == color.rgba[0] &&
-                c.rgba[1] == color.rgba[1] &&
-                c.rgba[2] == color.rgba[2])
-            {
-                std::string res = colorTable[i].colorName;
-                // maybe add alpha color
-                if (color.rgba[3] != 255)
-                {
-                    sprintf(buf, ",%i", (int)color.rgba[3]);
-                    res += buf;
-                }
-                return res;
-            }
+            sprintf(buf, ",%i", (int)color.rgba[3]);
+            res += buf;
         }
-        i++;
+        return res;
     }
-    // hex alpha
-    // maybe add alpha color
+
+    // hex color
     if (color.rgba[3] != 255)
     {
-        sprintf(buf, "%02X", color.rgba[3]);
-        return hexColor + buf;
+        sprintf(buf, "#%02X%02X%02X%02X", color.rgba[0],
+                color.rgba[1], color.rgba[2], color.rgba[3]);
+        return buf;
     }
     else
-        return hexColor;
+    {
+        sprintf(buf, "#%02X%02X%02X", color.rgba[0],
+                color.rgba[1], color.rgba[2]);
+        return buf;
+    }
 }
 
 static FormattedNumber SigDigitNum(double v, int digits)
@@ -1853,24 +1886,27 @@ void GeekConsole::render()
     overlay->begin();
     glTranslatef(0.0f, BOTTOM_MARGIN, 0.0f); //little margin from bottom
 
-    float funNameWidth = titleFont->getWidth(curFunName) + 10.0;
+    float funNameWidth = titleFont->getWidth(curFunName + ": ");
+    float interPrefixSz = titleFont->getWidth(InteractivePrefixStr) + 6.0f;
 
     // background
     glColor4ubv(clBackground->rgba);
     overlay->rect(0.0f, 0.0f, width, cachedCompletionRectH);
-    overlay->rect(0.0f, cachedCompletionRectH, funNameWidth, titleFontH);
+    overlay->rect(0.0f, cachedCompletionRectH, funNameWidth + interPrefixSz, titleFontH);
 
     // Interactive & description rects
 
     glColor4ubv(clBgInteractive->rgba);
     overlay->rect(0.0f, 0.0f , width, titleFontH);
     overlay->rect(0.0f, cachedCompletionRectH - titleFontH , width, titleFontH);
-    overlay->rect(0.0f, cachedCompletionRectH, funNameWidth, titleFontH);
+    // fun name rect and inter prefix
+    overlay->rect(0.0f, cachedCompletionRectH, funNameWidth + interPrefixSz, titleFontH);
 
     glColor4ubv(clBgInteractiveBrd->rgba);
     overlay->rect(0.0f, 0.0f , width-1, titleFontH, false);
     overlay->rect(0.0f, cachedCompletionRectH - titleFontH , width-1, titleFontH, false);
     overlay->rect(0.0f, cachedCompletionRectH, funNameWidth, titleFontH, false);
+    overlay->rect(0.0f, cachedCompletionRectH, funNameWidth + interPrefixSz, titleFontH, false);
 
     // info text
     if (infoText.size()) {
@@ -1908,7 +1944,7 @@ void GeekConsole::render()
         glTranslatef(2.0f, cachedCompletionRectH + 4, 0.0f);
         overlay->beginText();
         glColor4ubv(clInteractivePrefixFnt->rgba);
-        *overlay << curFunName << ":";
+        *overlay << curFunName << ": " << InteractivePrefixStr;
         overlay->endText();
     }
     glPopMatrix();
@@ -1920,7 +1956,6 @@ void GeekConsole::render()
     	glTranslatef(2.0f, cachedCompletionRectH - titleFontH + 4, 0.0f);
         overlay->beginText();
         glColor4ubv(clInteractivePrefixFnt->rgba);
-    	*overlay << InteractivePrefixStr << " ";
         curInteractive->renderInteractive();
         overlay->endText();
     }
@@ -2531,26 +2566,31 @@ void ColorChooserInteractive::renderCompletion(float height, float width)
     float marg = font->getWidth("#FFFFFFFF ");
     int shiftx = width/ListInteractive::cols;
     glTranslatef((float) shiftx - marg - 4.0f, 0, 0);
+    Color32 color;
+
     for (uint i=0; it < typedTextCompletion.end() && i < ListInteractive::cols; i++)
     {
         glPushMatrix();
         gc->getOverlay()->beginText();
         for (uint j = 0; it < typedTextCompletion.end() && j < nb_lines; it++, j++)
         {
-            int k = 0;
-            while (colorTable[k].colorName)
+            string clname = *it;
+            std::transform(clname.begin(), clname.end(), clname.begin(), easytolower);
+
+            std::map<std::string, ctbl_c_i_t>::iterator itc;
+            itc = colors_name_2_c.find(clname);
+            if (itc != colors_name_2_c.end())
             {
-                if (*it == colorTable[k].colorName)
-                {
-                    glColor4ubv(getColor32FromHexText(
-                                    colorTable[k].colorHexName).rgba);
-                    gc->getOverlay()->rect(0, 0, marg, fh);
-                    glColor4ub(255, 255, 255, 255);
-                    *gc->getOverlay() << colorTable[k].colorHexName << "\n";
-                    break;
-                }
-                k++;
+                ctbl_c_i_t t = itc->second;
+                color.i = t.first;
+
+                glColor4ubv(color.rgba);
+                gc->getOverlay()->rect(0, 0, marg, fh);
+                glColor4ub(255, 255, 255, 255);
+                *gc->getOverlay() << colorTable[t.second].colorHexName;
             }
+
+            *gc->getOverlay() << "\n";
         }
         gc->getOverlay()->endText();
         glPopMatrix();
@@ -3226,7 +3266,6 @@ void ListInteractive::renderCompletionFilter(float height, float width)
     string::size_type pos = buftext.find_last_of(separatorChars, buftext.length());
     if (pos != string::npos)
         buftext = string(buftext, pos + 1);
-    uint buf_length = buftext.size();
 
     std::vector<string> parts = splitString(buftext, " ");
     vector<std::string>::const_iterator pit;
@@ -4952,6 +4991,10 @@ void initGCInteractives(GeekConsole *gc)
         colorChooserInteractive = new ColorChooserInteractive("colorch");
         pagerInteractive = new PagerInteractive("pager");
         infoInteractive = new InfoInteractive("info");
+
+        if (colors_name_2_c.empty())
+            initColorTables();
+
         isInteractsInit = true;
     }
     gc->registerAndBind("", "M-x",
