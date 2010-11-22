@@ -975,6 +975,7 @@ std::string GeekVar::GetTypeName(gvar_type type)
     case Color: return "color";
     case Celbody: return "celestia body";
     }
+    return "";
 }
 
 GeekVar::flags32_s *GeekVar::GetFlagTbl(string name)

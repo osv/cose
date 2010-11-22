@@ -1001,8 +1001,8 @@ void InfoInteractive::renderCompletion(float height, float width)
         // scrollbar
         if (lines.size() > nb_lines)
         {
-            float scrollH = height + fh - 2;
-            glTranslatef(width - scrollW - 2.0f, -height, 0.0f);
+            float scrollH = height - 2;
+            glTranslatef(width - scrollW - 2.0f, -height + fh, 0.0f);
             glColor4ubv(clCompletionExpandBg->rgba);
             gc->getOverlay()->rect(0.0f, 0.0f, scrollW, scrollH);
             // bar
