@@ -1175,9 +1175,11 @@ static int setVar(GeekConsole *gc, int state, std::string value)
         case GeekVar::Color:
             gc->setInteractive(colorChooserInteractive, "select-color", varname);
             colorChooserInteractive->setDefaultValue(gVar.GetFlagString(varname));
+            break;
         case GeekVar::Celbody:
             gc->setInteractive(celBodyInteractive, "select-body", varname);
             celBodyInteractive->setDefaultValue(gVar.GetFlagString(varname));
+            break;
         }
         break;
     }
