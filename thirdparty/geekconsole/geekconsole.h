@@ -119,6 +119,7 @@ public:
     virtual void charEntered(const char *c_p, int modifiers);
     virtual void mouseWheel(float motion, int modifiers);
     virtual void mouseButtonDown(float x, float y, int button);
+    virtual void mouseButtonUp(float x, float y, int button);
     virtual void mouseMove(float dx, float dy, int modifiers);
     virtual void mouseMove(float x, float y);
 
@@ -193,6 +194,8 @@ public:
     void mouseWheel(float motion, int modifiers);
     void mouseButtonDown(float x, float y, int button);
     void mouseMove(float x, float y);
+    // return index of picked completion item, -1 - no item
+    int  pick(float x, float y);
     virtual void renderInteractive();
     virtual void renderCompletion(float height, float width);
     void update(const std::string &buftext);

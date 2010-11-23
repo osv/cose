@@ -1766,6 +1766,7 @@ bool GeekConsole::mouseButtonDown(float x, float y, int button)
     if (curInteractive)
     {
         curInteractive->mouseButtonDown(x, y, button);
+        // curInteractive may be cleared by finish()
         if (curInteractive)
             curInteractive->update(curInteractive->getBufferText());
     }
@@ -1774,13 +1775,14 @@ bool GeekConsole::mouseButtonDown(float x, float y, int button)
 
 bool GeekConsole::mouseButtonUp(float x, float y, int button)
 {
-    if (!isVisible || mouseYofInter(y) < 0)
-        return false;
     if (mouseDown)
     {
         mouseDown = false;
+        if (curInteractive)
+            curInteractive->mouseButtonUp(x, y, button);
         return true;
     }
+    mouseDown = false;
     return false;
 }
 
@@ -1807,8 +1809,12 @@ bool GeekConsole::mouseMove(float x, float y)
     descriptionStr.clear();
     y = mouseYofInter(y);
     if (curInteractive && y >= 0)
+    {
         curInteractive->mouseMove(x, y);
-    return true;
+        return true;
+    }
+    else
+        return false;
 }
 
 TextureFont* GeekConsole::getInteractiveFont()
@@ -1828,7 +1834,6 @@ TextureFont* GeekConsole::getCompletionFont()
 // return  Y of interactive rect from screen size
 float GeekConsole::mouseYofInter(float y)
 {
-    TextureFont* titleFont = getInteractiveFont();
     float rectH = cachedCompletionRectH;
     return y - (height - rectH);
 }
@@ -2425,6 +2430,9 @@ void GCInteractive::mouseWheel(float motion, int modifiers)
 void GCInteractive::mouseButtonDown(float x, float y, int button)
 {}
 
+void GCInteractive::mouseButtonUp(float x, float y, int button)
+{}
+
 void GCInteractive::mouseMove(float x, float y, int modifiers)
 {}
 
@@ -2805,7 +2813,10 @@ void ListInteractive::charEntered(const char *c_p, int modifiers)
     } else if (C == '\t' && modifiers == GeekBind::CTRL) { // ctrl + TAB
             pageScrollIdx -= scrollSize;
             if (pageScrollIdx < 0)
-                pageScrollIdx = typedTextCompletion.size() - scrollSize;
+            {
+                div_t dr = div((int)typedTextCompletion.size(), scrollSize);
+                pageScrollIdx = scrollSize * dr.quot;
+            }
             if (pageScrollIdx < 0)
                 pageScrollIdx = 0;
             char buff[256];
@@ -3075,6 +3086,11 @@ void ListInteractive::mouseWheel(float motion, int modifiers)
 void ListInteractive::mouseButtonDown(float x, float y, int button)
 {
     if (button == CelestiaCore::LeftButton)
+    {
+        // make sure some item is selected
+        if (-1 == pick(x, y))
+            return;
+
         if (completionStyle != Filter)
             gc->getCurInteractive()->charEntered("\n", 0);
         else
@@ -3082,6 +3098,7 @@ void ListInteractive::mouseButtonDown(float x, float y, int button)
             gc->getCurInteractive()->charEntered("\n", GeekBind::SHIFT);
             gc->getCurInteractive()->charEntered("\n", 0);
         }
+    }
     else if (button == CelestiaCore::RightButton)
         if (!separatorChars.empty())
         {
@@ -3098,25 +3115,11 @@ void ListInteractive::mouseButtonDown(float x, float y, int button)
 
 void ListInteractive::mouseMove(float x, float y)
 {
-    TextureFont *font = gc->getCompletionFont();
-    TextureFont *titleFont = gc->getInteractiveFont();
-    float fh = font->getHeight();
-    float titleFontH = titleFont->getHeight();
-
-    y -= titleFontH;
-    int cy = floor((int)(y / (fh + 1)));
-    if (cy < 0 || cy >= nb_lines)
+    int tmpCmplIdx = pick(x, y);
+    if (-1 == tmpCmplIdx)
         return;
-
-    int cx = ceil(((int) x / (gc->getWidth() / cols)));
-
-    int tmpCmplIdx = pageScrollIdx + nb_lines * (cx) + (cy);
-    if (tmpCmplIdx < pageScrollIdx)
-        tmpCmplIdx = pageScrollIdx;
-    if (tmpCmplIdx >= typedTextCompletion.size())
-        return;
-    if (tmpCmplIdx > pageScrollIdx + scrollSize - 1)
-        tmpCmplIdx = pageScrollIdx;
+    // if (tmpCmplIdx > pageScrollIdx + scrollSize - 1)
+    //     tmpCmplIdx = pageScrollIdx;
     completedIdx = tmpCmplIdx;
     // For cmpl style Filter need append right text like it in
     // charEntered for M-/ M-?
@@ -3151,6 +3154,28 @@ void ListInteractive::mouseMove(float x, float y)
     }
     else
         gc->describeCurText(getBufferText());
+}
+
+int ListInteractive::pick(float x, float y)
+{
+    TextureFont *font = gc->getCompletionFont();
+    TextureFont *titleFont = gc->getInteractiveFont();
+    float fh = font->getHeight();
+    float titleFontH = titleFont->getHeight();
+
+    y -= titleFontH;
+    int cy = floor((int)(y / (fh + 1)));
+    if (cy < 0 || cy >= nb_lines)
+        return -1;
+
+    int cx = ceil(((int) x / (gc->getWidth() / cols)));
+
+    int index = pageScrollIdx + nb_lines * (cx) + (cy);
+    if (index < pageScrollIdx)
+        index = pageScrollIdx;
+    if (index >= typedTextCompletion.size())
+        return -1;
+    return index;
 }
 
 void ListInteractive::renderInteractive()
