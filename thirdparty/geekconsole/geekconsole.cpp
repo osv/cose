@@ -2308,6 +2308,7 @@ void GCInteractive::Interact(GeekConsole *_gc, string historyName)
     typedHistoryCompletionIdx = 0;
     bufSizeBeforeHystory = 0;
     prepareHistoryCompletion();
+    defaultValue.clear();
 }
 
 void GCInteractive::charEntered(const char *c_p, int modifiers)
@@ -2318,9 +2319,10 @@ void GCInteractive::charEntered(const char *c_p, int modifiers)
     char C = toupper((char)wc);
 
     if (useHistory && !curHistoryName.empty())
-    {
-        gc->descriptionStr += _(", C-p Previous, C-n Next in history");
-    }
+        gc->appendDescriptionStr(_("C-p Previous, C-n Next in history"));
+
+    if (!defaultValue.empty())
+        gc->appendDescriptionStr(_("C-r Default value"));
 
     std::vector<std::string>::iterator it;
     std::vector<std::string>::reverse_iterator rit;
@@ -2349,7 +2351,7 @@ void GCInteractive::charEntered(const char *c_p, int modifiers)
             gc->InteractFinished(buf);
             return;
         }
-    case '\020':  // Ctrl+P prev history
+    case CTRL_P:  // prev history
         if (typedHistoryCompletion.empty())
             return;
         rit = typedHistoryCompletion.rbegin() + typedHistoryCompletionIdx;
@@ -2366,7 +2368,7 @@ void GCInteractive::charEntered(const char *c_p, int modifiers)
             typedHistoryCompletionIdx = 0;
         }
         return;
-    case '\016':  // Ctrl+N forw history
+    case CTRL_N:  // forw history
         if (typedHistoryCompletion.empty())
             return;
         it = typedHistoryCompletion.begin() + typedHistoryCompletionIdx;
@@ -2383,17 +2385,17 @@ void GCInteractive::charEntered(const char *c_p, int modifiers)
             typedHistoryCompletionIdx = typedHistoryCompletion.size() - 1;
         }
         return;
-    case '\032':  // Ctrl+Z
+    case CTRL_Z:
         if (bufSizeBeforeHystory == buf.size())
             return;
         setBufferText(string(buf, 0, bufSizeBeforeHystory));
         prepareHistoryCompletion();
         return;
-    case '\025': // Ctrl+U
+    case CTRL_U:
         setBufferText("");
         prepareHistoryCompletion();
         break;
-    case '\027':  // Ctrl+W
+    case CTRL_W:
     case '\b':
         if ((modifiers & GeekBind::CTRL) != 0)
             while (buf.size() && !strchr(string(separatorChars + " /:,;").c_str(),
@@ -2405,6 +2407,11 @@ void GCInteractive::charEntered(const char *c_p, int modifiers)
     }
     setBufferText(string(buf, 0, buf.size() - 1));
     prepareHistoryCompletion();
+    break;
+    case CTRL_R:
+        setBufferText(defaultValue);
+        prepareHistoryCompletion();
+        return;
     default:
         break;
     }
@@ -2492,6 +2499,7 @@ void GCInteractive::update(const std::string &buftext)
 void GCInteractive::setDefaultValue(std::string v)
 {
     setBufferText(v);
+    defaultValue = v;
     bufSizeBeforeHystory = 0;
     update(getBufferText());
 }

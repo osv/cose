@@ -148,6 +148,8 @@ public:
     // get size of completion, -1 for need max as possible
     virtual int getBestCompletionSizePx();
 
+    // default value that can be set by C-r
+    std::string defaultValue;
 protected:
     GeekConsole *gc;
     std::string separatorChars; // additional separator chars
