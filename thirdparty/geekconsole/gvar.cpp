@@ -260,6 +260,17 @@ GeekVar::gvar *GeekVar::getGvar(string name)
     return NULL;
 }
 
+void GeekVar::Unbind(std::string name)
+{
+    gvar *oldvar = getGvar(name);
+    if (oldvar)
+    {
+        gvar newvar;
+        newvar.set(oldvar->get());
+        vars[name] = newvar;
+    }
+}
+
 #define DECLARE_GVAR_BIND(FunType, VarType)                             \
     bool GeekVar::Bind(string name, VarType *var, const char *resetval, string doc) \
     {                                                                   \
@@ -769,11 +780,33 @@ void GeekVar::Set(string name, const char *val)
  *  Get
  ******************************************************************/
 
+#define RETURN_BINDED(v)                        \
+    if (v->p)                                   \
+        if (v->type == Int32)                   \
+            return *(int32 *)v->p;              \
+        else if (v->type == Int64)              \
+            return *(int64 *)v->p;              \
+        else if (v->type == Float)              \
+            return *(float *)v->p;              \
+        else if (v->type == Double)             \
+            return *(double *)v->p;             \
+        else if (v->type == Flags32)            \
+            return *(uint32 *)v->p;             \
+        else if (v->type == Enum32)             \
+            return *(uint32 *)v->p;             \
+        else if (v->type == Enum32)             \
+            return *(uint32 *)v->p;             \
+        else if (v->type == Color)              \
+            return *(uint32 *)v->p;
+
 int32 GeekVar::GetI32(string name)
 {
     gvar *v = getGvar(name);
     if(v)
+    {
+        RETURN_BINDED(v);
         return strToInt32(v->get().c_str());
+    }
     else
         return 0;
 }
@@ -782,7 +815,10 @@ int64 GeekVar::GetI64(string name)
 {
     gvar *v = getGvar(name);
     if(v)
+    {
+        RETURN_BINDED(v);
         return strToInt64(v->get().c_str());
+    }
     else
         return 0;
 }
@@ -791,7 +827,10 @@ double GeekVar::GetDouble(string name)
 {
     gvar *v = getGvar(name);
     if(v)
+    {
+        RETURN_BINDED(v);
         return atof(v->get().c_str());
+    }
     else
         return 0;
 }
@@ -800,7 +839,10 @@ float GeekVar::GetFloat(string name)
 {
     gvar *v = getGvar(name);
     if(v)
+    {
+        RETURN_BINDED(v);
         return atof(v->get().c_str());
+    }
     else
         return 0;
 }

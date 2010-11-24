@@ -105,6 +105,10 @@ public:
 
     GeekVar () {};
 
+    // Unbind var that will become to Unknown.
+    // Use it in your deconst if you bind.
+    void Unbind(std::string name);
+
     /* ==============================================================
        Bind
        return false if already binded or created by New*
