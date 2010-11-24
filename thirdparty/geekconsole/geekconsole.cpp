@@ -3563,8 +3563,22 @@ void CelBodyInteractive::charEntered(const char *c_p, int modifiers)
 
     if (((modifiers & GeekBind::META ) != 0) && C == 'C')
     {
-        Selection sel = gc->getCelCore()->
-            getSimulation()->findObjectFromPath(lastCompletionSel, true);
+        Selection sel = celApp->getSimulation()->
+            findObjectFromPath(lastCompletionSel, true);
+
+        // for compl. type Filter try get selection also from cur. completion item
+        if (Filter == completionStyle && sel.empty())
+        {
+            vector<std::string>::const_iterator it = typedTextCompletion.begin();
+            if (completedIdx >=0)
+                it += completedIdx;
+            if (it < typedTextCompletion.end())
+            {
+                sel = gc->getCelCore()->
+                    getSimulation()->findObjectFromPath(*it, true);
+            }
+        }
+
         celApp->getSimulation()->setSelection(sel);
         celApp->getSimulation()->centerSelection();
         return;
@@ -3651,11 +3665,9 @@ void CelBodyInteractive::mouseMove(float x, float y)
     {
         gc->setInfoText(desc);
     }
+    _updateMarkSelection(getBufferText());
 }
 
-
-/* Mark obj if found
- */
 void CelBodyInteractive::update(const std::string &buftext)
 {
     Selection sel = celApp->getSimulation()->findObjectFromPath(buftext, true);
@@ -3669,23 +3681,47 @@ void CelBodyInteractive::update(const std::string &buftext)
         if (b)
             b->match();
     }
-    // mark selected
-    MarkerRepresentation markerRep(MarkerRepresentation::Crosshair);
-    markerRep.setSize(10.0f);
-    markerRep.setColor(Color(0.0f, 1.0f, 0.0f, 0.9f));
 
+    _updateMarkSelection(buftext);
+
+    ListInteractive::update(buftext);
+};
+
+/* Mark obj if match
+ */
+void CelBodyInteractive::_updateMarkSelection(const std::string &text)
+{
     // unmark last selection
     Selection lastsel = gc->getCelCore()->
         getSimulation()->findObjectFromPath(lastCompletionSel, true);
     celApp->getSimulation()->
         getUniverse()->unmarkObject(lastsel, 3);
 
+    Selection sel = celApp->getSimulation()->
+        findObjectFromPath(text, true);
+
+    // for compl. type Filter try get selection also from cur. completion item
+    if (Filter == completionStyle && sel.empty())
+    {
+        vector<std::string>::const_iterator it = typedTextCompletion.begin();
+        if (completedIdx >=0)
+            it += completedIdx;
+        if (it < typedTextCompletion.end())
+        {
+            sel = gc->getCelCore()->
+                getSimulation()->findObjectFromPath(*it, true);
+        }
+    }
+
+    // mark selected
+    MarkerRepresentation markerRep(MarkerRepresentation::Crosshair);
+    markerRep.setSize(10.0f);
+    markerRep.setColor(Color(0.0f, 1.0f, 0.0f, 0.9f));
+
     celApp->getSimulation()->
         getUniverse()->markObject(sel, markerRep, 3);
-    lastCompletionSel = buftext;
-
-    ListInteractive::update(buftext);
-};
+    lastCompletionSel = sel.getName();
+}
 
 void CelBodyInteractive::setCompletion(std::vector<std::string> completion)
 {

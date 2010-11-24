@@ -259,6 +259,7 @@ private:
 
     // name of last selection
     std::string lastCompletionSel;
+    void _updateMarkSelection(const std::string &text);
     // selection before interactive do any sel changes
     std::string firstSelection;
 };
