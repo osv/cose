@@ -272,6 +272,7 @@ public:
 
     void Interact(GeekConsole *_gc, string historyName);
     void setSeparatorChars(std::string);
+    void charEntered(const char *c_p, int modifiers);
     string getDefaultDelim() const
         { return defDelim; }
 

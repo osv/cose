@@ -3767,29 +3767,90 @@ void FlagInteractive::setSeparatorChars(std::string s)
         separatorChars = s;
 }
 
+void FlagInteractive::charEntered(const char *c_p, int modifiers)
+{
+    wchar_t wc = 0;
+    UTF8Decode(c_p, 0, strlen(c_p), wc);
+
+    char C = toupper((char)wc);
+    if (mustMatch && separatorChars.find(C) != string::npos &&
+        modifiers != GeekBind::CTRL &&
+        modifiers != GeekBind::META)
+    {
+        std::string buftext = string(getBufferText());
+        string::size_type pos = buftext.find_last_of(separatorChars, buftext.length());
+        if (pos != string::npos)
+            buftext = string(buftext, pos + 1);
+
+        bool found = false;
+        for (vector<string>::iterator it = completionList.begin();
+             it != completionList.end(); it++)
+            if (UTF8StringCompare(*it, buftext) == 0)
+            {
+                found = true;
+                break;
+            }
+        if (!found)
+        {
+            gc->beep();
+            return;
+        }
+        completedIdx--;
+    }
+    ListInteractive::charEntered(c_p, modifiers);
+}
+
 void FlagInteractive::updateTextCompletion()
 {
     std::string buftext = string(getBufferText(), 0, bufSizeBeforeHystory);
     string::size_type pos = buftext.find_last_of(separatorChars, buftext.length());
+    std::string typedFlagStr;
     if (pos != string::npos)
+    {
+        typedFlagStr = string(buftext, 0, pos);
         buftext = string(buftext, pos + 1);
+    }
+
     typedTextCompletion.clear();
+
+    // Fist create completion list witout entered flags.
+    // Not so efective algor. but completion list is always small.
+    std::vector<std::string> completion;
+
+    vector<string> typedFlags = splitString(typedFlagStr, separatorChars);
+    std::vector<std::string>::iterator it;
+    for (it = completionList.begin();
+         it != completionList.end(); it++)
+    {
+        bool found = false;
+
+        for (vector<string>::iterator it2 = typedFlags.begin();
+             it2 != typedFlags.end(); it2++)
+        {
+            if (UTF8StringCompare(*it, *it2) == 0)
+            {
+                found = true;
+                break;
+            }
+        }
+        if (!found)
+            completion.push_back(*it);
+    }
+
     if (completionStyle != Filter)
     {
-        // add items that matched with first chars of buftext
-        std::vector<std::string>::iterator it;
         int buf_length = UTF8Length(buftext);
 
-        for (it = completionList.begin();
-             it != completionList.end(); it++)
+        for (it = completion.begin();
+             it != completion.end(); it++)
         {
             if (buf_length == 0 ||
                 (UTF8StringCompare(*it, buftext, buf_length) == 0))
-                typedTextCompletion.push_back(*it);
+                    typedTextCompletion.push_back(*it);
         }
     }
     else
-        filterCompletion(completionList, buftext);
+        filterCompletion(completion, buftext);
 }
 
 /* File chooser interactive */
