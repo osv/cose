@@ -148,6 +148,7 @@ public:
     // get size of completion, -1 for need max as possible
     virtual int getBestCompletionSizePx();
 
+    virtual string getHelpText();
     // default value that can be set by C-r
     std::string defaultValue;
 protected:
@@ -208,6 +209,7 @@ public:
     void setColumns(int c = 4)
         {cols = c; if (cols < 1) cols = 1; if (cols > 8) cols = 8;}
     int getBestCompletionSizePx();
+    string getHelpText();
 
 protected:
     virtual void updateTextCompletion();
@@ -245,6 +247,7 @@ public:
     void cancelInteractive();
     int getBestCompletionSizePx()
         { return -1;}
+    string getHelpText();
 private:
     void updateTextCompletion();
     CelestiaCore *celApp;
@@ -275,6 +278,7 @@ public:
     void charEntered(const char *c_p, int modifiers);
     string getDefaultDelim() const
         { return defDelim; }
+    string getHelpText();
 
 private:
     void updateTextCompletion();
@@ -292,6 +296,7 @@ public:
     void charEntered(const char *c_p, int modifiers);
     int getBestCompletionSizePx()
         { return -1;}
+    string getHelpText();
     /* Set dir, entire - root dir; use it in inter-callback */
     void setDir(std::string dir, std::string entire = "./");
 private:
@@ -322,6 +327,7 @@ public:
     void Interact(GeekConsole *_gc, string historyName);
     void renderInteractive();
     void renderCompletion(float height, float width);
+    string getHelpText();
 };
 
 // pager, text viewer, similar to `less` command
@@ -559,6 +565,10 @@ private:
     int cachedCompletionH; // Height for renderer of completion
     int cachedCompletionRectH; // Real completion rect height
     int lastMX, lastMY; // last mouse coord
+
+    std::vector<std::string> helpText; // lines of info helpText
+    uint helpTextWidth; // max width in pixel of helpText
+    void setHelpText(std::string);
 };
 
 // convert control, '"', '\' chars to \X or \DDD i.e. to readable lua string

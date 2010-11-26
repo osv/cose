@@ -54,6 +54,47 @@ void InfoInteractive::setFont(TextureFont* _font)
         font = _font;
 }
 
+string InfoInteractive::getHelpText()
+{
+    return GCInteractive::getHelpText() +
+        _("\n---\n               SUMMARY OF PAGER COMMANDS\n\n"
+          " \n"
+          "h  H                    Display this help.\n"
+          "q  Q                    Exit.\n\n"
+          "                            MOVING\n"
+          "e  ^E  j  ^N  CR        Forward  one line   (or N lines).\n"
+          "y  ^Y  k  ^K  ^P        Backward one line   (or N lines).\n"
+          "f  ^F  ^V  SPACE        Forward  one window (or N lines).\n"
+          "b  ^B                   Backward one window (or N lines).\n"
+          "z                       Forward  one window (and set window to N).\n"
+          "w                       Backward one window (and set window to N).\n"
+          "d  ^D                   Forward  one half-window (and set half-window to N).\n"
+          "u  ^U                   Backward one half-window (and set half-window to N).\n"
+          "l                       Left  one half screen width (or N positions).\n"
+          "r                       Right one half screen width (or N positions).\n"
+          " \n"
+          "Default \"window\" is the screen height.\n"
+          "Default \"half-window\" is half of the screen height.\n"
+          " \n                            SEARCHING\n"
+          "/pattern                Search forward for (N-th) matching line.\n"
+          "?pattern                Search backward for (N-th) matching line.\n"
+          "n                       Repeat previous search (for N-th occurrence).\n"
+          "N                       Repeat previous search in reverse direction.\n"
+          " \n                             JUMPING\n"
+          "g  <                    Go to first line in file (or line N).\n"
+          "G  >                    Go to last line in file (or line N).\n"
+          "p  %                    Go to beginning of file (or N percent into file).\n"
+          " \n                          INFO NAVIGATION\n"
+          "E  S-^E  J  S-^N  S-CR  Follow the hypertext link under cursor\n"
+          "]                       Move forwards or down through node structure\n"
+          "[                       Move backwards or up through node structure\n"
+          "}                       Select the Next node\n"
+          "}                       Select the Prev node\n"
+          "t                       Select the node `Top' in this file\n"
+          "M-/                     Select next hypertext\n"
+          "M-?                     Select prev hypertext");
+}
+
 void InfoInteractive::Interact(GeekConsole *_gc, string historyName)
 {
     GCInteractive::Interact(_gc, historyName);

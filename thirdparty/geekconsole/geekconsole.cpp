@@ -344,7 +344,7 @@ static colortbl colorTable[] = {
     {"floral white", "#fffaf0"},
     {"beige", "#f5f5dc"},
     {"light yellow", "#ffffe0"},
-    {"light goldenrod ye", "fafad2"},
+    {"light goldenrod yellow", "#fafad2"},
     {"ivory", "#fffff0"},
     {"honeydew", "#f0fff0"},
     {"mint cream", "#f5fffa"},
@@ -1598,6 +1598,8 @@ bool GeekConsole::charEntered(const char *c_p, int modifiers)
     if (!sym)
         return false;
 
+    helpText.clear();
+
     if (!isVisible)
     {
         curKey.c[curKey.len] = tolower(sym);
@@ -1685,9 +1687,9 @@ bool GeekConsole::charEntered(const char *c_p, int modifiers)
     } // !isVisible
 
     if (isMacroRecording)
-        descriptionStr = _("C-S-g Stop macro here");
+        descriptionStr = _("C-S-g Stop macro here, C-h Help");
     else
-        descriptionStr = _("ESC or C-g Cancel");
+        descriptionStr = _("ESC or C-g Cancel, C-h Help");
     clearInfoText();
 
     bool isCtrl = modifiers & GeekBind::CTRL;
@@ -1697,6 +1699,12 @@ bool GeekConsole::charEntered(const char *c_p, int modifiers)
     {
         if (curFun)
             setInfoText(curFun->getInfo());
+        if (curInteractive)
+            setHelpText(curInteractive->getHelpText() +
+                        _("\n---\n"
+                          "ESC, C-g Cancel current interactive\n"
+                          "C-S-g Stop macro on unfinished interactive\n"
+                          "C-s, C-S-s Change size of console"));
         return true;
     } else if (isCtrl && c == 's') // C-s
     {
@@ -1848,6 +1856,9 @@ void GeekConsole::render()
         return;
 
     float fontH = font->getHeight();
+    // cel. overlay << \n will shift y by fontH + 1
+    const float realFontH = font->getHeight() + 1;
+
     float titleFontH = titleFont->getHeight();
 
     int nb_lines;
@@ -1857,11 +1868,11 @@ void GeekConsole::render()
         nb_lines = 3;
         break;
     case GeekConsole::Medium:
-        nb_lines = (height * 0.5 - 4 * titleFontH - 10) / (fontH + 1);
+        nb_lines = (height * 0.5 - 4 * titleFontH - 10) / realFontH;
         break;
     case GeekConsole::Big:
     default:
-        nb_lines = ((height - 3 * titleFontH) / (fontH + 1)) - MAX_LINES_INFO - 1;
+        nb_lines = ((height - 3 * titleFontH) / realFontH) - MAX_LINES_INFO - 1;
         break;
     }
 
@@ -1873,7 +1884,7 @@ void GeekConsole::render()
     if (-1 == cachedCompletionH)
     {
         cachedCompletionH = curInteractive->getBestCompletionSizePx();
-        int maxComplH = nb_lines * (fontH + 1);
+        int maxComplH = nb_lines * realFontH;
         if (-1 != cachedCompletionH) // -1 - max size need
         {
             if (cachedCompletionH > maxComplH)
@@ -1918,18 +1929,18 @@ void GeekConsole::render()
         float y = cachedCompletionRectH + titleFontH;
         glColor4ubv(clInfoTextBg->rgba);
         overlay->rect(0.0f, y,
-                      infoWidth, fontH * infoText.size() + 2);
+                      infoWidth, realFontH * infoText.size());
 
         glColor4ubv(clInfoTextBrd->rgba);
         overlay->rect(0.0f, y,
-                      infoWidth, fontH * infoText.size() + 2, false);
+                      infoWidth, realFontH * infoText.size(), false);
 
         // render info text
         glPushMatrix();
         {
             overlay->setFont(font);
-            glTranslatef(2.0f, y + 6
-                         + (infoText.size() - 1) * fontH, 0.0f);
+            glTranslatef(2.0f, y + 2
+                         + (infoText.size() -1) * realFontH, 0.0f);
             overlay->beginText();
             glColor4ubv(clInfoTextFnt->rgba);
             std::vector<std::string>::iterator it;
@@ -1988,7 +1999,62 @@ void GeekConsole::render()
         overlay->endText();
     }
     glPopMatrix();
+
+    // show help
+    if (helpText.size()) {
+        float y = 0;//cachedCompletionRectH + titleFontH;
+        float decideWidth = width - helpTextWidth;
+        if (decideWidth < 0)
+            decideWidth = 0;
+        glColor4ubv(clInfoTextBg->rgba);
+        overlay->rect(decideWidth, y,
+                      helpTextWidth, realFontH * helpText.size());
+
+        glColor4ubv(clInfoTextBrd->rgba);
+        overlay->rect(decideWidth, y,
+                      helpTextWidth, realFontH * helpText.size(), false);
+
+        // render help text
+        glPushMatrix();
+        {
+            overlay->setFont(font);
+            glTranslatef(decideWidth + 2.0f, y + 2
+                         + (helpText.size() - 1) * realFontH, 0.0f);
+            overlay->beginText();
+            glColor4ubv(clInfoTextFnt->rgba);
+            std::vector<std::string>::iterator it;
+            for (it = helpText.begin();
+                 it != helpText.end(); it++) {
+                *overlay << *it << "\n";
+            }
+            overlay->endText();
+        }
+        glPopMatrix();
+    }
+
     overlay->end();
+}
+
+void GeekConsole::setHelpText(std::string text)
+{
+    helpText = splitString(text, "\n");
+
+    std::vector<std::string>::iterator it;
+
+    helpTextWidth = 0;
+
+    TextureFont* font = getCompletionFont();
+    if (!font)
+        return;
+    for (it = helpText.begin();
+         it != helpText.end(); it++) {
+        if (!(*it).empty())
+        {
+            uint s = font->getWidth(*it);
+            if (s > helpTextWidth)
+                helpTextWidth = s + 4;
+        }
+    }
 }
 
 void GeekConsole::setInteractive(GCInteractive *Interactive, std::string historyName, std::string InteractiveStr, std::string descrStr)
@@ -2001,6 +2067,7 @@ void GeekConsole::setInteractive(GCInteractive *Interactive, std::string history
     descriptionStr = descrStr;
     clearInfoText();
     isVisible = true;
+    helpText.clear();
 }
 
 int GeekConsole::call(const std::string &value, bool params)
@@ -2524,6 +2591,15 @@ int GCInteractive::getBestCompletionSizePx()
     return 0;
 }
 
+string GCInteractive::getHelpText()
+{
+    return _("C-p, C-n previous and next in history\n"
+             "C-z Remove expanded part from input\n"
+             "C-w Kill backword\n"
+             "C-u Kill whole line\n"
+             "C-r Set default value in entry line");
+}
+
 void PasswordInteractive::renderInteractive()
 {
     glColor4ubv(clInteractiveFnt->rgba);
@@ -2614,6 +2690,18 @@ void ColorChooserInteractive::renderCompletion(float height, float width)
     }
 
 }
+
+string ColorChooserInteractive::getHelpText()
+{
+    return ListInteractive::getHelpText() +
+        _("\n---\n"
+          "Color names must be as text name or html-like #RRGGBBAA\n"
+          "Alpha component of color name may be entered after"
+          " \",\" as number or float:\n"
+          " \"spring green, 255\"\n"
+          " \"deep sky blue, 0.75\"");
+}
+
 
 // ListInteractive
 
@@ -3482,6 +3570,17 @@ int ListInteractive::getBestCompletionSizePx()
         return 0;
 }
 
+string ListInteractive::getHelpText()
+{
+    return GCInteractive::getHelpText() +
+        _("\n---\n"
+          "S-RET For compl"
+          "M-i Cycle completion type\n"
+          "TAB Try complete or scroll completion\n"
+          "C-TAB Scroll back completion\n"
+          "M-/, M-? Expand next, previous from completion");
+}
+
 CelBodyInteractive::CelBodyInteractive(std::string name, CelestiaCore *core):
     ListInteractive(name), celApp(core)
 {
@@ -3751,6 +3850,13 @@ void CelBodyInteractive::cancelInteractive()
     firstSelection.clear();
 }
 
+string CelBodyInteractive::getHelpText()
+{
+    return ListInteractive::getHelpText() +
+        _("\n---\n"
+          "M-c Center view on entered object");
+}
+
 /* Flag interactive
 */
 void FlagInteractive::Interact(GeekConsole *_gc, string historyName)
@@ -3851,6 +3957,14 @@ void FlagInteractive::updateTextCompletion()
     }
     else
         filterCompletion(completion, buftext);
+}
+
+string FlagInteractive::getHelpText()
+{
+    string res = ListInteractive::getHelpText() + "\n---\n";
+    res += _("Flags separator chars: ");
+    res += "\"" + separatorChars + "\"";
+    return res;
 }
 
 /* File chooser interactive */
@@ -4025,6 +4139,11 @@ void FileInteractive::setDir(std::string dir, std::string entire)
         dirEntire += '/';
 
     setDefaultValue(dir);
+}
+
+string FileInteractive::getHelpText()
+{
+    return ListInteractive::getHelpText();
 }
 
 /* Pager interactive */
