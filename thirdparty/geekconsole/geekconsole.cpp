@@ -1773,6 +1773,7 @@ bool GeekConsole::mouseButtonDown(float x, float y, int button)
     descriptionStr.clear();
     if (curInteractive)
     {
+        y = mouseYofInter(y);
         curInteractive->mouseButtonDown(x, y, button);
         // curInteractive may be cleared by finish()
         if (curInteractive)
@@ -1786,6 +1787,7 @@ bool GeekConsole::mouseButtonUp(float x, float y, int button)
     if (mouseDown)
     {
         mouseDown = false;
+        y = mouseYofInter(y);
         if (curInteractive)
             curInteractive->mouseButtonUp(x, y, button);
         return true;
