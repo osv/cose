@@ -37,6 +37,7 @@ std::string describeChunk(InfoInteractive::chunk_s *chk)
         }
         return text;
     }
+    return "";
 }
 
 InfoInteractive::InfoInteractive(std::string name)
@@ -466,7 +467,7 @@ void InfoInteractive::charEntered(const char *c_p, int modifiers)
         pageScrollIdx = lines.size() - 1;
     if (pageScrollIdx < 0)
         pageScrollIdx = 0;
-    if (selectedY > pageScrollIdx + scrollSize)
+    if (selectedY > pageScrollIdx + (int)scrollSize)
         selectedY = -1;
     if (selectedY < pageScrollIdx)
         selectedY = -1;
@@ -512,7 +513,7 @@ void InfoInteractive::charEntered(const char *c_p, int modifiers)
             setBufferText("");
             for (int i = pageScrollIdx -1; i >= 0; i--)
             {
-                for (uint chk = lines[i].size() - 1; chk >= 0; chk--)
+                for (int chk = lines[i].size() - 1; chk >= 0; chk--)
                 {
                     chunk_s *chunk = &lines[i][chk];
                     if (chunk->text.find(lastSearchStr) != string::npos)
@@ -550,7 +551,7 @@ void InfoInteractive::charEntered(const char *c_p, int modifiers)
                 lastSearchStr = getBufferText();
             }
             setBufferText("");
-            for (int i = pageScrollIdx +1; i < lines.size(); i++)
+            for (int i = pageScrollIdx +1; i < (int)lines.size(); i++)
             {
                 for (uint chk = 0; chk < lines[i].size(); chk++)
                 {
@@ -589,7 +590,7 @@ void InfoInteractive::charEntered(const char *c_p, int modifiers)
         pageScrollIdx = lines.size() - 1;
     if (pageScrollIdx < 0)
         pageScrollIdx = 0;
-    if (selectedY > pageScrollIdx + scrollSize)
+    if (selectedY > pageScrollIdx + (int)scrollSize)
         selectedY = -1;
     if (selectedY < pageScrollIdx)
         selectedY = -1;
@@ -847,14 +848,14 @@ void InfoInteractive::processChar(const char *c_p, int modifiers)
             if (lines.empty())
                 return;
             int i = selectedY;
-            if (selectedY == -1 || selectedY >= lines.size())
+            if (selectedY == -1 || selectedY >= (int)lines.size())
                 i = pageScrollIdx;
             if (selectedX == -1)
                 selectedX = 0;
             else
                 selectedX++;
             // try search link in current selected line for hint
-            for (int chk = selectedX; chk < lines[i].size(); chk++)
+            for (int chk = selectedX; chk < (int)lines[i].size(); chk++)
             {
                 chunk_s *chunk = &lines[i][chk];
                 if (chunk->type == chunk_s::LINK || chunk->type == chunk_s::NODE)
@@ -869,9 +870,9 @@ void InfoInteractive::processChar(const char *c_p, int modifiers)
 
             i++; // next lines
             vector<Chunks>::const_iterator it = lines.begin();
-            while (i < pageScrollIdx + scrollSize && i < lines.size())
+            while (i < pageScrollIdx + (int)scrollSize && i < (int)lines.size())
             {
-                for (int chk = 0; chk < lines[i].size(); chk++)
+                for (int chk = 0; chk < (int)lines[i].size(); chk++)
                 {
                     chunk_s *chunk = &lines[i][chk];
                     if (chunk->type == chunk_s::LINK || chunk->type == chunk_s::NODE)
@@ -891,9 +892,9 @@ void InfoInteractive::processChar(const char *c_p, int modifiers)
             if (lines.empty())
                 return;
             int i = selectedY;
-            if (selectedY == -1 || selectedY >= lines.size())
+            if (selectedY == -1 || selectedY >= (int)lines.size())
                 i = pageScrollIdx + scrollSize -1;
-            if (i >= lines.size())
+            if (i >= (int)lines.size())
                 i = lines.size() -1;
             if (selectedX == -1)
                 selectedX = lines[i].size();
@@ -981,7 +982,7 @@ void InfoInteractive::renderCompletion(float height, float width)
             }
             else if (chunk->type == chunk_s::LINK || chunk->type == chunk_s::NODE)
             {
-                if (selectedY == line && selectedX == chk)
+                if (selectedY == (int)line && selectedX == (int)chk)
                 {  // selected item color setup
                     glColor4ubv(clCompletionExpandBg->rgba);
                     gc->getOverlay()->rect(gc->getOverlay()->getXoffset(), -2,
