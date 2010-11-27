@@ -231,14 +231,8 @@ static bool handleSpecialKey(int key, int state, bool down)
 
     if (k >= 0)
     {
-        int mod = 0;
-        if ((state & AG_KEYMOD_SHIFT) != 0)
-            mod |= CelestiaCore::ShiftKey;
-        if ((state & AG_KEYMOD_CTRL) != 0)
-            mod |= CelestiaCore::ControlKey;
-
         if (down)
-            celAppCore->keyDown(k, mod);
+            celAppCore->keyDown(k, state);
         else
             celAppCore->keyUp(k);
         return (k < 'a' || k > 'z');
@@ -403,20 +397,12 @@ static int BG_ProcessEvent(AG_DriverEvent *dev)
     {
         UI::syncRenderFromAgar();
 
-        int mod = 0;
-        if (repeatKey.mod & AG_KEYMOD_CTRL)
-            mod |=  CelestiaCore::ControlKey;
-        if (repeatKey.mod & AG_KEYMOD_SHIFT)
-            mod |=  CelestiaCore::ShiftKey;
-        if (repeatKey.mod & AG_KEYMOD_ALT)
-            mod |=  CelestiaCore::AltKey;
-
         char utf_c[8];
         UTF8Encode(repeatKey.uch, utf_c);
 
         if (repeatKey.uch)
             if (!handleSpecialKey(repeatKey.sym, repeatKey.mod, true))
-                celAppCore->charEntered(utf_c, mod, true);
+                celAppCore->charEntered(utf_c, repeatKey.mod, true);
         UI::syncRenderToAgar();
         return 1;
     }
@@ -546,18 +532,12 @@ RepeatTimeout(void *obj, Uint32 ival, void *arg)
     if (getGeekConsole())
     {
         int mod = 0;
-        if (repeatKey.mod & AG_KEYMOD_CTRL)
-            mod |=  CelestiaCore::ControlKey;
-        if (repeatKey.mod & AG_KEYMOD_SHIFT)
-            mod |=  CelestiaCore::ShiftKey;
-        if (repeatKey.mod & AG_KEYMOD_ALT)
-            mod |=  CelestiaCore::AltKey;
 
         char utf_c[8];
         UTF8Encode(repeatKey.uch, utf_c);
         if (repeatKey.uch)
             if (!handleSpecialKey(repeatKey.sym, repeatKey.mod, true))
-                celAppCore->charEntered(utf_c, mod, true);
+                celAppCore->charEntered(utf_c, repeatKey.mod, true);
             else
                 return 0;
         return (agKbdRepeat);
@@ -683,7 +663,6 @@ int CL_ProcessEvent(AG_DriverEvent *dev)
 {
     int rv = 0;
     int x,y;
-    int mod = 0;
 	AG_Driver *drv;
 
     // geekconsole have highest prioritet for mause event
@@ -720,18 +699,20 @@ int CL_ProcessEvent(AG_DriverEvent *dev)
     case AG_DRIVER_KEY_DOWN:
         AG_DelTimeout(NULL, &toRepeat);
         repeatKey.sym = dev->data.key.ks;
-        repeatKey.mod = drv->kbd->modState;
+        repeatKey.mod = 0;
+        // convert agar mod key to celestia's mod key
+        if (drv->kbd->modState & AG_KEYMOD_CTRL)
+            repeatKey.mod |=  CelestiaCore::ControlKey;
+        if (drv->kbd->modState & AG_KEYMOD_SHIFT)
+            repeatKey.mod |=  CelestiaCore::ShiftKey;
+        if (drv->kbd->modState & AG_KEYMOD_ALT)
+            repeatKey.mod |=  CelestiaCore::AltKey;
+
         repeatKey.uch = dev->data.key.ucs;
         AG_ScheduleTimeout(NULL, &toDelay, agKbdDelay);
 
         if (getGeekConsole())
         {
-            if (repeatKey.mod & AG_KEYMOD_CTRL)
-                mod |=  GeekBind::CTRL;
-            if (repeatKey.mod & AG_KEYMOD_SHIFT)
-                mod |=  GeekBind::SHIFT;
-            if (repeatKey.mod & AG_KEYMOD_ALT)
-                mod |=  GeekBind::META;
 
             if (!(bgFocuse &&
                   handleSpecialKey(repeatKey.sym, repeatKey.mod, true))
@@ -741,7 +722,7 @@ int CL_ProcessEvent(AG_DriverEvent *dev)
                 UTF8Encode(repeatKey.uch, utf_c);
 
                 if (celAppCore->getTextEnterMode() == CelestiaCore::KbNormal &&
-                    getGeekConsole()->charEntered(utf_c, mod))
+                    getGeekConsole()->charEntered(utf_c, repeatKey.mod))
                 {
                     return My_PostEventCallback();
                 }

@@ -1587,16 +1587,24 @@ std::vector<std::string> GeekConsole::getFunctionsNames()
    Process key event for interactive if visible console, if not, than
    check hot keys
  */
-bool GeekConsole::charEntered(const char *c_p, int modifiers)
+bool GeekConsole::charEntered(const char *c_p, int cel_modifiers)
 {
     char sym;
-    if (modifiers & GeekBind::CTRL)
+    if (cel_modifiers & CelestiaCore::ControlKey)
         sym = removeCtrl(*c_p);
     else
         sym = *c_p;
 
     if (!sym)
         return false;
+
+    int modifiers = 0;
+    if (cel_modifiers & CelestiaCore::ControlKey)
+        modifiers |=  GeekBind::CTRL;
+    if (cel_modifiers & CelestiaCore::ShiftKey)
+        modifiers |=  GeekBind::SHIFT;
+    if (cel_modifiers & CelestiaCore::AltKey)
+        modifiers |=  GeekBind::META;
 
     helpText.clear();
 
@@ -1746,6 +1754,34 @@ bool GeekConsole::charEntered(const char *c_p, int modifiers)
             curInteractive->update(curInteractive->getBufferText());
     }
     return true;
+}
+
+/*
+  Currently celestia  have use 'a', 'z'  and special keys  on key down
+  event (for  every tick() tests). Geekconsole don't  use special keys,
+  so return false if not visible.
+
+  Note: Because of  a and z keys used for speed  incr/decr here may be
+  problem with binded to same  keys with geekbind! This is other reson
+  why good to use C-x or C-c key prefix.
+ */
+bool GeekConsole::keyDown(int key, int)
+{
+    if (!isVisible)
+        return false;
+
+    if (islower(key))
+        key = toupper(key);
+    // ignore only special keys
+    if ((key >= 'A' && key <= 'Z'))
+        return true;
+    return false;
+}
+
+bool GeekConsole::keyUp(int key, int)
+{
+    // always allow celetia core to passkey up
+    return false;
 }
 
 // return true if event procceed

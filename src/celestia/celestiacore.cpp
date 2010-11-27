@@ -1137,6 +1137,12 @@ void CelestiaCore::keyDown(int key, int modifiers)
 {
     setViewChanged();
 
+#ifndef NO_GEEKCONSOLE
+    if ((textEnterMode == KbNormal) &&
+        getGeekConsole()->keyDown(key, 0))
+        return;
+#endif
+
 #ifdef CELX
     // TODO: should pass modifiers as a Lua table
     if (luaHook && luaHook->callLuaHook(this,
@@ -1235,6 +1241,13 @@ void CelestiaCore::keyUp(int key, int)
 {
     setViewChanged();
     KeyAccel = 1.0;
+
+#ifndef NO_GEEKCONSOLE
+    if (textEnterMode == KbNormal &&
+        getGeekConsole()->keyUp(key, 0))
+        return;
+#endif
+
     if (islower(key))
         key = toupper(key);
     keysPressed[key] = false;
@@ -1290,14 +1303,7 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers, bool gc)
 #ifndef NO_GEEKCONSOLE
     if (gc && (textEnterMode == KbNormal))
     {
-        int mod = 0;
-        if (modifiers & CelestiaCore::ControlKey)
-            mod |=  GeekBind::CTRL;
-        if (modifiers & CelestiaCore::ShiftKey)
-            mod |=  GeekBind::SHIFT;
-        if (modifiers & CelestiaCore::AltKey)
-            mod |=  GeekBind::META;
-        getGeekConsole()->charEntered(c_p, mod);
+        getGeekConsole()->charEntered(c_p, modifiers);
         return;
     }
 #endif

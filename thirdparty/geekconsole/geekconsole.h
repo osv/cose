@@ -464,6 +464,8 @@ public:
     GCFunc *getFunctionByName(std::string);
     std::vector<std::string> getFunctionsNames();
     bool charEntered(const char *c_p, int modifiers);
+    bool keyDown(int key, int modifiers);
+    bool keyUp(int key, int modifiers);
     bool mouseWheel(float motion, int modifiers);
     bool mouseButtonDown(float x, float y, int button);
     bool mouseButtonUp(float x, float y, int button);
