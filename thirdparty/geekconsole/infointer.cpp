@@ -60,7 +60,6 @@ string InfoInteractive::getHelpText()
     return GCInteractive::getHelpText() +
         _("\n---\n               SUMMARY OF PAGER COMMANDS\n\n"
           " \n"
-          "h  H                    Display this help.\n"
           "q  Q                    Exit.\n\n"
           "                            MOVING\n"
           "e  ^E  j  ^N  CR        Forward  one line   (or N lines).\n"
@@ -86,7 +85,7 @@ string InfoInteractive::getHelpText()
           "G  >                    Go to last line in file (or line N).\n"
           "p  %                    Go to beginning of file (or N percent into file).\n"
           " \n                          INFO NAVIGATION\n"
-          "E  S-^E  J  S-^N  S-CR  Follow the hypertext link under cursor\n"
+          "E  S-^E  J  S-^N  S-CR  Follow the selected hypertext link\n"
           "]                       Move forwards or down through node structure\n"
           "[                       Move backwards or up through node structure\n"
           "}                       Select the Next node\n"

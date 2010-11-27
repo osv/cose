@@ -2905,6 +2905,16 @@ void ListInteractive::charEntered(const char *c_p, int modifiers)
     UTF8Decode(c_p, 0, strlen(c_p), wc);
 
     char C = toupper((char)wc);
+
+#define DESCR_COMPLETION_STYLE(completionStyle)                     \
+    gc->appendDescriptionStr(_("Completion type: "));               \
+    switch (completionStyle)                                        \
+    {                                                               \
+    case Standart: gc->descriptionStr += "\"Standart\""; break;     \
+    case Fast: gc->descriptionStr += "\"Fast complete\""; break;    \
+    case Filter: gc->descriptionStr += "\"Filter\""; break;         \
+    }
+
     if (C == 'I' && (modifiers & GeekBind::META))
     {
         if (completionStyle == Standart)
@@ -2913,15 +2923,28 @@ void ListInteractive::charEntered(const char *c_p, int modifiers)
             completionStyle = Filter;
         else
             completionStyle = Standart;
-        gc->appendDescriptionStr(_("Completion type: "));
-        switch (completionStyle)
-        {
-        case Standart: gc->descriptionStr += "\"Standart\""; break;
-        case Fast: gc->descriptionStr += "\"Fast complete\""; break;
-        case Filter: gc->descriptionStr += "\"Filter\""; break;
-        }
+        DESCR_COMPLETION_STYLE(completionStyle);
         return;
     }
+    else if (C == 'S' && (modifiers & GeekBind::META))
+    {
+        completionStyle = Standart;
+        DESCR_COMPLETION_STYLE(Standart);
+        return;
+    }
+    else if (C == 'F' && (modifiers & GeekBind::META))
+    {
+        completionStyle = Fast;
+        DESCR_COMPLETION_STYLE(Fast);
+        return;
+    }
+    else if (C == 'L' && (modifiers & GeekBind::META))
+    {
+        completionStyle = Filter;
+        DESCR_COMPLETION_STYLE(Filter);
+        return;
+    }
+
     if (completionStyle == Filter)
         return charEnteredFilter(c_p, modifiers);
 
@@ -3612,8 +3635,14 @@ string ListInteractive::getHelpText()
 {
     return GCInteractive::getHelpText() +
         _("\n---\n"
-          "S-RET For compl"
-          "M-i Cycle completion type\n"
+          "M-i Cycle completion style\n"
+          "M-s Set completion style to \"Standart\"\n"
+          "M-f Set completion style to \"Fast\" -\n"
+          "  on key press try complete first\n"
+          "M-l Set completion style to \"Filter\" - \n"
+          "  filter completion list by entered words\n"
+          "S-RET For completion style \"Filter\" -\n"
+          "  set selected item from completion list\n"
           "TAB Try complete or scroll completion\n"
           "C-TAB Scroll back completion\n"
           "M-/, M-? Expand next, previous from completion");

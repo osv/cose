@@ -531,8 +531,6 @@ RepeatTimeout(void *obj, Uint32 ival, void *arg)
 {
     if (getGeekConsole())
     {
-        int mod = 0;
-
         char utf_c[8];
         UTF8Encode(repeatKey.uch, utf_c);
         if (repeatKey.uch)
