@@ -2574,7 +2574,7 @@ void CelestiaCore::draw()
 // geekconsole may be rendered after CelestiaCore::draw() if EMBED_GEEKCONSOLE
 #if !defined(NO_GEEKCONSOLE) && !defined(EMBED_GEEKCONSOLE)
     if (getGeekConsole())
-        getGeekConsole()->render();
+        getGeekConsole()->render(currentTime);
 #endif
 
     if (toggleAA)

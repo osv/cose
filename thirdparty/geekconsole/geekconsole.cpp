@@ -1657,7 +1657,7 @@ bool GeekConsole::charEntered(const char *c_p, int cel_modifiers)
                         if (getFunctionByName(fun))
                         {
                             if (curKey.len > 1)
-                                getCelCore()->flash(curKey.keyToStr() + " (" + fun +
+                                showText(curKey.keyToStr() + " (" + fun +
                                                     ") " + it->params, 2.5);
                             if (isMacroRecording)
                             {
@@ -1669,7 +1669,7 @@ bool GeekConsole::charEntered(const char *c_p, int cel_modifiers)
                         }
                         else
                         {
-                            getCelCore()->flash(curKey.keyToStr() + " (" + fun +
+                            showText(curKey.keyToStr() + " (" + fun +
                                                     ") not defined", 1.5);
                         }
                         curKey.len = 0;
@@ -1677,7 +1677,7 @@ bool GeekConsole::charEntered(const char *c_p, int cel_modifiers)
                     }
                     else
                     {
-                        getCelCore()->flash(curKey.keyToStr() + "-", 15.0);
+                        showText(curKey.keyToStr() + "-", -1.0);
                         return true; // key prefix
                     }
             }
@@ -1685,7 +1685,7 @@ bool GeekConsole::charEntered(const char *c_p, int cel_modifiers)
         // for key length 1 dont flash messg.
         if (curKey.len > 1)
         {
-            getCelCore()->flash(curKey.keyToStr() + " is undefined");
+            showText(curKey.keyToStr() + " is undefined");
             curKey.len = 0;
             // true because we dont want to continue passing key event
             return true;
@@ -1884,20 +1884,72 @@ float GeekConsole::mouseYofInter(float y)
     return y - (height - rectH);
 }
 
-void GeekConsole::render()
+void GeekConsole::render(double time)
 {
-    if (!isVisible || !curInteractive)
-        return;
+    lastTickTime = time;
     TextureFont* font = getCompletionFont();
     TextureFont* titleFont = getInteractiveFont();
     if (font == NULL || titleFont == NULL)
         return;
 
+    float titleFontH = titleFont->getHeight();
+
+    if (!isVisible)
+    {
+        if (messageText.empty())
+            return;
+
+        float alpha = 1.0f;
+        if (messageDuration >= 0)
+            if (lastTickTime > messageStart + messageDuration - 0.5)
+            {
+                if (lastTickTime > messageStart + messageDuration)
+                {
+                    messageText = "";
+                    return;
+                }
+                alpha = (float) ((messageStart + messageDuration - lastTickTime) / 0.5);
+            }
+
+        overlay->begin();
+        glTranslatef(0.0f, titleFontH, 0.0f); // margin from bottom
+
+        float msgWidth = titleFont->getWidth(messageText) + 4.0f;
+
+        glColor4f(clBackground->rgba[0] / 255.0f,
+                  clBackground->rgba[1] / 255.0f,
+                  clBackground->rgba[2] / 255.0f,
+                  clBackground->rgba[3] / 255.0f * alpha);
+        overlay->rect(0.0f, 0.0f, msgWidth, titleFontH);
+
+        glColor4f(clBgInteractiveBrd->rgba[0] / 255.0f,
+                  clBgInteractiveBrd->rgba[1] / 255.0f,
+                  clBgInteractiveBrd->rgba[2] / 255.0f,
+                  clBgInteractiveBrd->rgba[3] / 255.0f * alpha);
+
+        overlay->rect(0.0f, 0.0f, msgWidth, titleFontH, false);
+        overlay->setFont(titleFont);
+
+        glTranslatef(0.0f, 2.0f, 0.0f);
+        overlay->beginText();
+
+        glColor4f(clInteractivePrefixFnt->rgba[0] / 255.0f,
+                  clInteractivePrefixFnt->rgba[1] / 255.0f,
+                  clInteractivePrefixFnt->rgba[2] / 255.0f, alpha);
+
+        *overlay << messageText;
+
+        overlay->endText();
+        overlay->end();
+        return;
+    }
+
+    if (!curInteractive)
+        return;
+
     float fontH = font->getHeight();
     // cel. overlay << \n will shift y by fontH + 1
     const float realFontH = font->getHeight() + 1;
-
-    float titleFontH = titleFont->getHeight();
 
     int nb_lines;
     switch(consoleType)
@@ -2251,7 +2303,7 @@ void GeekConsole::setMacroRecord(bool enable, bool quiet)
         if (isMacroRecording)
         {
             if (!quiet)
-                celCore->flash(_("Already defining macro"));
+                showText(_("Already defining macro"));
 
             size_t found = currentMacro.rfind(execkey);
             if( found != string::npos )
@@ -2266,7 +2318,7 @@ void GeekConsole::setMacroRecord(bool enable, bool quiet)
         if (!isMacroRecording)
         {
             if (!quiet)
-                celCore->flash(_("Not defining macro"));
+                showText(_("Not defining macro"));
             return;
         }
 
@@ -2300,7 +2352,7 @@ void GeekConsole::setMacroRecord(bool enable, bool quiet)
 void GeekConsole::callMacro()
 {
     setMacroRecord(false);
-    celCore->flash(string(_("Call macro")) + " " + lastMacro);
+    showText(string(_("Call macro")) + " " + lastMacro);
     execFunction("exec function", lastMacro);
 }
 
@@ -2311,7 +2363,7 @@ void GeekConsole::appendCurrentMacro(std::string macro)
     if ( curMacroLevel >= maxMacroLevel)
     {
         setMacroRecord(false, true);
-        celCore->flash(_("Max level of macro, defining stopped."), 8);
+        showText(_("Max level of macro, defining stopped."), 8);
     }
     else
     {
@@ -2337,6 +2389,13 @@ void GeekConsole::beep()
 {
     if (beeper)
         beeper->beep();
+}
+
+void GeekConsole::showText(string s, double duration)
+{
+    messageText = s;
+    messageStart = lastTickTime;
+    messageDuration = duration;
 }
 
 /******************************************************************
@@ -4732,7 +4791,7 @@ int GCFunc::call(GeekConsole *gc, int state, std::string value)
             return lua_tointeger ( lua, -1 );
         else
         {
-            gc->getCelCore()->flash("Error during executing lua function");
+            gc->showText("Error during executing lua function");
             break;
         }
     case LuaNamed:
@@ -4740,7 +4799,7 @@ int GCFunc::call(GeekConsole *gc, int state, std::string value)
         lua_getfield    ( lua, LUA_GLOBALSINDEX, luaFunName.c_str());   // push global function on stack
         if (!lua_isfunction(lua, -1)) {
             gc->finish();
-            gc->getCelCore()->flash("Lua function \""+luaFunName+"\" is undefined.");
+            gc->showText("Lua function \""+luaFunName+"\" is undefined.");
             return 1;
         }
         lua_pushinteger ( lua, state );                     // push second argument on stack
@@ -4750,7 +4809,7 @@ int GCFunc::call(GeekConsole *gc, int state, std::string value)
             return lua_tointeger ( lua, -1 );
         else
         {
-            gc->getCelCore()->flash("Error during executing lua function");
+            gc->showText("Error during executing lua function");
             break;
         }
     case Alias:

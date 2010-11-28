@@ -890,7 +890,7 @@ void MyEventLoop(void)
                 glPushAttrib(GL_ALL_ATTRIB_BITS );
 
                 if (getGeekConsole())
-                    getGeekConsole()->render();
+                    getGeekConsole()->render((double)t2 / 1000);
                 glPopAttrib();
                 glMatrixMode(GL_MODELVIEW);
                 glPopMatrix();

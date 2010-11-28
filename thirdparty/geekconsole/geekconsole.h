@@ -480,7 +480,7 @@ public:
         };
     int const getWidth() {return width;}
     int const getHeight() {return height;}
-    void render();
+    void render(double time);
     bool isVisible;
     int32 consoleType;
 
@@ -526,7 +526,8 @@ public:
     Beep *getBeeper()
         { return beeper; }
     void beep();
-    
+    void showText(std::string s, double duration = 2.5);
+
     // descript. prefix in before interactive prompt
     std::string InteractivePrefixStr;
     // bottom description str
@@ -571,6 +572,11 @@ private:
     std::vector<std::string> helpText; // lines of info helpText
     uint helpTextWidth; // max width in pixel of helpText
     void setHelpText(std::string);
+
+    std::string messageText;
+    double messageStart;
+    double lastTickTime;
+    double messageDuration; // < 0 for infinity
 };
 
 // convert control, '"', '\' chars to \X or \DDD i.e. to readable lua string
