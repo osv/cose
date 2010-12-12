@@ -656,6 +656,7 @@ void InfoInteractive::mouseWheel(float motion, int modifiers)
 void InfoInteractive::processChar(const char *c_p, int modifiers)
 {
     char c = *c_p;
+    char C = toupper(c);
     setBufferText("");
     switch (state)
     {
@@ -709,7 +710,7 @@ void InfoInteractive::processChar(const char *c_p, int modifiers)
                 windowSize = N;
             forward(getWindowSize());
         } else if (c == '\r' || c == '\n' || c == CTRL_N ||
-                   c == 'e' || c == CTRL_E || c == 'j' || c == CTRL_J) {
+                   C == 'E' || c == CTRL_E || C == 'J' || c == CTRL_J) {
             if (modifiers & GeekBind::SHIFT)
             {
                 if (selectedY != -1 && selectedX != -1)
