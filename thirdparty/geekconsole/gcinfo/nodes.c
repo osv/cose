@@ -43,7 +43,6 @@ static FILE_BUFFER *info_find_file_internal (char *filename, int get_tags);
 static NODE *info_node_of_file_buffer_tags (FILE_BUFFER *file_buffer,
     char *nodename);
 
-static long get_node_length (SEARCH_BINDING *binding);
 
 /* Magic number that RMS used to decide how much a tags table pointer could
    be off by.  I feel that it should be much smaller, like 4.  */
@@ -89,6 +88,11 @@ info_get_node (char *filename, char *nodename)
 
   if (info_parsed_nodename)
     nodename = info_parsed_nodename;
+
+  // try auto node first
+  node = getDynamicNode(filename, nodename);
+  if (node)
+      return node;
 
   /* If FILENAME is not specified, it defaults to "dir". */
   if (!filename)
@@ -572,7 +576,7 @@ get_nodes_of_info_file (FILE_BUFFER *file_buffer)
 }
 
 /* Return the length of the node which starts at BINDING. */
-static long
+long
 get_node_length (SEARCH_BINDING *binding)
 {
   int i;

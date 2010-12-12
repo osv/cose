@@ -22,6 +22,10 @@
 #ifndef INFO_FILESYS_H
 #define INFO_FILESYS_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /* The path on which we look for info files.  You can initialize this
    from the environment variable INFOPATH if there is one, or you can
    call info_add_path () to add paths to the beginning or end of it. */
@@ -78,7 +82,8 @@ extern int is_dir_name (char *filename);
 
 /* The default value of INFOPATH. */
 #if !defined (DEFAULT_INFOPATH)
-#  define DEFAULT_INFOPATH ".;/usr/local/info;/usr/info;/usr/local/lib/info;/usr/lib/info;/usr/local/gnu/info;/usr/local/gnu/lib/info;/usr/gnu/info;/usr/gnu/lib/info;/opt/gnu/info;/usr/share/info;/usr/share/lib/info;/usr/local/share/info;/usr/local/share/lib/info;/usr/gnu/lib/emacs/info;/usr/local/gnu/lib/emacs/info;/usr/local/lib/emacs/info;/usr/local/emacs/info"
+// #  define DEFAULT_INFOPATH ".;/usr/local/info;/usr/info;/usr/local/lib/info;/usr/lib/info;/usr/local/gnu/info;/usr/local/gnu/lib/info;/usr/gnu/info;/usr/gnu/lib/info;/opt/gnu/info;/usr/share/info;/usr/share/lib/info;/usr/local/share/info;/usr/local/share/lib/info;/usr/gnu/lib/emacs/info;/usr/local/gnu/lib/emacs/info;/usr/local/lib/emacs/info;/usr/local/emacs/info"
+#  define DEFAULT_INFOPATH "."
 #endif /* !DEFAULT_INFOPATH */
 
 #if !defined (S_ISREG) && defined (S_IFREG)
@@ -88,5 +93,9 @@ extern int is_dir_name (char *filename);
 #if !defined (S_ISDIR) && defined (S_IFDIR)
 #  define S_ISDIR(m) (((m) & S_IFMT) == S_IFDIR)
 #endif /* !S_ISDIR && S_IFDIR */
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* not INFO_FILESYS_H */

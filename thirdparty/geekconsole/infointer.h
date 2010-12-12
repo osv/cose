@@ -5,6 +5,11 @@
 #define MAX_NODE_HISTORY_SYZE 64
 #endif
 
+#include "gcinfo/shared.h"
+#include <map>
+#include <vector>
+#include <string>
+
 // pager, text viewer, similar to `less` and `info` command
 class InfoInteractive: public GCInteractive
 {
@@ -43,6 +48,7 @@ public:
     };
 
     InfoInteractive(std::string name);
+    ~InfoInteractive();
     void Interact(GeekConsole *_gc, string historyName);
     /* set node to view, also compile text with hyper links
        FILENAME can be passed as NULL, in which case the filename of "dir" is used.
@@ -62,6 +68,18 @@ public:
         { return -1;}
     string getHelpText();
 
+    NODE *getDynamicNode(char *filename, char *nodename);
+
+    void rebuildDirCache();
+    bool addFileToDirCache(std::string filename);
+
+    // register fullpath of info's file name
+    void addCachedInfoFile(std::string filename, std::string fullname);
+    // get fullpath of info file
+    const char *getInfoFullPath(char *filename);
+
+    void saveDirCache();
+    bool loadDirCache();
     // pager state
     enum {
         PG_NOP = 0,
@@ -149,6 +167,24 @@ private:
     node_s node_up; // parsed up node for current node
     std::vector <node_s> menu; // menu of this node
     std::list <node_s> nodeHistory; // history of visited nodes
+
+    // cached dir entry
+
+    struct dir_item
+    {
+        string menu;
+        string descr;
+        bool   dynamic;
+    };
+    typedef std::vector <dir_item> menus;
+    // section, dir entrys
+    typedef std::map<std::string, menus> dirSection_t;
+    dirSection_t dirCache;
+    NODE dirNode;
+    std::map<std::string, std::string> cachedInfoFiles;
+    // add Dir menu
+    void addDirTxt(char *content, int size, bool dynamic);
+    bool dirModified;
 };
 
 extern InfoInteractive *infoInteractive;

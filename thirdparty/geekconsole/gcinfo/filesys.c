@@ -85,6 +85,11 @@ info_find_fullpath (char *partial)
   int initial_character;
   char *temp;
 
+  // try cached info path first
+  temp = getInfoFullPath (partial);
+  if (*temp)
+      return temp;
+
   filesys_error_number = 0;
 
   maybe_initialize_infopath ();

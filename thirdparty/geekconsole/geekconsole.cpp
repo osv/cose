@@ -5350,6 +5350,11 @@ static int info_last_node(GeekConsole *gc, int state, std::string value)
     return state;
 }
 
+static void info_rebuild_dir()
+{
+    infoInteractive->rebuildDirCache();
+}
+
 static bool isInteractsInit = false;
 
 extern void initinfos();
@@ -5414,6 +5419,8 @@ void initGCInteractives(GeekConsole *gc)
                         "macro end and call");
     getGeekConsole()->registerFunction(GCFunc(info, _("Read Info documents")), "info");
     getGeekConsole()->registerFunction(GCFunc(info_last_node), "info, last visited node");
+    getGeekConsole()->registerFunction(GCFunc(info_rebuild_dir, _("Rebuild directory node - the top of the INFO tree")),
+                                       "info, rebuild dir node");
 }
 
 void destroyGCInteractives()

@@ -1,7 +1,12 @@
 #include "geekconsole.h"
 #include "gcinfo/nodes.h"
+#include "gcinfo/filesys.h"
 #include "gcinfo/info-utils.h"
+#include "gcinfo/shared.h"
 #include "infointer.h"
+
+#include <celutil/directory.h>
+#include <fstream>
 
 /*
   InfoInteractive
@@ -19,10 +24,38 @@
    dir.c
    tilde.c
 
+  If you want to use system info files just create link:
+   %ln -s /usr/local/info ~/temp/celestia/sysinfo
+  where ~/temp/celestia/ is your celestia data dir/
+
   This interactive  is emulate `less' command  with several navigation
   command for info-specified facility. */
 
+// TODO: Garbage collect for unused node contents.
+
 const char *hint_follownode = "S-RET - follow node";
+const char *dirCache_FileName = "dir.cache";
+const char *infoFileListCache_FileName = "info.cache";
+
+class InfoDirLoader : public EnumFilesHandler
+{
+public:
+    InfoInteractive *infoInter;
+    InfoDirLoader(InfoInteractive *i) :
+        infoInter(i){};
+
+    bool process(const string& filename) {
+        size_t sz = filename.find(".info");
+        if (sz != string::npos)
+        {
+            string fullname = getPath() + '/' + filename;
+            infoInter->addFileToDirCache(fullname);
+            if (filename.find(".info-") == string::npos)
+                infoInter->addCachedInfoFile(string(filename, 0, sz), fullname);
+        }
+        return true;
+    }
+};
 
 std::string describeChunk(InfoInteractive::chunk_s *chk)
 {
@@ -45,8 +78,18 @@ InfoInteractive::InfoInteractive(std::string name)
      pageScrollIdx(0),
      font(NULL),
      selectedY(1),
-     selectedX(-1)
+     selectedX(-1),
+     dirModified(true)
 {
+    dirNode.contents = NULL;
+
+    if (!loadDirCache())
+        rebuildDirCache();
+}
+
+InfoInteractive::~InfoInteractive()
+{
+    maybe_free(dirNode.contents);
 }
 
 void InfoInteractive::setFont(TextureFont* _font)
@@ -438,7 +481,10 @@ void InfoInteractive::addNodeText(char *contents, int size)
             else
             {
                 c += skip_whitespace_and_newlines (c);
-                c = info_parse_node (c, DONT_SKIP_NEWLINES);
+                if (search_for_menu)
+                    c = info_parse_node (c, DONT_SKIP_NEWLINES);
+                else
+                    c = info_parse_node (c, SKIP_NEWLINES);
 
                 if (info_parsed_filename)
                     file_name = info_parsed_filename;
@@ -1072,3 +1118,342 @@ void InfoInteractive::renderInteractive()
     *gc->getOverlay() << getBufferText();
 }
 
+void InfoInteractive::rebuildDirCache()
+{
+    dirCache.clear();
+    cachedInfoFiles.clear();
+
+    Directory* dir = OpenDirectory(".");
+
+    InfoDirLoader loader(this);
+    loader.pushDir(".");
+    dir->enumFiles(loader, true);
+
+    delete dir;
+
+    saveDirCache();
+}
+
+bool InfoInteractive::addFileToDirCache(string filename)
+{
+    struct stat fstat;
+    long filesize;
+    int retcode, compressed;
+
+    cout << _("Get dir from info: ") << filename << '\n';
+
+    stat(filename.c_str(), &fstat);
+    char *contents = filesys_read_info_file ((char *)filename.c_str(), &filesize, &fstat, &compressed);
+    if (!contents)
+        return false;
+
+    addDirTxt(contents, filesize, false);
+
+    free(contents);
+    return true;
+}
+
+// pars content and insert node netry to *dirCache
+void InfoInteractive::addDirTxt(char *content, int size, bool dynamic)
+{
+    dirModified = true;
+
+    SEARCH_BINDING search;
+    search.buffer = content;
+    search.start = 0;
+    search.end = size;
+
+    // only first node contain dir section
+    search.end = get_node_length(&search);
+
+# define CURC search.buffer + search.start
+
+    dirSection_t dirSection;
+
+    std::vector <string> sections;
+
+    while(1)
+    {
+        sections.clear();
+        search.flags = S_SkipDest;
+        long pos = search_forward("INFO-DIR-SECTION", &search);
+        if (-1 == pos)
+            break;
+        search.start = pos;
+
+        search.start += skip_whitespace(CURC);
+        int sec_end = skip_line(CURC);
+        if (sec_end > 1)
+        {
+            sections.push_back(string(CURC, sec_end -1));
+        }
+        else
+        {
+            // section w/o name, invalid node
+            break;
+        }
+
+        // START-INFO-DIR-ENTRY without INFO-DIR-SECTION?
+        if (sections.empty())
+            break;
+
+        search.start += sec_end;
+
+        // look what tag is nearest
+        int next_sec_pos = search_forward("INFO-DIR-SECTION", &search);
+        int dir_entry_start = search_forward("START-INFO-DIR-ENTRY", &search);
+
+        // if dir section - continue for add it to section list
+        if (next_sec_pos < dir_entry_start &&
+            -1 != next_sec_pos)
+        {
+            //search.start = next_sec_pos;
+            continue;
+        }
+
+        // dir section w/o dir entry?
+        if (-1 == dir_entry_start)
+            break;
+        search.start = dir_entry_start;
+
+        // search for end of dir entry
+        search.flags = 0;
+        long dir_entry_end = search_forward("END-INFO-DIR-ENTRY", &search);
+
+        // check for valid
+        if (dir_entry_end < 1)
+            break;
+
+        // now parse entry menus
+        char *c = CURC;
+        char *end = search.buffer + dir_entry_end;
+        while(c < end)
+        {
+            if ('*' == *c)
+            {
+                dir_item mitem;
+                mitem.dynamic = dynamic;
+
+                c += 2; // skip "* "
+                char *menu = c;
+                // search end of menu name i.e. str like: "* Cpp: (cpp)."
+                while(c < end && !(*c == '\t' ||
+                                   *c == ','  ||
+                                   *c == INFO_TAGSEP ||
+                                   (*c == '.' &&
+                                    (
+                                        (whitespace_or_newline (*(c+1))) ||
+                                        (*(c+1) == ')')))))
+                    c++;
+                if (c > menu)
+                    mitem.menu = string(menu, c - menu);
+                c++;
+
+                // rest text is description of menu until next menu found
+                char *descr = c;
+                while(c < end && *c != '\n' && *(c+1) != '*')
+                    c++;
+
+                if (c > descr)
+                    mitem.descr = string(descr, c - descr);
+
+                // add to dirSection mitem
+                for (vector<string>::const_iterator it = sections.begin();
+                     it < sections.end(); it++)
+                {
+                    dirSection_t::iterator ds = dirSection.find(*it);
+                    if (ds != dirSection.end())
+                    {
+                        menus *m = &ds->second;
+
+                        bool found = false;
+                        for (menus::const_iterator itm = m->begin();
+                             itm != m->end(); itm++)
+                        {
+                            if ((*itm).menu == mitem.menu)
+                            {
+                                found = true;
+                                break;
+                            }
+                        }
+
+                        if (!found)
+                            m->push_back(mitem);
+                    }
+                    else
+                    {
+                        menus m;
+                        m.push_back(mitem);
+                        dirSection[*it] = m;
+                    }
+                }
+            }
+            c++;
+        }
+
+        search.start = dir_entry_end;
+        // try search next section
+    }
+
+    // concat file current dir section with global dircache
+    for (dirSection_t::iterator itl = dirSection.begin();
+         itl != dirSection.end(); itl++ )
+    {
+        dirSection_t::iterator ds = dirCache.find((*itl).first);
+        if (ds != dirCache.end())
+        {
+            menus ml = (*itl).second;
+            menus *mg = &ds->second;
+            for (menus::const_iterator itml = ml.begin();
+                 itml != ml.end(); itml++)
+                {
+                    bool found = false;
+                    for (menus::const_iterator itmg = mg->begin();
+                         itmg != mg->end(); itmg++)
+                    {
+                        if ((*itmg).menu == (*itml).menu)
+                        {
+                            found = true;
+                            break;
+                        }
+                    }
+                    if (!found)
+                        mg->push_back(*itml);
+                }
+        }
+        else
+        {
+            dirCache[(*itl).first] = (*itl).second;
+        }
+
+    }
+}
+
+void InfoInteractive::saveDirCache()
+{
+    fstream file;
+    file.open(dirCache_FileName, fstream::out);
+    if (!file.good())
+        return;
+
+    file << " Auto generated" << endl;
+    for (dirSection_t::const_iterator it = dirCache.begin();
+         it != dirCache.end(); it++ )
+    {
+        menus ml = (*it).second;
+
+        file <<  "INFO-DIR-SECTION "
+             << (*it).first << endl;
+
+        file << "START-INFO-DIR-ENTRY" << endl;
+
+        for (menus::const_iterator itml = ml.begin();
+             itml != ml.end(); itml++)
+            if (!(*itml).dynamic)
+                file << "* " << (*itml).menu << ".       " << (*itml).descr << endl;
+        file << "END-INFO-DIR-ENTRY" << endl << endl;
+    }
+
+    file.close();
+
+    // info file list
+    file.open(infoFileListCache_FileName, fstream::out);
+    if (!file.good())
+        return;
+
+    map<string, string>::const_iterator it;
+    for (it = cachedInfoFiles.begin(); it != cachedInfoFiles.end(); it++)
+        file << (*it).first << endl << (*it).second << endl;
+    file.close();
+}
+
+bool InfoInteractive::loadDirCache()
+{
+    dirCache.clear();
+    cachedInfoFiles.clear();
+
+    fstream file;
+    file.open(infoFileListCache_FileName, fstream::in);
+    if (!file.good())
+        return false;
+
+    while(!file.eof())
+    {
+        string name;
+        string fullname;
+        file >> name >> fullname;
+        cachedInfoFiles[name] = fullname;
+    }
+
+    file.close();
+
+    return addFileToDirCache(dirCache_FileName);
+}
+
+void InfoInteractive::addCachedInfoFile(std::string filename, std::string fullname)
+{
+    cachedInfoFiles[filename] = fullname;
+}
+
+NODE *InfoInteractive::getDynamicNode(char *filename, char *nodename)
+{
+    // create dir node from cache
+    if (is_dir_name(filename))
+    {
+        if (dirNode.contents && !dirModified)
+            return &dirNode;
+
+        dirModified = false;
+
+        maybe_free(dirNode.contents);
+
+        dirNode.filename = "dir";
+        dirNode.parent = NULL;
+        dirNode.nodename = "Top";
+        dirNode.flags = 0;
+        dirNode.display_pos;
+        std::stringstream ss;
+        ss << "File: dir,\tNode: Top\t"
+           << endl << endl;
+        ss << _(" This (the Directory node) gives a menu of major topics.\n");
+        ss << "\n\n* Menu:\n";
+
+        for (dirSection_t::const_iterator it=dirCache.begin();
+             it != dirCache.end(); it++ )
+        {
+            menus ml = (*it).second;
+
+            ss <<  endl << (*it).first << endl;
+
+            for (menus::const_iterator itml = ml.begin();
+                 itml != ml.end(); itml++)
+                ss << "* " << (*itml).menu << ".       " << (*itml).descr << endl;
+        }
+
+        dirNode.nodelen = ss.str().size();
+        dirNode.contents = (char *)malloc(dirNode.nodelen);
+        memcpy(dirNode.contents, ss.str().c_str(), dirNode.nodelen);
+        return &dirNode;
+    }
+    return NULL;
+}
+
+const char *InfoInteractive::getInfoFullPath(char *filename)
+{
+    map<string, string>::const_iterator it =
+        cachedInfoFiles.find(filename);
+    if (it != cachedInfoFiles.end())
+        return (&it->second)->c_str();
+    else
+        return "";
+}
+
+NODE *getDynamicNode(char *filename, char *nodename)
+{
+    return infoInteractive->getDynamicNode(filename, nodename);
+}
+
+char *getInfoFullPath(char *filename)
+{
+    return const_cast<char *>(infoInteractive->getInfoFullPath(filename));
+}
