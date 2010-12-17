@@ -4,6 +4,7 @@
 #include "gcinfo/info-utils.h"
 #include "gcinfo/shared.h"
 #include "infointer.h"
+#include "gvar.h"
 
 #include <celutil/directory.h>
 #include <fstream>
@@ -57,20 +58,121 @@ public:
     }
 };
 
-std::string describeChunk(InfoInteractive::chunk_s *chk)
+void ChkText::render(rcontext *rc)
 {
-    if (chk->type == InfoInteractive::chunk_s::NODE)
+    *rc->ovl << text;
+}
+
+float ChkText::getHeight()
+{
+    return 0;
+}
+
+void ChkVar::render(rcontext *rc)
+{
+    string varval = gVar.GetString(varname);
+    float width = rc->font->getWidth(varval);
+    const short spacesz = spaces * rc->font->getAdvance('X');
+    if (spaces > 0 && width < spacesz)
+        width = spacesz;
+
+    glColor4ubv(clCompletionAfterMatch->rgba);
+    rc->ovl->rect(rc->ovl->getXoffset(), -2,
+                  width, rc->font->getHeight());
+    glColor4ubv(clCompletionExpandBg->rgba);
+    *rc->ovl << varval;
+
+    // return to default color
+    glColor4ubv(clCompletionFnt->rgba);
+}
+
+std::string ChkVar::getText()
+{
+    return varname;
+}
+
+float ChkVar::getHeight()
+{
+    return 0;
+}
+
+void ChkHText::render(rcontext *rc)
+{
+    rc->ovl->rect(rc->ovl->getXoffset(), -2,
+              rc->font->getWidth(text), 1);
+    *rc->ovl << text;
+}
+
+void ChkNode::render(rcontext *rc)
+{
+    if (rc->renderSelected)
     {
-        std::string text = "Node: ";
-        text += chk->text;
-        if (!chk->filename.empty())
-        {
-            text += "\nFile: ";
-            text += chk->filename;
-        }
-        return text;
+        glColor4ubv(clCompletionExpandBg->rgba);
+        rc->ovl->rect(rc->ovl->getXoffset(), -2,
+                      rc->font->getWidth(text), rc->font->getHeight());
     }
-    return "";
+
+    glColor4ubv(clCompletionAfterMatch->rgba);
+    *rc->ovl << text;
+
+    // return to default color
+    glColor4ubv(clCompletionFnt->rgba);
+}
+
+string ChkNode::getHelpTip()
+{
+    string res = "Node: ";
+    res += node;
+    if (!filename.empty())
+    {
+        res += "\nFile: ";
+        res += filename;
+    }
+    return res;
+}
+
+void ChkNode::followLink()
+{
+    infoInteractive->setNode(filename, node, linenumber);
+}
+
+void ChkHSpace::render(rcontext *rc)
+{
+    const float xoffset = rc->ovl->getXoffset();
+    const short basesz = rc->font->getAdvance('X');
+    const short spacesz = rc->font->getAdvance(' ');
+    int n = ceil((m_spaces * basesz - xoffset) / spacesz);
+    if (n <= 0)
+        n = 1;
+    *rc->ovl << string(n, ' ');
+}
+
+void ChkSeparator::render(rcontext *rc)
+{
+    float fh = rc->font->getHeight();
+
+    if (type == SEPARATOR1) // bold line
+    {
+        rc->ovl->rect(0, fh/2 + 1, 100.0 * rc->width, 3);
+    }
+    else if (type == SEPARATOR2) // ====
+    {
+        rc->ovl->rect(0, fh/2 + 1, 100.0 * rc->width, 3, false);
+    }
+    else if (type == SEPARATOR3) // ----
+        rc->ovl->rect(0, fh/2 + 1, 100.0 * rc->width, 2);
+    else if (type == SEPARATOR4) // ....
+        rc->ovl->rect(0, fh/2 + 1, 100.0 * rc->width, 1);
+
+}
+
+// InfoInteractive //
+
+void InfoInteractive::line_s::free()
+{
+    Chunks::iterator it;
+    for (it = chunks.begin(); it != chunks.end(); it++)
+        delete *it;
 }
 
 InfoInteractive::InfoInteractive(std::string name)
@@ -216,7 +318,7 @@ void InfoInteractive::setNode(node_s node)
 
 void InfoInteractive::setNode(string f, string n, int linenumber)
 {
-    Chunks chunks;
+    line_s line;
 
     // save history before all
     nodeHistory.push_back(node_s(m_filename, m_nodename, pageScrollIdx, selectedX, selectedY));
@@ -235,7 +337,12 @@ void InfoInteractive::setNode(string f, string n, int linenumber)
     // read node
     NODE *node = info_get_node ((char *)f.c_str(), (char *)n.c_str());
 
+    // clear old lines
+    std::vector<line_s>::iterator it;
+    for (it = lines.begin(); it != lines.end(); it++)
+        (*it).free();
     lines.clear();
+
     node_next.clear();
     node_prev.clear();
     node_up.clear();
@@ -250,13 +357,13 @@ void InfoInteractive::setNode(string f, string n, int linenumber)
     }
     else
     {
-        chunks.push_back(_("Node not found."));
-        lines.push_back(chunks);
+        line.add(new ChkText(_("Node not found.")));
+        lines.push_back(line);
         if (info_recent_file_error)
         {
-            chunks.clear();
-            chunks.push_back(info_recent_file_error);
-            lines.push_back(chunks);
+            line.clear();
+            line.add(new ChkText(info_recent_file_error));
+            lines.push_back(line);
         }
     }
 
@@ -271,7 +378,7 @@ void InfoInteractive::setNodeText(char *contents, int size)
     char *c = contents;
     char *end = contents + size;
     char *lstart; // line start
-    Chunks chunks;
+    line_s line;
 
     // first line is header, skip it
     while(c < end && *c != '\n')
@@ -286,25 +393,22 @@ void InfoInteractive::setNodeText(char *contents, int size)
     info_file_label_of_line(contents);
     if (info_parsed_nodename)
     {
-        chunks.push_back(chunk_s(_("File: ")));
-        chunk_s c(info_parsed_nodename);
-        c.type = chunk_s::TEXT2;
-        chunks.push_back(c);
+        line.add(new ChkText(_("File: ")));
+        line.add(new ChkHText(info_parsed_nodename));
     }
 
     info_node_label_of_line(contents);
     if (info_parsed_nodename)
     {
-        chunks.push_back(chunk_s(_(",  Node: ")));
-        chunk_s c(info_parsed_nodename);
-        c.type = chunk_s::TEXT2;
-        chunks.push_back(c);
+        line.add(new ChkText(_(",  Node: ")));
+        line.add(new ChkHText(info_parsed_nodename));
     }
 
 #define CHECKLABEL(_textm, _nodeset)                                    \
     if (info_parsed_filename || info_parsed_nodename)                   \
     {                                                                   \
-        chunks.push_back(chunk_s(_(",  " _textm ": ")));                \
+        line.add(new ChkText(_(",  " _textm ": ")));                    \
+                                                                        \
         string filename;                                                \
         string nodename;                                                \
         string label;                                                   \
@@ -318,8 +422,8 @@ void InfoInteractive::setNodeText(char *contents, int size)
             label += info_parsed_nodename;                              \
             nodename = info_parsed_nodename;                            \
         }                                                               \
-        chunks.push_back(chunk_s(label, filename, nodename,             \
-                                 info_parsed_line_number));             \
+        line.add(new ChkNode(label, filename, nodename,                 \
+                         info_parsed_line_number));                     \
         _nodeset.set(filename, nodename, info_parsed_line_number);      \
     }
 
@@ -333,7 +437,7 @@ void InfoInteractive::setNodeText(char *contents, int size)
     info_up_label_of_line(contents);
     CHECKLABEL("Up", node_up);
 
-    lines.push_back(chunks);
+    lines.push_back(line);
 
     // parse rest
     addNodeText(lstart, end - lstart);
@@ -350,7 +454,7 @@ void InfoInteractive::addNodeText(char *contents, int size)
     };
 
     State state = TEXTMODE;
-    Chunks chunks;
+    line_s line;
 
     char *c = contents;
     char *end = contents + size;
@@ -369,68 +473,67 @@ void InfoInteractive::addNodeText(char *contents, int size)
                         state = TEXTMODE; // if empty line - reset state to def.
                 else
                 {
-                    chunks.push_back(chunk_s(28)); // format comment of menu to right align
+                    line.add(new ChkHSpace(28)); // format comment of menu to right align
                     lstart += skip_whitespace(lstart);
                     state = MENU_DESCR;
                 }
             }
             else
             {
-                if (chunks.size() == 0 && c - lstart > 0)
+                if (line.chunks.size() == 0 && c - lstart > 0)
                 {
                     int i;
                     for (i = 0; i < c - lstart; i++)
                     {
                         if (!(lstart[i] == '-' || lstart[i] == ' ' ||
-                              lstart[i] == '*' || lstart[i] == '='))
+                              lstart[i] == '*' || lstart[i] == '=' ||
+                              lstart[i] == '.'))
                             break;
                     }
                     if (i == c - lstart)
                     {
                         if (c[-1] == '*')
-                            chunks.push_back(chunk_s(chunk_s::SEPARATOR1));
+                            line.add(new ChkSeparator(ChkSeparator::SEPARATOR1));
                         else if (c[-1] == '=')
-                            chunks.push_back(chunk_s(chunk_s::SEPARATOR2));
+                            line.add(new ChkSeparator(ChkSeparator::SEPARATOR2));
                         else if (c[-1] == '-')
-                            chunks.push_back(chunk_s(chunk_s::SEPARATOR3));
+                            line.add(new ChkSeparator(ChkSeparator::SEPARATOR3));
+                        else if (c[-1] == '.' && i > 3) // make sure not just "..."
+                            line.add(new ChkSeparator(ChkSeparator::SEPARATOR4));
                         goto appendline;
                     }
                 }
             }
-            chunks.push_back(chunk_s(lstart, c - lstart));
+            line.add(new ChkText(lstart, c - lstart));
         appendline:
-            lines.push_back(chunks);
-            chunks.clear();
+            lines.push_back(line);
+            line.clear();
             lstart = c + 1;
         }
         else if (*c == '`' && state == TEXTMODE) // highlight text between `'
         {
             c++; // push '`'also
-            chunks.push_back(chunk_s(lstart, c - lstart));
+            line.add(new ChkText(lstart, c - lstart));
             lstart = c;
             while(c < end && *c != '\'')
             {
                 if (*c == '\n')
                 {   // push current line and continue search for '\''
-                    chunk_s chk(lstart, c - lstart);
-                    chk.type = chunk_s::TEXT2;
-                    chunks.push_back(chk);
-                    lines.push_back(chunks);
-                    chunks.clear();
+                    line.add(new ChkHText(lstart, c - lstart));
+                    lines.push_back(line);
+                    line.clear();
                     lstart = c +1;
                 }
                 c++;
             }
-            chunk_s chk(lstart, c - lstart);
-            chk.type = chunk_s::TEXT2;
-            chunks.push_back(chk);
+            line.add(new ChkHText(lstart, c - lstart));
             lstart = c;
         }
         else if (*c == '\t') // just convert tab to 8 spaces, TODO: add real tabs
         {
             if (c -1 - lstart > 0)
-                chunks.push_back(chunk_s(lstart, c -1 - lstart));
-            chunks.push_back("        ");
+                line.add(new ChkText(lstart, c -1 - lstart));
+            line.add(new ChkText("        "));
             lstart = c +1;
         }
         // "^\* "
@@ -439,7 +542,7 @@ void InfoInteractive::addNodeText(char *contents, int size)
             // if "* " at line begin - menu item found
             bool search_for_menu = (c[1] == ' ' && lstart == c);
             if (search_for_menu) {
-                chunks.push_back("* ");
+                line.add(new ChkText("* "));
                 c+=2;
             } else {
                 // check for XREF
@@ -449,9 +552,9 @@ void InfoInteractive::addNodeText(char *contents, int size)
                 }
                 // replace *Note to See
                 if (c - lstart > 0)
-                    chunks.push_back(chunk_s(lstart, c - lstart));
-                //chunks.push_back(chunk_s(lstart, c - lstart + strlen(INFO_XREF_LABEL)));
-                chunks.push_back(chunk_s("See "));
+                    line.add(new ChkText(lstart, c - lstart));
+
+                line.add(new ChkText("See "));
                 c += strlen(INFO_XREF_LABEL);
             }
             lstart = c;
@@ -494,14 +597,136 @@ void InfoInteractive::addNodeText(char *contents, int size)
 
                 line_number = info_parsed_line_number -2; // -2 is visible line correction
             }
-            chunks.push_back(chunk_s(label, file_name, node_name, line_number));
+            line.add(new ChkNode(label, file_name, node_name, line_number));
             if (search_for_menu)
                 menu.push_back(node_s(file_name, node_name, line_number));
             lstart = c;
             continue;
+            // ^@^H[...^@^H]
+        } else if (c < end -2 &&
+                   c[0] == 0 && c[1] == 8 && c[2] == '[') // ^@^H[
+        {
+            if (c -1 - lstart > 0)
+                line.add(new ChkText(lstart, c -1 - lstart));
+
+            c += 3; // skip ^@^H[
+            char *esc_start = c;
+            //search for ^@^H]
+            while (c < end -2 &&
+                   !(c[0] == 0 && c[1] == 8 && c[2] == ']'))
+                c++;
+
+            lstart = c +3; // skip ^@^H]
+            char *esc_end = c;
+
+            int tagsz = skip_non_whitespace(esc_start);
+            string tagname;
+            if (tagsz > 0)
+                tagname = string(esc_start, tagsz);
+
+            SEARCH_BINDING search;
+            search.buffer = esc_start;
+            search.start = tagsz;
+            search.end = esc_end - esc_start;
+
+
+            // parse  rest params like  foo="xyz" or  bar=[[zyx]] into
+            // map
+            map<string,string> params;
+
+# define CURC search.buffer + search.start
+            while(1)
+            {
+                search.start += skip_whitespace_and_newlines(CURC);
+                search.flags = 0;
+                long param_name_start = search.start;
+                long param_name_end = search_forward("=", &search);
+                if (-1 == param_name_end)
+                    break;
+
+                int strsz;
+                strsz = param_name_end - param_name_start;
+                if (strsz <= 0)
+                    break;
+                string param_name(CURC, strsz);
+                search.start = param_name_end +1; // +1 -  "=" offset
+
+                string value;
+
+                // value maybe in "foobar" or in [[foobar]]
+
+                if (search.buffer[search.start] == '"')
+                {
+                    search.start++;
+                    search.flags = 0;
+                    long value_start = search.start;
+                    long value_end = search_forward("\"", &search);
+                    if (-1 == param_name_end) // valid end?
+                        break;
+
+                    strsz = value_end - value_start;
+                    if (strsz <= 0)
+                        break;
+
+                    value = string(CURC, strsz);
+                    search.start = value_end + 1;
+                }
+                else if (search.buffer[search.start] == '[' &&
+                         search.buffer[search.start +1] == '[')
+                {
+                    search.start += 2; // skip "[["
+                    search.flags = 0;
+                    long value_start = search.start;
+                    long value_end = search_forward("]]", &search);
+                    if (-1 == param_name_end) // valid end?
+                        break;
+
+                    strsz = value_end - value_start;
+                    if (strsz <= 0)
+                        break;
+
+                    value = string(CURC, strsz);
+                    search.start = value_end + 2; // 2 - size of "]]"
+                }
+                else
+                    break;
+                params[param_name] = value;
+            }
+#undef CURC
+            map<string,string>::const_iterator it;
+            if (tagname == "var" || tagname == "descvar")
+            {
+                it = params.find("name");
+                if (it != params.end())
+                {
+                    string varname = it->second;
+                    it = params.find("spaces");
+                    int spaces = 0;
+                    if (it != params.end())
+                        spaces = atoi((it->second).c_str());
+
+                    if (tagname == "descvar")
+                    {
+                        line.add(new ChkText(varname));
+                        line.add(new ChkHSpace(26));
+                        line.add(new ChkVar(varname, spaces));
+                        lines.push_back(line);
+                        line.clear();
+                        // var doc
+                        string doc = gVar.GetDoc(varname);
+                        addNodeText(const_cast<char *>(doc.c_str()), doc.size());
+                    }
+                    else
+                        line.add(new ChkVar(varname, spaces));
+                }
+            }
         }
         c++;
     }
+    if (c - lstart > 0)
+        line.add(new ChkText(lstart, c - lstart));
+    if (!line.chunks.empty())
+        lines.push_back(line);
 }
 
 void InfoInteractive::charEntered(const char *c_p, int modifiers)
@@ -558,10 +783,10 @@ void InfoInteractive::charEntered(const char *c_p, int modifiers)
             setBufferText("");
             for (int i = pageScrollIdx -1; i >= 0; i--)
             {
-                for (int chk = lines[i].size() - 1; chk >= 0; chk--)
+                for (int chk = lines[i].chunks.size() - 1; chk >= 0; chk--)
                 {
-                    chunk_s *chunk = &lines[i][chk];
-                    if (chunk->text.find(lastSearchStr) != string::npos)
+                    Chunk *chunk = lines[i].chunks[chk];
+                    if (chunk->getText().find(lastSearchStr) != string::npos)
                     {
                         if (--N < 1) { // skip N matches
                             pageScrollIdx = i;
@@ -598,10 +823,10 @@ void InfoInteractive::charEntered(const char *c_p, int modifiers)
             setBufferText("");
             for (int i = pageScrollIdx +1; i < (int)lines.size(); i++)
             {
-                for (uint chk = 0; chk < lines[i].size(); chk++)
+                for (uint chk = 0; chk < lines[i].chunks.size(); chk++)
                 {
-                    chunk_s *chunk = &lines[i][chk];
-                    if (chunk->text.find(lastSearchStr) != string::npos)
+                    Chunk *chunk = lines[i].chunks[chk];
+                    if (chunk->getText().find(lastSearchStr) != string::npos)
                     {
                         if (--N < 1) { // skip N matches
                             pageScrollIdx = i;
@@ -715,11 +940,8 @@ void InfoInteractive::processChar(const char *c_p, int modifiers)
             {
                 if (selectedY != -1 && selectedX != -1)
                 {
-                    chunk_s *chunk = &lines[selectedY][selectedX];
-                    if (chunk->type == chunk_s::NODE)
-                    {
-                        setNode(chunk->filename, chunk->hyp, chunk->linenumber);
-                    }
+                    Chunk *chunk = lines[selectedY].chunks[selectedX];
+                    chunk->followLink();
                 }
             }
             else
@@ -901,31 +1123,31 @@ void InfoInteractive::processChar(const char *c_p, int modifiers)
             else
                 selectedX++;
             // try search link in current selected line for hint
-            for (int chk = selectedX; chk < (int)lines[i].size(); chk++)
+            for (int chk = selectedX; chk < (int)lines[i].chunks.size(); chk++)
             {
-                chunk_s *chunk = &lines[i][chk];
-                if (chunk->type == chunk_s::LINK || chunk->type == chunk_s::NODE)
+                Chunk *chunk = lines[i].chunks[chk];
+                if (chunk->isLink())
                 {
                     selectedY = i;
                     selectedX = chk;
-                    gc->setInfoText(describeChunk(chunk));
+                    gc->setInfoText(chunk->getHelpTip());
                     gc->appendDescriptionStr(_(hint_follownode));
                     return;
                 }
             }
 
             i++; // next lines
-            vector<Chunks>::const_iterator it = lines.begin();
+            vector<line_s>::const_iterator it = lines.begin();
             while (i < pageScrollIdx + (int)scrollSize && i < (int)lines.size())
             {
-                for (int chk = 0; chk < (int)lines[i].size(); chk++)
+                for (int chk = 0; chk < (int)lines[i].chunks.size(); chk++)
                 {
-                    chunk_s *chunk = &lines[i][chk];
-                    if (chunk->type == chunk_s::LINK || chunk->type == chunk_s::NODE)
+                    Chunk *chunk = lines[i].chunks[chk];
+                    if (chunk->isLink())
                     {
                         selectedY = i;
                         selectedX = chk;
-                        gc->setInfoText(describeChunk(chunk));
+                        gc->setInfoText(chunk->getHelpTip());
                         gc->appendDescriptionStr(_(hint_follownode));
                         return;
                     }
@@ -943,35 +1165,37 @@ void InfoInteractive::processChar(const char *c_p, int modifiers)
             if (i >= (int)lines.size())
                 i = lines.size() -1;
             if (selectedX == -1)
-                selectedX = lines[i].size();
+                selectedX = lines[i].chunks.size();
             else
                 selectedX--;
             // try back search link in current selected line
-            for (int chk = selectedX; chk >= 0; chk--)
+            for (int chk = selectedX;
+                 chk >= 0 && chk < (int)lines[i].chunks.size(); chk--)
             {
-                chunk_s *chunk = &lines[i][chk];
-                if (chunk->type == chunk_s::LINK || chunk->type == chunk_s::NODE)
+                Chunk *chunk = lines[i].chunks[chk];
+                if (chunk->isLink())
                 {
                     selectedY = i;
                     selectedX = chk;
-                    gc->setInfoText(describeChunk(chunk));
+                    gc->setInfoText(chunk->getHelpTip());
                     gc->appendDescriptionStr(_(hint_follownode));
                     return;
                 }
             }
 
             i--; // next lines
-            vector<Chunks>::const_iterator it = lines.begin();
+            vector<line_s>::const_iterator it = lines.begin();
             while (i >= 0)
             {
-                for (int chk = lines[i].size(); chk >= 0; chk--)
+                for (int chk = lines[i].chunks.size() -1; chk >= 0; chk--)
                 {
-                    chunk_s *chunk = &lines[i][chk];
-                    if (chunk->type == chunk_s::LINK || chunk->type == chunk_s::NODE)
+                    Chunk *chunk = lines[i].chunks[chk];
+                    cout << chunk->getText() << "\n";
+                    if (chunk->isLink())
                     {
                         selectedY = i;
                         selectedX = chk;
-                        gc->setInfoText(describeChunk(chunk));
+                        gc->setInfoText(chunk->getHelpTip());
                         gc->appendDescriptionStr(_(hint_follownode));
                         return;
                     }
@@ -1005,60 +1229,41 @@ void InfoInteractive::renderCompletion(float height, float width)
     if (pageScrollIdx < 0)
         pageScrollIdx = 0;
 
+    // Default  color, each  chunk->render  must not  change GL  color
+    // agter return.
     glColor4ubv(clCompletionFnt->rgba);
+
     glPushMatrix();
     glTranslatef((float) -leftScrollIdx, 0.0f, 0.0f);
-    gc->getOverlay()->beginText();
+    Overlay *overlay =  gc->getOverlay();
+    overlay->setFont(font);
+    overlay->beginText();
+
+    Chunk::rcontext rc;
+    rc.ovl = overlay;
+    rc.font = font;
+    rc.height = height;
+    rc.width = width;
+    rc.renderSelected = false;
 
     uint j, line;
     for (j = 0, line = pageScrollIdx;
          line < lines.size() && j < nb_lines; line++, j++)
     {
-        for (uint chk = 0; chk < lines[line].size(); chk++)
+        for (uint chk = 0; chk < lines[line].chunks.size(); chk++)
         {
-            chunk_s *chunk = &lines[line][chk];
-            if (chunk->type == chunk_s::TEXT)
-                *gc->getOverlay() << chunk->text;
-            else if (chunk->type == chunk_s::TEXT2)
-            {
-                gc->getOverlay()->rect(gc->getOverlay()->getXoffset(), -2,
-                                       font->getWidth(chunk->text), 1);
-                *gc->getOverlay() << chunk->text;
+            Chunk *chunk = lines[line].chunks[chk];
 
-            }
-            else if (chunk->type == chunk_s::LINK || chunk->type == chunk_s::NODE)
+            if (!(selectedY == (int)line && selectedX == (int)chk))
+                chunk->render(&rc);
+            else
             {
-                if (selectedY == (int)line && selectedX == (int)chk)
-                {  // selected item color setup
-                    glColor4ubv(clCompletionExpandBg->rgba);
-                    gc->getOverlay()->rect(gc->getOverlay()->getXoffset(), -2,
-                                           font->getWidth(chunk->text), fh);
-                }
-                glColor4ubv(clCompletionAfterMatch->rgba);
-                *gc->getOverlay() << chunk->text;
-                glColor4ubv(clCompletionFnt->rgba);
+                rc.renderSelected = true;
+                chunk->render(&rc);
+                rc.renderSelected = false;
             }
-            else if (chunk->type == chunk_s::HSPACE)
-            {
-                const float xoffset = gc->getOverlay()->getXoffset();
-                short basesz = font->getAdvance('X');
-                short spacesz = font->getAdvance(' ');
-                int n = ((float)chunk->spaces * basesz - xoffset) / spacesz;
-                if (n <= 0)
-                    n = 1;
-                *gc->getOverlay() << string(n, ' ');
-            }
-            else if (chunk->type == chunk_s::SEPARATOR1) // bold line
-            {
-                gc->getOverlay()->rect(0, fh/2 + 1, 100.0 * width, 3);
-            }
-            else if (chunk->type == chunk_s::SEPARATOR2) // ====
-            {
-                gc->getOverlay()->rect(0, fh/2 + 1, 100.0 * width, 3, false);
-            }
-            else if (chunk->type == chunk_s::SEPARATOR3) // ----
-                gc->getOverlay()->rect(0, fh/2 + 1, 100.0 * width, 1);
         }
+
         *gc->getOverlay() << "\n";
     }
     for (; j < nb_lines; j++)

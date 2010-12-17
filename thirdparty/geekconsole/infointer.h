@@ -10,6 +10,113 @@
 #include <vector>
 #include <string>
 
+class Chunk
+{
+public:
+    typedef struct rcontext {
+        Overlay *ovl;
+        TextureFont *font;
+        float height;
+        float width;
+        bool renderSelected; // item selected?
+    };
+
+    Chunk() {};
+    virtual void render(rcontext *rc) {};
+    virtual std::string getText() {
+        return ""; };
+    virtual std::string getHelpTip() {
+        return ""; };
+    virtual float getHeight() {return 0;};
+    virtual bool isLink() {
+        return false; };
+    virtual void followLink() {};
+};
+
+/* horizontal spaces  from whole line, if  it smaller then
+   size of line text before add just 1 ' ' */
+class ChkHSpace : public Chunk
+{
+public:
+    ChkHSpace(uint spaces): m_spaces(spaces) {};
+    void render(rcontext *rc);
+private:
+    float m_spaces;
+};
+
+class ChkSeparator : public Chunk
+{
+public:
+
+    enum Separator{
+        SEPARATOR1,
+        SEPARATOR2,
+        SEPARATOR3,
+        SEPARATOR4,
+    };
+
+    ChkSeparator(Separator s) : type(s) {};
+    void render(rcontext *rc);
+private:
+    Separator type;
+};
+
+class ChkText : public Chunk
+{
+public:
+    ChkText(std::string t): text(t) {};
+    ChkText(const char *str, int len)
+        {
+            if (len > 0)
+                text = std::string(str, len);
+        };
+
+    void render(rcontext *rc);
+    std::string getText() {
+        return text; };
+    float getHeight();
+protected:
+    std::string text;
+};
+
+class ChkVar : public Chunk
+{
+public:
+    ChkVar(std::string t, int spaces): varname(t), spaces(spaces) {};
+    void render(rcontext *rc);
+    std::string getText();
+    float getHeight();
+protected:
+    std::string varname;
+    int spaces;
+};
+
+// highlight text
+class ChkHText : public ChkText
+{
+public:
+    ChkHText(std::string t): ChkText(t) {};
+    ChkHText(const char *str, int len): ChkText(str, len) {};
+    void render(rcontext *rc);
+};
+
+// info node link
+class ChkNode : public ChkText
+{
+public:
+    ChkNode(std::string label,
+            std::string f, std::string n, int l):
+        ChkText(label), filename(f), node(n), linenumber(l) {};
+    void render(rcontext *rc);
+    std::string filename;
+    std::string node;
+    int linenumber;
+    bool isLink() {
+        return true;};
+    string getHelpTip();
+    void followLink();
+};
+
 // pager, text viewer, similar to `less` and `info` command
 class InfoInteractive: public GCInteractive
 {
@@ -64,6 +171,8 @@ public:
     void renderInteractive();
     void setLastFromHistory() {};
     void setFont(TextureFont* _font);
+    TextureFont* getFont() const {
+        return font;}
     int getBestCompletionSizePx()
         { return -1;}
     string getHelpText();
@@ -88,60 +197,32 @@ public:
         PG_SEARCH_BWD = 3,
     };
 
-    typedef struct chunk_s {
-        enum Type
-        {
-            TEXT,
-            TEXT2, // highlight text
-            LINK,
-            NODE, //  info node
-            /* horizontal spaces  from whole line, if  it smaller then
-               size of line text before add just 1 ' ' */
-            HSPACE,
-            SEPARATOR1, // horizontal line level1
-            SEPARATOR2,
-            SEPARATOR3,
-        };
-        chunk_s(string label, string _filename, string _nodename, int line):
-            text(label), hyp(_nodename), filename(_filename),
-            linenumber(line), type(NODE){
-        };
-        chunk_s(const char *_str): text(_str), type(TEXT) {};
-        chunk_s(const char *_str, int len):type(TEXT) 
-            {
-                if (len > 0)
-                    text = std::string(_str, len);
-            };
-        // [[text here][exec:select object#sol][more info here]]
-        chunk_s(const char *_str, int len,
-                const char *_hyp, int hyplen,
-                const char *_tip, int tiplen): type(LINK)
-            {
-                if (len > 0)
-                    text = std::string(_str, len);
-                if (hyplen > 0)
-                    hyp = std::string(_hyp, hyplen);
-                if (tiplen > 0)
-                    tip = std::string(_tip, tiplen);
-            };
-        chunk_s(int _spaces): type(HSPACE), spaces(_spaces){};
-        chunk_s(Type _type): type(_type) {};
-        std::string text;
-        std::string hyp; // for type NODE - node name
-        std::string filename; // for type NODE - node's file name
-        int linenumber;
-        std::string tip;
-        Type type;
-        int spaces;
-    };
-
 private:
     void forward(int);
 
     void processChar(const char *c_p, int modifiers);
-    typedef std::vector<chunk_s> Chunks;
 
-    std::vector<Chunks> lines;
+    typedef std::vector<Chunk*> Chunks;
+
+    typedef struct line_s {
+        Chunks chunks;
+        float height;
+        inline void add(Chunk *chk) {
+            chunks.push_back(chk);
+            float h = chk->getHeight();
+            if (h > height)
+                height = h;
+        };
+        void clear() {
+            chunks.clear();
+            height = 0;
+        };
+        // free ptr for Chunks
+        void free();
+    };
+
+    std::vector<line_s> lines;
+
     int pageScrollIdx;
     int leftScrollIdx; //  scroll
     uint scrollSize;
