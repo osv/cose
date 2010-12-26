@@ -64,10 +64,6 @@ class Overlay : public std::ostream
     void print(wchar_t);
     void print(char);
     void print(const char*);
-    const float getXoffset() const
-        {return xoffset;}
-    const float getYoffset() const
-        {return yoffset;}
 
 #ifndef _WIN32
     // Disable GCC format attribute specification requests. Only
@@ -77,7 +73,7 @@ class Overlay : public std::ostream
     void oprintf(const char*, ...);
 #endif
 
- private:
+ protected:
     int windowWidth;
     int windowHeight;
     TextureFont* font;

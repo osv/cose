@@ -7,6 +7,8 @@
 #include "gvar.h"
 
 #include <celutil/directory.h>
+#include <celutil/resmanager.h>
+
 #include <fstream>
 
 /*
@@ -28,6 +30,14 @@
   If you want to use system info files just create link:
    %ln -s /usr/local/info ~/temp/celestia/sysinfo
   where ~/temp/celestia/ is your celestia data dir/
+
+  Text  render based  on celesita's  overlay.  Text  is  splitted into
+  chunks. Each chunk  may have different height. For  soft scroll each
+  line fave fixed height (font height +1). If chunk's height is bigger
+  than default  line height - empty  lines will be added,  so if first
+  visible line for  render is empty - previous  non-empty line will be
+  rendered. This is nod usual way  for rich text render, in future may
+  logic be changed.
 
   This interactive  is emulate `less' command  with several navigation
   command for info-specified facility. */
@@ -58,7 +68,51 @@ public:
     }
 };
 
-void ChkText::render(rcontext *rc)
+/* Texinfo  require  that  image  files  may be  in  .info  file  dir.
+   Celestia's  TextureInfo is not  good -  it try  to locate  image in
+   texture/[resolution]/ dir, also ignore basedir  */
+class GCTextureInfo : public ResourceInfo<Texture>
+{
+public:
+    std::string source;
+    std::string path;
+
+    GCTextureInfo(const std::string _source,
+                const std::string _path) :
+        source(_source), path(_path) {};
+
+    virtual std::string resolve(const std::string&baseDir) {
+        if (!path.empty())
+            return path + "/" + source;
+        else
+            return baseDir + source;
+    };
+
+    virtual Texture* load(const std::string& name) {
+        return LoadTextureFromFile(name,
+                                   Texture::EdgeClamp, Texture::NoMipMaps);
+    };
+
+};
+
+inline bool operator<(const GCTextureInfo& ti0, const GCTextureInfo& ti1){
+    if (ti0.source == ti1.source)
+        return ti0.path < ti1.path;
+    else
+        return ti0.source < ti1.source;
+};
+
+typedef ResourceManager<GCTextureInfo> GCTextureManager;
+
+static GCTextureManager* textureManager = NULL;
+static GCTextureManager* GetGCTextureManager()
+{
+    if (textureManager == NULL)
+        textureManager = new GCTextureManager("texture");
+    return textureManager;
+}
+
+float ChkText::render(rcontext *rc)
 {
     *rc->ovl << text;
 }
@@ -68,7 +122,7 @@ float ChkText::getHeight()
     return 0;
 }
 
-void ChkVar::render(rcontext *rc)
+float ChkVar::render(rcontext *rc)
 {
     string varval = gVar.GetString(varname);
     float width = rc->font->getWidth(varval);
@@ -96,14 +150,45 @@ float ChkVar::getHeight()
     return 0;
 }
 
-void ChkHText::render(rcontext *rc)
+ChkImage::ChkImage(const std::string& path, const std::string& source)
+{
+    imagename = source;
+    texRes = GetGCTextureManager()->getHandle(GCTextureInfo(path, source));
+}
+
+float ChkImage::render(rcontext *rc)
+{
+    GCOverlay *ovl = rc->ovl;
+    if (texRes != InvalidResource)
+    {
+        texture = GetGCTextureManager()->find(texRes);
+    }
+
+    if (texture != NULL)
+    {
+        glColor4ub(255, 255, 255, 255);
+        ovl->drawImage(texture);
+        // return to default color
+        glColor4ubv(clCompletionFnt->rgba);
+        return (float) texture->getHeight();
+    }
+    else
+        *ovl << " [image: " << imagename << "] ";
+}
+
+float ChkImage::getHeight()
+{
+    return 0;
+}
+
+float ChkHText::render(rcontext *rc)
 {
     rc->ovl->rect(rc->ovl->getXoffset(), -2,
               rc->font->getWidth(text), 1);
     *rc->ovl << text;
 }
 
-void ChkNode::render(rcontext *rc)
+float ChkNode::render(rcontext *rc)
 {
     if (rc->renderSelected)
     {
@@ -136,7 +221,7 @@ void ChkNode::followLink()
     infoInteractive->setNode(filename, node, linenumber);
 }
 
-void ChkHSpace::render(rcontext *rc)
+float ChkHSpace::render(rcontext *rc)
 {
     const float xoffset = rc->ovl->getXoffset();
     const short basesz = rc->font->getAdvance('X');
@@ -147,7 +232,7 @@ void ChkHSpace::render(rcontext *rc)
     *rc->ovl << string(n, ' ');
 }
 
-void ChkSeparator::render(rcontext *rc)
+float ChkSeparator::render(rcontext *rc)
 {
     float fh = rc->font->getHeight();
 
@@ -720,6 +805,17 @@ void InfoInteractive::addNodeText(char *contents, int size)
                         line.add(new ChkVar(varname, spaces));
                 }
             }
+            else if (tagname == "image")
+            {
+                it = params.find("src");
+                if (it != params.end())
+                {
+                    string path(getInfoFullPath(m_filename));
+                    size_t found = path.find_last_of("/\\");
+                    path = path.substr(0,found);
+                    line.add(new ChkImage(it->second, path));
+                }
+            }
         }
         c++;
     }
@@ -1190,7 +1286,6 @@ void InfoInteractive::processChar(const char *c_p, int modifiers)
                 for (int chk = lines[i].chunks.size() -1; chk >= 0; chk--)
                 {
                     Chunk *chunk = lines[i].chunks[chk];
-                    cout << chunk->getText() << "\n";
                     if (chunk->isLink())
                     {
                         selectedY = i;
@@ -1235,7 +1330,7 @@ void InfoInteractive::renderCompletion(float height, float width)
 
     glPushMatrix();
     glTranslatef((float) -leftScrollIdx, 0.0f, 0.0f);
-    Overlay *overlay =  gc->getOverlay();
+    GCOverlay *overlay =  gc->getOverlay();
     overlay->setFont(font);
     overlay->beginText();
 
@@ -1246,31 +1341,91 @@ void InfoInteractive::renderCompletion(float height, float width)
     rc.width = width;
     rc.renderSelected = false;
 
+    // need clip test for proper image clip
+    GLdouble p0[4] = { 0, 1.0, 0.0, height - fh };
+    GLdouble p1[4] = { 0, -1.0, 0.0, fh -1 };
+    glEnable(GL_CLIP_PLANE0);
+    glEnable(GL_CLIP_PLANE1);
+    glClipPlane(GL_CLIP_PLANE0, p0);
+    glClipPlane(GL_CLIP_PLANE1, p1);
+
     uint j, line;
+
+    // first search non empty line (before pageScrollIdx) because that
+    // line may containe image, and render it
+    for (line = pageScrollIdx -1; line < lines.size() && line > 0; line--)
+    {
+        if (lines[line].chunks.empty())
+            continue;
+        glPushMatrix();
+        glTranslatef(0.0f, (pageScrollIdx - line) * (fh +1), 0.0f);
+
+        for (uint chk = 0; chk < lines[line].chunks.size(); chk++)
+        {
+            Chunk *chunk = lines[line].chunks[chk];
+            chunk->render(&rc);
+        }
+        overlay->setXoffset(0);
+        glPopMatrix();
+        break;
+    }
+
+    // now render other visible range of lines
+    // lines that ha
+    std::vector<line_s>::iterator it;
+    float totalHeight = 0.0f; // collected heights of rendered lines
     for (j = 0, line = pageScrollIdx;
          line < lines.size() && j < nb_lines; line++, j++)
     {
+        float chunkHeight;
+        float lineHeight = fh +1;
         for (uint chk = 0; chk < lines[line].chunks.size(); chk++)
         {
             Chunk *chunk = lines[line].chunks[chk];
 
             if (!(selectedY == (int)line && selectedX == (int)chk))
-                chunk->render(&rc);
+                chunkHeight = chunk->render(&rc);
             else
             {
                 rc.renderSelected = true;
-                chunk->render(&rc);
+                chunkHeight = chunk->render(&rc);
                 rc.renderSelected = false;
             }
+
+            if (chunkHeight > lineHeight)
+                lineHeight = chunkHeight;
         }
 
-        *gc->getOverlay() << "\n";
+        overlay->endl();
+
+        // insert empty lines if current line height was more than standart line height (fh +1)
+        if (lineHeight > lines[line].height + fh + 1.1f) // 0.1 is epsil
+        {
+            int lines_to_insert = floor(((float)(lineHeight - lines[line].height)) / (fh +1));
+            if (lines_to_insert > 0)
+            {
+                it = lines.begin() + line +1;
+                lines[line].height = (lines_to_insert +1) * (fh +1);
+                line_s l;
+                lines.insert(it, lines_to_insert, l);
+                line += lines_to_insert;
+                j += lines_to_insert;
+            }
+        }
     }
-    for (; j < nb_lines; j++)
+
+    glDisable(GL_CLIP_PLANE0);
+    glDisable(GL_CLIP_PLANE1);
+
+    totalHeight += fh +1;
+    while (j < nb_lines)
     {
-        *gc->getOverlay() << "~";
-        *gc->getOverlay() << "\n";
+        *overlay << "~";
+        overlay->endl();
+        totalHeight += fh +1;
+        j++;
     }
+
     gc->getOverlay()->endText();
     glPopMatrix();
     // render scroll
@@ -1642,6 +1797,11 @@ NODE *InfoInteractive::getDynamicNode(char *filename, char *nodename)
         return &dirNode;
     }
     return NULL;
+}
+
+const char *InfoInteractive::getInfoFullPath(string &filename)
+{
+    return getInfoFullPath(const_cast<char *>(filename.c_str()));
 }
 
 const char *InfoInteractive::getInfoFullPath(char *filename)

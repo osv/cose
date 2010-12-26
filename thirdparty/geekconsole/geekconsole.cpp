@@ -1303,7 +1303,7 @@ GeekConsole::GeekConsole(CelestiaCore *celCore):
     cachedCompletionH(-1),
     lastMX(0),lastMY(0)
 {
-    overlay = new Overlay();
+    overlay = new GCOverlay();
     *overlay << setprecision(6);
     *overlay << ios::fixed;
     // create global key bind space
@@ -2036,7 +2036,8 @@ void GeekConsole::render(double time)
             std::vector<std::string>::iterator it;
             for (it = infoText.begin();
                  it != infoText.end(); it++) {
-                *overlay << *it << "\n";
+                *overlay << *it;
+                overlay->endl();
             }
             overlay->endText();
         }
@@ -2115,7 +2116,8 @@ void GeekConsole::render(double time)
             std::vector<std::string>::iterator it;
             for (it = helpText.begin();
                  it != helpText.end(); it++) {
-                *overlay << *it << "\n";
+                *overlay << *it;
+                overlay->endl();
             }
             overlay->endText();
         }
@@ -2779,7 +2781,7 @@ void ColorChooserInteractive::renderCompletion(float height, float width)
                 *gc->getOverlay() << colorTable[t.second].colorHexName;
             }
 
-            *gc->getOverlay() << "\n";
+            gc->getOverlay()->endl();
         }
         gc->getOverlay()->endText();
         glPopMatrix();
@@ -3481,7 +3483,7 @@ void ListInteractive::renderCompletionStandart(float height, float width)
                 if (s.size() > buf_length)
                     *gc->getOverlay() << string(s, buf_length + 1, 128);
             }
-            *gc->getOverlay() << "\n";
+            gc->getOverlay()->endl();
         }
         gc->getOverlay()->endText();
         glPopMatrix();
@@ -3587,7 +3589,7 @@ void ListInteractive::renderCompletionFilter(float height, float width)
                 glColor4ubv(clCompletionFnt->rgba);
             *gc->getOverlay() << str;
 
-            *gc->getOverlay() << "\n";
+            gc->getOverlay()->endl();
         }
         gc->getOverlay()->endText();
         glPopMatrix();
@@ -4700,12 +4702,12 @@ void PagerInteractive::renderCompletion(float height, float width)
             gc->getOverlay()->rect(0, 0, 100.0 * width, 1);
         else
             *gc->getOverlay() << *it;
-        *gc->getOverlay() << "\n";
+        gc->getOverlay()->endl();
     }
     for (; j < nb_lines; j++)
     {
         *gc->getOverlay() << "~";
-        *gc->getOverlay() << "\n";
+        gc->getOverlay()->endl();
     }
     gc->getOverlay()->endText();
     glPopMatrix();

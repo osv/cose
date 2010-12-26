@@ -14,7 +14,7 @@ class Chunk
 {
 public:
     typedef struct rcontext {
-        Overlay *ovl;
+        GCOverlay *ovl;
         TextureFont *font;
         float height;
         float width;
@@ -22,7 +22,7 @@ public:
     };
 
     Chunk() {};
-    virtual void render(rcontext *rc) {};
+    virtual float render(rcontext *rc) {return 0;};
     virtual std::string getText() {
         return ""; };
     virtual std::string getHelpTip() {
@@ -39,7 +39,7 @@ class ChkHSpace : public Chunk
 {
 public:
     ChkHSpace(uint spaces): m_spaces(spaces) {};
-    void render(rcontext *rc);
+    float render(rcontext *rc);
 private:
     float m_spaces;
 };
@@ -56,7 +56,7 @@ public:
     };
 
     ChkSeparator(Separator s) : type(s) {};
-    void render(rcontext *rc);
+    float render(rcontext *rc);
 private:
     Separator type;
 };
@@ -71,7 +71,7 @@ public:
                 text = std::string(str, len);
         };
 
-    void render(rcontext *rc);
+    float render(rcontext *rc);
     std::string getText() {
         return text; };
     float getHeight();
@@ -83,12 +83,24 @@ class ChkVar : public Chunk
 {
 public:
     ChkVar(std::string t, int spaces): varname(t), spaces(spaces) {};
-    void render(rcontext *rc);
+    float render(rcontext *rc);
     std::string getText();
     float getHeight();
 protected:
     std::string varname;
     int spaces;
+};
+
+class ChkImage : public Chunk
+{
+public:
+    ChkImage(const std::string& path, const std::string& source);
+    float render(rcontext *rc);
+    float getHeight();
+protected:
+    std::string imagename;
+    Texture *texture;
+    ResourceHandle texRes;
 };
 
 // highlight text
@@ -97,7 +109,7 @@ class ChkHText : public ChkText
 public:
     ChkHText(std::string t): ChkText(t) {};
     ChkHText(const char *str, int len): ChkText(str, len) {};
-    void render(rcontext *rc);
+    float render(rcontext *rc);
 };
 
 // info node link
@@ -107,7 +119,7 @@ public:
     ChkNode(std::string label,
             std::string f, std::string n, int l):
         ChkText(label), filename(f), node(n), linenumber(l) {};
-    void render(rcontext *rc);
+    float render(rcontext *rc);
     std::string filename;
     std::string node;
     int linenumber;
@@ -185,6 +197,7 @@ public:
     // register fullpath of info's file name
     void addCachedInfoFile(std::string filename, std::string fullname);
     // get fullpath of info file
+    const char *getInfoFullPath(string &filename);
     const char *getInfoFullPath(char *filename);
 
     void saveDirCache();
@@ -228,7 +241,8 @@ private:
     uint scrollSize;
     bool richedEnd;
     int state;
-    int width;
+    float width;
+    float height;
     std::string lastSearchStr;
     int N;
     TextureFont* font;

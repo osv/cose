@@ -25,10 +25,10 @@
 #include <map>
 #include <vector>
 #include <string>
-#include <celengine/overlay.h>
 #include <celestia/celestiacore.h>
 #include <celx.h>
 #include <celx_internal.h>
+#include "gcoverlay.h"
 #include "geekbind.h"
 
 #define MAX_HISTORY_SYZE 128
@@ -487,7 +487,7 @@ public:
     TextureFont* getInteractiveFont();
     TextureFont* getCompletionFont();
 
-    Overlay* getOverlay() const
+    GCOverlay* getOverlay() const
         {return overlay;}
     void setInteractive(GCInteractive *Interactive,
                         std::string historyName = "",  // if empty - dont use history
@@ -541,7 +541,7 @@ private:
     TextureFont* font;
 
     CelestiaCore *celCore;
-    Overlay* overlay;
+    GCOverlay* overlay;
     int width; // width of viewport
     int height; // height of viewport
 
