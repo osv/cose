@@ -117,8 +117,7 @@ class ChkNode : public ChkText
 {
 public:
     ChkNode(std::string label,
-            std::string f, std::string n, int l):
-        ChkText(label), filename(f), node(n), linenumber(l) {};
+            std::string f, std::string n, int l);
     float render(rcontext *rc);
     std::string filename;
     std::string node;

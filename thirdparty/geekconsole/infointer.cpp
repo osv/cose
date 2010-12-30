@@ -48,6 +48,15 @@ const char *hint_follownode = "S-RET - follow node";
 const char *dirCache_FileName = "dir.cache";
 const char *infoFileListCache_FileName = "info.cache";
 
+string normalizeNodeName(string &s)
+{
+    string res = s;
+    for(int i = 0; i < res.size(); i++)
+        if (res[i] == '\n')
+            res[i] = ' ';
+    return res;
+}
+
 class InfoDirLoader : public EnumFilesHandler
 {
 public:
@@ -186,6 +195,12 @@ float ChkHText::render(rcontext *rc)
     rc->ovl->rect(rc->ovl->getXoffset(), -2,
               rc->font->getWidth(text), 1);
     *rc->ovl << text;
+}
+
+ChkNode::ChkNode(std::string label,
+            std::string f, std::string n, int l):
+    ChkText(normalizeNodeName(label)), filename(f), node(normalizeNodeName(n)), linenumber(l)
+{
 }
 
 float ChkNode::render(rcontext *rc)
@@ -645,22 +660,37 @@ void InfoInteractive::addNodeText(char *contents, int size)
             lstart = c;
             int offset = string_in_line (":", c);
             // menu item must have ":"
-            if (offset < 1  || c[offset] == '\n')
-                continue;
+            if (offset < 1)
+            {
+                if (search_for_menu)
+                    continue;
+                else
+                {
+                    int temp;
 
-            if (search_for_menu)
-                state = MENU_HINT;
+                    temp = skip_line (c);
+                    offset = string_in_line (":", c + temp);
+                    if (offset == -1)
+                        continue;       /* Give up? */
+                    else
+                        offset += temp;
+                }
+            }
 
             std::string label(c, offset -1);
             std::string file_name;
             std::string node_name;
             int         line_number = 0;
 
-            // TODO: need canonicalize whitespace for label
-
             c += offset;
             /* If this menu entry continues with another ':' then the
                nodename is the same as the label. */
+            if (*c == '\n')
+                continue;
+
+            if (search_for_menu)
+                state = MENU_HINT;
+
             if (*c == ':')
             {
                 node_name = label;
