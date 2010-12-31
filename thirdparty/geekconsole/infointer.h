@@ -124,8 +124,22 @@ public:
     int linenumber;
     bool isLink() {
         return true;};
-    string getHelpTip();
+    std::string getHelpTip();
     void followLink();
+};
+
+class ChkGCFun : public Chunk
+{
+public:
+    ChkGCFun(std::string fun, std::string text = "", std::string tip = "");
+    float render(rcontext *rc);
+    bool isLink() { return true;};
+    std::string getHelpTip();
+    void followLink();
+private:
+    std::string text;
+    std::string function;
+    std::string helpTip;
 };
 
 // pager, text viewer, similar to `less` and `info` command

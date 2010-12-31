@@ -1301,7 +1301,8 @@ GeekConsole::GeekConsole(CelestiaCore *celCore):
     maxMacroLevel(64),
     beeper(NULL),
     cachedCompletionH(-1),
-    lastMX(0),lastMY(0)
+    lastMX(0),lastMY(0),
+    isInfoInterCall(false)
 {
     overlay = new GCOverlay();
     *overlay << setprecision(6);
@@ -1463,6 +1464,7 @@ int GeekConsole::execFunction(std::string funName)
 
 int GeekConsole::execFunction(std::string funName, std::string param)
 {
+    finish();
     GCFunc *f = getFunctionByName(funName);
     curFun = f;
     funState = 0;
@@ -1752,6 +1754,14 @@ bool GeekConsole::charEntered(const char *c_p, int cel_modifiers)
         curInteractive->charEntered(c_p, modifiers);
         if (isVisible && curInteractive)
             curInteractive->update(curInteractive->getBufferText());
+    }
+
+    // if  this  function is  called  from  infoInteractive than  need
+    // return back to info
+    if (isInfoInterCall && !isVisible)
+    {
+        execFunction("info, last visited node");
+        isInfoInterCall = false;
     }
     return true;
 }
@@ -2206,6 +2216,7 @@ void GeekConsole::InteractFinished(std::string value)
 void GeekConsole::finish()
 {
     isVisible = false;
+
     if (curInteractive)
         curInteractive->cancelInteractive();
     curInteractive = NULL;

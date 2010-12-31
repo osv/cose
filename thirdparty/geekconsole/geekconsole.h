@@ -528,6 +528,9 @@ public:
     void beep();
     void showText(std::string s, double duration = 2.5);
 
+    // after finish interactive need to return to last info node
+    void setReturnToLastInfoNode(bool r = true)
+        { isInfoInterCall = r; }
     // descript. prefix in before interactive prompt
     std::string InteractivePrefixStr;
     // bottom description str
@@ -577,6 +580,10 @@ private:
     double messageStart;
     double lastTickTime;
     double messageDuration; // < 0 for infinity
+
+    // true if  function is called from  infoInteractive. After finish
+    // this need to return back to info
+    bool isInfoInterCall;
 };
 
 // convert control, '"', '\' chars to \X or \DDD i.e. to readable lua string

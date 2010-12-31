@@ -48,6 +48,7 @@ const char *hint_follownode = "S-RET - follow node";
 const char *dirCache_FileName = "dir.cache";
 const char *infoFileListCache_FileName = "info.cache";
 
+// remove \n from str
 string normalizeNodeName(string &s)
 {
     string res = s;
@@ -147,6 +148,7 @@ float ChkVar::render(rcontext *rc)
 
     // return to default color
     glColor4ubv(clCompletionFnt->rgba);
+    return 0; // 0 - default font height
 }
 
 std::string ChkVar::getText()
@@ -183,6 +185,7 @@ float ChkImage::render(rcontext *rc)
     }
     else
         *ovl << " [image: " << imagename << "] ";
+    return 0;
 }
 
 float ChkImage::getHeight()
@@ -217,6 +220,7 @@ float ChkNode::render(rcontext *rc)
 
     // return to default color
     glColor4ubv(clCompletionFnt->rgba);
+    return 0;
 }
 
 string ChkNode::getHelpTip()
@@ -245,6 +249,7 @@ float ChkHSpace::render(rcontext *rc)
     if (n <= 0)
         n = 1;
     *rc->ovl << string(n, ' ');
+    return 0;
 }
 
 float ChkSeparator::render(rcontext *rc)
@@ -263,7 +268,53 @@ float ChkSeparator::render(rcontext *rc)
         rc->ovl->rect(0, fh/2 + 1, 100.0 * rc->width, 2);
     else if (type == SEPARATOR4) // ....
         rc->ovl->rect(0, fh/2 + 1, 100.0 * rc->width, 1);
+    return 0;
+}
 
+ChkGCFun::ChkGCFun(std::string fun, std::string text, std::string tip):
+    function(normalizeNodeName(fun)), text(normalizeNodeName(text)), helpTip(tip)
+{
+
+}
+
+float ChkGCFun::render(rcontext *rc)
+{
+    string str = text;
+    if (str.empty())
+        str = function;
+
+    GCOverlay *ovl = rc->ovl;
+    *ovl << "[";
+    if (rc->renderSelected)
+    {
+        glColor4ubv(clCompletionExpandBg->rgba);
+        ovl->rect(ovl->getXoffset(), -2,
+                   rc->font->getWidth(str), rc->font->getHeight());
+    }
+
+    glColor4ubv(clCompletionAfterMatch->rgba);
+    *ovl << str << "]";
+
+    // return to default color
+    glColor4ubv(clCompletionFnt->rgba);
+}
+
+string ChkGCFun::getHelpTip()
+{
+    string res = helpTip;
+    if (!res.empty())
+        res+="\n";
+    res+= "*EXEC*#" + function;
+    return res;
+}
+
+void ChkGCFun::followLink()
+{
+    if (!function.empty())
+    {
+        getGeekConsole()->setReturnToLastInfoNode();
+        getGeekConsole()->execFunction("exec function", function);
+    }
 }
 
 // InfoInteractive //
@@ -833,6 +884,23 @@ void InfoInteractive::addNodeText(char *contents, int size)
                     }
                     else
                         line.add(new ChkVar(varname, spaces));
+                }
+            }
+            else if (tagname == "gcfun")
+            {
+                it = params.find("f");
+                if (it != params.end())
+                {
+                    string funname = it->second;
+                    string text;
+                    string helpTip;
+                    it = params.find("text");
+                    if (it != params.end())
+                        text = it->second;
+                    it = params.find("help");
+                    if (it != params.end())
+                        helpTip = it->second;
+                    line.add(new ChkGCFun(funname, text, helpTip));
                 }
             }
             else if (tagname == "image")
