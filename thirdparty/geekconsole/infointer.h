@@ -82,13 +82,21 @@ protected:
 class ChkVar : public Chunk
 {
 public:
-    ChkVar(std::string t, int spaces): varname(t), spaces(spaces) {};
+    enum Type{
+        VAR_VALUE,
+        DEFAULT_VALUE,
+        LAST_VALUE,
+        TYPE_VALUE,
+    };
+    ChkVar(std::string t, int spaces, Type type = VAR_VALUE):
+        varname(t), spaces(spaces), type(type) {};
     float render(rcontext *rc);
     std::string getText();
     float getHeight();
 protected:
     std::string varname;
     int spaces;
+    Type type;
 };
 
 class ChkImage : public Chunk

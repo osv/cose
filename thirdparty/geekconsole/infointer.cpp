@@ -134,17 +134,55 @@ float ChkText::getHeight()
 
 float ChkVar::render(rcontext *rc)
 {
-    string varval = gVar.GetString(varname);
-    float width = rc->font->getWidth(varval);
-    const short spacesz = spaces * rc->font->getAdvance('X');
+    string str;
+    GCOverlay *ovl = rc->ovl;
+    switch(type)
+    {
+    case VAR_VALUE:
+        str = gVar.GetFlagString(varname); break;
+    case DEFAULT_VALUE:
+        str = gVar.GetFlagResetString(varname); break;
+    case LAST_VALUE:
+        str = gVar.GetFlagLastString(varname); break;
+    case TYPE_VALUE:
+        str = gVar.GetTypeName(gVar.GetType(varname)); break;
+    };
+
+    float width = rc->font->getWidth(str);
+    // save x offset
+    float xoffset = ovl->getXoffset();
+    const short spacesz = (spaces == 0 ? 1 : spaces) * rc->font->getAdvance('X');
     if (spaces > 0 && width < spacesz)
         width = spacesz;
 
     glColor4ubv(clCompletionAfterMatch->rgba);
-    rc->ovl->rect(rc->ovl->getXoffset(), -2,
-                  width, rc->font->getHeight());
+    ovl->rect(xoffset, -2, width, rc->font->getHeight());
     glColor4ubv(clCompletionExpandBg->rgba);
-    *rc->ovl << varval;
+    *ovl << str;
+
+    if (TYPE_VALUE != type && gVar.GetType(varname) == GeekVar::Color)
+    {
+        // render 2x2 chess board
+        glColor4ub(255,255,255,255);
+        float x = xoffset + width + 2;
+        float y = -1.0;
+        float h = rc->font->getHeight() - 2;
+        float w = rc->font->getAdvance('X') * 6;
+        float hw = w / 2;
+        float hh = h / 2;
+        ovl->rect(x, y, w, h);
+        glColor3ub(0,0,0);
+        ovl->rect(x, y + hh, hw, hh);
+        ovl->rect(x + hw, y, hw, hh);
+
+        // now color
+        Color32 c = getColor32FromText(gVar.GetFlagString(varname));
+        glColor4ubv(c.rgba);
+        ovl->rect(x+1, y+1, w-2, h-2);
+        // width correction
+        width += w + 4;
+    }
+    ovl->setXoffset(xoffset + width);
 
     // return to default color
     glColor4ubv(clCompletionFnt->rgba);
@@ -293,10 +331,12 @@ float ChkGCFun::render(rcontext *rc)
     }
 
     glColor4ubv(clCompletionAfterMatch->rgba);
-    *ovl << str << "]";
+    *ovl << str;
 
     // return to default color
     glColor4ubv(clCompletionFnt->rgba);
+    *ovl << "]";
+    return 0;
 }
 
 string ChkGCFun::getHelpTip()
@@ -772,8 +812,8 @@ void InfoInteractive::addNodeText(char *contents, int size)
         } else if (c < end -2 &&
                    c[0] == 0 && c[1] == 8 && c[2] == '[') // ^@^H[
         {
-            if (c -1 - lstart > 0)
-                line.add(new ChkText(lstart, c -1 - lstart));
+            if (c - lstart > 0)
+                line.add(new ChkText(lstart, c - lstart));
 
             c += 3; // skip ^@^H[
             char *esc_start = c;
@@ -860,27 +900,63 @@ void InfoInteractive::addNodeText(char *contents, int size)
             }
 #undef CURC
             map<string,string>::const_iterator it;
-            if (tagname == "var" || tagname == "descvar")
+            if (tagname == "var" || tagname == "descvar"
+                || tagname == "editvar" || tagname == "editvar2")
             {
                 it = params.find("name");
                 if (it != params.end())
                 {
                     string varname = it->second;
                     it = params.find("spaces");
-                    int spaces = 0;
+                    int spaces = 16;
                     if (it != params.end())
                         spaces = atoi((it->second).c_str());
 
                     if (tagname == "descvar")
                     {
-                        line.add(new ChkText(varname));
-                        line.add(new ChkHSpace(26));
+                        line.add(new ChkGCFun(string("set variable#") + varname, varname,
+                                              _("Edit variable")));
+                        line.add(new ChkHSpace(18));
                         line.add(new ChkVar(varname, spaces));
+                        line.add(new ChkText(" "));
                         lines.push_back(line);
                         line.clear();
+                        line.add(new ChkText("  Type "));
+                        line.add(new ChkVar(varname, 1, ChkVar::TYPE_VALUE));
+                        lines.push_back(line);
+                        line.clear();
+                        line.add(new ChkGCFun(string("reset variable#") + varname, _("Default:")));
+                        line.add(new ChkText(" "));
+                        line.add(new ChkVar(varname, 1, ChkVar::DEFAULT_VALUE));
+                        line.add(new ChkHSpace(26));
+                        line.add(new ChkGCFun(string("set variable with last#") + varname, _("Last:")));
+                        line.add(new ChkText(" "));
+                        line.add(new ChkVar(varname, 1, ChkVar::LAST_VALUE));
+                        lines.push_back(line);
+                        line.clear();
+
                         // var doc
                         string doc = gVar.GetDoc(varname);
-                        addNodeText(const_cast<char *>(doc.c_str()), doc.size());
+                        if (!doc.empty())
+                            addNodeText(const_cast<char *>(doc.c_str()), doc.size());
+                    }
+                    else if (tagname == "editvar" || tagname == "editvar2")
+                    {
+                        line.add(new ChkVar(varname, spaces));
+                        line.add(new ChkText(" "));
+                        line.add(new ChkGCFun(string("set variable#") + varname, "...",
+                                              string(_("Edit variable:\n")) + varname));
+                        line.add(new ChkText(" "));
+                        line.add(new ChkGCFun(string("reset variable#") + varname, "R",
+                                              string(_("Reset variable to:\n")) + gVar.GetFlagResetString(varname)));
+                        line.add(new ChkText(" "));
+                        line.add(new ChkGCFun(string("set variable with last#") + varname, "L",
+                                              string(_("Set to last value:\n")) + gVar.GetFlagLastString(varname)));
+                        if (tagname == "editvar2")
+                        {
+                            line.add(new ChkHSpace(32));
+                            line.add(new ChkText(varname));
+                        }
                     }
                     else
                         line.add(new ChkVar(varname, spaces));
