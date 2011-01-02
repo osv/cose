@@ -52,7 +52,7 @@ const char *infoFileListCache_FileName = "info.cache";
 string normalizeNodeName(string &s)
 {
     string res = s;
-    for(int i = 0; i < res.size(); i++)
+    for(int i = 0; i < (int) res.size(); i++)
         if (res[i] == '\n')
             res[i] = ' ';
     return res;
@@ -125,6 +125,7 @@ static GCTextureManager* GetGCTextureManager()
 float ChkText::render(rcontext *rc)
 {
     *rc->ovl << text;
+    return 0;
 }
 
 float ChkText::getHeight()
@@ -236,6 +237,7 @@ float ChkHText::render(rcontext *rc)
     rc->ovl->rect(rc->ovl->getXoffset(), -2,
               rc->font->getWidth(text), 1);
     *rc->ovl << text;
+    return 0;
 }
 
 ChkNode::ChkNode(std::string label,
@@ -1673,7 +1675,7 @@ bool InfoInteractive::addFileToDirCache(string filename)
 {
     struct stat fstat;
     long filesize;
-    int retcode, compressed;
+    int compressed;
 
     cout << _("Get dir from info: ") << filename << '\n';
 
@@ -1946,7 +1948,7 @@ NODE *InfoInteractive::getDynamicNode(char *filename, char *nodename)
         dirNode.parent = NULL;
         dirNode.nodename = "Top";
         dirNode.flags = 0;
-        dirNode.display_pos;
+        dirNode.display_pos = 0;
         std::stringstream ss;
         ss << "File: dir,\tNode: Top\t"
            << endl << endl;

@@ -145,8 +145,8 @@ public:
     std::string getHelpTip();
     void followLink();
 private:
-    std::string text;
     std::string function;
+    std::string text;
     std::string helpTip;
 };
 
