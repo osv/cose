@@ -24,6 +24,7 @@
 
 #include "gvar.h"
 #include "geekconsole.h"
+#include "infointer.h"
 
 // For some version of inttypes.h need to define it for macros PRIi32...
 // TODO: FIX: Seems windows will have problem with inttypes.h
@@ -1058,9 +1059,17 @@ vector<string> GeekVar::GetVarNames(string path)
         if ((*it).first.compare(0, path.size(), path) != 0)
             break;
         res.push_back((*it).first);
-        cout << (*it).first << endl;
     }
     return res;
+}
+
+bool GeekVar::IsBinded(std::string name)
+{
+    gvar *v = getGvar(name);
+    if (v && v->p)
+        return true;
+    else
+        return false;
 }
 
 /******************************************************************
@@ -1323,6 +1332,186 @@ static int varSetLastVal(GeekConsole *gc, int state, std::string value)
     return state;
 }
 
+std::vector<std::string> getGroupsOfVarNames(std::vector<std::string> l, int text_start)
+{
+    vector<string> res;
+    vector<string>::iterator it;
+
+    size_t found, found2;
+    string lastAdded;
+    for (it = l.begin(); it != l.end(); it++)
+    {
+        found  = (*it).find_first_of('/', text_start);
+        if (found != string::npos)
+        {
+            found++;
+            string grp = (*it).substr(0, found);
+
+            if (grp != lastAdded)
+            {
+                res.push_back(grp);
+                lastAdded = grp;
+            }
+        }
+    }
+    return res;
+}
+
+std::vector<std::string> getNamesOfVarNames(std::vector<std::string> l, int text_start)
+{
+    vector<string> res;
+    vector<string>::iterator it;
+
+    size_t found;
+    string lastAdded;
+    for (it = l.begin(); it != l.end(); it++)
+    {
+        found  = (*it).find_first_of('/', text_start);
+        if (found == string::npos)
+        {
+            res.push_back(*it);
+            lastAdded = *it;
+        }
+    }
+    return res;
+}
+
+/* Info file generator for customize variables
+ */
+string customizeVar(string filename, string nodename)
+{
+    string res = "File: *customize*,\tNode: " + nodename + ", ";// Top,  Up: (dir)\n\n";
+
+    const char *custom_node = "Customize ";
+    const char *summary_node = "Summary ";
+
+    string groupName;
+
+    if ("Top" == nodename)
+    {
+        res += "Up: (dir)\n\n"
+            "   Here you can overview and customize all variables.\n\n"
+            "* Menu:\n"
+            "* Customize: Customize root.       Customize variables.\n"
+            "* Summary: Summary root.           Customize without details.\n"
+            "* All: Summary all.                Overview all variables.\n\n";
+        return res;
+    }
+
+    if ("Summary all" == nodename)
+    {
+        res += "Up: Top\n\n"
+            "Summary of all variables\n***\n";
+
+        vector<string> vars = gVar.GetVarNames(groupName);
+        vector<string>::iterator it;
+        for (it = vars.begin(); it != vars.end(); it++)
+        {
+            res.push_back(0);
+            res.push_back(8);
+            res += "[editvar2 name=[[";
+            res += *it;
+            res += "]]";
+            res.push_back(0);
+            res.push_back(8);
+            res.push_back(']');
+            res.push_back('\n');
+        }
+        return res;
+    }
+
+    // check for "Customize ..." or "Summary ..." node name
+    const char *nodename_pfx = NULL;
+    if (nodename.find(custom_node) == 0)
+    {
+        nodename_pfx = custom_node;
+    }
+    if (nodename.find(summary_node) == 0)
+    {
+        nodename_pfx = summary_node;
+    }
+
+    if (nodename_pfx)
+    {
+        groupName = string(nodename, strlen(nodename_pfx));
+        // special case: root group name, clearit for math vars
+        if (groupName == "root")
+            groupName = "";
+
+        string upNode = "Top";
+        if (!groupName.empty())
+        {
+            size_t f = groupName.find_last_of('/');
+            if (f != string::npos)
+                f = groupName.substr(0, f).find_last_of('/');
+            if (f != string::npos)
+                upNode = nodename_pfx + groupName.substr(0, f +1);
+        }
+        res += ", Up: " + upNode + "\n\n";
+
+        vector<string> vars = gVar.GetVarNames(groupName);
+        vector<string> groups = getGroupsOfVarNames(vars, groupName.size());
+        vector<string> varnames = getNamesOfVarNames(vars, groupName.size());
+        vector<string>::iterator it;
+
+        res += "Customization of the \"";
+        res += groupName + "\" group.\n***\n\n";
+
+        if (!groups.empty())
+        {
+            res += "* Sub groups:\n\n";
+            for (it = groups.begin(); it != groups.end(); it++)
+            {
+                res += "* ";
+                res += *it + ": (*customize*)";
+                res += nodename_pfx;
+                res += *it + ".\n";
+            }
+            res += "\n---\n";
+        }
+        res.push_back('\n');
+
+        if (custom_node == nodename_pfx)
+        {
+            for (it = varnames.begin(); it != varnames.end(); it++)
+            {
+                res.push_back(0);
+                res.push_back(8);
+                res += "[descvar name=[[";
+                res += *it;
+                res += "]]";
+                res.push_back(0);
+                res.push_back(8);
+                res.push_back(']');
+                res.push_back('\n');
+            }
+        }
+        else if (summary_node == nodename_pfx)
+        {
+            for (it = varnames.begin(); it != varnames.end(); it++)
+            {
+                res.push_back(0);
+                res.push_back(8);
+                res += "[editvar2 name=[[";
+                res += *it;
+                res += "]]";
+                res.push_back(0);
+                res.push_back(8);
+                res.push_back(']');
+                res.push_back('\n');
+            }
+
+            res += "\n....\n\nMore information about variable *Note ";
+            if (groupName.empty())
+                groupName = "root";
+            res += custom_node + groupName + "::.\n";
+        }
+    }
+
+    return res;
+}
+
+
 void initGCVarInteractivsFunctions()
 {
     GeekConsole *gc = getGeekConsole();
@@ -1332,4 +1521,12 @@ void initGCVarInteractivsFunctions()
                          "reset variable");
     gc->registerFunction(GCFunc(varSetLastVal, _("Set variable with the last set value")),
                          "set variable with last");
+    char dir[] = "INFO-DIR-SECTION Customize\n"
+        "START-INFO-DIR-ENTRY\n"
+        "* Customize: (*customize*)Customize root.  Customize variables.\n"
+        "* Summary: (*customize*)Summary root.      Customize without details.\n"
+        "     describe.\n"
+        "END-INFO-DIR-ENTRY";
+    infoInteractive->addDirTxt(dir, sizeof(dir), true);
+    infoInteractive->registerDynamicNode("*customize*", customizeVar);
 }

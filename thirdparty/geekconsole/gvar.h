@@ -246,6 +246,9 @@ public:
     std::string GetDoc(std::string name);
     // get var names with path
     std::vector<std::string> GetVarNames(std::string path);
+    // return bind status for variable
+    bool IsBinded(std::string name);
+
 private:
     gvar *getGvar(std::string name);
     typedef std::map<std::string, gvar> vars_t;
