@@ -1464,6 +1464,13 @@ int GeekConsole::execFunction(std::string funName)
 
 int GeekConsole::execFunction(std::string funName, std::string param)
 {
+    if (isMacroRecording)
+    {
+        appendCurrentMacro("#*EXEC*#" + funName);
+        if (!param.empty())
+            appendCurrentMacro("#" + param);
+    }
+
     finish();
     GCFunc *f = getFunctionByName(funName);
     curFun = f;
@@ -1661,12 +1668,6 @@ bool GeekConsole::charEntered(const char *c_p, int cel_modifiers)
                             if (curKey.len > 1)
                                 showText(curKey.keyToStr() + " (" + fun +
                                                     ") " + it->params, 2.5);
-                            if (isMacroRecording)
-                            {
-                                appendCurrentMacro("#*EXEC*#" + fun);
-                                if (!it->params.empty())
-                                    appendCurrentMacro(it->params);
-                            }
                             execFunction(fun, it->params);
                         }
                         else
