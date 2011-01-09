@@ -231,6 +231,12 @@ public:
         PG_SEARCH_BWD = 3,
     };
 
+    // add Dir menu
+    void addDirTxt(char *content, int size, bool dynamic);
+    // dynamic node callback
+    typedef std::string (* GCDynNode)(std::string filename, std::string nodename);
+    void registerDynamicNode(std::string filename, GCDynNode dynNode);
+
 private:
     void forward(int);
 
@@ -290,7 +296,7 @@ private:
     {
         string menu;
         string descr;
-        bool   dynamic;
+        bool   dynamic; // dynamic - don't save as cache
     };
     typedef std::vector <dir_item> menus;
     // section, dir entrys
@@ -298,9 +304,12 @@ private:
     dirSection_t dirCache;
     NODE dirNode;
     std::map<std::string, std::string> cachedInfoFiles;
-    // add Dir menu
-    void addDirTxt(char *content, int size, bool dynamic);
     bool dirModified;
+
+    // dynamic node callback names
+    typedef std::map <std::string, GCDynNode> dynNodes_t;
+    dynNodes_t dynNodes;
+    NODE dynNode;
 };
 
 extern InfoInteractive *infoInteractive;

@@ -377,6 +377,7 @@ InfoInteractive::InfoInteractive(std::string name)
      dirModified(true)
 {
     dirNode.contents = NULL;
+    dynNode.contents = NULL;
 
     if (!loadDirCache())
         rebuildDirCache();
@@ -385,6 +386,7 @@ InfoInteractive::InfoInteractive(std::string name)
 InfoInteractive::~InfoInteractive()
 {
     maybe_free(dirNode.contents);
+    maybe_free(dynNode.contents);
 }
 
 void InfoInteractive::setFont(TextureFont* _font)
@@ -831,7 +833,6 @@ void InfoInteractive::addNodeText(char *contents, int size)
             string tagname;
             if (tagsz > 0)
                 tagname = string(esc_start, tagsz);
-
             SEARCH_BINDING search;
             search.buffer = esc_start;
             search.start = tagsz;
@@ -924,7 +925,9 @@ void InfoInteractive::addNodeText(char *contents, int size)
                         lines.push_back(line);
                         line.clear();
                         line.add(new ChkText("  Type "));
-                        line.add(new ChkVar(varname, 1, ChkVar::TYPE_VALUE));
+                        line.add(new ChkVar(varname, 8, ChkVar::TYPE_VALUE));
+                        if (gVar.IsBinded(varname))
+                            line.add(new ChkText(" (Binded)"));
                         lines.push_back(line);
                         line.clear();
                         line.add(new ChkGCFun(string("reset variable#") + varname, _("Default:")));
@@ -1932,6 +1935,11 @@ void InfoInteractive::addCachedInfoFile(std::string filename, std::string fullna
     cachedInfoFiles[filename] = fullname;
 }
 
+void InfoInteractive::registerDynamicNode(std::string filename, GCDynNode dynNode)
+{
+    dynNodes[filename] = dynNode;
+}
+
 NODE *InfoInteractive::getDynamicNode(char *filename, char *nodename)
 {
     // create dir node from cache
@@ -1972,6 +1980,24 @@ NODE *InfoInteractive::getDynamicNode(char *filename, char *nodename)
         memcpy(dirNode.contents, ss.str().c_str(), dirNode.nodelen);
         return &dirNode;
     }
+
+    dynNodes_t::iterator it = dynNodes.find(filename);
+    if (it != dynNodes.end())
+    {
+        maybe_free(dynNode.contents);
+        GCDynNode dn = it->second;
+        string nodetext = dn(filename, nodename);
+        dynNode.filename = filename;
+        dynNode.parent = NULL;
+        dynNode.nodename = nodename;
+        dynNode.flags = 0;
+        dynNode.display_pos = 0;
+        dynNode.nodelen = nodetext.size();
+        dynNode.contents = (char *)malloc(dynNode.nodelen);
+        memcpy(dynNode.contents, nodetext.data(), dynNode.nodelen);
+        return &dynNode;
+    }
+
     return NULL;
 }
 
