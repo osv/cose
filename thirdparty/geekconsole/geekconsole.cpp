@@ -1826,6 +1826,13 @@ bool GeekConsole::mouseButtonDown(float x, float y, int button)
         if (curInteractive)
             curInteractive->update(curInteractive->getBufferText());
     }
+
+    if (isInfoInterCall && !isVisible)
+    {
+        execFunction("info, last visited node");
+        isInfoInterCall = false;
+    }
+
     return true;
 }
 
