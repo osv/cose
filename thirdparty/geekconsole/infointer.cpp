@@ -156,9 +156,9 @@ float ChkVar::render(rcontext *rc)
     if (spaces > 0 && width < spacesz)
         width = spacesz;
 
-    glColor4ubv(clCompletionAfterMatch->rgba);
+    glColor4ub(0,0,0,50);
     ovl->rect(xoffset, -2, width, rc->font->getHeight());
-    glColor4ubv(clCompletionExpandBg->rgba);
+    glColor4ubv(clCompletionFnt->rgba);
     *ovl << str;
 
     if (TYPE_VALUE != type && gVar.GetType(varname) == GeekVar::Color)
@@ -920,10 +920,10 @@ void InfoInteractive::addNodeText(char *contents, int size)
                         line.add(new ChkGCFun(string("set variable#") + varname, varname,
                                               _("Edit variable")));
                         line.add(new ChkHSpace(18));
-                        line.add(new ChkVar(varname, spaces));
-                        line.add(new ChkText(" "));
                         lines.push_back(line);
                         line.clear();
+                        line.add(new ChkVar(varname, spaces));
+                        line.add(new ChkText(" "));
                         line.add(new ChkText("  Type "));
                         line.add(new ChkVar(varname, 8, ChkVar::TYPE_VALUE));
                         if (gVar.IsBinded(varname))
@@ -1660,7 +1660,7 @@ void InfoInteractive::renderInteractive()
 
 void InfoInteractive::rebuildDirCache()
 {
-    dirCache.clear();
+    clearDirCache();
     cachedInfoFiles.clear();
 
     Directory* dir = OpenDirectory(".");
@@ -1907,9 +1907,34 @@ void InfoInteractive::saveDirCache()
     file.close();
 }
 
+// remove nondynamic dir entrys
+void InfoInteractive::clearDirCache()
+{
+    for (dirSection_t::iterator it=dirCache.begin();
+         it != dirCache.end();)
+    {
+        menus ml = (*it).second;
+        menus::iterator notCulled = ml.begin();
+        for (menus::const_iterator itml = ml.begin();
+             itml != ml.end(); itml++)
+        {
+            if ((*itml).dynamic)
+            {
+                *notCulled = *itml;
+                notCulled++;
+            }
+        }
+        ml.resize(notCulled - ml.begin());
+        if (ml.empty())
+            dirCache.erase(it++);
+        else
+            it++;
+    }
+}
+
 bool InfoInteractive::loadDirCache()
 {
-    dirCache.clear();
+    clearDirCache();
     cachedInfoFiles.clear();
 
     fstream file;

@@ -305,6 +305,7 @@ private:
     NODE dirNode;
     std::map<std::string, std::string> cachedInfoFiles;
     bool dirModified;
+    void clearDirCache();
 
     // dynamic node callback names
     typedef std::map <std::string, GCDynNode> dynNodes_t;
