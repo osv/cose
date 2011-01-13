@@ -1332,6 +1332,44 @@ static int varSetLastVal(GeekConsole *gc, int state, std::string value)
     return state;
 }
 
+static int aproposVarCust(GeekConsole *gc, int state, std::string value)
+{
+    switch(state)
+    {
+    case 0:
+        gc->setInteractive(listInteractive, "", _("Pattern"));
+        listInteractive->setColumns(gVar.GetI32("gc/completion columns") - 1);
+        break;
+    case 1:
+        if (value.empty())
+            value = "root";
+        gc->setInteractive(infoInteractive, "Info");
+        infoInteractive->setNode("*customize*", "Apropos customize " + value);
+        break;
+    }
+    return state;
+}
+
+static int aproposVarSum(GeekConsole *gc, int state, std::string value)
+{
+    switch(state)
+    {
+    case 0:
+        gc->setInteractive(listInteractive, "", _("Pattern"));
+        listInteractive->setColumns(gVar.GetI32("gc/completion columns") - 1);
+        break;
+    case 1:
+        if (value.empty())
+            value = "root";
+        gc->setInteractive(infoInteractive, "Info");
+        infoInteractive->setNode("*customize*", "Apropos summary " + value);
+        break;
+
+    }
+    return state;
+}
+
+
 std::vector<std::string> getGroupsOfVarNames(std::vector<std::string> l, int text_start)
 {
     vector<string> res;
@@ -1384,7 +1422,8 @@ string customizeVar(string filename, string nodename)
 
     const char *custom_node = "Customize ";
     const char *summary_node = "Summary ";
-
+    const char *apropos_custom = "Apropos customize ";
+    const char *apropos_sum = "Apropos summary ";
     string groupName;
 
     if ("Top" == nodename)
@@ -1394,29 +1433,73 @@ string customizeVar(string filename, string nodename)
             "* Menu:\n"
             "* Customize: Customize root.       Customize variables.\n"
             "* Summary: Summary root.           Customize without details.\n"
-            "* All: Summary all.                Overview all variables.\n\n";
+            "* All: Apropos summary root.       Overview all variables.\n\n";
         return res;
     }
 
-    if ("Summary all" == nodename)
+    if (nodename.find(apropos_custom) == 0)
     {
         res += "Up: Top\n\n"
-            "Summary of all variables\n***\n";
+            "Customization of all variables that matches pattern.\n***\n";
+
+        string pattern = nodename.substr(strlen(apropos_custom));
+        if (pattern == "root")
+            pattern = "";
+        int buf_length = UTF8Length(pattern);
 
         vector<string> vars = gVar.GetVarNames(groupName);
         vector<string>::iterator it;
         for (it = vars.begin(); it != vars.end(); it++)
         {
-            res.push_back(0);
-            res.push_back(8);
-            res += "[editvar2 name=[[";
-            res += *it;
-            res += "]]";
-            res.push_back(0);
-            res.push_back(8);
-            res.push_back(']');
-            res.push_back('\n');
+            if (buf_length == 0 ||
+                (UTF8StrStr(*it, pattern) != -1))
+            {
+                res.push_back(0);
+                res.push_back(8);
+                res += "[descvar name=[[";
+                res += *it;
+                res += "]]";
+                res.push_back(0);
+                res.push_back(8);
+                res.push_back(']');
+                res.push_back('\n');
+            }
         }
+        return res;
+    }
+
+    if (nodename.find(apropos_sum) == 0)
+    {
+        res += "Up: Top\n\n"
+            "Summary of all variables that matches pattern.\n***\n";
+
+        string pattern = nodename.substr(strlen(apropos_sum));
+        if (pattern == "root")
+            pattern = "";
+        int buf_length = UTF8Length(pattern);
+
+        vector<string> vars = gVar.GetVarNames(groupName);
+        vector<string>::iterator it;
+        for (it = vars.begin(); it != vars.end(); it++)
+        {
+            if (buf_length == 0 ||
+                (UTF8StrStr(*it, pattern) != -1))
+            {
+                res.push_back(0);
+                res.push_back(8);
+                res += "[editvar2 name=[[";
+                res += *it;
+                res += "]]";
+                res.push_back(0);
+                res.push_back(8);
+                res.push_back(']');
+                res.push_back('\n');
+            }
+        }
+        res += "\n....\n\nMore information about variables *Note ";
+        if (pattern.empty())
+            pattern = "root";
+        res += apropos_custom + pattern + "::.\n";
         return res;
     }
 
@@ -1433,7 +1516,7 @@ string customizeVar(string filename, string nodename)
 
     if (nodename_pfx)
     {
-        groupName = string(nodename, strlen(nodename_pfx));
+        groupName = nodename.substr(strlen(nodename_pfx));
         // special case: root group name, clearit for math vars
         if (groupName == "root")
             groupName = "";
@@ -1521,6 +1604,13 @@ void initGCVarInteractivsFunctions()
                          "reset variable");
     gc->registerFunction(GCFunc(varSetLastVal, _("Set variable with the last set value")),
                          "set variable with last");
+    gc->registerFunction(GCFunc(aproposVarCust, _("Show all meaningful variables "
+                                                  "whose names match")),
+                         "apropos variable");
+    gc->registerFunction(GCFunc(aproposVarSum, _("Show summary of all meaningful variables "
+                                                  "whose names match")),
+                         "apropos variable summary");
+
     char dir[] = "INFO-DIR-SECTION Customize\n"
         "START-INFO-DIR-ENTRY\n"
         "* Customize: (*customize*)Customize root.  Customize variables.\n"
