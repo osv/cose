@@ -5444,6 +5444,52 @@ void initGCInteractives(GeekConsole *gc)
                                        "info, rebuild dir node");
 }
 
+static void bindVars()
+{
+
+    // bind colors
+
+    typedef struct gconsole_color_vars_t {
+        const char *name;
+        const char *descr;
+        Color32 *c;
+    };
+
+    gconsole_color_vars_t gconsole_color_vars[] = {
+        {"Bg", "Background color of geek console.", clBackground},
+        {"Bg Interactive", "Background color for entry field.", clBgInteractive},
+        {"Bg Interactive Brd", "Border color for entry field.", clBgInteractiveBrd},
+        {"Interactive Fnt", "Font color for entry.", clInteractiveFnt},
+        {"Interactive Prefix Fnt", "Font color for prefix of entry field.", clInteractivePrefixFnt},
+        {"Interactive Expand", "Font color fot expanded part of entry field.", clInteractiveExpand},
+        {"Description", "Font color of status (bottom) filed.", clDescrFnt},
+        {"Completion", "Completion text color.", clCompletionFnt},
+        {"Completion Match", "Completion font color for matched text.", clCompletionMatchCharFnt},
+        {"Completion Match Bg", "Completion background color for matched text.", clCompletionMatchCharBg},
+        {"Completion After Match", "Completion font color for text after matched text.", clCompletionAfterMatch},
+        {"Completion Expand Bg", "Background color for selected item.", clCompletionExpandBg},
+        {"Infotext Fnt", "Font color of help tip box.", clInfoTextFnt},
+        {"Infotext Bg", "Background color of help tip box.", clInfoTextBg},
+        {"Infotext Brd", "Border color of help tip box.", clInfoTextBrd},
+        {NULL}
+    };
+
+    int i = 0;
+    std::string cname("render/color/gconsole/");
+    while (gconsole_color_vars[i].name) {
+        // bind cfg var
+        gVar.BindColor(cname + gconsole_color_vars[i].name,
+                       &gconsole_color_vars[i].c->i,
+                       gconsole_color_vars[i].c->i,
+                       gconsole_color_vars[i].descr);
+        i++;
+    }
+
+    // default columns
+    gVar.Bind("gc/completion columns", &defaultColumns, defaultColumns,
+              _("Number of columns for completion (1..8)"));
+}
+
 void destroyGCInteractives()
 {
     delete listInteractive;
@@ -5467,8 +5513,7 @@ void initGeekConsole(CelestiaCore *celApp)
     // gvar
     initGCVarInteractivsFunctions();
 
-    gVar.Bind("gc/completion columns", &defaultColumns, defaultColumns,
-              _("Number of columns for completion (1..8)"));
+    bindVars();
 }
 
 void shutdownGeekconsole()

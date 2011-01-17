@@ -156,16 +156,11 @@ float ChkVar::render(rcontext *rc)
     if (spaces > 0 && width < spacesz)
         width = spacesz;
 
-    glColor4ub(0,0,0,50);
-    ovl->rect(xoffset, -2, width, rc->font->getHeight());
-    glColor4ubv(clCompletionFnt->rgba);
-    *ovl << str;
-
     if (TYPE_VALUE != type && gVar.GetType(varname) == GeekVar::Color)
     {
         // render 2x2 chess board
         glColor4ub(255,255,255,255);
-        float x = xoffset + width + 2;
+        float x = xoffset + 2;
         float y = -1.0;
         float h = rc->font->getHeight() - 2;
         float w = rc->font->getAdvance('X') * 6;
@@ -181,10 +176,16 @@ float ChkVar::render(rcontext *rc)
         glColor4ubv(c.rgba);
         ovl->rect(x+1, y+1, w-2, h-2);
         // width correction
-        width += w + 4;
+        xoffset += w + 4;
+        ovl->setXoffset(xoffset);
     }
-    ovl->setXoffset(xoffset + width);
 
+    glColor4ub(0,0,0,50);
+    ovl->rect(xoffset, -2, width, rc->font->getHeight());
+    glColor4ubv(clCompletionFnt->rgba);
+    *ovl << str;
+
+    ovl->setXoffset(xoffset + width);
     // return to default color
     glColor4ubv(clCompletionFnt->rgba);
     return 0; // 0 - default font height
@@ -911,7 +912,7 @@ void InfoInteractive::addNodeText(char *contents, int size)
                 {
                     string varname = it->second;
                     it = params.find("spaces");
-                    int spaces = 16;
+                    int spaces = 1024;
                     if (it != params.end())
                         spaces = atoi((it->second).c_str());
 
