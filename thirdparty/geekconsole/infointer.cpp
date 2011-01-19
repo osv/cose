@@ -484,7 +484,7 @@ int InfoInteractive::getChopLine()
 {
     if (chopLine == -1)
         // by default scroll 1/4 screen width
-        return width / 4 * gc->getCompletionFont()->getWidth("X");
+        return width / (4 * gc->getCompletionFont()->getAdvance('X'));
     else
         return chopLine;
 }
@@ -911,8 +911,11 @@ void InfoInteractive::addNodeText(char *contents, int size)
                 if (it != params.end())
                 {
                     string varname = it->second;
+                    // default width of variable's value
                     it = params.find("spaces");
                     int spaces = 1024;
+                    if (tagname != "descvar")
+                        spaces = 16;
                     if (it != params.end())
                         spaces = atoi((it->second).c_str());
 
