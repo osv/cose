@@ -1,5 +1,29 @@
+// Copyright (C) 2010-2011 Olexandr Sydorchuk <olexandr_syd [at] users.sourceforge.net>
+//
+// geekconsole is free software; you can redistribute it and/or modify
+// it  under the terms  of the  GNU Lesser  General Public  License as
+// published by the Free Software  Foundation; either version 2 of the
+// License, or (at your option) any later version.
+//
+// Alternatively, you  can redistribute it and/or modify  it under the
+// terms of  the GNU General Public  License as published  by the Free
+// Software Foundation; either  version 2 of the License,  or (at your
+// option) any later version.
+//
+// geekconsole is distributed in the  hope that it will be useful, but
+// WITHOUT  ANY  WARRANTY;  without   even  the  implied  warranty  of
+// MERCHANTABILITY or  FITNESS FOR A  PARTICULAR PURPOSE. See  the GNU
+// Lesser General Public License or the GNU General Public License for
+// more details.
+//
+// You should  have received a copy  of the GNU  Lesser General Public
+// License. If not, see <http://www.gnu.org/licenses/>.
+
+// This file contain base functions for geekconsole.
+
 #include "geekconsole.h"
 #include "infointer.h"
+#include "gvar.h"
 
 /******************************************************************
  *  Functions
@@ -585,4 +609,42 @@ void initGCInteractives(GeekConsole *gc)
     gc->registerFunction(GCFunc(info_last_node), "info, last visited node");
     gc->registerFunction(GCFunc(info_rebuild_dir, _("Rebuild directory node - the top of the INFO tree")),
                                        "info, rebuild dir node");
+
+    // bind colors
+    typedef struct gconsole_color_vars_t {
+        const char *name;
+        const char *descr;
+        Color32 *c;
+    };
+
+    gconsole_color_vars_t gconsole_color_vars[] = {
+        {"Bg", "Background color of geek console.", clBackground},
+        {"Bg Interactive", "Background color for entry field.", clBgInteractive},
+        {"Bg Interactive Brd", "Border color for entry field.", clBgInteractiveBrd},
+        {"Interactive Fnt", "Font color for entry.", clInteractiveFnt},
+        {"Interactive Prefix Fnt", "Font color for prefix of entry field.", clInteractivePrefixFnt},
+        {"Interactive Expand", "Font color fot expanded part of entry field.", clInteractiveExpand},
+        {"Description", "Font color of status (bottom) filed.", clDescrFnt},
+        {"Completion", "Completion text color.", clCompletionFnt},
+        {"Completion Match", "Completion font color for matched text.", clCompletionMatchCharFnt},
+        {"Completion Match Bg", "Completion background color for matched text.", clCompletionMatchCharBg},
+        {"Completion After Match", "Completion font color for text after matched text.", clCompletionAfterMatch},
+        {"Completion Expand Bg", "Background color for selected item.", clCompletionExpandBg},
+        {"Infotext Fnt", "Font color of help tip box.", clInfoTextFnt},
+        {"Infotext Bg", "Background color of help tip box.", clInfoTextBg},
+        {"Infotext Brd", "Border color of help tip box.", clInfoTextBrd},
+        {NULL}
+    };
+
+    int i = 0;
+    std::string cname("render/color/gconsole/");
+    while (gconsole_color_vars[i].name) {
+        // bind cfg var
+        gVar.BindColor(cname + gconsole_color_vars[i].name,
+                       &gconsole_color_vars[i].c->i,
+                       gconsole_color_vars[i].c->i,
+                       gconsole_color_vars[i].descr);
+        i++;
+    }
+
 }

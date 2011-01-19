@@ -19,7 +19,6 @@ LIBS = @LIBS@ \
 GEEKCONSOLESRC = \
 	$(top_srcdir)/thirdparty/geekconsole/geekconsole.cpp \
 	$(top_srcdir)/thirdparty/geekconsole/geekbind.cpp \
-	$(top_srcdir)/thirdparty/geekconsole/stdcelinter.cpp \
 	$(top_srcdir)/thirdparty/geekconsole/geeklua.cpp \
 	$(top_srcdir)/thirdparty/geekconsole/gcinfo/search.c \
 	$(top_srcdir)/thirdparty/geekconsole/gcinfo/nodes.c \
@@ -28,6 +27,8 @@ GEEKCONSOLESRC = \
 	$(top_srcdir)/thirdparty/geekconsole/gcinfo/dir.c \
 	$(top_srcdir)/thirdparty/geekconsole/gcinfo/tilde.c \
 	$(top_srcdir)/thirdparty/geekconsole/infointer.cpp \
+	$(top_srcdir)/thirdparty/geekconsole/m-x.cpp \
+	$(top_srcdir)/thirdparty/geekconsole/m-x_cel.cpp \
 	$(top_srcdir)/thirdparty/geekconsole/gvar.cpp
 
 if ENABLE_CGAME
