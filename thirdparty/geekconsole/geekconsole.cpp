@@ -787,7 +787,9 @@ char easytolower(char in){
 static void initColorTables()
 {
     int i = 0;
-    while (colorTable[i].colorName)
+    cout << "sizeof(colorTable) " << sizeof(colorTable) / sizeof(colortbl) << "\n";
+    i = (sizeof(colorTable) / sizeof(colortbl)) -2; // -2 - last element is NULL
+    while (i >=0)
     {
         string cname = colorTable[i].colorName;
 
@@ -798,7 +800,7 @@ static void initColorTables()
         uint32 c = getColor32FromText(colorTable[i].colorHexName).i;
         colors_name_2_c[cname] = ctbl_c_i_t(c, i);
         colorsUintStr[c] = colorTable[i].colorName;
-        i++;
+        i--;
     }
 }
 
