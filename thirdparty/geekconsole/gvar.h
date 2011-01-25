@@ -64,6 +64,8 @@ public:
         const char *helptip;
     };
 
+    typedef void (* HookFunc)(std::string);
+
     typedef struct gvar {
         void *p; // pointer to binded var
         gvar_type type;
@@ -74,36 +76,47 @@ public:
         std::string flagDelim; // delimiters for flag
         flags32_s *flagtbl;
         bool saveAsHex; // for intager save in hex format
+        HookFunc getHook;
+        HookFunc setHook;
         ~gvar();
-        gvar(): p(0), type(Unknown), flagtbl(0), saveAsHex(false) {};
+        gvar(): p(0), type(Unknown), flagtbl(0), saveAsHex(false), getHook(NULL), setHook(NULL) {};
         /* other helpfull constr.*/
         gvar(int32 *v, const std::string &resetstr, const std::string &_doc): p(v), type(Int32),
-                                                                              resetString(resetstr), doc(_doc), flagtbl(0), saveAsHex(false) {};
+                                                                              resetString(resetstr), doc(_doc), flagtbl(0), saveAsHex(false),
+                                                                              getHook(NULL), setHook(NULL){};
         gvar(bool *v, const std::string &resetstr, const std::string &_doc): p(v), type(Bool),
-                                                                             resetString(resetstr), doc(_doc), flagtbl(0), saveAsHex(false) {};
+                                                                             resetString(resetstr), doc(_doc), flagtbl(0), saveAsHex(false),
+                                                                             getHook(NULL), setHook(NULL){};
         gvar(double *v, const std::string &resetstr, const std::string &_doc): p(v), type(Double),
-                                                                               resetString(resetstr), doc(_doc), flagtbl(0), saveAsHex(false) {};
+                                                                               resetString(resetstr), doc(_doc), flagtbl(0), saveAsHex(false),
+                                                                               getHook(NULL), setHook(NULL) {};
         gvar(float *v, const std::string &resetstr, const std::string &_doc): p(v), type(Float),
-                                                                              resetString(resetstr), doc(_doc), flagtbl(0), saveAsHex(false) {};
+                                                                              resetString(resetstr), doc(_doc), flagtbl(0), saveAsHex(false),
+                                                                              getHook(NULL), setHook(NULL){};
         gvar(int64 *v, const std::string &resetstr, const std::string &_doc): p(v), type(Int64),
-                                                                              resetString(resetstr), doc(_doc), flagtbl(0), saveAsHex(false) {};
+                                                                              resetString(resetstr), doc(_doc), flagtbl(0), saveAsHex(false),
+                                                                              getHook(NULL), setHook(NULL){};
         gvar(std::string *v, const std::string &resetstr, const std::string &_doc): p(v), type(String),
-                                                                                    resetString(resetstr), doc(_doc), flagtbl(0), saveAsHex(false) {};
+                                                                                    resetString(resetstr), doc(_doc), flagtbl(0), saveAsHex(false),
+                                                                                    getHook(NULL), setHook(NULL){};
         gvar(flags32_s *_flagtbl, const std::string &_flagDelim, uint32 *v, const std::string &resetstr, const std::string &_doc):
-            p(v), type(Flags32), resetString(resetstr), doc(_doc), flagDelim(_flagDelim), flagtbl(_flagtbl), saveAsHex(false) {};
+            p(v), type(Flags32), resetString(resetstr), doc(_doc), flagDelim(_flagDelim), flagtbl(_flagtbl), saveAsHex(false),
+            getHook(NULL), setHook(NULL){};
         gvar(flags32_s *_flagtbl, uint32 *v, const std::string &resetstr, const std::string &_doc):
-            p(v), type(Enum32), resetString(resetstr), doc(_doc), flagtbl(_flagtbl), saveAsHex(false) {};
+            p(v), type(Enum32), resetString(resetstr), doc(_doc), flagtbl(_flagtbl), saveAsHex(false),
+            getHook(NULL), setHook(NULL){};
 
         // new var but not binded
         gvar(gvar_type _type, const std::string &resetstr, const std::string &_doc): p(0), type(_type),
                                                                                      resetString(resetstr), doc(_doc),
-                                                                                     flagtbl(0), saveAsHex(false) {};
+                                                                                     flagtbl(0), saveAsHex(false),
+                                                                                     getHook(NULL), setHook(NULL){};
         void reset();
         std::string get();
         void set(const std::string &val);
     };
 
-    GeekVar () {};
+    GeekVar ();
 
     // Unbind var that will become to Unknown.
     // Use it in your deconst if you bind.
@@ -246,14 +259,29 @@ public:
     std::string GetDoc(std::string name);
     // get var names with path
     std::vector<std::string> GetVarNames(std::string path);
+    // copy all vars from one group to other
+    void CopyVars(std::string srcgroup, std::string dstgroup);
+    // copy types of variables. Only copy types, doc, etc, but *not* value
+    void CopyVarsTypes(std::string srcgroup, std::string dstgroup);
+
     // return bind status for variable
     bool IsBinded(std::string name);
+
+    // set gethook for var
+    void SetGetHook(std::string name, HookFunc hook);
+    void SetSetHook(std::string name, HookFunc hook);
+    // hook for creation variable that has been matched @groupname
+    void AddCreateHook(std::string groupname, HookFunc hook);
 
 private:
     gvar *getGvar(std::string name);
     typedef std::map<std::string, gvar> vars_t;
     vars_t  vars;
 
+    bool lock_set_get; // prevent infin. set/get in hook
+    typedef std::multimap<std::string, HookFunc> createHook_t;
+    createHook_t createHooks;
+    void callCreateHook(std::string var);
 };
 
 extern GeekVar gVar;

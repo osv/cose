@@ -250,6 +250,11 @@ void GeekVar::gvar::set(const string &val)
     }
 }
 
+GeekVar::GeekVar ()
+{
+    lock_set_get = false;
+};
+
 GeekVar::gvar *GeekVar::getGvar(string name)
 {
     vars_t::iterator it = vars.find(name);
@@ -295,6 +300,7 @@ void GeekVar::Unbind(std::string name)
             newvar.set(oldvar->get());                                  \
             vars[name] = newvar;                                        \
         }                                                               \
+        callCreateHook(name);                                           \
         return true;                                                    \
     }
 
@@ -389,6 +395,7 @@ bool GeekVar::BindFlag(string name, flags32_s *flagtbl, string _flagDelim, uint3
         gvar newvar(flagtbl, _flagDelim, var, resetval, doc);
         vars[name] = newvar;
     }
+    callCreateHook(name);
     return true;
 }
 
@@ -421,6 +428,7 @@ bool GeekVar::BindEnum(string name, flags32_s *flagtbl, uint32 *var, const char 
         gvar newvar(flagtbl, var, resetval, doc);
         vars[name] = newvar;
     }
+    callCreateHook(name);
     return true;
 }
 
@@ -455,6 +463,7 @@ bool GeekVar::BindColor(string name, uint32 *var, const char *resetval, string d
         newvar.p = var;
         vars[name] = newvar;
     }
+    callCreateHook(name);
     return true;
 }
 
@@ -564,6 +573,7 @@ bool GeekVar::NewFlag(std::string name, flags32_s *flagtbl, std::string delim,
         newvar.set(oldvar->get());
         vars[name] = newvar;
     }
+    callCreateHook(name);
     return true;
 }
 
@@ -595,6 +605,7 @@ bool GeekVar::NewEnum(std::string name, flags32_s *flagtbl,
         newvar.set(oldvar->get());
         vars[name] = newvar;
     }
+    callCreateHook(name);
     return true;
 }
 
@@ -625,6 +636,7 @@ bool GeekVar::NewColor(string name, const char *resetval, string doc)
         newvar.set(oldvar->get());
         vars[name] = newvar;
     }
+    callCreateHook(name);
     return true;
 }
 
@@ -671,13 +683,13 @@ bool GeekVar::New(string name, gvar_type type, const char *resetval, string doc)
         v->resetString = resetval;
         v->saveAsHex = false;
     }
+    callCreateHook(name);
     return true;
 }
 
 /******************************************************************
  *  Set
  ******************************************************************/
-
 
 void GeekVar::Set(string name, int32 val)
 {
@@ -686,12 +698,21 @@ void GeekVar::Set(string name, int32 val)
 
     gvar *v = getGvar(name);
     if(v)
+    {
         v->set(buffer);
+        if (!lock_set_get && v->setHook)
+        {
+            lock_set_get = true;
+            v->setHook(name);
+            lock_set_get = false;
+        }
+    }
     else
     {
         gvar v;
         v.set(buffer);
         vars[name] = v;
+        callCreateHook(name);
     }
 }
 
@@ -702,12 +723,21 @@ void GeekVar::Set(string name, int64 val)
 
     gvar *v = getGvar(name);
     if(v)
+    {
         v->set(buffer);
+        if (!lock_set_get && v->setHook)
+        {
+            lock_set_get = true;
+            v->setHook(name);
+            lock_set_get = false;
+        }
+    }
     else
     {
         gvar v;
         v.set(buffer);
         vars[name] = v;
+        callCreateHook(name);
     }
 }
 
@@ -718,12 +748,21 @@ void GeekVar::Set(string name, bool val)
 
     gvar *v = getGvar(name);
     if(v)
+    {
         v->set(buffer);
+        if (!lock_set_get && v->setHook)
+        {
+            lock_set_get = true;
+            v->setHook(name);
+            lock_set_get = false;
+        }
+    }
     else
     {
         gvar v;
         v.set(buffer);
         vars[name] = v;
+        callCreateHook(name);
     }
 }
 
@@ -734,12 +773,21 @@ void GeekVar::Set(string name, double val)
 
     gvar *v = getGvar(name);
     if(v)
+    {
         v->set(buffer);
+        if (!lock_set_get && v->setHook)
+        {
+            lock_set_get = true;
+            v->setHook(name);
+            lock_set_get = false;
+        }
+    }
     else
     {
         gvar v;
         v.set(buffer);
         vars[name] = v;
+        callCreateHook(name);
     }
 }
 
@@ -750,12 +798,21 @@ void GeekVar::Set(string name, float val)
 
     gvar *v = getGvar(name);
     if(v)
+    {
         v->set(buffer);
+        if (!lock_set_get && v->setHook)
+        {
+            lock_set_get = true;
+            v->setHook(name);
+            lock_set_get = false;
+        }
+    }
     else
     {
         gvar v;
         v.set(buffer);
         vars[name] = v;
+        callCreateHook(name);
     }
 }
 
@@ -763,12 +820,21 @@ void GeekVar::Set(string name, string val)
 {
     gvar *v = getGvar(name);
     if(v)
+    {
         v->set(val);
+        if (!lock_set_get && v->setHook)
+        {
+            lock_set_get = true;
+            v->setHook(name);
+            lock_set_get = false;
+        }
+    }
     else
     {
         gvar v;
         v.set(val);
         vars[name] = v;
+        callCreateHook(name);
     }
 }
 
@@ -795,8 +861,6 @@ void GeekVar::Set(string name, const char *val)
             return *(uint32 *)v->p;             \
         else if (v->type == Enum32)             \
             return *(uint32 *)v->p;             \
-        else if (v->type == Enum32)             \
-            return *(uint32 *)v->p;             \
         else if (v->type == Color)              \
             return *(uint32 *)v->p;
 
@@ -805,6 +869,12 @@ int32 GeekVar::GetI32(string name)
     gvar *v = getGvar(name);
     if(v)
     {
+        if (!lock_set_get && v->getHook)
+        {
+            lock_set_get = true;
+            v->getHook(name);
+            lock_set_get = false;
+        }
         RETURN_BINDED(v);
         return strToInt32(v->get().c_str());
     }
@@ -817,6 +887,12 @@ int64 GeekVar::GetI64(string name)
     gvar *v = getGvar(name);
     if(v)
     {
+        if (!lock_set_get && v->getHook)
+        {
+            lock_set_get = true;
+            v->getHook(name);
+            lock_set_get = false;
+        }
         RETURN_BINDED(v);
         return strToInt64(v->get().c_str());
     }
@@ -829,6 +905,12 @@ double GeekVar::GetDouble(string name)
     gvar *v = getGvar(name);
     if(v)
     {
+        if (!lock_set_get && v->getHook)
+        {
+            lock_set_get = true;
+            v->getHook(name);
+            lock_set_get = false;
+        }
         RETURN_BINDED(v);
         return atof(v->get().c_str());
     }
@@ -841,6 +923,12 @@ float GeekVar::GetFloat(string name)
     gvar *v = getGvar(name);
     if(v)
     {
+        if (!lock_set_get && v->getHook)
+        {
+            lock_set_get = true;
+            v->getHook(name);
+            lock_set_get = false;
+        }
         RETURN_BINDED(v);
         return atof(v->get().c_str());
     }
@@ -852,10 +940,18 @@ bool GeekVar::GetBool(string name)
 {
     gvar *v = getGvar(name);
     if (v)
+    {
+        if (!lock_set_get && v->getHook)
+        {
+            lock_set_get = true;
+            v->getHook(name);
+            lock_set_get = false;
+        }
         if (v->get() == "true")
             return true;
         else
             return (bool) GetI32(name);
+    }
     else
         return false;
 }
@@ -864,7 +960,15 @@ string GeekVar::GetString(string name)
 {
     gvar *v = getGvar(name);
     if(v)
+    {
+        if (!lock_set_get && v->getHook)
+        {
+            lock_set_get = true;
+            v->getHook(name);
+            lock_set_get = false;
+        }
         return v->get();
+    }
     else
         return "";
 }
@@ -941,6 +1045,12 @@ string GeekVar::GetFlagString(string name)
     gvar *v = getGvar(name);
     if (!v)
         return "";
+    if (!lock_set_get && v->getHook)
+    {
+        lock_set_get = true;
+        v->getHook(name);
+        lock_set_get = false;
+    }
     return _getFlagStr(v, v->get());
 }
 
@@ -1007,7 +1117,7 @@ std::string GeekVar::GetTypeName(gvar_type type)
     switch (type)
     {
     case Int32: return "integer 32 bit";
-    case Int64: return "integer 64";
+    case Int64: return "integer 64 bit";
     case Bool: return "boolean";
     case Double: return "long number";
     case Float: return "number";
@@ -1063,6 +1173,63 @@ vector<string> GeekVar::GetVarNames(string path)
     return res;
 }
 
+void GeekVar::CopyVars(std::string srcgroup, std::string dstgroup)
+{
+    vars_t::iterator it,itlow,itup;
+
+    itlow=vars.lower_bound (srcgroup);
+    for ( it=itlow ; it != vars.end(); it++ )
+    {
+        if ((*it).first.compare(0, srcgroup.size(), srcgroup) != 0)
+            break;
+        if (srcgroup.size() < ((*it).first).size())
+        {
+            string dstvar = dstgroup + ((*it).first).substr(srcgroup.size());
+            // if dest var exist than just set value
+            gvar *oldv = getGvar(dstvar);
+            if (oldv)
+            {
+                Set(dstvar, GetString((*it).first));
+            }
+            else // otherwice create same, but not binded or hooked
+            {
+                gvar v = (*it).second;
+                v.p = NULL;
+                v.setHook = NULL;
+                v.getHook = NULL;
+                v.set(((*it).second).get());
+                vars[dstvar] = v;
+            }
+        }
+    }
+}
+
+void GeekVar::CopyVarsTypes(std::string srcgroup, std::string dstgroup)
+{
+    vars_t::iterator it,itlow,itup;
+    itlow=vars.lower_bound (srcgroup);
+    for ( it=itlow; it != vars.end(); it++ )
+    {
+        if ((*it).first.compare(0, srcgroup.size(), srcgroup) != 0)
+            break;
+        if (srcgroup.size() <= ((*it).first).size())
+        {
+            string dstvar = dstgroup + ((*it).first).substr(srcgroup.size());
+            // if destvar exist than copy all types, doc, flagtables
+
+            gvar *oldv = getGvar(dstvar);
+            if (oldv)
+            {
+                oldv->type = (*it).second.type;
+                oldv->doc = (*it).second.doc;
+                oldv->flagDelim = (*it).second.flagDelim;
+                oldv->flagtbl = (*it).second.flagtbl;
+                oldv->saveAsHex = (*it).second.saveAsHex;
+            }
+        }
+    }
+}
+
 bool GeekVar::IsBinded(std::string name)
 {
     gvar *v = getGvar(name);
@@ -1070,6 +1237,36 @@ bool GeekVar::IsBinded(std::string name)
         return true;
     else
         return false;
+}
+
+void GeekVar::SetGetHook(std::string name, HookFunc hook)
+{
+    gvar *v = getGvar(name);
+    if (v)
+        v->getHook = hook;
+}
+void GeekVar::SetSetHook(std::string name, HookFunc hook)
+{
+    gvar *v = getGvar(name);
+    if (v)
+        v->setHook = hook;
+}
+
+void GeekVar::AddCreateHook(std::string groupname, HookFunc hook)
+{
+    createHooks.insert(pair<std::string, HookFunc>(groupname, hook));
+}
+
+void GeekVar::callCreateHook(std::string var)
+{
+    createHook_t::iterator it;
+    for ( it=createHooks.begin() ; it != createHooks.end(); it++ )
+    {
+        if (var.compare(0, (*it).first.size(), (*it).first) == 0)
+        {
+            ((*it).second)(var);
+        }
+    }
 }
 
 /******************************************************************
@@ -1370,12 +1567,12 @@ static int aproposVarSum(GeekConsole *gc, int state, std::string value)
 }
 
 
-std::vector<std::string> getGroupsOfVarNames(std::vector<std::string> l, int text_start)
+static std::vector<std::string> getGroupsOfVarNames(std::vector<std::string> l, int text_start)
 {
     vector<string> res;
     vector<string>::iterator it;
 
-    size_t found, found2;
+    size_t found;
     string lastAdded;
     for (it = l.begin(); it != l.end(); it++)
     {
@@ -1395,7 +1592,7 @@ std::vector<std::string> getGroupsOfVarNames(std::vector<std::string> l, int tex
     return res;
 }
 
-std::vector<std::string> getNamesOfVarNames(std::vector<std::string> l, int text_start)
+static std::vector<std::string> getNamesOfVarNames(std::vector<std::string> l, int text_start)
 {
     vector<string> res;
     vector<string>::iterator it;
