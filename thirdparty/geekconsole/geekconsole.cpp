@@ -2257,14 +2257,10 @@ GeekBind *GeekConsole::getGeekBind(std::string bindspace)
 }
 
 void GeekConsole::registerAndBind(std::string bindspace, const char *bindkey,
-                                  GCFunc fun, const char *funname)
+                                  GCFunc fun, const char *funname, bool archive)
 {
     registerFunction(fun, funname);
-    if (bindspace.empty())
-        bindspace = "Global";
-    GeekBind *gb = getGeekBind(bindspace);
-    if (gb)
-        gb->bind(bindkey, funname);
+    bind(bindspace, bindkey, funname, archive);
 }
 
 //! bind key

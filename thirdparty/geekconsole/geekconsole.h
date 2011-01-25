@@ -501,7 +501,7 @@ public:
     GeekBind *createGeekBind(std::string bindspace); // return existen or new binder
     GeekBind *getGeekBind(std::string bindspace);
     void registerAndBind(std::string bindspace, const char *bindkey,
-                         GCFunc fun, const char *funname);
+                         GCFunc fun, const char *funname, bool archive = false);
     const std::vector<GeekBind *>& getGeekBinds()
         { return geekBinds;}
     bool bind(std::string bindspace, std::string bindkey, std::string function, bool archive = false);
