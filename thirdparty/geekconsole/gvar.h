@@ -228,6 +228,7 @@ public:
     */
 
     int32 GetI32(std::string name);
+    uint32 GetUI32(std::string name);
     int64 GetI64(std::string name);
     bool GetBool(std::string name);
     double GetDouble(std::string name);

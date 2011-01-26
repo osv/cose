@@ -882,6 +882,24 @@ int32 GeekVar::GetI32(string name)
         return 0;
 }
 
+uint32 GeekVar::GetUI32(std::string name)
+{
+    gvar *v = getGvar(name);
+    if(v)
+    {
+        if (!lock_set_get && v->getHook)
+        {
+            lock_set_get = true;
+            v->getHook(name);
+            lock_set_get = false;
+        }
+        RETURN_BINDED(v);
+        return strToUint32(v->get().c_str());
+    }
+    else
+        return 0;
+}
+
 int64 GeekVar::GetI64(string name)
 {
     gvar *v = getGvar(name);
@@ -1336,6 +1354,224 @@ static string describeVar(string varname)
     return res;
 }
 
+static int setVarFlag(GeekConsole *gc, int state, std::string value)
+{
+    static string varname;
+    static GeekVar::gvar_type vartype;
+    static GeekVar::flags32_s *flags;
+
+    enum v_action {
+        SET = 1,
+        UNSET = 2,
+        TOGGLE =3
+    };
+    static v_action setUnset;
+    std::stringstream ss;
+
+    switch(state)
+    {
+    case 0:
+        gc->setInteractive(listInteractive, "select-gvar", _("Select variable"));
+        listInteractive->setCompletion(gVar.GetVarNames(""));
+        listInteractive->setColumns(gVar.GetI32("gc/completion columns") - 1);
+        listInteractive->setMatchCompletion(true);
+        break;
+    case -1:
+        gc->setInfoText(describeVar(value));
+        break;
+    case 1: // select action: set/unset
+        varname = value;
+        vartype = gVar.GetType(varname);
+
+        gc->setInteractive(listInteractive, "set-unset", _("Set/Unset/Toggle flags"));
+        listInteractive->setCompletionFromSemicolonStr("set;unset;toggle");
+        listInteractive->setMatchCompletion(true);
+        break;
+    case 2: // create completion list for variable
+    {
+        vector<string> completion;
+        switch (vartype)
+        {
+        case GeekVar::Unknown:
+        case GeekVar::Int32:
+        case GeekVar::Double:
+        case GeekVar::Float:
+        case GeekVar::Int64:
+        case GeekVar::String:
+            gc->setInteractive(listInteractive, "set-gvar-val.str",
+                               string(_("Set ")) + varname + " (" + gVar.GetTypeName(vartype) + ")");
+            completion.push_back(gVar.GetResetValue(varname));
+            completion.push_back(gVar.GetLastValue(varname));
+            completion.push_back(gVar.GetString(varname));
+            listInteractive->setCompletion(completion);
+            listInteractive->setDefaultValue(gVar.GetString(varname));
+            break;
+        case GeekVar::Bool:
+            gc->setInteractive(listInteractive, "",
+                               string(_("Set ")) + varname + " (" + gVar.GetTypeName(vartype) + ")");
+            completion.push_back("yes");
+            completion.push_back("no");
+            completion.push_back("true");
+            completion.push_back("false");
+            listInteractive->setCompletion(completion);
+            listInteractive->setMatchCompletion(true);
+            listInteractive->setDefaultValue(gVar.GetString(varname));
+            break;
+        case GeekVar::Flags32:
+        {
+            if (value == "set")
+            {
+                ss << _("Set flags");
+                setUnset = SET;
+            } else if (value == "unset")
+            {
+                ss << _("Unset flags");
+                setUnset = UNSET;
+            } else
+            {
+                ss << _("Toggle flags");
+                setUnset = TOGGLE;
+            }
+
+            flags = gVar.GetFlagTbl(varname);
+            uint32 var = gVar.GetUI32(varname);
+            int i = 0;
+            while(flags[i].name != NULL)
+            {
+                // add only if flag not set currently if need to set flag and so on
+                if (setUnset == SET)
+                {
+                    if (!(var & flags[i].mask))
+                        completion.push_back(flags[i].name);
+                } else if (setUnset == UNSET)
+                {
+                    if ((var & flags[i].mask))
+                        completion.push_back(flags[i].name);
+                } else
+                    completion.push_back(flags[i].name);
+                i++;
+            }
+
+            ss << " " << varname;
+            gc->setInteractive(flagInteractive, "", ss.str());
+            flagInteractive->setCompletion(completion);
+            flagInteractive->setMatchCompletion(true);
+            flagInteractive->setSeparatorChars(gVar.GetFlagDelim(varname));
+            break;
+        }
+        case GeekVar::Enum32:
+        {
+            gc->setInteractive(listInteractive, "",
+                               string(_("Set ")) + varname + " (enum)");
+            listInteractive->setMatchCompletion(true);
+
+            flags = gVar.GetFlagTbl(varname);
+            int i = 0;
+            while(flags && flags[i].name != NULL)
+            {
+                completion.push_back(flags[i].name);
+                i++;
+            }
+            listInteractive->setCompletion(completion);
+            listInteractive->setDefaultValue(gVar.GetFlagString(varname));
+            break;
+        }
+        case GeekVar::Color:
+            gc->setInteractive(colorChooserInteractive, "select-color",
+                               string(_("Select color ")) + varname);
+            colorChooserInteractive->setDefaultValue(gVar.GetFlagString(varname));
+            break;
+        case GeekVar::Celbody:
+            gc->setInteractive(celBodyInteractive, "select-body",
+                               string(_("Select body ")) + varname);
+            celBodyInteractive->setDefaultValue(gVar.GetFlagString(varname));
+            break;
+        }
+        break;
+    } // case 2:
+    // hint for suitable value of variable
+    case -2-1:
+    {
+        switch(vartype)
+        {
+        case GeekVar::Flags32:
+        case GeekVar::Enum32:
+        {
+            // find doc of value from table
+            int i = 0;
+            while(flags && flags[i].name != NULL)
+            {
+                if (flags[i].name == value)
+                {
+                    if (flags[i].helptip)
+                        gc->setInfoText(_(flags[i].helptip));
+                    break;
+                }
+                i++;
+            }
+            break;
+        }
+        case GeekVar::Celbody:
+            break;
+        default:
+            // for non flag vars just hint of variable
+            gc->setInfoText(describeVar(varname));
+            break;
+        }
+        break;
+    }
+
+    case 3:
+    {
+        if (GeekVar::Celbody == vartype)
+        {
+            Selection sel = gc->getCelCore()->getSimulation()->findObjectFromPath(value, true);
+            if (!sel.empty())
+                value = sel.getName();
+        }
+        else if (GeekVar::Flags32 == vartype)
+        {
+            uint32 var = gVar.GetUI32(varname);
+            cout << var << " before \n";
+            // split flags str
+            std::vector<std::string> strArray =
+                splitString(value, gVar.GetFlagDelim(varname));
+            std::vector<string>::iterator it;
+
+            // now setup flags
+            for (it = strArray.begin();
+                 it != strArray.end(); it++)
+            {
+                int i = 0;
+                while(flags[i].name != NULL)
+                {
+                    string s = *it;
+                    if(s == flags[i].name )
+                    {
+                        if (setUnset == SET)
+                            var |= flags[i].mask;
+                        else if (setUnset == UNSET)
+                            var &= ~ flags[i].mask;
+                        else // toggle
+                            var ^= flags[i].mask;
+                        break;
+                    }
+                    i++;
+                }
+            }
+            cout << var << " before \n";
+            gVar.Set(varname, (int32)var);
+            break;
+        }
+        gVar.Set(varname, value);
+        break;
+    } // case 3:
+    }
+    return state;
+}
+
+
+
 static int setVar(GeekConsole *gc, int state, std::string value)
 {
     static string varname;
@@ -1422,11 +1658,13 @@ static int setVar(GeekConsole *gc, int state, std::string value)
             break;
         }
         case GeekVar::Color:
-            gc->setInteractive(colorChooserInteractive, "select-color", varname);
+            gc->setInteractive(colorChooserInteractive, "select-color",
+                               string(_("Select color ")) + varname);
             colorChooserInteractive->setDefaultValue(gVar.GetFlagString(varname));
             break;
         case GeekVar::Celbody:
-            gc->setInteractive(celBodyInteractive, "select-body", varname);
+            gc->setInteractive(celBodyInteractive, "select-body",
+                               string(_("Select body ")) + varname);
             celBodyInteractive->setDefaultValue(gVar.GetFlagString(varname));
             break;
         }
@@ -1797,6 +2035,9 @@ void initGCVarInteractivsFunctions()
     GeekConsole *gc = getGeekConsole();
     gc->registerFunction(GCFunc(setVar, _("Set variable")),
                          "set variable");
+    gc->registerFunction(GCFunc(setVarFlag, _("Set, unset or toggle variable's flags\n"
+                                    "or just set variable")),
+                         "set flag");
     gc->registerFunction(GCFunc(resetVar, _("Reset variable")),
                          "reset variable");
     gc->registerFunction(GCFunc(varSetLastVal, _("Set variable with the last set value")),
