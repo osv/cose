@@ -589,8 +589,8 @@ namespace UI
                                setPreset, "%i", i);
                 addSndEvent((AG_Object *) btn, "button-pushed", BTNCLICK);
                 sprintf(buff,"C-x r %d #%d", i, i);
-                getGeekConsole()->bind("Global", buff,
-                                  "set render preset");
+//                getGeekConsole()->bind("Global", buff,
+//                                  "set render preset");
             }
             // show and hide, need for "swith window" proper work
             showCelPreference(NULL); 
@@ -1408,8 +1408,8 @@ namespace UI
                                      GCFunc(maximizeCurrentFocusedWindow), "maximize window");
         getGeekConsole()->registerAndBind("", "C-o",
                                      GCFunc(toggleShowUI), "toggle ui");
-        getGeekConsole()->registerAndBind("", "C-x r r",
-                                     GCFunc(RenderCfgDial::GCSetPreset), "set render preset");
+        // getGeekConsole()->registerAndBind("", "C-x r r",
+        //                              GCFunc(RenderCfgDial::GCSetPreset), "set render preset");
         // geekconsole
         getGeekConsole()->registerFunction(GCFunc(StarBrowserDialog::GCShowStarBrowser), "show solar browser");
         getGeekConsole()->registerFunction(GCFunc(SolarSysBrowser::GCBrowseNearestSolarSystem), "show solar system browser");
