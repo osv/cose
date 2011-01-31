@@ -1988,6 +1988,7 @@ void InfoInteractive::addCachedInfoFile(std::string filename, std::string fullna
 void InfoInteractive::registerDynamicNode(std::string filename, GCDynNode dynNode)
 {
     dynNodes[filename] = dynNode;
+    dirModified = true;
 }
 
 NODE *InfoInteractive::getDynamicNode(char *filename, char *nodename)
