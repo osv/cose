@@ -1373,7 +1373,6 @@ static int setVarFlag(GeekConsole *gc, int state, std::string value)
     case 0:
         gc->setInteractive(listInteractive, "select-gvar", _("Select variable"));
         listInteractive->setCompletion(gVar.GetVarNames(""));
-        listInteractive->setColumns(gVar.GetI32("gc/completion columns") - 1);
         listInteractive->setMatchCompletion(true);
         break;
     case -1:
@@ -1583,7 +1582,6 @@ static int setVar(GeekConsole *gc, int state, std::string value)
     case 0:
         gc->setInteractive(listInteractive, "select-gvar", _("Select variable"));
         listInteractive->setCompletion(gVar.GetVarNames(""));
-        listInteractive->setColumns(gVar.GetI32("gc/completion columns") - 1);
         listInteractive->setMatchCompletion(true);
         break;
     case -1:
@@ -1731,7 +1729,6 @@ static int resetVar(GeekConsole *gc, int state, std::string value)
     case 0:
         gc->setInteractive(listInteractive, "select-gvar", _("Select variable for reset"));
         listInteractive->setCompletion(gVar.GetVarNames(""));
-        listInteractive->setColumns(gVar.GetI32("gc/completion columns") - 1);
         listInteractive->setMatchCompletion(true);
         break;
     case -1:
@@ -1753,7 +1750,6 @@ static int varSetLastVal(GeekConsole *gc, int state, std::string value)
     case 0:
         gc->setInteractive(listInteractive, "select-gvar", _("Select variable"));
         listInteractive->setCompletion(gVar.GetVarNames(""));
-        listInteractive->setColumns(gVar.GetI32("gc/completion columns") - 1);
         listInteractive->setMatchCompletion(true);
         break;
     case -1:
@@ -1773,7 +1769,6 @@ static int aproposVarCust(GeekConsole *gc, int state, std::string value)
     {
     case 0:
         gc->setInteractive(listInteractive, "", _("Pattern"));
-        listInteractive->setColumns(gVar.GetI32("gc/completion columns") - 1);
         break;
     case 1:
         if (value.empty())
@@ -1791,7 +1786,6 @@ static int aproposVarSum(GeekConsole *gc, int state, std::string value)
     {
     case 0:
         gc->setInteractive(listInteractive, "", _("Pattern"));
-        listInteractive->setColumns(gVar.GetI32("gc/completion columns") - 1);
         break;
     case 1:
         if (value.empty())

@@ -207,7 +207,14 @@ public:
     void setMatchCompletion(bool mustMatch); // true - result must be matched in completion. Default false
     void setCompletionFromSemicolonStr(std::string); // add completion by str like "yes;no"
     void setColumns(int c = 4)
-        {cols = c; if (cols < 1) cols = 1; if (cols > 8) cols = 8;}
+        {
+            cols = c; if (cols < 1) cols = 1; if (cols > 8) cols = 8;
+            maxColumns = cols;}
+    // set auto calc size for columns based on num of chars @sz
+    void setColumnsCh(int sz, int _maxColumns = 8)
+        {columnSizeInChar = sz; maxColumns = _maxColumns;}
+    void setColumnsMax(int _maxColumns = 8)
+        {maxColumns = _maxColumns;}
     int getBestCompletionSizePx();
     string getHelpText();
 
@@ -230,6 +237,11 @@ private:
     void renderCompletionFilter(float height, float width);
     // only for Filter type, indicate that inter may be finished by RET key
     bool canFinish;
+
+    // if > 0 calculate cols each time on render completion, cols can't be > 8
+    int columnSizeInChar;
+    int maxColumns; // used with columnSizeInChar as max cols
+    int lastWidth;
 };
 
 // celestia's object prompter
@@ -478,6 +490,8 @@ public:
             width = w; height = h;
             cachedCompletionH = -1;
         };
+    void recalcCompletionHeight()
+        {cachedCompletionH = -1;}
     int const getWidth() {return width;}
     int const getHeight() {return height;}
     void render(double time);

@@ -787,7 +787,6 @@ char easytolower(char in){
 static void initColorTables()
 {
     int i = 0;
-    cout << "sizeof(colorTable) " << sizeof(colorTable) / sizeof(colortbl) << "\n";
     i = (sizeof(colorTable) / sizeof(colortbl)) -2; // -2 - last element is NULL
     while (i >=0)
     {
@@ -2734,7 +2733,6 @@ void ColorChooserInteractive::Interact(GeekConsole *_gc, string historyName)
         completionList.push_back(colorTable[i].colorName);
         i++;
     }
-    ListInteractive::setColumns(defaultColumns);
     typedTextCompletion = completionList;
 }
 
@@ -2830,8 +2828,10 @@ void ListInteractive::Interact(GeekConsole *_gc, string historyName)
     pageScrollIdx = 0;
     completedIdx = -1;
     setColumns(defaultColumns);
+    maxColumns = defaultColumns;
     canFinish = false;
     nb_lines = 0;
+    columnSizeInChar = 0;
 }
 
 void ListInteractive::updateTextCompletion()
@@ -3435,6 +3435,22 @@ void ListInteractive::renderInteractive()
 
 void ListInteractive::renderCompletion(float height, float width)
 {
+    // if auto column size - recalc column num
+    if (columnSizeInChar > 0)
+    {
+        cols = floor(width / ((columnSizeInChar +1) * gc->getCompletionFont()->getAdvance('X')));
+        if (cols > maxColumns)
+            cols = maxColumns;
+        if (cols > 8)
+            cols = 8;
+        if (lastWidth != width)
+        {
+            lastWidth = width;
+            // make sure that completion size height is recalced
+            gc->recalcCompletionHeight();
+        }
+    }
+
     if (completionStyle == Filter)
         renderCompletionFilter(height, width);
     else
@@ -3659,6 +3675,17 @@ void ListInteractive::playMatch()
 void ListInteractive::setCompletion(std::vector<std::string> completion)
 {
     completionList = completion;
+
+    columnSizeInChar = 0;
+    // search max size of item
+    std::vector<std::string>::iterator it;
+    for (it = completionList.begin();
+         it != completionList.end(); it++)
+    {
+        if (columnSizeInChar < (*it).size())
+            columnSizeInChar = (*it).size();
+    }
+
     pageScrollIdx = 0;
     updateTextCompletion();
 }
