@@ -2733,6 +2733,7 @@ void ColorChooserInteractive::Interact(GeekConsole *_gc, string historyName)
         completionList.push_back(colorTable[i].colorName);
         i++;
     }
+    ListInteractive::setCompletion(completionList);
     typedTextCompletion = completionList;
 }
 
@@ -3449,6 +3450,13 @@ void ListInteractive::renderCompletion(float height, float width)
             // make sure that completion size height is recalced
             gc->recalcCompletionHeight();
         }
+    }
+    else
+    {
+        if (cols > maxColumns)
+            cols = maxColumns;
+        if (cols > 8)
+            cols = 8;
     }
 
     if (completionStyle == Filter)

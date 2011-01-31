@@ -24,9 +24,9 @@ gc.registerFunction("lua undefined test", "foobar")
 
 -- alias test
 -- select moon and goto
-gc.registerAlias("lua alias test", "select object", "sol/Earth/moon@*EXEC*@goto object gc",
+gc.registerAlias("lua alias test", "select object", "sol/Earth/moon#*EXEC*#goto object gc",
 		 "This is alias demo from lua code (gc.registerAlias)\n" ..
-		    "This command will call \"select object\" @sol/Earth/moon@*EXEC*@goto object gc")
+		    "This command will call \"select object\" #sol/Earth/moon#*EXEC*#goto object gc")
 
 -- reregister function test
 -- first register
@@ -50,7 +50,7 @@ end
 -- simple
 gc.bind("C-c l", "goto object")
 -- complex: select moon and goto greate circle
-gc.bind("C-c s m @Sol/Earth/Moon@*EXEC*@goto object gc@", "select object")
+gc.bind("C-c s m #Sol/Earth/Moon#*EXEC*#goto object gc#", "select object")
 
 -- unbind test
 gc.bind("C-c C-x", "goto object")
@@ -93,7 +93,7 @@ end
 function colorChooserTest (state, s)
    if state == 0 then
       gc.colorChooseInteractive("test-color", "Select color", "Color select")
-      gc.setColumns(1)
+      gc.setColumnsMax(2)
    elseif state == 1 then
       celestia:flash("Hex color: " .. gc.color2HexRGB(s) .. ", Alpha: " .. gc.alphaFromColor(s), 5)
    end
@@ -104,7 +104,8 @@ end
 function celBodyTest (state, s)
    if state == 0 then
       gc.celBodyInteractive("test-body-sel", "Body", "Select object")
-      gc.setColumns(5)
+      -- 16 is usual body name length, 7 -max of columns
+      gc.setColumnsCh(16, 7)
    elseif state == 1 then
       celestia:flash(s)
    end

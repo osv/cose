@@ -318,6 +318,44 @@ static int setColumns(lua_State* l)
     return 0;
 }
 
+static int setColumnsCh(lua_State* l)
+{
+    CelxLua celx(l);
+
+    celx.checkArgs(1, 2, "One or two arguments expected for gc.setColumnsCh(nNum, [nMaxCols])");
+    int num = celx.safeGetNumber(1, AllErrors, "argument 1 to gc.setColumnsCh must be a number");
+    int max = celx.safeGetNumber(2, WrongType, "argument 2 to gc.setColumnsCh must be a number");
+    if (getGeekConsole()->getCurrentInteractive() == listInteractive)
+        listInteractive->setColumnsCh(num, max);
+    else if (getGeekConsole()->getCurrentInteractive() == celBodyInteractive)
+        celBodyInteractive->setColumnsCh(num, max);
+    else if (getGeekConsole()->getCurrentInteractive() == colorChooserInteractive)
+        colorChooserInteractive->setColumnsCh(num, max);
+    else if (getGeekConsole()->getCurrentInteractive() == flagInteractive)
+        flagInteractive->setColumnsCh(num, max);
+    else if (getGeekConsole()->getCurrentInteractive() == fileInteractive)
+        fileInteractive->setColumnsCh(num, max);
+    return 0;
+}
+
+static int setColumnsMax(lua_State* l)
+{
+    CelxLua celx(l);
+    celx.checkArgs(1, 1, "One arguments expected for gc.setColumnsMax(nCols)");
+    int max = celx.safeGetNumber(1, AllErrors, "arguments 1 to gc.setColumnsMax must be a number");
+    if (getGeekConsole()->getCurrentInteractive() == listInteractive)
+        listInteractive->setColumnsMax(max);
+    else if (getGeekConsole()->getCurrentInteractive() == celBodyInteractive)
+        celBodyInteractive->setColumnsMax(max);
+    else if (getGeekConsole()->getCurrentInteractive() == colorChooserInteractive)
+        colorChooserInteractive->setColumnsMax(max);
+    else if (getGeekConsole()->getCurrentInteractive() == flagInteractive)
+        flagInteractive->setColumnsMax(max);
+    else if (getGeekConsole()->getCurrentInteractive() == fileInteractive)
+        fileInteractive->setColumnsMax(max);
+    return 0;
+}
+
 static int setLastFromHistory(lua_State* l)
 {
     CelxLua celx(l);
@@ -395,6 +433,8 @@ void LoadLuaGeekConsoleLibrary(lua_State* l)
     celx.registerMethod("finish", finishGConsole);
     celx.registerMethod("call", callFun);
     celx.registerMethod("setColumns", setColumns);
+    celx.registerMethod("setColumnsCh", setColumnsCh);
+    celx.registerMethod("setColumnsMax", setColumnsMax);
     celx.registerMethod("setLastFromHistory", setLastFromHistory);
     celx.registerMethod("bind", gcBindKey);
     celx.registerMethod("bindA", gcBindKeyA);
