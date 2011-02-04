@@ -184,7 +184,11 @@ float ChkVar::render(rcontext *rc)
         float x = xoffset + 2;
         float y = -1.0;
         float h = rc->font->getHeight() - 2;
-        float w = rc->font->getAdvance('X') * 6;
+        float w;
+        if (VAR_VALUE == type)
+            w = rc->font->getAdvance('X') * 6;
+        else
+            w = rc->font->getAdvance('X') * 3;
         float hw = w / 2;
         float hh = h / 2;
         ovl->rect(x, y, w, h);
@@ -305,12 +309,11 @@ void ChkNode::followLink()
 float ChkHSpace::render(rcontext *rc)
 {
     const float xoffset = rc->ovl->getXoffset();
-    const short basesz = rc->font->getAdvance('X');
     const short spacesz = rc->font->getAdvance(' ');
-    int n = ceil((m_spaces * basesz - xoffset) / spacesz);
-    if (n <= 0)
-        n = 1;
-    *rc->ovl << string(n, ' ');
+    float newOffset = m_spaces * rc->font->getAdvance('X');
+    if (newOffset - xoffset <= spacesz)
+        newOffset = xoffset + spacesz;
+    rc->ovl->setXoffset(newOffset);
     return 0;
 }
 
@@ -944,15 +947,14 @@ void InfoInteractive::addNodeText(char *contents, int size)
                     {
                         line.add(new ChkGCFun(string("set variable#") + varname, varname,
                                               _("Edit variable")));
-                        line.add(new ChkHSpace(18));
-                        lines.push_back(line);
-                        line.clear();
-                        line.add(new ChkVar(varname, spaces));
-                        line.add(new ChkText(" "));
                         line.add(new ChkText("  Type "));
                         line.add(new ChkVar(varname, 8, ChkVar::TYPE_VALUE));
                         if (gVar.IsBinded(varname))
                             line.add(new ChkText(" (Binded)"));
+                        lines.push_back(line);
+                        line.clear();
+                        line.add(new ChkVar(varname, spaces));
+                        line.add(new ChkText(" "));
                         lines.push_back(line);
                         line.clear();
                         line.add(new ChkGCFun(string("reset variable#") + varname, _("Default:")));
@@ -972,8 +974,11 @@ void InfoInteractive::addNodeText(char *contents, int size)
                     }
                     else if (tagname == "editvar" || tagname == "editvar2")
                     {
-                        line.add(new ChkVar(varname, spaces));
-                        line.add(new ChkText(" "));
+                        if (tagname == "editvar2")
+                        {
+                            line.add(new ChkText(varname));
+                            line.add(new ChkHSpace(32));
+                        }
                         line.add(new ChkGCFun(string("set variable#") + varname, "...",
                                               string(_("Edit variable:\n")) + varname));
                         line.add(new ChkText(" "));
@@ -982,11 +987,7 @@ void InfoInteractive::addNodeText(char *contents, int size)
                         line.add(new ChkText(" "));
                         line.add(new ChkGCFun(string("set variable with last#") + varname, "L",
                                               string(_("Set to last value:\n")) + gVar.GetFlagLastString(varname)));
-                        if (tagname == "editvar2")
-                        {
-                            line.add(new ChkHSpace(32));
-                            line.add(new ChkText(varname));
-                        }
+                        line.add(new ChkVar(varname, spaces));
                     }
                     else
                         line.add(new ChkVar(varname, spaces));
@@ -1086,7 +1087,7 @@ void InfoInteractive::charEntered(const char *c_p, int modifiers)
                 for (int chk = lines[i].chunks.size() - 1; chk >= 0; chk--)
                 {
                     Chunk *chunk = lines[i].chunks[chk];
-                    if (chunk->getText().find(lastSearchStr) != string::npos)
+                    if (UTF8StrStr(chunk->getText(), lastSearchStr) != -1)
                     {
                         if (--N < 1) { // skip N matches
                             pageScrollIdx = i;
@@ -1126,7 +1127,7 @@ void InfoInteractive::charEntered(const char *c_p, int modifiers)
                 for (uint chk = 0; chk < lines[i].chunks.size(); chk++)
                 {
                     Chunk *chunk = lines[i].chunks[chk];
-                    if (chunk->getText().find(lastSearchStr) != string::npos)
+                    if (UTF8StrStr(chunk->getText(), lastSearchStr) != -1)
                     {
                         if (--N < 1) { // skip N matches
                             pageScrollIdx = i;
