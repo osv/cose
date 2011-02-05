@@ -68,20 +68,6 @@ public:
         }
     };
 
-    void print(wchar_t c) {
-        if (c != '\n')
-            Overlay::print(c);
-        else
-            Overlay::print(' ');
-    };
-
-    void print(char c) {
-        if (c != '\n')
-            Overlay::print(c);
-        else
-            Overlay::print(' ');
-    };
-
     void endl() {
         if (textBlock > 0)
         {
@@ -100,6 +86,10 @@ public:
             xoffset = 0.0f;
             glPushMatrix();
         }
+    }
+
+    void shiftX(char c) {
+        xoffset += font->getAdvance(c);
     }
 };
 

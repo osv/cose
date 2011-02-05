@@ -149,6 +149,9 @@ public:
     virtual int getBestCompletionSizePx();
 
     virtual string getHelpText();
+
+    virtual string getStateHelpTip();
+
     // default value that can be set by C-r
     std::string defaultValue;
 protected:
@@ -217,6 +220,7 @@ public:
         {maxColumns = _maxColumns;}
     int getBestCompletionSizePx();
     string getHelpText();
+    string getStateHelpTip();
 
 protected:
     virtual void updateTextCompletion();
@@ -541,6 +545,9 @@ public:
         { return beeper; }
     void beep();
     void showText(std::string s, double duration = 2.5);
+    // last real time
+    double getLastTick() const
+        { return lastTickTime; }
 
     // after finish interactive need to return to last info node
     void setReturnToLastInfoNode(bool r = true)

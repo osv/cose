@@ -1286,6 +1286,14 @@ std::string describeSelection(Selection sel, CelestiaCore *celAppCore, bool doCu
     return ss.str();
 }
 
+static string appendStr(std::string &a, std::string b)
+{
+    if (a.length())
+        return a + ", " + b;
+    else
+        return b;
+}
+
 /*
   GeekConsole
  */
@@ -1913,6 +1921,7 @@ void GeekConsole::render(double time)
 
     float titleFontH = titleFont->getHeight();
 
+    // maybe need render messg text?
     if (!isVisible)
     {
         if (messageText.empty())
@@ -2013,6 +2022,8 @@ void GeekConsole::render(double time)
 
     float funNameWidth = titleFont->getWidth(curFunName + ": ");
     float interPrefixSz = titleFont->getWidth(InteractivePrefixStr) + 6.0f;
+    string statusStr = curInteractive->getStateHelpTip();
+    float statusStrWh = font->getWidth(statusStr) + 6.0f;
 
     // background
     glColor4ubv(clBackground->rgba);
@@ -2026,12 +2037,15 @@ void GeekConsole::render(double time)
     overlay->rect(0.0f, cachedCompletionRectH - titleFontH , width, titleFontH);
     // fun name rect and inter prefix
     overlay->rect(0.0f, cachedCompletionRectH, funNameWidth + interPrefixSz, titleFontH);
+    // statstr rect
+    overlay->rect(funNameWidth + interPrefixSz, cachedCompletionRectH, statusStrWh, realFontH);
 
     glColor4ubv(clBgInteractiveBrd->rgba);
     overlay->rect(0.0f, 0.0f , width-1, titleFontH, false);
     overlay->rect(0.0f, cachedCompletionRectH - titleFontH , width-1, titleFontH, false);
     overlay->rect(0.0f, cachedCompletionRectH, funNameWidth, titleFontH, false);
     overlay->rect(0.0f, cachedCompletionRectH, funNameWidth + interPrefixSz, titleFontH, false);
+    overlay->rect(funNameWidth + interPrefixSz, cachedCompletionRectH, statusStrWh, realFontH, false);
 
     // info text
     if (infoText.size()) {
@@ -2070,7 +2084,12 @@ void GeekConsole::render(double time)
         glTranslatef(2.0f, cachedCompletionRectH + 4, 0.0f);
         overlay->beginText();
         glColor4ubv(clInteractivePrefixFnt->rgba);
-        *overlay << curFunName << ": " << InteractivePrefixStr;
+        *overlay << curFunName << ": ";
+        overlay->setXoffset(funNameWidth);
+        *overlay << InteractivePrefixStr;
+        overlay->setFont(font);
+        overlay->setXoffset(funNameWidth + interPrefixSz);
+        *overlay << curInteractive->getStateHelpTip();
         overlay->endText();
     }
     glPopMatrix();
@@ -2392,10 +2411,7 @@ void GeekConsole::appendCurrentMacro(std::string macro)
 
 void GeekConsole::appendDescriptionStr(std::string text)
 {
-    if (descriptionStr.length())
-        descriptionStr += ", " + text;
-    else
-        descriptionStr = text;
+    descriptionStr = appendStr(descriptionStr, text);
 }
 
 void GeekConsole::setBeeper(Beep *b)
@@ -2649,7 +2665,12 @@ void GCInteractive::renderInteractive()
     	*gc->getOverlay() << s;
     }
     glColor4ubv(clInteractiveFnt->rgba);
-    *gc->getOverlay() << "|";
+
+    double tmp;
+    if (modf(gc->getLastTick() * 3, &tmp) > .5f)
+        gc->getOverlay()->shiftX('|');
+    else
+        *gc->getOverlay() << "|";
 }
 
 void GCInteractive::prepareHistoryCompletion()
@@ -2715,12 +2736,22 @@ string GCInteractive::getHelpText()
              "C-r Set default value in entry line");
 }
 
+string GCInteractive::getStateHelpTip()
+{
+    if (!defaultValue.empty())
+        return "Def"; // Def
+    return "";
+}
+
 void PasswordInteractive::renderInteractive()
 {
     glColor4ubv(clInteractiveFnt->rgba);
     for (uint i = 0; i < getBufferText().length(); i++)
         *gc->getOverlay() << "*";
-    *gc->getOverlay() << "|";
+
+    double tmp;
+    if (modf(gc->getLastTick() * 3, &tmp) > .5f)
+        *gc->getOverlay() << "|";
 }
 
 // Color Chooser interactive
@@ -3759,6 +3790,23 @@ string ListInteractive::getHelpText()
           "TAB Try complete or scroll completion\n"
           "C-TAB Scroll back completion\n"
           "M-/, M-? Expand next, previous from completion");
+}
+
+string ListInteractive::getStateHelpTip()
+{
+    string res;
+
+    res = GCInteractive::getStateHelpTip();
+
+    if (mustMatch)
+        res = appendStr(res, "Match");
+    switch (completionStyle)
+    {
+    case Standart: res = appendStr(res, "ab"); break;
+    case Fast: res = appendStr(res, "Abc"); break;
+    case Filter: res = appendStr(res, "ab c"); break;
+    }
+    return res;
 }
 
 CelBodyInteractive::CelBodyInteractive(std::string name, CelestiaCore *core):
