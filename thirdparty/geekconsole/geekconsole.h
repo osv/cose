@@ -60,8 +60,8 @@
 #define CTRL_Y '\031'
 #define CTRL_Z '\032'
 
-inline vector<string> splitString( string str, string delim ){
-    vector<string> result;
+inline std::vector<std::string> splitString(std::string str, std::string delim ){
+    std::vector<std::string> result;
     uint cutAt;
     while( (cutAt = str.find_first_of( delim )) != str.npos ){
         if( cutAt > 0 ){
@@ -115,7 +115,7 @@ public:
     ~GCInteractive();
     /* Reset interactive
      */
-    virtual void Interact(GeekConsole *gc, string historyName);
+    virtual void Interact(GeekConsole *gc, std::string historyName);
     virtual void charEntered(const char *c_p, int modifiers);
     virtual void mouseWheel(float motion, int modifiers);
     virtual void mouseButtonDown(float x, float y, int button);
@@ -148,9 +148,9 @@ public:
     // get size of completion, -1 for need max as possible
     virtual int getBestCompletionSizePx();
 
-    virtual string getHelpText();
+    virtual std::string getHelpText();
 
-    virtual string getStateHelpTip();
+    virtual std::string getStateHelpTip();
 
     // default value that can be set by C-r
     std::string defaultValue;
@@ -188,7 +188,7 @@ public:
 
     ListInteractive(std::string name):GCInteractive(name, true), cols(4)
         {};
-    void Interact(GeekConsole *_gc, string historyName);
+    void Interact(GeekConsole *_gc, std::string historyName);
     virtual void setRightText(std::string str);
     // return text that start after last separator chars
     virtual std::string getRightText()const;
@@ -219,8 +219,8 @@ public:
     void setColumnsMax(int _maxColumns = 8)
         {maxColumns = _maxColumns;}
     int getBestCompletionSizePx();
-    string getHelpText();
-    string getStateHelpTip();
+    std::string getHelpText();
+    std::string getStateHelpTip();
 
 protected:
     virtual void updateTextCompletion();
@@ -253,7 +253,7 @@ class CelBodyInteractive: public ListInteractive
 {
 public:
     CelBodyInteractive(std::string name, CelestiaCore *celApp);
-    void Interact(GeekConsole *_gc, string historyName);
+    void Interact(GeekConsole *_gc, std::string historyName);
     void charEntered(const char *c_p, int modifiers);
     void mouseButtonDown(float, float, int);
     void mouseMove(float, float);
@@ -263,7 +263,7 @@ public:
     void cancelInteractive();
     int getBestCompletionSizePx()
         { return -1;}
-    string getHelpText();
+    std::string getHelpText();
 private:
     void updateTextCompletion();
     CelestiaCore *celApp;
@@ -289,23 +289,45 @@ class FlagInteractive: public ListInteractive
 public:
     FlagInteractive(std::string name): ListInteractive(name), defDelim("/;") {};
 
-    void Interact(GeekConsole *_gc, string historyName);
+    void Interact(GeekConsole *_gc, std::string historyName);
     void setSeparatorChars(std::string);
     void charEntered(const char *c_p, int modifiers);
-    string getDefaultDelim() const
+    std::string getDefaultDelim() const
         { return defDelim; }
-    string getHelpText();
+    std::string getHelpText();
 
 private:
     void updateTextCompletion();
-    string defDelim;
+    std::string defDelim;
+};
+
+class KeyInteractive: public GCInteractive
+{
+public:
+    enum {
+        ACTVE_KEYS      = 2, // only math keys from active bind spaces
+        NOT             = 4,
+        ANY             = 8,
+    };
+
+    KeyInteractive(std::string name): GCInteractive(name, false) {};
+
+    void Interact(GeekConsole *_gc, std::string historyName);
+    void charEntered(const char *c_p, int modifiers);
+    void update(const std::string &buftext);
+    void setKeyMatching(int);
+    std::string getHelpText();
+    std::string getStateHelpTip();
+private:
+    GeekBind::KeyBind curKey; // current key sequence
+    int key_match;
 };
 
 class FileInteractive: public ListInteractive
 {
 public:
     FileInteractive(std::string name): ListInteractive(name) {};
-    void Interact(GeekConsole *_gc, string historyName);
+    void Interact(GeekConsole *_gc, std::string historyName);
     void setFileExtenstion(std::string);
     void setRightText(std::string str);
     void update(const std::string &buftext);
@@ -351,7 +373,7 @@ class PagerInteractive: public GCInteractive
 {
 public:
     PagerInteractive(std::string name);
-    void Interact(GeekConsole *_gc, string historyName);
+    void Interact(GeekConsole *_gc, std::string historyName);
     void charEntered(const char *c_p, int modifiers);
     void mouseWheel(float motion, int modifiers);
     void renderCompletion(float height, float width);
@@ -361,7 +383,7 @@ public:
     void setText(std::vector<std::string> text);
     void appendText(std::vector<std::string> text);
     void setLastFromHistory() {};
-    string makeSpace(string s1, int spaces, string s2, string base = "X");
+    string makeSpace(std::string s1, int spaces, std::string s2, std::string base = "X");
     enum {
         PG_NOP = 0,
         PG_ENTERDIGIT = 1,
@@ -440,12 +462,12 @@ private:
     GCFuncType type;
     CFunc cFun;
 	CFuncVoid vFun; // simple void func()
-    string luaFunName;
+    std::string luaFunName;
     int luaCallBack;
     lua_State* lua;
-    string aliasfun; // alias to function
-    string params; // parameters to alias functions
-    string info; // documentation of this function
+    std::string aliasfun; // alias to function
+    std::string params; // parameters to alias functions
+    std::string info; // documentation of this function
     bool archive; // alias may be saved by GeekConsole::createAutogen
 };
 
@@ -474,7 +496,7 @@ public:
     int execFunction(std::string funName);
     int execFunction(std::string funName, std::string param);
     // call callback fun for describe interactive text with state (-funstate - 1)
-    void describeCurText(string text);
+    void describeCurText(std::string text);
     void registerFunction(GCFunc fun, std::string name);
     void reRegisterFunction(GCFunc fun, std::string name);
     GCFunc *getFunctionByName(std::string);
@@ -608,7 +630,7 @@ private:
 };
 
 // convert control, '"', '\' chars to \X or \DDD i.e. to readable lua string
-extern string normalLuaStr(string);
+extern std::string normalLuaStr(std::string);
 
 // init geekconsole
 extern void initGeekConsole(CelestiaCore *celApp);
@@ -617,8 +639,8 @@ extern void shutdownGeekconsole();
 
 extern GeekConsole *getGeekConsole();
 
-extern Color getColorFromText(const string &text);
-extern Color32 getColor32FromText(const string &text);
+extern Color getColorFromText(const std::string &text);
+extern Color32 getColor32FromText(const std::string &text);
 extern std::string getColorName(const Color32 &color);
 extern char removeCtrl(char ckey);
 extern char toCtrl(char key);

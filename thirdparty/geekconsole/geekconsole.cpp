@@ -1630,16 +1630,12 @@ bool GeekConsole::charEntered(const char *c_p, int cel_modifiers)
     {
         curKey.c[curKey.len] = tolower(sym);
         curKey.mod[curKey.len] = modifiers;
-        // clear shit for some spec chars
+        // clear shift for some spec chars
         if (strchr(nonShiftChars, curKey.c[curKey.len]))
             curKey.mod[curKey.len] &= ~GeekBind::SHIFT;
         curKey.len++;
-        if (modifiers & GeekBind::SHIFT)
-            curKey.mod[curKey.len] |= GeekBind::SHIFT;
-        if (modifiers & GeekBind::CTRL)
-            curKey.mod[curKey.len] |= GeekBind::CTRL;
-        if (modifiers & GeekBind::META)
-            curKey.mod[curKey.len] |= GeekBind::META;
+
+        std::string keyseq = curKey.keyToStr();
 
         std::vector<GeekBind::KeyBind>::const_iterator it;
         std::vector<GeekBind *>::iterator gb;
@@ -1649,55 +1645,42 @@ bool GeekConsole::charEntered(const char *c_p, int cel_modifiers)
             if (!(*gb)->isActive)
                 continue;
 
-            std::vector<GeekBind::KeyBind> binds = (*gb)->getBinds();
-            for (it = binds.begin();
-                 it != binds.end(); it++)
+            GeekBind::BindStatus bs = (*gb)->isBinded(curKey);
+            switch (bs)
             {
-                if (curKey.len > it->len)
-                    continue;
-                bool eq = true;
-                // compare hot-keys
-                for (int i = 0; i < curKey.len; i++)
+            case GeekBind::BINDED:
+            {
+                std::string fun = (*gb)->getFunName(keyseq);
+                if(fun.empty())
+                    fun = "exec function";
+                if (getFunctionByName(fun))
                 {
-                    if (curKey.mod[i] != it->mod[i] ||
-                        curKey.c[i] != it->c[i])
-                    {
-                        eq = false;
-                        break;
-                    }
+                    if (curKey.len > 1)
+                        showText(curKey.keyToStr() + " (" + fun +
+                                 ") " + (*gb)->getParams(keyseq), 2.5);
+                    execFunction(fun, (*gb)->getParams(keyseq));
                 }
-                if (eq)
-                    if (curKey.len == it->len)
-                    {
-                        std::string fun = it->gcFunName;
-                        if(fun.empty())
-                            fun = "exec function";
-                        if (getFunctionByName(fun))
-                        {
-                            if (curKey.len > 1)
-                                showText(curKey.keyToStr() + " (" + fun +
-                                                    ") " + it->params, 2.5);
-                            execFunction(fun, it->params);
-                        }
-                        else
-                        {
-                            showText(curKey.keyToStr() + " (" + fun +
-                                                    ") not defined", 1.5);
-                        }
-                        curKey.len = 0;
-                        return true;
-                    }
-                    else
-                    {
-                        showText(curKey.keyToStr() + "-", -1.0);
-                        return true; // key prefix
-                    }
+                else
+                {
+                    showText(keyseq + " (" + fun +
+                             ") not defined", 1.5);
+                }
+                curKey.len = 0;
+                return true;
+            }
+            case GeekBind::IS_PREFIX:
+            {
+                showText(keyseq + "-", -1.0);
+                return true; // key prefix
+            }
+            default:
+                break;
             }
         }
         // for key length 1 dont flash messg.
         if (curKey.len > 1)
         {
-            showText(curKey.keyToStr() + " is undefined");
+            showText(keyseq + " is undefined");
             curKey.len = 0;
             // true because we dont want to continue passing key event
             return true;
@@ -4195,6 +4178,174 @@ string FlagInteractive::getHelpText()
     return res;
 }
 
+/* key interactive */
+
+void KeyInteractive::Interact(GeekConsole *_gc, string historyName)
+{
+    GCInteractive::Interact(_gc, historyName);
+    curKey.len = 0;
+    key_match = ACTVE_KEYS;
+}
+
+/* You cannot enter somekeys like C-u, S-RET*/
+void KeyInteractive::charEntered(const char *c_p, int modifiers)
+{
+    char sym;
+    if (modifiers & GeekBind::CTRL)
+        sym = removeCtrl(*c_p);
+    else
+        sym = *c_p;
+
+    if ((sym == 'u') && (modifiers & GeekBind::CTRL))
+    {
+        curKey.len = 0;
+    }
+    else if ((sym == '\n' || sym == '\r') && (modifiers == GeekBind::SHIFT) &&
+             ((NOT & key_match) || ANY & key_match))
+    {
+        if (curKey.len == 0)
+        {
+            gc->appendDescriptionStr(_("Key is empty!"));
+            gc->beep();
+        }
+        else
+        {
+            setBufferText(curKey.keyToStr());
+            GCInteractive::charEntered("\n", 0);
+        }
+        return;
+    }
+    // if key sequence is no too big append next char
+    else if (curKey.len < MAX_KEYBIND_LEN)
+    {
+        curKey.c[curKey.len] = tolower(sym);
+        curKey.mod[curKey.len] = modifiers;
+        // clear shift for some spec chars
+        if (strchr(nonShiftChars, curKey.c[curKey.len]))
+            curKey.mod[curKey.len] &= ~GeekBind::SHIFT;
+
+        curKey.len++;
+
+        gc->appendDescriptionStr(_("C-u - Clear"));
+        if (NOT & key_match)
+            gc->appendDescriptionStr(_("S-RET - Finish"));
+    }
+    else
+    {
+        gc->beep();
+    }
+
+    if (ANY & key_match)
+    {
+        setBufferText(curKey.keyToStr());
+        // if need any key sequence just return
+        return;
+    }
+
+    // below test key for match in some bind space
+    std::vector<GeekBind::KeyBind>::const_iterator it;
+    std::vector<GeekBind *> gbs = gc->getGeekBinds();
+    std::vector<GeekBind *>::iterator gb;
+
+    for (gb  = gbs.begin();
+         gb != gbs.end(); gb++)
+    {
+        if ((ACTVE_KEYS & key_match) && !(*gb)->isActive)
+            continue;
+
+        GeekBind::BindStatus bs = (*gb)->isBinded(curKey);
+        switch (bs)
+        {
+        case GeekBind::BINDED:
+            if (NOT & key_match)
+            {
+                curKey.len--;
+                gc->beep();
+                gc->appendDescriptionStr(_("Key is currently binded"));
+                return;
+            }
+            else
+            {
+                setBufferText(curKey.keyToStr());
+                GCInteractive::charEntered("\n", 0);
+                return;
+            }
+        case GeekBind::IS_PREFIX:
+            setBufferText(curKey.keyToStr() + " -");
+            return;
+        default:
+            break;
+        }
+    }
+
+    if (NOT & key_match)
+    {
+        setBufferText(curKey.keyToStr());
+    }
+    else
+    {
+        curKey.len--;
+        gc->beep();
+        gc->appendDescriptionStr("Key is undefined");
+    }
+}
+
+/* show info aboud key bind - binded function */
+void KeyInteractive::update(const std::string &buftext)
+{
+    std::vector<GeekBind::KeyBind>::const_iterator it;
+    std::vector<GeekBind *> gbs = gc->getGeekBinds();
+    std::vector<GeekBind *>::iterator gb;
+    for (gb  = gbs.begin();
+         gb != gbs.end(); gb++)
+    {
+        if ((ACTVE_KEYS & key_match) && !(*gb)->isActive)
+            continue;
+
+        string keyseq = curKey.keyToStr();
+        string fn = (*gb)->getFunName(keyseq);
+        if (fn.empty())
+            continue;
+
+        string info = "Binded to: " + fn;
+        if ((*gb)->getParams(keyseq) != "")
+            info += "#" + (*gb)->getParams(keyseq);
+        info +="\nBind space: " + (*gb)->getName();
+        gc->setInfoText(info);
+    }
+}
+
+void KeyInteractive::setKeyMatching(int km)
+{
+    key_match = km;
+    // for ANY flag NOT make no sence, clear it
+    if ((ANY & key_match) && (NOT & key_match))
+        key_match &=~NOT;
+}
+
+string KeyInteractive::getHelpText()
+{
+    return _("C-u Clear current entered key.\n"
+             "S-RET Finish.");
+}
+
+string KeyInteractive::getStateHelpTip()
+{
+    string res;
+    if (NOT & key_match)
+        res = "Not";
+    if (ANY & key_match)
+    {
+        res = appendStr(res, "Any key");
+        return res;
+    }
+    if (ACTVE_KEYS & key_match)
+        res = appendStr(res, "Binded active keys");
+    else
+        res = appendStr(res, "Binded all keys");
+    return res;
+}
+
 /* File chooser interactive */
 
 void FileInteractive::Interact(GeekConsole *_gc, string historyName)
@@ -4870,6 +5021,7 @@ FlagInteractive *flagInteractive;
 FileInteractive *fileInteractive;
 PagerInteractive *pagerInteractive;
 InfoInteractive *infoInteractive;
+KeyInteractive *keyInteractive;
 
 int GCFunc::call(GeekConsole *gc, int state, std::string value)
 {
@@ -4931,6 +5083,7 @@ void destroyGCInteractives()
     delete fileInteractive;
     delete pagerInteractive;
     delete infoInteractive;
+    delete keyInteractive;
 }
 
 void initGeekConsole(CelestiaCore *celApp)
@@ -4947,6 +5100,7 @@ void initGeekConsole(CelestiaCore *celApp)
         colorChooserInteractive = new ColorChooserInteractive("colorch");
         pagerInteractive = new PagerInteractive("pager");
         infoInteractive = new InfoInteractive("info");
+        keyInteractive = new KeyInteractive("key");
 
         if (colors_name_2_c.empty())
             initColorTables();

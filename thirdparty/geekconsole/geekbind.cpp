@@ -184,32 +184,31 @@ GeekBind::GeekBind(std::string _name):
     needSort = false;
 }
 
-bool GeekBind::isBinded(KeyBind b)
+GeekBind::BindStatus GeekBind::isBinded(KeyBind b)
 {
     std::vector<KeyBind>::iterator it;
     for (it = binds.begin();
          it != binds.end(); it++)
     {
-        if (b.len != it->len)
+        if (b.len > it->len)
             continue;
         bool eq = true;
         for (int i = 0; i < b.len; i++)
         {
-            if (b.mod[i] != it->mod[i])
-            {
-                eq = false;
-                break;
-            }
-            if (b.c[i] != it->c[i])
+            if (b.mod[i] != it->mod[i] ||
+                b.c[i] != it->c[i])
             {
                 eq = false;
                 break;
             }
         }
         if (eq)
-            return true;
+            if (b.len == it->len)
+                return BINDED;
+            else
+                return IS_PREFIX;
     }
-    return false;
+    return NOT_BINDED;
 }
 
 std::string GeekBind::getBinds(std::string funName)

@@ -54,6 +54,15 @@ public:
         CTRL   = 2,
         META   = 8, // ALT, ESC
     };
+
+    // Results comparison of key sequence
+    enum BindStatus
+    {
+        BINDED,
+        IS_PREFIX,
+        NOT_BINDED
+    };
+
     struct KeyBind
     {
         char c[MAX_KEYBIND_LEN];
@@ -71,7 +80,7 @@ public:
     };
     GeekBind(std::string name);
     ~GeekBind() {};
-    bool isBinded(KeyBind);
+    BindStatus isBinded(KeyBind);
     // coma sep. list of k. binds for specified fun
     std::string getBinds(std::string funName);
     std::string getBindDescr(std::string keybind);
