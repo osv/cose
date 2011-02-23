@@ -1531,7 +1531,6 @@ static int setVarFlag(GeekConsole *gc, int state, std::string value)
         else if (GeekVar::Flags32 == vartype)
         {
             uint32 var = gVar.GetUI32(varname);
-            cout << var << " before \n";
             // split flags str
             std::vector<std::string> strArray =
                 splitString(value, gVar.GetFlagDelim(varname));
@@ -1558,7 +1557,6 @@ static int setVarFlag(GeekConsole *gc, int state, std::string value)
                     i++;
                 }
             }
-            cout << var << " before \n";
             gVar.Set(varname, (int32)var);
             break;
         }
@@ -1883,15 +1881,9 @@ string customizeVar(string filename, string nodename)
             if (buf_length == 0 ||
                 (UTF8StrStr(*it, pattern) != -1))
             {
-                res.push_back(0);
-                res.push_back(8);
-                res += "[descvar name=[[";
+                res += INFO_TAGSTART "[descvar name=[[";
                 res += *it;
-                res += "]]";
-                res.push_back(0);
-                res.push_back(8);
-                res.push_back(']');
-                res.push_back('\n');
+                res += "]]" INFO_TAGEND "\n";
             }
         }
         return res;
@@ -1914,15 +1906,9 @@ string customizeVar(string filename, string nodename)
             if (buf_length == 0 ||
                 (UTF8StrStr(*it, pattern) != -1))
             {
-                res.push_back(0);
-                res.push_back(8);
-                res += "[editvar2 name=[[";
+                res += INFO_TAGSTART "[editvar2 name=[[";
                 res += *it;
-                res += "]]";
-                res.push_back(0);
-                res.push_back(8);
-                res.push_back(']');
-                res.push_back('\n');
+                res += "]]" INFO_TAGEND "\n";
             }
         }
         res += "\n....\n\nMore information about variables *Note ";
@@ -1987,30 +1973,18 @@ string customizeVar(string filename, string nodename)
         {
             for (it = varnames.begin(); it != varnames.end(); it++)
             {
-                res.push_back(0);
-                res.push_back(8);
-                res += "[descvar name=[[";
+                res += INFO_TAGSTART "[descvar name=[[";
                 res += *it;
-                res += "]]";
-                res.push_back(0);
-                res.push_back(8);
-                res.push_back(']');
-                res.push_back('\n');
+                res += "]]" INFO_TAGEND "\n";
             }
         }
         else if (summary_node == nodename_pfx)
         {
             for (it = varnames.begin(); it != varnames.end(); it++)
             {
-                res.push_back(0);
-                res.push_back(8);
-                res += "[editvar2 name=[[";
+                res += INFO_TAGSTART "[editvar2 name=[[";
                 res += *it;
-                res += "]]";
-                res.push_back(0);
-                res.push_back(8);
-                res.push_back(']');
-                res.push_back('\n');
+                res += "]]" INFO_TAGEND "\n";
             }
 
             res += "\n....\n\nMore information about variable *Note ";

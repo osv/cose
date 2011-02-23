@@ -210,12 +210,12 @@ public:
 
     InfoInteractive(std::string name);
     ~InfoInteractive();
-    void Interact(GeekConsole *_gc, string historyName);
+    void Interact(GeekConsole *_gc, std::string historyName);
     /* set node to view, also compile text with hyper links
        FILENAME can be passed as NULL, in which case the filename of "dir" is used.
        NODENAME can be passed as NULL, in which case the nodename of "Top" is used.
        If the node cannot be found, return a NULL pointer. */
-    void setNode(string filename, string nodename = "", int linenumber = 0);
+    void setNode(std::string filename, std::string nodename = "", int linenumber = 0);
     void setNode(node_s node);
     void setNodeText(char *contents, int size);
     void addNodeText(char *contents, int size);
@@ -229,7 +229,7 @@ public:
         return font;}
     int getBestCompletionSizePx()
         { return -1;}
-    string getHelpText();
+    std::string getHelpText();
 
     NODE *getDynamicNode(char *filename, char *nodename);
 
@@ -315,8 +315,8 @@ private:
 
     struct dir_item
     {
-        string menu;
-        string descr;
+        std::string menu;
+        std::string descr;
         bool   dynamic; // dynamic - don't save as cache
     };
     typedef std::vector <dir_item> menus;
@@ -333,6 +333,9 @@ private:
     dynNodes_t dynNodes;
     NODE dynNode;
 };
+
+#define INFO_TAGSTART "\x008\x008["
+#define INFO_TAGEND "\x008\x008]"
 
 extern InfoInteractive *infoInteractive;
 #endif // _INFOINTER_H_

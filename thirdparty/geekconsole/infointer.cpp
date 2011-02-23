@@ -260,7 +260,7 @@ float ChkImage::getHeight()
 
 float ChkHText::render(rcontext *rc)
 {
-    rc->ovl->rect(rc->ovl->getXoffset(), -2,
+    rc->ovl->rect(rc->ovl->getXoffset(), -3,
               rc->font->getWidth(text), 1);
     *rc->ovl << text;
     return 0;
@@ -733,6 +733,14 @@ void InfoInteractive::addNodeText(char *contents, int size)
         else if (*c == '`' && state == TEXTMODE) // highlight text between `'
         {
             c++; // push '`'also
+            // first make sure here not end of text without '
+            char *s = c;
+            while(s < end && *s != '\'' && s[0] != 0)
+                s++;
+            // if ' not found - skip
+            if (*s != '\'')
+                continue;
+
             line.add(new ChkText(lstart, c - lstart));
             lstart = c;
             while(c < end && *c != '\'')
@@ -837,18 +845,21 @@ void InfoInteractive::addNodeText(char *contents, int size)
                 menu.push_back(node_s(file_name, node_name, line_number));
             lstart = c;
             continue;
-            // ^@^H[...^@^H]
+            // ^@^H[...^@^H] or ^H^H[..^H^H]
         } else if (c < end -2 &&
-                   c[0] == 0 && c[1] == 8 && c[2] == '[') // ^@^H[
+                   (c[0] == 0 || c[0] == 8) &&
+                   c[1] == 8 &&
+                   c[2] == '[') // ^@^H[
         {
             if (c - lstart > 0)
                 line.add(new ChkText(lstart, c - lstart));
 
             c += 3; // skip ^@^H[
             char *esc_start = c;
-            //search for ^@^H]
+            //search for ^@^H] or ^H^H]
             while (c < end -2 &&
-                   !(c[0] == 0 && c[1] == 8 && c[2] == ']'))
+                   !((c[0] == 0 || c[0] == 8) &&
+                   c[1] == 8 && c[2] == ']'))
                 c++;
 
             lstart = c +3; // skip ^@^H]
@@ -1021,9 +1032,48 @@ void InfoInteractive::addNodeText(char *contents, int size)
                     line.add(new ChkImage(it->second, path));
                 }
             }
+            else if (tagname == "tab")
+            {
+                int spaces = 16;
+                it = params.find("n");
+                if (it != params.end())
+                    spaces = atoi((it->second).c_str());
+                if (spaces < 1)
+                    spaces = 1;
+                line.add(new ChkHSpace(spaces));
+            }
+            else if (tagname == "node")
+            {
+                it = params.find("n");
+                if (it != params.end())
+                {
+                    string nodestr = it->second;
+                    string label = nodestr;
+                    string file_name;
+                    string node_name;
+                    size_t found = nodestr.find(':');
+                    if (found != string::npos)
+                    {
+                        label = nodestr.substr(0, found);
+                        nodestr = nodestr.substr(found +1);
+                    }
+                    info_parse_node(const_cast<char *> (nodestr.c_str()),
+                                    SKIP_NEWLINES);
+                    if (info_parsed_filename)
+                        file_name = info_parsed_filename;
+
+                    if (info_parsed_nodename)
+                        node_name = info_parsed_nodename;
+
+                    int line_number = info_parsed_line_number -2; // -2 is visible line correction
+
+                    line.add(new ChkNode(label, file_name, node_name, line_number));
+                }
+            }
         }
         c++;
     }
+
     if (c - lstart > 0)
         line.add(new ChkText(lstart, c - lstart));
     if (!line.chunks.empty())
