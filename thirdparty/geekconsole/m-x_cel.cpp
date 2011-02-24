@@ -936,7 +936,7 @@ void initGCStdCelBinds(GeekConsole *gc, const char *bindspace)
         {"S-s",     ".stop motion"}, // Stop motion
         {"t",       ".track selected"}, // Track selected object (keep selected object centered in view)
         {"S-t",     ".track selected"}, // Track selected object (keep selected object centered in view)
-        {"u #toggle objectsGalaxies", ""}, // Toggle galaxy rendering
+        {"u #toggle objects#Galaxies", ""}, // Toggle galaxy rendering
         {"S-u #toggle objects#Galaxies", ""}, // Toggle galaxy rendering
         {"v",       ".toggle verbosity"}, // Toggle verbosity of information text
         {"S-v",     ".toggle verbosity"}, // Toggle verbosity of information text

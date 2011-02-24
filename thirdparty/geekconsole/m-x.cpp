@@ -29,6 +29,9 @@
  *  Functions
  ******************************************************************/
 
+// help func for info node creation, return hyperlink of gc funcs
+static string makeHyperFcFunc(string text);
+
 static int execFunction(GeekConsole *gc, int state, std::string value)
 {
     switch (state)
@@ -380,18 +383,18 @@ static std::string _describeFunction(GeekConsole *gc, std::string function)
     std::vector<string> completion;
 
     GCFunc *f = gc->getFunctionByName(function);
-    ss << _("  Function") << " `" << function << "'\n\n";
+    ss << "  Function" << " `" << function << "'\n";
     if (f)
     {
         std::string s = f->getInfo();
         if (s != "")
-            ss << f->getInfo() << "\n";
+            ss << "  " << f->getInfo() << "\n";
         if (f->getType() == GCFunc::Alias) {
-            ss << "---\n"
-               << _("It is alias to") << " \"" << f->getAliasFun() << "\"\n";
+            ss << "  It is alias to" << " \"" << makeHyperFcFunc(f->getAliasFun()) << "\"";
             if (f->getAliasParams() != "")
-                ss << _("with params \"") << f->getAliasParams() << "\"\n";
-
+                ss << " with params \"" << makeHyperFcFunc(f->getAliasParams()) << "\"\n";
+            else
+                ss << '\n';
         }
     }
 
@@ -405,22 +408,29 @@ static std::string _describeFunction(GeekConsole *gc, std::string function)
         if (!binds.empty())
         {
             if (bindx == 0)
-                ss << _("It is bound to:\n");
+                ss << "  It is bound to:\n";
             bindx ++;
-            ss << _("Bind space") << " \"" << b->getName() << "\": "
+            ss << "Bind space" << " "
+                // make url to list of keys in bind space
+               << INFO_TAGSTART "node n=\"" + b->getName() + ": (*binds*)Keys " + b->getName() + "\"" INFO_TAGEND << ": "
                << b->getBinds(function) << "\n";
 
             for (bit = binds.begin(); bit < binds.end(); bit++)
             {
-                ss << pagerInteractive->makeSpace(
-                    pagerInteractive->makeSpace((*bit).keyToStr(), 12,
-                                                (*bit).gcFunName),
-                    34, (*bit).params) << "\n";
+                string res;
+                res += (*bit).keyToStr();
+                res += INFO_TAGSTART "tab n=\"12\"" INFO_TAGEND;
+                res += " " + makeHyperFcFunc((*bit).gcFunName);
+                if (!(*bit).params.empty())
+                {
+                    res += INFO_TAGSTART "tab n=\"34\"" INFO_TAGEND;
+                    res += makeHyperFcFunc((*bit).params);
+                }
+                ss << res << "\n";
             }
         }
     }
     ss << "\n";
-
     return ss.str();
 }
 
@@ -469,7 +479,7 @@ static int describeFunction(GeekConsole *gc, int state, std::string value)
 }
 
 
-static int describeBindKey(GeekConsole *gc, int state, std::string value)
+static int describeBindKeyExt(GeekConsole *gc, int state, std::string value)
 {
     static string bindspace;
 
@@ -515,26 +525,231 @@ static int describeBindKey(GeekConsole *gc, int state, std::string value)
         GeekBind *gb = gc->getGeekBind(bindspace);
         if (gb)
         {
-            std::stringstream ss;
-            gc->setInteractive(pagerInteractive, "", _("Describe bind key"));
-            ss << value << _(" runs the command \"");
-            ss << gb->getFunName(value) << "\"\n";
-
-            if (gb->getParams(value) != "")
-                ss << _("with params \"") << gb->getParams(value)
-                   << "\"\n";
-
-            std::string function = gb->getFunName(value);
-            if (function.empty())
-                function = gb->getFirstParam(value);
-            ss << "\n" << _describeFunction(gc, function);
-
-            pagerInteractive->setText(ss.str());
+            gc->setInteractive(infoInteractive);
+            infoInteractive->setNode("*binds*", "Key " + bindspace + "/" + value);
         }
         break;
     }
     default:
         break;
+    }
+    return state;
+}
+
+static string makeHyperFcFunc(string text)
+{
+    string res;
+    vector<string> vstr = splitString(text, "#");
+    vector<string>::iterator it;
+    GeekConsole *gc = getGeekConsole();
+    for (it = vstr.begin();
+         it != vstr.end(); it++) {
+        if (gc->getFunctionByName(*it))
+        {
+            if (!res.empty())
+                res.push_back('#');
+            res += INFO_TAGSTART "node n=\"" + *it + ": (*gcfun*)Function " + *it + "\"" INFO_TAGEND;
+        }
+        else
+        {
+            if (!res.empty())
+                res.push_back('#');
+            res += *it;
+        }
+    }
+    return res;
+}
+
+// help fun - get info about key
+static string _describeKey(string bindspace, string key)
+{
+    std::stringstream ss;
+    GeekConsole *gc = getGeekConsole();
+    GeekBind *gb = gc->getGeekBind(bindspace);
+    if (gb && (gb->isBinded(key) == GeekBind::BINDED))
+    {
+        ss << "In Bind space `" + bindspace + "' ";
+        if ((gb)->isActive)
+            ss << " (active) ";
+
+        ss << key << " runs the command \"";
+        ss << gb->getFunName(key) << "\"\n";
+
+        if (gb->getParams(key) != "")
+            ss << "with params \"" << gb->getParams(key)
+               << "\"\n";
+
+        std::string function = gb->getFunName(key);
+        if (function.empty())
+            function = gb->getFirstParam(key);
+        ss << "\n" << _describeFunction(gc, function);
+    }
+    else
+    {
+        ss << "Key `" << key << "' is not defined in `"
+           << bindspace << "' bind space. *Note Keys " << bindspace << "::.";
+    }
+    return ss.str();
+}
+
+/* dynamic info node for gc function */
+string funcInfoDynNode(string filename, string nodename)
+{
+    string res = "File: *gcfun*,\tNode: " + nodename + ", ";
+
+    GeekConsole *gc = getGeekConsole();
+    const char *func_node = "Function ";
+
+    if ("Top" == nodename)
+    {
+        res += "Up: (dir) \n\n"
+            "* Menu:\n\n"
+            "* All: Function *all*. List of all functions of geekconsole\n";
+    }
+    else if (nodename.find(func_node) == 0)
+    {
+        string funcname = nodename.substr(strlen(func_node));
+        res += "Up: Top\n\n";
+        if (funcname == "*all*")
+        {
+            res += "* Menu:\n\n";
+            vector<string> funcs = gc->getFunctionsNames();
+            vector<string> funinfo;
+            std::sort(funcs.begin(), funcs.end());
+            for (vector<string>::const_iterator it = funcs.begin();
+                 it != funcs.end(); it++)
+            {
+                GCFunc *f = gc->getFunctionByName(*it);
+                if (!f)
+                    continue;
+
+                res.append("* " + *it + ": Function " + *it + ".");
+                funinfo = splitString(f->getInfo(), "\n");
+                // add only first 5 lines
+                if (funinfo.size() > 0)
+                {
+                    res.append(" ");
+                    vector<string>::const_iterator l = funinfo.begin();
+                    int n = 0;
+                    for (; l != funinfo.end() && n < 5;
+                     l++, n++)
+                        res.append(*l + "\n");
+                }
+                else
+                    res.push_back('\n');
+            }
+        }
+        else
+            res += _describeFunction(gc, funcname);
+    }
+
+    return res;
+}
+
+/* dynamic info node for key binds */
+string bindsInfoDynNode(string filename, string nodename)
+{
+    string res = "File: *binds*,\tNode: " + nodename + ", ";
+
+    GeekConsole *gc = getGeekConsole();
+    const char *keys_node = "Keys ";
+    const char *key_node = "Key ";
+
+    if ("Top" == nodename)
+    {
+        res += "Up: (dir) \n\n"
+            "* Menu:\n\n"
+            "Describe keys in bind spaces:\n"
+            "* All: Keys *all*.\n";
+        const std::vector<GeekBind *>& gbs = gc->getGeekBinds();
+        for (std::vector<GeekBind *>::const_iterator it = gbs.begin();
+             it != gbs.end(); it++)
+        {
+            res += "* " + (*it)->getName() + ": Keys " + (*it)->getName() + '.';
+            if ((*it)->isActive)
+                res += " Bindspace is active";
+            res += '\n';
+        }
+        res += "\n"
+            "   You can request full describe for key sequence by using\n"
+            "node `Key key_name' or `Key bindspace/key_name' for example *Note Key M-x::.";
+        return res;
+    }
+    else if (nodename.find(key_node) == 0)
+    {
+        res += "Up: Top\n\n";
+        string bindspace;
+        string key = nodename.substr(strlen(key_node));
+        size_t found = key.find('/');
+        if (found != string::npos)
+        {
+            bindspace = key.substr(0, found);
+            key = key.substr(found +1);
+        }
+        if (bindspace.empty())
+        {
+            res += "Describe key `" + key + "' in all bind spaces.\n***\n";
+            const std::vector<GeekBind *>& gbs = gc->getGeekBinds();
+            for (std::vector<GeekBind *>::const_iterator it = gbs.begin();
+                 it != gbs.end(); it++)
+                if ((*it)->isBinded(key) == GeekBind::BINDED)
+                    res += _describeKey((*it)->getName(), key);
+        }
+        else
+        {
+            res += "Describe key " + key + " in `"+ bindspace + "' bind space.\n***\n";
+            res += _describeKey(bindspace, key);
+        }
+    }
+    else if (nodename.find(keys_node) == 0)
+    {
+        string bindspace = nodename.substr(strlen(keys_node));
+        res += "Up: Top\n\n"
+            "Describe keys in " + bindspace + " bind space(s).\n***\n";
+        std::vector<GeekBind::KeyBind>::const_iterator it;
+        std::vector<GeekBind *> gbs = gc->getGeekBinds();
+        std::vector<GeekBind *>::iterator gb;
+        for (gb  = gbs.begin();
+             gb != gbs.end(); gb++)
+        {
+            if (bindspace == (*gb)->getName() || "*all*" == bindspace)
+            {
+                res += '\n' + (*gb)->getName();
+                if ((*gb)->isActive)
+                    res += " (Active)";
+                res += "\n===\n";
+
+                std::vector<GeekBind::KeyBind> binds = (*gb)->getBinds();
+                for (it = binds.begin();
+                     it != binds.end(); it++)
+                {
+                    res += it->keyToStr();
+                    res += INFO_TAGSTART "tab n=\"12\"" INFO_TAGEND;
+                    res += " " + makeHyperFcFunc(it->gcFunName);
+                    if (!it->params.empty())
+                    {
+                        res += INFO_TAGSTART "tab n=\"34\"" INFO_TAGEND;
+                        res += makeHyperFcFunc(it->params);
+                    }
+                    res += "\n";
+                }
+            }
+        }
+    }
+    return res;
+}
+
+static int describeBindKey(GeekConsole *gc, int state, std::string value)
+{
+    if (state == 0)
+    {
+        gc->setInteractive(keyInteractive, "key-test");
+        keyInteractive->setKeyMatching(KeyInteractive::ACTVE_KEYS);
+    }
+    else if (state == 1)
+    {
+        gc->setInteractive(infoInteractive);
+        infoInteractive->setNode("*binds*", "Key " + value);
     }
     return state;
 }
@@ -578,6 +793,10 @@ void initGCInteractives(GeekConsole *gc)
     gc->registerAndBind("", "C-h k",
                         GCFunc(describeBindKey, _("Display the documentation for the key sequence.")),
                         "describe key");
+    gc->registerAndBind("", "C-h S-k",
+                        GCFunc(describeBindKeyExt, _("Display the documentation for the key sequence"
+                                                  "\nby selecting bindspace.")),
+                        "describe key Ext");
 
     gc->registerAndBind("", "C-x C-k s",
                         GCFunc(startMacro, _("Define macro.\n"
@@ -593,7 +812,7 @@ void initGCInteractives(GeekConsole *gc)
                         "macro end");
     gc->registerAndBind("", "C-x C-k n",
                         GCFunc(saveMacro, _("Assign name to last macro.\n"
-                                            "Also bind you can bind key")),
+                                            "Also you can bind key")),
                         "macro save");
     gc->registerAndBind("", "C-x C-k S-n",
                         GCFunc(saveMacrosBind, _("Bind key for current macro.\n"
@@ -646,5 +865,14 @@ void initGCInteractives(GeekConsole *gc)
                        gconsole_color_vars[i].descr);
         i++;
     }
+
+    char dir[] = "INFO-DIR-SECTION GeekConsole\n"
+        "START-INFO-DIR-ENTRY\n"
+        "* Binds: (*binds*)Top.   Key bind configuration.\n"
+        "* Function: (*gcfun*)Top.  GeekConsole's function.\n"
+        "END-INFO-DIR-ENTRY";
+    infoInteractive->addDirTxt(dir, sizeof(dir), true);
+    infoInteractive->registerDynamicNode("*binds*", bindsInfoDynNode);
+    infoInteractive->registerDynamicNode("*gcfun*", funcInfoDynNode);
 
 }
