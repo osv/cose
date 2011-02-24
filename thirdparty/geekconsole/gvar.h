@@ -228,6 +228,8 @@ public:
     */
 
     int32 GetI32(std::string name);
+    /* Return as  uint32. Instead of  other Get* work with  not binded
+       vars that have flag tbl*/
     uint32 GetUI32(std::string name);
     int64 GetI64(std::string name);
     bool GetBool(std::string name);

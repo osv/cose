@@ -109,8 +109,9 @@ public:
         LAST_VALUE,
         TYPE_VALUE,
     };
-    ChkVar(std::string t, int spaces, Type type = VAR_VALUE):
-        varname(t), spaces(spaces), type(type) {};
+    // @flagtype - flag from flag table of var to match, 0 - dont use.
+    ChkVar(std::string t, int spaces, Type type = VAR_VALUE, uint32 flag = 0):
+        varname(t), spaces(spaces), type(type), flag(flag) {};
     float render(rcontext *rc);
     std::string getText();
     float getHeight();
@@ -118,6 +119,7 @@ protected:
     std::string varname;
     int spaces;
     Type type;
+    uint32 flag;
 };
 
 class ChkImage : public Chunk

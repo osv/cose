@@ -177,7 +177,8 @@ float ChkVar::render(rcontext *rc)
     if (spaces > 0 && width < spacesz)
         width = spacesz;
 
-    if (TYPE_VALUE != type && gVar.GetType(varname) == GeekVar::Color)
+    GeekVar::gvar_type vartype = gVar.GetType(varname);
+    if (TYPE_VALUE != type && vartype == GeekVar::Color)
     {
         // render 2x2 chess board
         glColor4ub(255,255,255,255);
@@ -204,15 +205,27 @@ float ChkVar::render(rcontext *rc)
         xoffset += w + 4;
         ovl->setXoffset(xoffset);
     }
+    if (flag && vartype == GeekVar::Flags32)
+    {
+        // render [X] or [ ] as flag state
+        *ovl << '[';
+        if (gVar.GetUI32(varname) & flag)
+            *ovl << 'X';
+        ovl->setXoffset(xoffset + rc->font->getWidth("[X"));
+        *ovl << ']';
+    }
+    else
+    {
+        glColor4ub(0,0,0,50);
+        ovl->rect(xoffset, -2, width, rc->font->getHeight());
+        glColor4ubv(clCompletionFnt->rgba);
+        *ovl << str;
 
-    glColor4ub(0,0,0,50);
-    ovl->rect(xoffset, -2, width, rc->font->getHeight());
-    glColor4ubv(clCompletionFnt->rgba);
-    *ovl << str;
+        ovl->setXoffset(xoffset + width);
+        // return to default color
+        glColor4ubv(clCompletionFnt->rgba);
+    }
 
-    ovl->setXoffset(xoffset + width);
-    // return to default color
-    glColor4ubv(clCompletionFnt->rgba);
     return 0; // 0 - default font height
 }
 
@@ -965,7 +978,41 @@ void InfoInteractive::addNodeText(char *contents, int size)
                         lines.push_back(line);
                         line.clear();
                         line.add(new ChkVar(varname, spaces));
-                        line.add(new ChkText(" "));
+                        lines.push_back(line);
+                        line.clear();
+
+                        // var doc
+                        string doc = gVar.GetDoc(varname);
+                        if (!doc.empty())
+                            addNodeText(const_cast<char *>(doc.c_str()), doc.size());
+
+                        GeekVar::flags32_s *flagtbl = gVar.GetFlagTbl(varname);
+                        // if var have flags - build rows of togglable flags
+                        if (flagtbl && gVar.GetType(varname) == GeekVar::Flags32)
+                        {
+                            int j=0;
+                            while(flagtbl[j].name != NULL)
+                            {
+                                if (flagtbl[j].mask)
+                                {
+                                    line.add(new ChkGCFun(string("set flag#") + varname + "#toggle#" + flagtbl[j].name, flagtbl[j].name));
+                                    if (!(j % 2))
+                                    {
+                                        line.add(new ChkHSpace(16));
+                                        line.add(new ChkVar(varname, 0, ChkVar::VAR_VALUE, flagtbl[j].mask));
+                                        line.add(new ChkHSpace(20));
+                                    }
+                                    else
+                                    {
+                                        line.add(new ChkHSpace(36));
+                                        line.add(new ChkVar(varname, 0, ChkVar::VAR_VALUE, flagtbl[j].mask));
+                                        lines.push_back(line);
+                                        line.clear();
+                                    }
+                                }
+                                j++;
+                            }
+                        }
                         lines.push_back(line);
                         line.clear();
                         line.add(new ChkGCFun(string("reset variable#") + varname, _("Default:")));
@@ -977,11 +1024,6 @@ void InfoInteractive::addNodeText(char *contents, int size)
                         line.add(new ChkVar(varname, 1, ChkVar::LAST_VALUE));
                         lines.push_back(line);
                         line.clear();
-
-                        // var doc
-                        string doc = gVar.GetDoc(varname);
-                        if (!doc.empty())
-                            addNodeText(const_cast<char *>(doc.c_str()), doc.size());
                     }
                     else if (tagname == "editvar" || tagname == "editvar2")
                     {

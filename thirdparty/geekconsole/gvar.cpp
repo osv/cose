@@ -893,7 +893,15 @@ uint32 GeekVar::GetUI32(std::string name)
             v->getHook(name);
             lock_set_get = false;
         }
-        RETURN_BINDED(v);
+        if (v->p)
+        {
+            RETURN_BINDED(v);
+        }
+        else
+            if (v->type == Flags32)
+                return setFlag(v->flagtbl, v->flagDelim, v->get());
+            else if (v->type == Enum32)
+                return setEnum(v->flagtbl, v->get());
         return strToUint32(v->get().c_str());
     }
     else
