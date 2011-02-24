@@ -1104,7 +1104,15 @@ void GeekVar::Reset(string name)
 {
     gvar *v = getGvar(name);
     if (v)
+    {
         v->reset();
+        if (!lock_set_get && v->setHook)
+        {
+            lock_set_get = true;
+            v->setHook(name);
+            lock_set_get = false;
+        }
+    }
 }
 
 string GeekVar::GetResetValue(string name)
@@ -1889,7 +1897,7 @@ string customizeVar(string filename, string nodename)
             if (buf_length == 0 ||
                 (UTF8StrStr(*it, pattern) != -1))
             {
-                res += INFO_TAGSTART "[descvar name=[[";
+                res += INFO_TAGSTART "descvar name=[[";
                 res += *it;
                 res += "]]" INFO_TAGEND "\n";
             }
@@ -1914,7 +1922,7 @@ string customizeVar(string filename, string nodename)
             if (buf_length == 0 ||
                 (UTF8StrStr(*it, pattern) != -1))
             {
-                res += INFO_TAGSTART "[editvar2 name=[[";
+                res += INFO_TAGSTART "editvar2 name=[[";
                 res += *it;
                 res += "]]" INFO_TAGEND "\n";
             }
@@ -1981,7 +1989,7 @@ string customizeVar(string filename, string nodename)
         {
             for (it = varnames.begin(); it != varnames.end(); it++)
             {
-                res += INFO_TAGSTART "[descvar name=[[";
+                res += INFO_TAGSTART "descvar name=[[";
                 res += *it;
                 res += "]]" INFO_TAGEND "\n";
             }
@@ -1990,7 +1998,7 @@ string customizeVar(string filename, string nodename)
         {
             for (it = varnames.begin(); it != varnames.end(); it++)
             {
-                res += INFO_TAGSTART "[editvar2 name=[[";
+                res += INFO_TAGSTART "editvar2 name=[[";
                 res += *it;
                 res += "]]" INFO_TAGEND "\n";
             }
@@ -2030,6 +2038,10 @@ void initGCVarInteractivsFunctions()
         "* Customize: (*customize*)Customize root.  Customize variables.\n"
         "* Summary: (*customize*)Summary root.      Customize without details.\n"
         "     describe.\n"
+        "END-INFO-DIR-ENTRY\n"
+        "INFO-DIR-SECTION GeekConsole\n"
+        "START-INFO-DIR-ENTRY\n"
+        "* Variables: (*customize*)Top.   Customize variables.\n"
         "END-INFO-DIR-ENTRY";
     infoInteractive->addDirTxt(dir, sizeof(dir), true);
     infoInteractive->registerDynamicNode("*customize*", customizeVar);

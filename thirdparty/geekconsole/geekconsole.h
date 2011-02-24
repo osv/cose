@@ -667,6 +667,7 @@ extern ColorChooserInteractive *colorChooserInteractive;
 extern FlagInteractive *flagInteractive;
 extern FileInteractive *fileInteractive;
 extern PagerInteractive *pagerInteractive;
+extern KeyInteractive *keyInteractive;
 
 /* describeselection is used celestia body interactive.
    You can setup own describer

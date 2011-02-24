@@ -211,6 +211,13 @@ GeekBind::BindStatus GeekBind::isBinded(KeyBind b)
     return NOT_BINDED;
 }
 
+GeekBind::BindStatus GeekBind::isBinded(string &key)
+{
+    KeyBind k;
+    k.set(key.c_str());
+    return isBinded(k);
+}
+
 std::string GeekBind::getBinds(std::string funName)
 {
     std::vector<KeyBind>::iterator it;

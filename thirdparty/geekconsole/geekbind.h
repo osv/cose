@@ -81,6 +81,7 @@ public:
     GeekBind(std::string name);
     ~GeekBind() {};
     BindStatus isBinded(KeyBind);
+    BindStatus isBinded(string &key);
     // coma sep. list of k. binds for specified fun
     std::string getBinds(std::string funName);
     std::string getBindDescr(std::string keybind);
