@@ -2012,6 +2012,8 @@ void GeekConsole::render(double time)
     glColor4ubv(clBackground->rgba);
     overlay->rect(0.0f, 0.0f, width, cachedCompletionRectH);
     overlay->rect(0.0f, cachedCompletionRectH, funNameWidth + interPrefixSz, titleFontH);
+    // statstr bg
+    overlay->rect(funNameWidth + interPrefixSz, cachedCompletionRectH, statusStrWh, realFontH);
 
     // Interactive & description rects
 
@@ -2072,7 +2074,7 @@ void GeekConsole::render(double time)
         *overlay << InteractivePrefixStr;
         overlay->setFont(font);
         overlay->setXoffset(funNameWidth + interPrefixSz);
-        *overlay << curInteractive->getStateHelpTip();
+        *overlay << statusStr;
         overlay->endText();
     }
     glPopMatrix();
