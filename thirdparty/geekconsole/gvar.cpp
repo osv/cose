@@ -1957,7 +1957,10 @@ string customizeVar(string filename, string nodename)
         {
             size_t f = groupName.find_last_of('/');
             if (f != string::npos)
+            {
+                upNode = string(nodename_pfx) + " root";
                 f = groupName.substr(0, f).find_last_of('/');
+            }
             if (f != string::npos)
                 upNode = nodename_pfx + groupName.substr(0, f +1);
         }

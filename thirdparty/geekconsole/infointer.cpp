@@ -198,9 +198,9 @@ float ChkVar::render(rcontext *rc)
         ovl->rect(x + hw, y, hw, hh);
 
         // now color
-        Color32 c = getColor32FromText(gVar.GetFlagString(varname));
+        Color32 c = getColor32FromText(str);
         glColor4ubv(c.rgba);
-        ovl->rect(x+1, y+1, w-2, h-2);
+        ovl->rect(x, y+1, w, h-2);
         // width correction
         xoffset += w + 4;
         ovl->setXoffset(xoffset);
