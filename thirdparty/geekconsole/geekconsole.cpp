@@ -2412,7 +2412,7 @@ void GeekConsole::beep()
 
 void GeekConsole::showText(string s, double duration)
 {
-    messageText = s;
+    messageText = normalLuaStr(s);
     messageStart = lastTickTime;
     messageDuration = duration;
 }
@@ -5073,6 +5073,28 @@ int GCFunc::call(GeekConsole *gc, int state, std::string value)
     return 0;
 }
 
+static std::string helpNodeStr;
+static string dynHelpNode(string filename, string nodename)
+{
+    return "File: *help*,\tUp: (dir)\n\n" + helpNodeStr;
+}
+
+static int _showHelpNode(GeekConsole *gc, int state, std::string value)
+{
+    if (state == 0)
+    {
+        getGeekConsole()->setInteractive(infoInteractive);
+        infoInteractive->setNode("*help*");
+    }
+    return state;
+}
+
+void showHelpNode(std::string node_content)
+{
+    helpNodeStr = node_content;
+    getGeekConsole()->execFunction(".show help node");
+}
+
 static bool isInteractsInit = false;
 
 void destroyGCInteractives()
@@ -5120,6 +5142,16 @@ void initGeekConsole(CelestiaCore *celApp)
     // default columns
     gVar.Bind("gc/completion columns", &defaultColumns, defaultColumns,
               _("Number of columns for completion (1..8)"));
+
+    char dir[] = "INFO-DIR-SECTION Misc\n"
+        "START-INFO-DIR-ENTRY\n"
+        "* *Help*: (*help*)Top.  Show last help node.\n"
+        "END-INFO-DIR-ENTRY";
+    infoInteractive->addDirTxt(dir, sizeof(dir), true);
+    infoInteractive->registerDynamicNode("*help*", dynHelpNode);
+    geekConsole->registerFunction(GCFunc(_showHelpNode,
+                                _("Show `*help*' node\n"
+                                  "`*help*' node used as misc temporary output buffer.")), ".show help node");
 }
 
 void shutdownGeekconsole()

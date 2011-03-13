@@ -639,6 +639,9 @@ extern void shutdownGeekconsole();
 
 extern GeekConsole *getGeekConsole();
 
+// set and show *help* info node
+extern void showHelpNode(std::string node_content);
+
 extern Color getColorFromText(const std::string &text);
 extern Color32 getColor32FromText(const std::string &text);
 extern std::string getColorName(const Color32 &color);

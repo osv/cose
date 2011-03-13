@@ -20,11 +20,13 @@
 // License. If not, see <http://www.gnu.org/licenses/>.
 
 #include "geekconsole.h"
+#include "infointer.h"
+#include "gvar.h"
 
 /******************************************************************
  *  Lua API for geek console
  ******************************************************************/
-std::string sstr(const char *str)
+static inline std::string sstr(const char *str)
 {
     if (str)
         return string(str);
@@ -110,10 +112,10 @@ static int registerAliasA(lua_State* l)
 {
     CelxLua celx(l);
     celx.checkArgs(3, 4, "Three arguments expected for gc.registerAliasA(string, string, string, [string])");
-    const char *gcFunName = celx.safeGetString(1, AllErrors, "argument 1 to gc.registerAlias must be a string");
-    const char *aliasName = celx.safeGetString(2, AllErrors, "argument 2 to gc.registerAlias must be a string");
-    const char *args = celx.safeGetString(3, AllErrors, "argument 3 to gc.registerAlias must be a string");
-    const char *doc = celx.safeGetString(4, WrongType, "argument 4 to gc.registerAlias must be a string");
+    const char *gcFunName = celx.safeGetString(1, AllErrors, "argument 1 to gc.registerAliasA must be a string");
+    const char *aliasName = celx.safeGetString(2, AllErrors, "argument 2 to gc.registerAliasA must be a string");
+    const char *args = celx.safeGetString(3, AllErrors, "argument 3 to gc.registerAliasA must be a string");
+    const char *doc = celx.safeGetString(4, WrongType, "argument 4 to gc.registerAliasA must be a string");
     if (doc)
         getGeekConsole()->reRegisterFunction(GCFunc(aliasName, args, doc, true), gcFunName);
     else
@@ -121,17 +123,57 @@ static int registerAliasA(lua_State* l)
     return 0;
 }
 
+// try to return in @completionlist array of strings
+static bool safeGetStrArray(lua_State* l, int index, vector<string> *completionlist)
+{
+    int argc = lua_gettop(l);
+    if (index < 1 || index > argc)
+        return false;
+    if (lua_istable(l, index))
+    {
+        int n;
+        n = lua_objlen(l, index);
+        int i;
+        for(i = 0; i < n; i++) {
+            lua_rawgeti(l, index, i+1);
+
+            if (lua_isstring(l, -1))
+            {
+                const char *v = lua_tostring(l, -1);
+                completionlist->push_back(sstr(v));
+            }
+
+            lua_remove(l, -1);
+        }
+        return true;
+    }
+    else
+        return false;
+}
+
 static int setListInteractive(lua_State* l)
 {
     CelxLua celx(l);
     celx.checkArgs(4, 5, "Four or three arguments expected for gc.listInteractive(sCompletion, shistory, sPrefix, sDescr, [mustMatch])");
-    const char *completion = celx.safeGetString(1, AllErrors, "argument 1 to gc.listInteractive must be a string");
     const char *history = celx.safeGetString(2, AllErrors, "argument 2 to gc.listInteractive must be a string");
     const char *prefix = celx.safeGetString(3, AllErrors, "argument 3 to gc.listInteractive must be a string");
     const char *descr = celx.safeGetString(4, AllErrors, "argument 4 to gc.listInteractive must be a string");
     bool isMustMatch = celx.safeGetBoolean(5, WrongType, "argument 5 to gc.listInteractive must be a number", false);
-    getGeekConsole()->setInteractive(listInteractive, history, prefix, descr);
-    listInteractive->setCompletionFromSemicolonStr(completion);
+    vector<string> completionlist;
+
+    // first  param must be array or string
+    if (safeGetStrArray(l, 1, &completionlist))
+    {
+        getGeekConsole()->setInteractive(listInteractive, history, prefix, descr);
+        listInteractive->setCompletion(completionlist);
+    }
+    else
+    {
+        const char *completion = celx.safeGetString(1, AllErrors, "argument 1 to gc.listInteractive must be a string array or string");
+        getGeekConsole()->setInteractive(listInteractive, history, prefix, descr);
+        if (completion)
+            listInteractive->setCompletionFromSemicolonStr(completion);
+    }
     listInteractive->setMatchCompletion(isMustMatch);
     return 0;
 }
@@ -139,9 +181,9 @@ static int setListInteractive(lua_State* l)
 static int setPasswdInteractive(lua_State* l)
 {
     CelxLua celx(l);
-    celx.checkArgs(2, 2, "Two arguments expected for gc.listInteractive(sPrefix, sDescr)");
-    const char *prefix = celx.safeGetString(1, AllErrors, "argument 1 to gc.listInteractive must be a string");
-    const char *descr = celx.safeGetString(2, AllErrors, "argument 2 to gc.listInteractive must be a string");
+    celx.checkArgs(2, 2, "Two arguments expected for gc.passwdInteractive(sPrefix, sDescr)");
+    const char *prefix = celx.safeGetString(1, AllErrors, "argument 1 to gc.passwdInteractive must be a string");
+    const char *descr = celx.safeGetString(2, AllErrors, "argument 2 to gc.passwdInteractive must be a string");
     getGeekConsole()->setInteractive(passwordInteractive, "", prefix, descr);
     return 0;
 }
@@ -150,20 +192,29 @@ static int setCelBodyInteractive(lua_State* l)
 {
     CelxLua celx(l);
     celx.checkArgs(3, 4, "Three or four arguments expected for gc.celBodyInteractive(shistory, sPrefix, sDescr, [sCompetion]");
+    vector<string> completionlist;
     const char *history = celx.safeGetString(1, AllErrors, "argument 1 to gc.celBodyInteractive must be a string");
     const char *prefix = celx.safeGetString(2, AllErrors, "argument 2 to gc.celBodyInteractive must be a string");
     const char *descr = celx.safeGetString(3, AllErrors, "argument 3 to gc.celBodyInteractive must be a string");
-    const char *completion = celx.safeGetString(4, WrongType, "argument 4 to gc.celBodyInteractive must be a string");
-    getGeekConsole()->setInteractive(celBodyInteractive, history, prefix, descr);
-    if (completion)
-        celBodyInteractive->setCompletionFromSemicolonStr(completion);
+    // last 4-st param must be array or string
+    if (safeGetStrArray(l, 4, &completionlist))
+        getGeekConsole()->setInteractive(celBodyInteractive, history, prefix, descr);
+        if (!completionlist.empty())
+            celBodyInteractive->setCompletion(completionlist);
+    else
+    {
+        const char *completion = celx.safeGetString(4, WrongType, "argument 4 to gc.celBodyInteractive must be a string array or string");
+        getGeekConsole()->setInteractive(celBodyInteractive, history, prefix, descr);
+        if (completion)
+            celBodyInteractive->setCompletionFromSemicolonStr(completion);
+    }
     return 0;
 }
 
 static int setColorChooseInteractive(lua_State* l)
 {
     CelxLua celx(l);
-    celx.checkArgs(3, 3, "Three arguments expected for gc.celBodyInteractive(shistory, sPrefix, sDescr)");
+    celx.checkArgs(3, 3, "Three arguments expected for gc.colorChooseInteractive(shistory, sPrefix, sDescr)");
     const char *history = celx.safeGetString(1, AllErrors, "argument 1 to gc.colorChooseInteractive must be a string");
     const char *prefix = celx.safeGetString(2, AllErrors, "argument 2 to gc.colorChooseInteractive must be a string");
     const char *descr = celx.safeGetString(3, AllErrors, "argument 3 to gc.colorChooseInteractive must be a string");
@@ -175,14 +226,26 @@ static int setFlagInteractive(lua_State* l)
 {
     CelxLua celx(l);
     celx.checkArgs(4, 6, "Two or three arguments expected for gc.flagInteractive(sCompletion, shistory, sPrefix, sDescr, [mustMatch], [sDelim])");
-    const char *completion = celx.safeGetString(1, AllErrors, "argument 1 to gc.flagInteractive must be a string");
     const char *history = celx.safeGetString(2, AllErrors, "argument 2 to gc.flagInteractive must be a string");
     const char *prefix = celx.safeGetString(3, AllErrors, "argument 3 to gc.flagInteractive must be a string");
     const char *descr = celx.safeGetString(4, AllErrors, "argument 4 to gc.flagInteractive must be a string");
     bool isMustMatch = celx.safeGetBoolean(5, WrongType, "argument 5 to gc.flagInteractive must be a boolean", true);
     const char *delim = celx.safeGetString(6, WrongType, "argument 6 to gc.flagInteractive must be a string");
-    getGeekConsole()->setInteractive(flagInteractive, history, prefix, descr);
-    flagInteractive->setCompletionFromSemicolonStr(completion);
+
+    // last 4-st param must be array or string
+    vector<string> completionlist;
+    if (safeGetStrArray(l, 1, &completionlist))
+        getGeekConsole()->setInteractive(flagInteractive, history, prefix, descr);
+        if (!completionlist.empty())
+            flagInteractive->setCompletion(completionlist);
+    else
+    {
+        const char *completion = celx.safeGetString(1, WrongType, "argument 1 to gc.flagInteractive must be a string array or string");
+        getGeekConsole()->setInteractive(flagInteractive, history, prefix, descr);
+        if (completion)
+            flagInteractive->setCompletionFromSemicolonStr(completion);
+    }
+
     flagInteractive->setMatchCompletion(isMustMatch);
     if (delim)
         flagInteractive->setSeparatorChars(delim);
@@ -213,16 +276,25 @@ static int setFileInteractive(lua_State* l)
     return 0;
 }
 
-static int setPagerInteractive(lua_State* l)
+static int setInfoInteractive(lua_State* l)
 {
     CelxLua celx(l);
-    celx.checkArgs(1, 3, "One or three arguments expected for gc.pagerInteractive(sText, sPrefix, sDescr)");
-    const char *text = celx.safeGetString(1, AllErrors, "argument 1 to gc.pagerInteractive must be a string");
-    const char *prefix = celx.safeGetString(2, WrongType, "argument 2 to gc.pagerInteractive must be a string");
-    const char *descr = celx.safeGetString(3, WrongType, "argument 3 to gc.pagerInteractive must be a string");
-    getGeekConsole()->setInteractive(pagerInteractive, "", sstr(prefix), sstr(descr));
-    pagerInteractive->setText(text);
+    celx.checkArgs(0, 2, "One or three arguments expected for gc.infoInteractive([sFile], [sNode])");
+    const char *file = celx.safeGetString(1, WrongType, "argument 1 to gc.infoInteractive must be a string");
+    const char *node = celx.safeGetString(2, WrongType, "argument 2 to gc.infoInteractive must be a string");
+    getGeekConsole()->setInteractive(infoInteractive);
+    infoInteractive->setNode(sstr(file), sstr(node));
     return 0;
+}
+
+/*TODO: get sized str not NULL terminater 'cause node may content ^@^H[ tags. (^@ - \x000)*/
+static int showHelpNode(lua_State* l)
+{
+    CelxLua celx(l);
+    celx.checkArgs(1, 1, "One arguments expected for gc.showHelpNode(sNodeContent)");
+    const char *node_content = celx.safeGetString(1, AllErrors, "argument 1 to gc.showHelpNode must be a string");
+    showHelpNode(sstr(node_content));
+    return 1;
 }
 
 // convert geekconsole's color to #RRGGBB
@@ -286,7 +358,10 @@ static int callFun(lua_State* l)
     const char *args = celx.safeGetString(2, WrongType, "argument 2 to gc.call must be a string");
 
     if (!getGeekConsole()->getFunctionByName(funName))
+    {
+        getGeekConsole()->showText(string("function `") + funName + "` is undefined");
         return 0;
+    }
 
     // append macro
     getGeekConsole()->appendCurrentMacro(string("#*EXEC*#") + funName);
@@ -400,13 +475,219 @@ static int gcUnBindKey(lua_State* l)
 {
     CelxLua celx(l);
     celx.checkArgs(1, 2, "One or two arguments expected for gc.unbind(sKeyAndARGS, [sNamseSpace])");
-    const char *key = celx.safeGetString(1, AllErrors, "argument 1 to gc.bind must be a string");
-    const char *namesp = celx.safeGetString(2, WrongType, "argument 2 to gc.bind must be a string");
+    const char *key = celx.safeGetString(1, AllErrors, "argument 1 to gc.unbind must be a string");
+    const char *namesp = celx.safeGetString(2, WrongType, "argument 2 to gc.unbind must be a string");
     if (namesp)
         getGeekConsole()->unbind(namesp, key);
     else
         getGeekConsole()->unbind("", key);
     return 0;
+}
+
+static int gcFlash(lua_State* l)
+{
+    CelxLua celx(l);
+    celx.checkArgs(1, 2, "One or two arguments expected for gc.flash(sText, [nDuration])");
+    const char *text = celx.safeGetString(1, AllErrors, "argument 1 to gc.flash must be a string");
+    double duration = celx.safeGetNumber(2, WrongType, "argument 2 to gc.flash must be a number", 2.5);
+    getGeekConsole()->showText(sstr(text), duration);
+    return 0;
+}
+
+static int varNewString(lua_State* l)
+{
+    CelxLua celx(l);
+    celx.checkArgs(1, 3, "1, 2, 3 arguments expected for gvar.NewString(sName, sValue, sDoc)");
+    const char *name = celx.safeGetString(1, AllErrors, "argument 1 to gvar.NewString must be a string");
+    const char *val = celx.safeGetString(2, WrongType, "argument 2 to gvar.NewString must be a number");
+    const char *doc = celx.safeGetString(3, WrongType, "argument 3 to gvar.NewString must be a string");
+    gVar.New(name, sstr(val), sstr(doc));
+    return 0;
+}
+
+static int varNewInt(lua_State* l)
+{
+    CelxLua celx(l);
+    celx.checkArgs(1, 3, "1, 2, 3 arguments expected for gvar.NewInt(sName, iValue, sDoc)");
+    const char *name = celx.safeGetString(1, AllErrors, "argument 1 to gvar.NewInt must be a string");
+    const char *doc = celx.safeGetString(3, WrongType, "argument 3 to gvar.NewInt must be a string");
+    int val = celx.safeGetNumber(2, WrongType, "argument 2 to gvar.NewInt must be a number");
+    gVar.New(name, val, sstr(doc));
+    return 0;
+}
+
+static int varNewIntHex(lua_State* l)
+{
+    CelxLua celx(l);
+    celx.checkArgs(1, 3, "1, 2, 3 arguments expected for gvar.NewIntHex(sName, iValue, sDoc)");
+    const char *name = celx.safeGetString(1, AllErrors, "argument 1 to gvar.NewIntHex must be a string");
+    const char *doc = celx.safeGetString(3, WrongType, "argument 3 to gvar.NewIntHex must be a string");
+    int val = celx.safeGetNumber(2, WrongType, "argument 2 to gvar.NewIntHex must be a number");
+    gVar.NewHex(name, val, sstr(doc));
+    return 0;
+}
+
+static int varNewBool(lua_State* l)
+{
+    CelxLua celx(l);
+    celx.checkArgs(1, 3, "1, 2, 3 arguments expected for gvar.NewBool(sName, dValue, sDoc)");
+    const char *name = celx.safeGetString(1, AllErrors, "argument 1 to gvar.NewBool must be a string");
+    const char *doc = celx.safeGetString(3, WrongType, "argument 3 to gvar.NewBool must be a string");
+    bool val = celx.safeGetBoolean(2, WrongType, "argument 2 to gvar.NewBool must be a boolean");
+    gVar.New(name, val, sstr(doc));
+    return 0;
+}
+
+static int varNewFloat(lua_State* l)
+{
+    CelxLua celx(l);
+    celx.checkArgs(1, 3, "1, 2, 3 arguments expected for gvar.NewFloat(sName, fValue, sDoc)");
+    const char *name = celx.safeGetString(1, AllErrors, "argument 1 to gvar.NewFloat must be a string");
+    const char *doc = celx.safeGetString(3, WrongType, "argument 3 to gvar.NewBool must be a string");
+    float val = celx.safeGetNumber(2, WrongType, "argument 2 to gvar.NewFloat must be a number");
+    gVar.New(name, val, sstr(doc));
+    return 0;
+}
+
+static int varNewDouble(lua_State* l)
+{
+    CelxLua celx(l);
+    celx.checkArgs(1, 3, "1, 2, 3 arguments expected for gvar.NewDouble(sName, dValue, sDoc)");
+    const char *name = celx.safeGetString(1, AllErrors, "argument 1 to gvar.NewDouble must be a string");
+    const char *doc = celx.safeGetString(3, WrongType, "argument 3 to gvar.NewDouble must be a string");
+    double val = celx.safeGetNumber(2, WrongType, "argument 2 to gvar.NewDouble must be a number");
+    gVar.New(name, val, sstr(doc));
+    return 0;
+}
+
+static int varNewColor(lua_State* l)
+{
+    CelxLua celx(l);
+    celx.checkArgs(1, 3, "1, 2, 3 arguments expected for gvar.NewColor(sName, dValue, sDoc)");
+    const char *name = celx.safeGetString(1, AllErrors, "argument 1 to gvar.NewColor must be a string");
+    const char *doc = celx.safeGetString(3, WrongType, "argument 3 to gvar.NewColor must be a string");
+    const char *val = celx.safeGetString(2, WrongType, "argument 2 to gvar.NewDouble must be a string");
+    gVar.NewColor(name, sstr(val).c_str(), sstr(doc));
+    return 0;
+}
+
+static int varNewBody(lua_State* l)
+{
+    CelxLua celx(l);
+    celx.checkArgs(1, 3, "1, 2, 3 arguments expected for gvar.NewBody(sName, dValue, sDoc)");
+    const char *name = celx.safeGetString(1, AllErrors, "argument 1 to gvar.NewBody must be a string");
+    const char *doc = celx.safeGetString(3, WrongType, "argument 3 to gvar.NewBody must be a string");
+    const char *val = celx.safeGetString(2, WrongType, "argument 2 to gvar.NewBody must be a string");
+    gVar.NewCelBodyName(name, sstr(val).c_str(), sstr(doc));
+    return 0;
+}
+
+static int varSet(lua_State* l)
+{
+    CelxLua celx(l);
+    celx.checkArgs(2, 2, "2 arguments expected for gvar.Set(sName, dValue, sDoc)");
+    const char *name = celx.safeGetString(1, AllErrors, "argument 1 to gvar.Set must be a string");
+    if (lua_isboolean (l, 1))
+    {
+        bool val = celx.safeGetBoolean(2, AllErrors, "argument 2 to gvar.Set must be a number/boolean/string");
+        gVar.Set(name, val);
+    }
+    else
+    if (lua_isnumber (l, 1))
+    {
+        double val = celx.safeGetNumber(2, AllErrors, "argument 2 to gvar.Set must be a number/boolean/string");
+        gVar.Set(name, val);
+    }
+    else
+    if (lua_isstring (l, 1))
+    {
+        const char *val = celx.safeGetString(2, AllErrors, "argument 2 to gvar.Set must be a number/boolean/string");
+        gVar.Set(name, sstr(val));
+    }
+    return 0;
+}
+
+static int varGetNumber(lua_State* l)
+{
+    CelxLua celx(l);
+    celx.checkArgs(1, 1, "1 argument expected for gvar.AsNum(sName)");
+    const char *name = celx.safeGetString(1, AllErrors, "argument 1 to gvar.AsNum must be a string");
+    lua_pushnumber(l, gVar.GetDouble(sstr(name)));
+    return 1;
+}
+
+static int varGetBool(lua_State* l)
+{
+    CelxLua celx(l);
+    celx.checkArgs(1, 1, "1 argument expected for gvar.AsBool(sName)");
+    const char *name = celx.safeGetString(1, AllErrors, "argument 1 to gvar.AsBool must be a string");
+    lua_pushboolean(l, gVar.GetBool(sstr(name)));
+    return 1;
+}
+
+static int varGetStr(lua_State* l)
+{
+    CelxLua celx(l);
+    celx.checkArgs(1, 1, "1 argument expected for gvar.AsStr(sName)");
+    const char *name = celx.safeGetString(1, AllErrors, "argument 1 to gvar.AsStr must be a string");
+    lua_pushstring(l, gVar.GetString(sstr(name)).c_str());
+    return 1;
+}
+
+static int varReset(lua_State* l)
+{
+    CelxLua celx(l);
+    celx.checkArgs(1, 1, "1 argument expected for gvar.Reset(sName)");
+    const char *name = celx.safeGetString(1, AllErrors, "argument 1 to gvar.Reset must be a string");
+    gVar.Reset(sstr(name));
+    return 0;
+}
+
+static int varGetReset(lua_State* l)
+{
+    CelxLua celx(l);
+    celx.checkArgs(1, 1, "1 argument expected for gvar.GetReset(sName)");
+    const char *name = celx.safeGetString(1, AllErrors, "argument 1 to gvar.GetReset must be a string");
+    lua_pushstring(l, gVar.GetResetValue(sstr(name)).c_str());
+    return 1;
+}
+
+static int varGetLast(lua_State* l)
+{
+    CelxLua celx(l);
+    celx.checkArgs(1, 1, "1 argument expected for gvar.GetLast(sName)");
+    const char *name = celx.safeGetString(1, AllErrors, "argument 1 to gvar.GetLast must be a string");
+    lua_pushstring(l, gVar.GetLastValue(sstr(name)).c_str());
+    return 1;
+}
+
+static int varCopyVars(lua_State* l)
+{
+    CelxLua celx(l);
+    celx.checkArgs(2, 2, "2 arguments expected for gvar.CopyVars(sName, sSrcGroup, sDstGroup)");
+    const char *src = celx.safeGetString(1, AllErrors, "argument 1 to gvar.CopyVars must be a string");
+    const char *dst = celx.safeGetString(2, AllErrors, "argument 2 to gvar.CopyVars must be a string");
+    gVar.CopyVars(sstr(src), sstr(dst));
+    return 0;
+}
+
+static int varCopyVarsTypes(lua_State* l)
+{
+    CelxLua celx(l);
+    celx.checkArgs(2, 2, "2 arguments expected for gvar.CopyVarsTypes(sName, sSrcGroup, sDstGroup)");
+    const char *src = celx.safeGetString(1, AllErrors, "argument 1 to gvar.CopyVarsTypes must be a string");
+    const char *dst = celx.safeGetString(2, AllErrors, "argument 2 to gvar.CopyVarsTypes must be a string");
+    gVar.CopyVarsTypes(sstr(src), sstr(dst));
+    return 0;
+}
+
+static int varGetType(lua_State* l)
+{
+    CelxLua celx(l);
+    celx.checkArgs(1, 1, "1 argument expected for gvar.GetType(sName)");
+    const char *name = celx.safeGetString(1, AllErrors, "argument 1 to gvar.GetType must be a string");
+    lua_pushstring(l, gVar.GetTypeName(gVar.GetType(sstr(name))).c_str());
+    return 1;
 }
 
 void LoadLuaGeekConsoleLibrary(lua_State* l)
@@ -425,9 +706,10 @@ void LoadLuaGeekConsoleLibrary(lua_State* l)
     celx.registerMethod("passwdInteractive", setPasswdInteractive);
     celx.registerMethod("celBodyInteractive", setCelBodyInteractive);
     celx.registerMethod("colorChooseInteractive", setColorChooseInteractive);
-    celx.registerMethod("pagerInteractive", setPagerInteractive);
     celx.registerMethod("flagInteractive", setFlagInteractive);
     celx.registerMethod("fileInteractive", setFileInteractive);
+    celx.registerMethod("infoInteractive", setInfoInteractive);
+    celx.registerMethod("showHelpNode", showHelpNode);
     celx.registerMethod("color2HexRGB", color2HexRGB);
     celx.registerMethod("alphaFromColor", alphaFromColor);
     celx.registerMethod("finish", finishGConsole);
@@ -439,5 +721,34 @@ void LoadLuaGeekConsoleLibrary(lua_State* l)
     celx.registerMethod("bind", gcBindKey);
     celx.registerMethod("bindA", gcBindKeyA);
     celx.registerMethod("unbind", gcUnBindKey);
+    celx.registerMethod("flash", gcFlash);
+    lua_settable(l, LUA_GLOBALSINDEX);
+
+    lua_pushstring(l, "gvar");
+    lua_newtable(l);
+    // new
+    celx.registerMethod("NewString", varNewString);
+    celx.registerMethod("NewBool", varNewBool);
+    celx.registerMethod("NewInt", varNewInt);
+    celx.registerMethod("NewIntHex", varNewIntHex);
+    celx.registerMethod("NewFloat", varNewFloat);
+    celx.registerMethod("NewDouble", varNewDouble);
+    celx.registerMethod("NewNumber", varNewDouble);
+    celx.registerMethod("NewColor", varNewColor);
+    celx.registerMethod("NewBody", varNewBody);
+    // set
+    celx.registerMethod("Set", varSet);
+    // get
+    celx.registerMethod("AsNum", varGetNumber);
+    celx.registerMethod("AsBool", varGetBool);
+    celx.registerMethod("AsStr", varGetStr);
+    // misc
+    celx.registerMethod("Reset", varReset);
+    celx.registerMethod("GetReset", varGetReset);
+    celx.registerMethod("GetLast", varGetLast);
+    celx.registerMethod("CopyVars", varCopyVars);
+    celx.registerMethod("CopyVarsTypes", varCopyVarsTypes);
+    celx.registerMethod("GetType", varGetType);
+
     lua_settable(l, LUA_GLOBALSINDEX);
 }

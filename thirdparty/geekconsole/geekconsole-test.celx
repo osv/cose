@@ -57,7 +57,7 @@ gc.bind("C-c C-x", "goto object")
 gc.unbind("C-c C-x")
 
 
--- INTERACTIVES CALLBACKS--
+-- INTERACTIVES CALLBACKS --
 
 -- listInteractive(string:semicolon-completion, string:history, 
 --                 string:prefix-text, string:describe-text,
@@ -71,7 +71,7 @@ function listTest (state, s)
 		     "Typed: \"" .. s .. "\"")
    elseif state == 1 then
       celestia:flash(s)
-      -- you  don't so  need  call  this, just  indicate  that end  of
+      -- you  don't need  to  call  this, just  indicate  that end  of
       -- interactive
       gc.finish()
    end
@@ -100,7 +100,7 @@ function colorChooserTest (state, s)
    return state
 end
 
--- celBodyInteractive(string:history, string:prefix-text, string:describe-text)
+-- celBodyInteractive(string:history, string:prefix-text, string:describe-text, [string:semicolon-completion|table])
 function celBodyTest (state, s)
    if state == 0 then
       gc.celBodyInteractive("test-body-sel", "Body", "Select object")
@@ -112,12 +112,12 @@ function celBodyTest (state, s)
    return state
 end
 
--- listInteractive(string:semicolon-completion, string:history, 
+-- listInteractive(string:semicolon-completion|table, string:history, 
 --                 string:prefix-text, string:describe-text,
 --                 [number:must-match], [string:delimiter=";/"])
 function flagTest (state, s)
    if state == 0 then
-      gc.flagInteractive("stars;planets;galaxy;clouds;atmospheres",
+      gc.flagInteractive({"stars","planets","galaxy","clouds","atmospheres"},
 			 "test-flag", "Select flag (use ';/' as delimiter)", "Select object", true)
    elseif state == 1 then
       celestia:flash(s)
@@ -140,29 +140,52 @@ function fileTest (state, s)
    return state
 end
 
--- pagerInteractive(string:text, [string:prefix], [string:describe-text])
-function pagerTest (state, s)
-   if state == 0 then
-      gc.pagerInteractive("                The  pager demo\n\n" .. 
-			  "gc.pagerInteractive can be used to show text information.\n" ..
-			  "To navigate use key like in `less` command.\n" ..
-			  "Press 'h' to display more help.")
-   end
-   return state
-end
+-- Info reader test
+gc.registerFunction("lua info test - show vars",
+		    "Lua infoInteractive demo.\n" ..
+		       "This func show variables\n",
+		    function  (state, s)
+		       if state == 0 then
+			  gc.infoInteractive("*customize*", "Top")
+		       end
+		       return state
+		    end
+		 )
+
+gc.registerFunction("lua demo info",
+		    "gc.showHelpNode demo.",
+		    function  (state, s)
+		       if state == 0 then
+			  gc.showHelpNode("Geekconsole lua bind test suit.\n"..
+					  "***\n\n"..
+					  "   All functions start from `lua'. "..
+					  "   This demo also show how to use `esc tags' to show\n"..
+					  "customized variable - `render/current/show' by using next code:\n\n"..
+					  "  \\008\\008[descvar name=[[render/current/show]]\\008\\008]\n"..
+					  "Result be:\n"..
+					  "---\n"..
+					  "\008\008[descvar name=[[render/current/show]]\008\008]")
+		       end
+		       return state
+		    end
+		 )
+
 
 function customBodySet (state, s)
    if state == 0 then
-      gc.celBodyInteractive("", "Body", "Select object", "Sol/Earth;Sol/Earth/Moon;eps eri/b;eps eri;iss")
+      gc.celBodyInteractive("", "Body", "Select object", {
+			       "Sol/Earth","Sol/Earth/Moon", "eps eri/b", "eps eri", "iss"})
    elseif state == 1 then
       obs = celestia:getobserver()
       myObject = celestia:find(s)
       celestia:select(myObject)
+      -- geekconsole have own flash
+      gc.flash("Selected: " .. s, 4)
    end
    return state
 end
 
--- listTest and passwdTest function is defined, so can register as not string
+-- listTest and passwdTest function is defined, so can register as not string function name
 gc.registerFunction("lua list test",
 		    "gc.listInteractive demo\n" ..
 		       "Match value from list",
@@ -197,3 +220,39 @@ gc.registerFunction("lua mark and goto",
 		       return state
 		    end
 		 )
+
+-- gvar test suit
+gvar.NewString("lua/string test", "text here",	"lua string var demo.")
+gvar.NewInt("lua/int test", 124.6,		"lua intager var demo.")
+gvar.NewBool("lua/bool test", true,		"lua boolean var demo.")
+gvar.NewFloat("lua/float test", 124.6)
+gvar.NewDouble("lua/float test", 124.6)
+-- NewNumber equal to NewDouble - this is real lua number form
+gvar.NewNumber("lua/float test", 124.6)
+gvar.NewColor("lua/color test", "dark red",	"lua color var demo.")
+gvar.NewBody("lua/body test", "Sol/Earth/Iss",	"lua celestia body variable demo.")
+
+-- gvar.Set test
+gvar.NewNumber("lua/number test2")
+gvar.NewNumber("lua/number test3")
+gvar.Set("lua/number test2", "123")
+gvar.Set("lua/number test3", 12345.6789)
+
+gvar.NewInt("lua/int test 2", 1245.6)
+gvar.Set("lua/int test 2", 341.3)
+
+gvar.NewColor("lua/color1 test", "#ff0000AA")
+gvar.Set("lua/color1 test", "dark sea green")
+
+gvar.NewBool("lua/bool set test", false)
+gvar.Set("lua/bool set test", "yes")
+
+-- get gvar test
+print("bool: 'lua/bool set test' " .. tostring(gvar.AsBool("lua/bool set test")))
+print("str:  'lua/color1 test' " .. gvar.AsStr("lua/color1 test"))
+print("num:  'lua/color1 test' " .. tostring(gvar.AsNum("lua/color1 test")))
+print("last: 'lua/bool set test' " .. gvar.GetLast("lua/bool set test"))
+print("reset: 'lua/bool set test' " .. gvar.GetReset("lua/bool set test"))
+print("type: 'lua/bool set test' " .. gvar.GetType("lua/bool set test"))
+
+gc.call("lua demo info")

@@ -42,8 +42,8 @@ static int64 strToInt64(string str);
 static int32 strToInt32(string str);
 static uint32 strToUint32(string str);
 
-static char precisionFormatDbl[] = "%.20g";
-static char precisionFormatFlt[] = "%.20g";
+static char precisionFormatDbl[] = "%.14g";
+static char precisionFormatFlt[] = "%.12g";
 
 // convert given text to number by given flag table
 static uint32 setFlag(GeekVar::flags32_s *flagtbl, string flagDelim, string text)
@@ -123,6 +123,8 @@ void GeekVar::gvar::reset()
 }
 
 GeekVar::gvar::~gvar() {
+    if (freep)
+        delete p;
 };
 
 string GeekVar::gvar::get() {
@@ -250,6 +252,10 @@ void GeekVar::gvar::set(const string &val)
     }
 }
 
+/******************************************************************
+GeekVar
+*******************************************************************/
+
 GeekVar::GeekVar ()
 {
     lock_set_get = false;
@@ -310,6 +316,12 @@ DECLARE_GVAR_BIND(Double, double);
 DECLARE_GVAR_BIND(Float, float);
 DECLARE_GVAR_BIND(Bool, bool);
 DECLARE_GVAR_BIND(String, string);
+
+bool GeekVar::Bind(std::string name, std::string *var,
+              std::string resetval, std::string doc)
+{
+    return Bind(name, var, resetval.c_str(), doc);
+}
 
 bool GeekVar::BindHex(string name, int32 *var, const int32 resetval, string doc)
 {
@@ -480,6 +492,12 @@ bool GeekVar::BindCelBodyName(std::string name, std::string *var,
     return v;
 }
 
+bool GeekVar::BindCelBodyName(std::string name, std::string *var,
+                     string resetval, std::string doc)
+{
+    return BindCelBodyName(name, var, resetval.c_str(), doc);
+}
+
 bool GeekVar::BindColor(string name, uint32 *var, const uint32 resetval, string doc)
 {
     char buffer[64];
@@ -491,201 +509,105 @@ bool GeekVar::BindColor(string name, uint32 *var, const uint32 resetval, string 
  *  New
  ******************************************************************/
 
-bool GeekVar::NewHex(string name, const int32 resetval, string doc)
-{
-    char buffer[64];
-    sprintf(buffer, "%" PRIi32, resetval);
-    New(name, Int32, buffer, doc);
-    gvar *v = getGvar(name);
-    if (v)
-    {
-        v->saveAsHex = true;;
+#define DECLARE_GVAR_NEW(FunType, VarType)                               \
+    bool GeekVar::New##FunType(string name, const VarType resetval, string doc)  \
+    {                                                                   \
+        VarType *p = new VarType;                                       \
+        *p = resetval;                                                  \
+        if (Bind##FunType(name, p, resetval, doc))                      \
+        {                                                               \
+            gvar *v = getGvar(name);                                    \
+            if (v)                                                      \
+            {                                                           \
+                v->freep = true;;                                       \
+            }                                                           \
+            return true;                                                \
+        }                                                               \
+        return false;                                                   \
     }
-    return v;
-}
 
-bool GeekVar::NewHex(string name, const int64 resetval, string doc)
-{
-    char buffer[128];
-    sprintf(buffer, "%" PRIi64, resetval);
-    New(name, Int64, buffer, doc);
-    gvar *v = getGvar(name);
-    if (v)
-    {
-        v->saveAsHex = true;;
-    }
-    return v;
-}
-
-bool GeekVar::New(string name, const int32 resetval, string doc)
-{
-    char buffer[64];
-    sprintf(buffer, "%" PRIi32, resetval);
-    return New(name, Int32, buffer, doc);
-}
-
-bool GeekVar::New(string name, const int64 resetval, string doc)
-{
-    char buffer[64];
-    sprintf(buffer, "%" PRIi64, resetval);
-    return New(name, Int64, buffer, doc);
-}
-
-bool GeekVar::New(string name, const double resetval, string doc)
-{
-    char buffer[128];
-    snprintf(buffer, sizeof(buffer) - 3, precisionFormatDbl, resetval);
-    return New(name, Double, buffer, doc);
-}
-
-bool GeekVar::New(string name, const float resetval, string doc)
-{
-    char buffer[128];
-    snprintf(buffer, sizeof(buffer) - 3, precisionFormatFlt, resetval);
-    return New(name, Float, buffer, doc);
-}
-
-bool GeekVar::New(string name, const bool resetval, string doc)
-{
-    char buffer[64];
-    sprintf(buffer, "%" PRIi32, (int32) resetval);
-    return New(name, Bool, buffer, doc);
-}
+DECLARE_GVAR_NEW(Hex, int32);
+DECLARE_GVAR_NEW(Hex, int64);
+DECLARE_GVAR_NEW(, int32);
+DECLARE_GVAR_NEW(, int64);
+DECLARE_GVAR_NEW(, double);
+DECLARE_GVAR_NEW(, float);
+DECLARE_GVAR_NEW(, bool);
+DECLARE_GVAR_NEW(, string);
+DECLARE_GVAR_NEW(Color, uint32);
+DECLARE_GVAR_NEW(CelBodyName, string);
 
 bool GeekVar::NewFlag(std::string name, flags32_s *flagtbl, std::string delim,
                       const char *resetval, std::string doc)
 {
-    gvar *oldvar = getGvar(name);
-    if (!oldvar)
+    uint32 *p = new uint32;
+    *p = strToUint32(resetval);
+    if (BindFlag(name, flagtbl, delim, p, resetval, doc))
     {
-        gvar newvar(flagtbl, delim, NULL, resetval, doc);
-        // reset with default value,
-        newvar.reset();
-        vars[name] = newvar;
+        gvar *v = getGvar(name);
+        if (v)
+        {
+            v->freep = true;;
+        }
+        return true;
     }
-    else
-    {
-        /* skip if var is binded or created */
-        if (oldvar->type != Unknown)
-            return false;
-
-        gvar newvar(flagtbl, delim, NULL, resetval, doc);
-        newvar.set(oldvar->get());
-        vars[name] = newvar;
-    }
-    callCreateHook(name);
-    return true;
+    return false;
 }
 
 bool GeekVar::NewFlag(string name, flags32_s *flagtbl, string delim, const uint32 resetval, string doc)
 {
-    char buffer[64];
-    sprintf(buffer, "%" PRIu32, resetval);
-    return NewFlag(name, flagtbl, delim, buffer, doc);
+    uint32 *p = new uint32;
+    *p = resetval;
+    if (BindFlag(name, flagtbl, delim, p, resetval, doc))
+    {
+        gvar *v = getGvar(name);
+        if (v)
+        {
+            v->freep = true;;
+        }
+        return true;
+    }
+    return false;
 }
 
 bool GeekVar::NewEnum(std::string name, flags32_s *flagtbl,
                       const char *resetval, std::string doc)
 {
-    gvar *oldvar = getGvar(name);
-    if (!oldvar)
+    uint32 *p = new uint32;
+    *p = strToUint32(resetval);
+    if (BindEnum(name, flagtbl, p, resetval, doc))
     {
-        gvar newvar(flagtbl, NULL, resetval, doc);
-        // reset with default value,
-        newvar.reset();
-        vars[name] = newvar;
+        gvar *v = getGvar(name);
+        if (v)
+        {
+            v->freep = true;;
+        }
+        return true;
     }
-    else
-    {
-        /* skip if var is binded or created */
-        if (oldvar->type != Unknown)
-            return false;
-
-        gvar newvar(flagtbl, NULL, resetval, doc);
-        newvar.set(oldvar->get());
-        vars[name] = newvar;
-    }
-    callCreateHook(name);
-    return true;
+    return false;
 }
 
 bool GeekVar::NewEnum(string name, flags32_s *flagtbl, const uint32 resetval, string doc)
 {
-    char buffer[64];
-    sprintf(buffer, "%" PRIu32, resetval);
-    return NewEnum(name, flagtbl, buffer, doc);
+    uint32 *p = new uint32;
+    *p = resetval;
+    if (BindEnum(name, flagtbl, p, resetval, doc))
+    {
+        gvar *v = getGvar(name);
+        if (v)
+        {
+            v->freep = true;;
+        }
+        return true;
+    }
+    return false;
 }
 
 bool GeekVar::NewColor(string name, const char *resetval, string doc)
 {
-    gvar *oldvar = getGvar(name);
-    if (!oldvar)
-    {
-        gvar newvar(Color, resetval, doc);
-        // reset with default value
-        newvar.reset();
-        vars[name] = newvar;
-    }
-    else
-    {
-        /* skip if var is binded or created */
-        if (oldvar->type != Unknown)
-            return false;
-
-        gvar newvar(Color, resetval, doc);
-        newvar.set(oldvar->get());
-        vars[name] = newvar;
-    }
-    callCreateHook(name);
-    return true;
+    return NewColor(name, strToUint32(resetval), doc);
 }
 
-bool GeekVar::NewColor(string name, const uint32 resetval, string doc)
-{
-    char buffer[64];
-    sprintf(buffer, "%" PRIu32, resetval);
-    return NewColor(name, buffer, doc);
-}
-
-bool GeekVar::NewCelBodyName(std::string name,
-                              const char *resetval, std::string doc)
-{
-    return New(name, Celbody, resetval, doc);
-}
-
-
-bool GeekVar::New(string name, gvar_type type, const char *resetval, string doc)
-{
-    gvar *v = getGvar(name);
-    if(!v)
-    {
-        gvar v(type, resetval, doc);
-        /* reset with default value  */
-        v.reset();
-        vars[name] = v;
-    }
-    else
-    {
-        /* skip if var is binded or created */
-        if (v->type != Unknown)
-            return false;
-        string savedval;
-        /* if var set before */
-        /* we must copy var's value */
-        savedval = v->get();
-        /* set new type & pointer of var */
-        v->type = type;
-        v->p = 0;
-        v->doc = doc;
-        /* setup var with saved value */
-        v->set(savedval);
-
-        v->resetString = resetval;
-        v->saveAsHex = false;
-    }
-    callCreateHook(name);
-    return true;
-}
 
 /******************************************************************
  *  Set
@@ -1267,7 +1189,8 @@ void GeekVar::CopyVarsTypes(std::string srcgroup, std::string dstgroup)
 bool GeekVar::IsBinded(std::string name)
 {
     gvar *v = getGvar(name);
-    if (v && v->p)
+    // freep - true for created bu New* vars
+    if (v && v->p && !v->freep)
         return true;
     else
         return false;

@@ -78,39 +78,40 @@ public:
         bool saveAsHex; // for intager save in hex format
         HookFunc getHook;
         HookFunc setHook;
+        bool freep; // ned free p when destruct
         ~gvar();
-        gvar(): p(0), type(Unknown), flagtbl(0), saveAsHex(false), getHook(NULL), setHook(NULL) {};
+        gvar(): p(0), type(Unknown), flagtbl(0), saveAsHex(false), getHook(NULL), setHook(NULL), freep(false) {};
         /* other helpfull constr.*/
         gvar(int32 *v, const std::string &resetstr, const std::string &_doc): p(v), type(Int32),
                                                                               resetString(resetstr), doc(_doc), flagtbl(0), saveAsHex(false),
-                                                                              getHook(NULL), setHook(NULL){};
+                                                                              getHook(NULL), setHook(NULL), freep(false) {};
         gvar(bool *v, const std::string &resetstr, const std::string &_doc): p(v), type(Bool),
                                                                              resetString(resetstr), doc(_doc), flagtbl(0), saveAsHex(false),
-                                                                             getHook(NULL), setHook(NULL){};
+                                                                             getHook(NULL), setHook(NULL), freep(false) {};
         gvar(double *v, const std::string &resetstr, const std::string &_doc): p(v), type(Double),
                                                                                resetString(resetstr), doc(_doc), flagtbl(0), saveAsHex(false),
-                                                                               getHook(NULL), setHook(NULL) {};
+                                                                               getHook(NULL), setHook(NULL), freep(false) {};
         gvar(float *v, const std::string &resetstr, const std::string &_doc): p(v), type(Float),
                                                                               resetString(resetstr), doc(_doc), flagtbl(0), saveAsHex(false),
-                                                                              getHook(NULL), setHook(NULL){};
+                                                                              getHook(NULL), setHook(NULL), freep(false) {};
         gvar(int64 *v, const std::string &resetstr, const std::string &_doc): p(v), type(Int64),
                                                                               resetString(resetstr), doc(_doc), flagtbl(0), saveAsHex(false),
-                                                                              getHook(NULL), setHook(NULL){};
+                                                                              getHook(NULL), setHook(NULL), freep(false) {};
         gvar(std::string *v, const std::string &resetstr, const std::string &_doc): p(v), type(String),
                                                                                     resetString(resetstr), doc(_doc), flagtbl(0), saveAsHex(false),
-                                                                                    getHook(NULL), setHook(NULL){};
+                                                                                    getHook(NULL), setHook(NULL), freep(false) {};
         gvar(flags32_s *_flagtbl, const std::string &_flagDelim, uint32 *v, const std::string &resetstr, const std::string &_doc):
             p(v), type(Flags32), resetString(resetstr), doc(_doc), flagDelim(_flagDelim), flagtbl(_flagtbl), saveAsHex(false),
-            getHook(NULL), setHook(NULL){};
+            getHook(NULL), setHook(NULL), freep(false){};
         gvar(flags32_s *_flagtbl, uint32 *v, const std::string &resetstr, const std::string &_doc):
             p(v), type(Enum32), resetString(resetstr), doc(_doc), flagtbl(_flagtbl), saveAsHex(false),
-            getHook(NULL), setHook(NULL){};
+            getHook(NULL), setHook(NULL), freep(false){};
 
         // new var but not binded
         gvar(gvar_type _type, const std::string &resetstr, const std::string &_doc): p(0), type(_type),
                                                                                      resetString(resetstr), doc(_doc),
                                                                                      flagtbl(0), saveAsHex(false),
-                                                                                     getHook(NULL), setHook(NULL){};
+                                                                                     getHook(NULL), setHook(NULL), freep(false) {};
         void reset();
         std::string get();
         void set(const std::string &val);
@@ -172,9 +173,13 @@ public:
     // string bind
     bool Bind(std::string name, std::string *var,
               const char *resetval, std::string doc = "");
+    bool Bind(std::string name, std::string *var,
+              std::string resetval, std::string doc = "");
     // string bind, celestia body
     bool BindCelBodyName(std::string name, std::string *var,
-              const char *resetval, std::string doc = "");
+                         const char *resetval, std::string doc = "");
+    bool BindCelBodyName(std::string name, std::string *var,
+                         std::string resetval, std::string doc = "");
 
     /* ==============================================================
        New var
@@ -197,8 +202,8 @@ public:
                   const uint32 resetval, std::string doc = "");
 
     // new var with string reset
-    bool New(std::string name, gvar_type type, const char *resetval,
-             std::string doc = "");
+    // bool New(std::string name, gvar_type type, const char *resetval,
+    //          std::string doc = "");
     bool NewFlag(std::string name, flags32_s *flagtbl, std::string delim,
                  const char *resetval, std::string doc = "");
     bool NewEnum(std::string name, flags32_s *flagtbl,
@@ -206,7 +211,11 @@ public:
     bool NewColor(std::string name,
                   const char *resetval, std::string doc = "");
     bool NewCelBodyName(std::string name,
-                        const char *resetval, std::string doc = "");
+                        std::string resetval, std::string doc = "");
+
+    // string new
+    bool New(std::string name, std::string resetval,
+             std::string doc = "");
 
     /* ==============================================================
        Set
