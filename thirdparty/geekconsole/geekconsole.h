@@ -343,6 +343,7 @@ private:
     std::string dirEntire; // root dir entire (not show for user)
     std::vector<std::string> dirCache;
     std::string lastPath;
+    bool rebuildDirCache;
 };
 
 // no history + ****** Interactive

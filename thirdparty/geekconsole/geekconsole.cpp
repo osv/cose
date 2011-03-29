@@ -4359,11 +4359,14 @@ void FileInteractive::Interact(GeekConsole *_gc, string historyName)
     dirCache.clear();
     lastPath = "_"; // foo dir, for rebuild dir cache
     update(getBufferText());
+    rebuildDirCache = true;
 }
 
 void FileInteractive::setFileExtenstion(std::string ext)
 {
     fileExt = splitString(ext, ";");
+    rebuildDirCache = true;
+    update(string(getBufferText(), 0, bufSizeBeforeHystory));
 }
 
 void FileInteractive::setRightText(std::string text)
@@ -4455,8 +4458,9 @@ void FileInteractive::updateTextCompletion()
     }
 
     Directory* dir = OpenDirectory(path);
-    if (dir != NULL && lastPath != path)
+    if (dir != NULL && (lastPath != path || rebuildDirCache))
     {
+        rebuildDirCache = false;
         std::string filename;
         dirCache.clear();
         while (dir->nextFile(filename))
