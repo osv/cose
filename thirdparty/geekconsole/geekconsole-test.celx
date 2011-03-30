@@ -255,4 +255,24 @@ print("last: 'lua/bool set test' " .. gvar.GetLast("lua/bool set test"))
 print("reset: 'lua/bool set test' " .. gvar.GetReset("lua/bool set test"))
 print("type: 'lua/bool set test' " .. gvar.GetType("lua/bool set test"))
 
+gvar.Set("lua/flagtest", 2) -- preset flag test
+gvar.NewFlag("lua/flagtest", 
+	     {			-- table of flags (subtables of 2 or 3 elements)
+		{"flag 1", 1},
+		{"flag 2", 2, "flag 2 help tip here."},
+		{"flag 4", 4}
+	     }, 6,		-- default value
+	     "/",		-- separator 
+	     "lua flag variable.") -- some documentation.
+print("flag: 'lua/flagtest' " .. tostring(gvar.AsNum("lua/flagtest")))
+
+gvar.NewEnum("lua/enumtest", 
+	     {			-- table of flags (subtables of 2 or 3 elements)
+		{"low", 1},
+		{"medium", 2, "flag 2 help tip here."},
+		{"hi", 3}
+	     }, 2,		-- default value
+	     "lua enum variable.") -- some documentation.
+print("flag: 'lua/enumtest' " .. tostring(gvar.AsNum("lua/enumtest")))
+
 gc.call("lua demo info")

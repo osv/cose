@@ -582,6 +582,132 @@ static int varNewBody(lua_State* l)
     return 0;
 }
 
+// manage flag tables that passed from lua for using it in c
+class FlagTableMng {
+public:
+    typedef GeekVar::flags32_s* flagtable;
+    FlagTableMng():num(0), tables(0){};
+    ~FlagTableMng();
+    GeekVar::flags32_s *getFlags(lua_State* l, int index);
+private:
+    int num;
+    flagtable *tables;
+};
+
+static FlagTableMng flagTableMng;
+
+FlagTableMng::~FlagTableMng()
+{
+    for (int i = 0; i < num; i++)
+    {
+        int j = 0;
+        flagtable tbl = tables[i];
+        while(tbl[j].name)
+        {
+            free((void *)(tbl[j].name));
+            if (tbl[j].helptip)
+                free((void *)(tbl[j].helptip));
+            j++;
+        }
+    }
+    free(tables);
+}
+
+// return allocated flag table flags32_s
+GeekVar::flags32_s *FlagTableMng::getFlags(lua_State* l, int tableIndex)
+{
+    int argc = lua_gettop(l);
+    if (tableIndex < 1 || tableIndex > argc)
+        return false;
+    if (lua_istable(l, tableIndex))
+    {
+        int n;
+        n = lua_objlen(l, tableIndex);
+        if (n < 1)
+            return NULL;
+
+        num++;
+        tables = (flagtable *)realloc(tables, num * sizeof(flagtable));
+        // alloc +1 - last for NULL
+        flagtable tbl = (flagtable)malloc((n +1) * sizeof(GeekVar::flags32_s));
+        tables[num - 1] = tbl;
+
+        int i = 0;
+        for (int ti = 1; ti <= n; ti++)
+        {
+            lua_rawgeti(l, tableIndex, ti);
+            if (lua_istable(l, -1)) {
+                int subTableIndex = -1;
+                int subn = lua_objlen(l, subTableIndex);
+                if (subn > 1) {
+                    tbl[i].name = NULL;
+                    tbl[i].helptip = NULL;
+                    tbl[i].mask = 0;
+                    lua_rawgeti(l, subTableIndex, 1);
+                    if (lua_isstring(l, -1))
+                    {
+                        const char *name = lua_tostring(l, -1);
+                        tbl[i].name = strdup(name);
+                    }
+                    lua_remove(l, -1);
+
+                    lua_rawgeti(l, subTableIndex, 2);
+                    if (lua_isnumber(l, -1) && tbl[i].name)
+                        tbl[i].mask = lua_tonumber(l, -1);
+                    lua_remove(l, -1);
+
+                    // 3rd item may be doc
+                    if (subn > 2 && tbl[i].name)
+                    {
+                        lua_rawgeti(l, subTableIndex, 3);
+                        if (lua_isstring(l, -1))
+                            tbl[i].helptip = strdup(lua_tostring(l, -1));
+                        lua_remove(l, -1);
+                    }
+                    i++;
+                }
+            }
+            lua_remove(l, -1);
+        }
+
+        tbl[i].name = NULL;
+        return tbl;
+    }
+    else
+        return NULL;
+}
+
+static int varNewFlag(lua_State *l)
+{
+    CelxLua celx(l);
+    celx.checkArgs(2, 5, "2, 3, 4 or 5 arguments expected for gvar.NewFlag(sName, tFlags, [nValue], [sDelimiters], [sDoc])");
+    GeekVar::flags32_s *fl = flagTableMng.getFlags(l, 2);
+    if (!fl)
+        return 0;
+    const char *name = celx.safeGetString(1, AllErrors, "argument 1 to gvar.NewFlag must be a string");
+    double val = celx.safeGetNumber(3, WrongType, "argument 3 to gvar.NewFlag must be a number", 0.0);
+    string delims = sstr(celx.safeGetString(4, WrongType, "argument 4 to gvar.NewFlag must be a string"));
+    if (delims == "")
+        delims = "/";
+    const char *doc = celx.safeGetString(5, WrongType, "argument 5 to gvar.NewFlag must be a string");
+    gVar.NewFlag(name, fl, delims, (uint32)val, sstr(doc));
+    return 0;
+}
+
+static int varNewEnum(lua_State *l)
+{
+    CelxLua celx(l);
+    celx.checkArgs(2, 4, "2, 3, or 4 arguments expected for gvar.NewEnum(sName, tFlags, [nValue], [sDoc])");
+    GeekVar::flags32_s *fl = flagTableMng.getFlags(l, 2);
+    if (!fl)
+        return 0;
+    const char *name = celx.safeGetString(1, AllErrors, "argument 1 to gvar.NewFlag must be a string");
+    double val = celx.safeGetNumber(3, WrongType, "argument 3 to gvar.NewFlag must be a number", 0.0);
+    const char *doc = celx.safeGetString(4, WrongType, "argument 4 to gvar.NewFlag must be a string");
+    gVar.NewEnum(name, fl, (uint32)val, sstr(doc));
+    return 0;
+}
+
 static int varSet(lua_State* l)
 {
     CelxLua celx(l);
@@ -736,6 +862,8 @@ void LoadLuaGeekConsoleLibrary(lua_State* l)
     celx.registerMethod("NewNumber", varNewDouble);
     celx.registerMethod("NewColor", varNewColor);
     celx.registerMethod("NewBody", varNewBody);
+    celx.registerMethod("NewFlag", varNewFlag);
+    celx.registerMethod("NewEnum", varNewEnum);
     // set
     celx.registerMethod("Set", varSet);
     // get
