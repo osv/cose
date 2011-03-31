@@ -1181,6 +1181,8 @@ void GeekVar::CopyVarsTypes(std::string srcgroup, std::string dstgroup)
                 oldv->flagDelim = (*it).second.flagDelim;
                 oldv->flagtbl = (*it).second.flagtbl;
                 oldv->saveAsHex = (*it).second.saveAsHex;
+                if (!oldv->p)
+                    oldv->resetString = oldv->get();
             }
         }
     }
@@ -1822,7 +1824,7 @@ string customizeVar(string filename, string nodename)
             {
                 res += INFO_TAGSTART "descvar name=[[";
                 res += *it;
-                res += "]]" INFO_TAGEND "\n";
+                res += "]]" INFO_TAGEND "....\n";
             }
         }
         return res;
@@ -1917,7 +1919,7 @@ string customizeVar(string filename, string nodename)
             {
                 res += INFO_TAGSTART "descvar name=[[";
                 res += *it;
-                res += "]]" INFO_TAGEND "\n";
+                res += "]]" INFO_TAGEND "....\n";
             }
         }
         else if (summary_node == nodename_pfx)

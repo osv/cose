@@ -273,7 +273,8 @@ public:
     std::vector<std::string> GetVarNames(std::string path);
     // copy all vars from one group to other
     void CopyVars(std::string srcgroup, std::string dstgroup);
-    // copy types of variables. Only copy types, doc, etc, but *not* value
+    // copy types of  variables. Only copy types, doc,  etc, but *not*
+    // value, and set reset value if variable not binded yet
     void CopyVarsTypes(std::string srcgroup, std::string dstgroup);
 
     // return bind status for variable
