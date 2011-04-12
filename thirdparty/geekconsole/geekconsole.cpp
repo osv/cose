@@ -1433,6 +1433,44 @@ void GeekConsole::createAutogen(const char *filename, bool update)
         }
     }
     file << endl;
+    // dump variables
+    file << "customSetVariables = {\n";
+    vector<string> vars = gVar.GetVarNames("");
+    vector<string>::iterator itv;
+    for (itv = vars.begin(); itv != vars.end(); itv++)
+    {
+        if ((*itv).empty() || ((*itv)[0] == '.'))
+            continue;
+
+        if (gVar.GetFlagString(*itv) == gVar.GetFlagResetString(*itv))
+            continue;
+
+        file << "   {\"" << normalLuaStr((*itv)) << "\",\t";
+        switch(gVar.GetType((*itv)))
+        {
+        case GeekVar::Int32:
+        case GeekVar::Double:
+        case GeekVar::Float:
+        case GeekVar::Int64:
+            file << doubleToString(gVar.GetDouble(*itv));
+            break;
+        case GeekVar::Bool:
+        {
+            bool b = gVar.GetBool(*itv);
+            if (b)
+                file << "true";
+            else
+                file << "false";
+            break;
+        }
+        default:
+            file << "\"" << normalLuaStr(gVar.GetFlagString(*itv)) << "\"";
+            break;
+        }
+        file << "},\n";
+    }
+    file << "} -- end of customSetVariables\n";
+    file << "gvar.Set(customSetVariables)\n";
 
     file << "-- " << tag_end << endl;
     file << after.str();

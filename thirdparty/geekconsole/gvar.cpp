@@ -42,9 +42,6 @@ static int64 strToInt64(string str);
 static int32 strToInt32(string str);
 static uint32 strToUint32(string str);
 
-static char precisionFormatDbl[] = "%.14g";
-static char precisionFormatFlt[] = "%.12g";
-
 // convert given text to number by given flag table
 static uint32 setFlag(GeekVar::flags32_s *flagtbl, string flagDelim, string text)
 {
@@ -146,10 +143,10 @@ string GeekVar::gvar::get() {
         break;
     }
     case Double:
-        snprintf(buffer, sizeof(buffer) - 3, precisionFormatDbl, *(double *) p);
+        return doubleToString(*(double *) p);
         break;
     case Float:
-        snprintf(buffer, sizeof(buffer) - 3, precisionFormatFlt, *(float *) p);
+        return doubleToString(*(float *) p);
         break;
     case Int64:
         sprintf(buffer, "%" PRIi64, *(int64 *) p);
@@ -365,16 +362,12 @@ bool GeekVar::Bind(string name, int64 *var, const int64 resetval, string doc)
 
 bool GeekVar::Bind(string name, double *var, const double resetval, string doc)
 {
-    char buffer[128];
-    snprintf(buffer, sizeof(buffer) - 3, precisionFormatDbl, resetval);
-    return Bind(name, var, buffer, doc);
+    return Bind(name, var, doubleToString(resetval).c_str(), doc);
 }
 
 bool GeekVar::Bind(string name, float *var, const float resetval, string doc)
 {
-    char buffer[128];
-    snprintf(buffer, sizeof(buffer) - 3, precisionFormatFlt, resetval);
-    return Bind(name, var, buffer, doc);
+    return Bind(name, var, doubleToString(resetval).c_str(), doc);
 }
 
 
@@ -690,13 +683,10 @@ void GeekVar::Set(string name, bool val)
 
 void GeekVar::Set(string name, double val)
 {
-    char buffer[128];
-    snprintf(buffer, sizeof(buffer) - 3, precisionFormatDbl,  val);
-
     gvar *v = getGvar(name);
     if(v)
     {
-        v->set(buffer);
+        v->set(doubleToString(val));
         if (!lock_set_get && v->setHook)
         {
             lock_set_get = true;
@@ -707,7 +697,7 @@ void GeekVar::Set(string name, double val)
     else
     {
         gvar v;
-        v.set(buffer);
+        v.set(doubleToString(val));
         vars[name] = v;
         callCreateHook(name);
     }
@@ -715,13 +705,10 @@ void GeekVar::Set(string name, double val)
 
 void GeekVar::Set(string name, float val)
 {
-    char buffer[128];
-    snprintf(buffer, sizeof(buffer) - 3, precisionFormatFlt, val);
-
     gvar *v = getGvar(name);
     if(v)
     {
-        v->set(buffer);
+        v->set(doubleToString(val));
         if (!lock_set_get && v->setHook)
         {
             lock_set_get = true;
@@ -732,7 +719,7 @@ void GeekVar::Set(string name, float val)
     else
     {
         gvar v;
-        v.set(buffer);
+        v.set(doubleToString(val));
         vars[name] = v;
         callCreateHook(name);
     }

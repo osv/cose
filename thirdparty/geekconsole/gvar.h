@@ -297,6 +297,18 @@ private:
     void callCreateHook(std::string var);
 };
 
+inline std::string doubleToString(double value)
+{
+    char buffer [128];
+    if(((value < 0.00001) && (value > -0.00001) && (value != 0.0))
+       ||(value > 100000000.0) || (value < -100000000.0)){
+        snprintf(buffer, sizeof(buffer) - 3, "%.6E", value);
+    }else{
+        snprintf(buffer, sizeof(buffer) - 3, "%.6g", value);
+    }
+    return buffer;
+}
+
 extern GeekVar gVar;
 extern void initGCVarInteractivsFunctions();
 

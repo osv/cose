@@ -637,13 +637,12 @@ GeekVar::flags32_s *FlagTableMng::getFlags(lua_State* l, int tableIndex)
         {
             lua_rawgeti(l, tableIndex, ti);
             if (lua_istable(l, -1)) {
-                int subTableIndex = -1;
-                int subn = lua_objlen(l, subTableIndex);
+                int subn = lua_objlen(l, -1);
                 if (subn > 1) {
                     tbl[i].name = NULL;
                     tbl[i].helptip = NULL;
                     tbl[i].mask = 0;
-                    lua_rawgeti(l, subTableIndex, 1);
+                    lua_rawgeti(l, -1, 1);
                     if (lua_isstring(l, -1))
                     {
                         const char *name = lua_tostring(l, -1);
@@ -651,7 +650,7 @@ GeekVar::flags32_s *FlagTableMng::getFlags(lua_State* l, int tableIndex)
                     }
                     lua_remove(l, -1);
 
-                    lua_rawgeti(l, subTableIndex, 2);
+                    lua_rawgeti(l, -1, 2);
                     if (lua_isnumber(l, -1) && tbl[i].name)
                         tbl[i].mask = lua_tonumber(l, -1);
                     lua_remove(l, -1);
@@ -659,7 +658,7 @@ GeekVar::flags32_s *FlagTableMng::getFlags(lua_State* l, int tableIndex)
                     // 3rd item may be doc
                     if (subn > 2 && tbl[i].name)
                     {
-                        lua_rawgeti(l, subTableIndex, 3);
+                        lua_rawgeti(l, -1, 3);
                         if (lua_isstring(l, -1))
                             tbl[i].helptip = strdup(lua_tostring(l, -1));
                         lua_remove(l, -1);
@@ -711,24 +710,65 @@ static int varNewEnum(lua_State *l)
 static int varSet(lua_State* l)
 {
     CelxLua celx(l);
-    celx.checkArgs(2, 2, "2 arguments expected for gvar.Set(sName, dValue, sDoc)");
-    const char *name = celx.safeGetString(1, AllErrors, "argument 1 to gvar.Set must be a string");
-    if (lua_isboolean (l, 1))
+    celx.checkArgs(1, 2, "1 or 2 arguments expected for gvar.Set(table)|(sName, dValue)");
+
+    if (lua_istable(l, 1))
     {
-        bool val = celx.safeGetBoolean(2, AllErrors, "argument 2 to gvar.Set must be a number/boolean/string");
-        gVar.Set(name, val);
+        for (int ti = 1; ti <= lua_objlen(l, 1); ti++)
+        {
+            lua_rawgeti(l, 1, ti);
+            if (lua_istable(l, -1)) {
+                int subn = lua_objlen(l, -1);
+                if (subn > 1) {
+                    const char *name = NULL;
+
+                    lua_rawgeti(l, -1, 1);
+                    if (lua_isstring(l, -1))
+                        name = lua_tostring(l, -1);
+                    lua_remove(l, -1);
+
+                    lua_rawgeti(l, -1, 2);
+                    if (name)
+                        if (lua_isboolean (l, -1))
+                        {
+                            gVar.Set(name, (bool)lua_toboolean(l, -1));
+                        }
+                        else
+                            if (lua_isnumber (l, -1))
+                            {
+                                gVar.Set(name, lua_tonumber(l, -1));
+                            }
+                            else
+                                if (lua_isstring (l, -1))
+                                {
+                                    gVar.Set(name, sstr(lua_tostring(l, -1)));
+                                }
+                    lua_remove(l, -1);
+                }
+            }
+            lua_remove(l, -1);
+        }
     }
-    else
-    if (lua_isnumber (l, 1))
+    else // 1 param is not table
     {
-        double val = celx.safeGetNumber(2, AllErrors, "argument 2 to gvar.Set must be a number/boolean/string");
-        gVar.Set(name, val);
-    }
-    else
-    if (lua_isstring (l, 1))
-    {
-        const char *val = celx.safeGetString(2, AllErrors, "argument 2 to gvar.Set must be a number/boolean/string");
-        gVar.Set(name, sstr(val));
+        const char *name = celx.safeGetString(1, AllErrors, "argument 1 to gvar.Set must be a string");
+        if (lua_isboolean (l, 1))
+        {
+            bool val = celx.safeGetBoolean(2, AllErrors, "argument 2 to gvar.Set must be a number/boolean/string");
+            gVar.Set(name, val);
+        }
+        else
+            if (lua_isnumber (l, 1))
+            {
+                double val = celx.safeGetNumber(2, AllErrors, "argument 2 to gvar.Set must be a number/boolean/string");
+                gVar.Set(name, val);
+            }
+            else
+                if (lua_isstring (l, 1))
+                {
+                    const char *val = celx.safeGetString(2, AllErrors, "argument 2 to gvar.Set must be a number/boolean/string");
+                    gVar.Set(name, sstr(val));
+                }
     }
     return 0;
 }
