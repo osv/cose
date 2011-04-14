@@ -234,7 +234,7 @@ void GeekVar::gvar::set(const string &val)
             *(bool *) p = (bool) atoi(val.c_str());
         break;
     case Double:
-        *(double *) p = (double) atof(val.c_str());
+        *(double *) p = (double) strtod(val.c_str(), NULL);
         break;
     case Float:
         *(float *) p = (float) atof(val.c_str());

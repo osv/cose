@@ -425,7 +425,8 @@ static int celTimeScaleIncr(GeekConsole *gc, int state, std::string value)
         if (abs(sim->getTimeScale()) > MinimumTimeRate &&
             abs(sim->getTimeScale()) < MaximumTimeRate)
         {
-            float scale = atof(value.c_str());
+            // trunc to 4 dig after .
+            double scale = strtod(value.c_str(), NULL);
             if (scale != 0 &&
                 abs(scale) > MinimumTimeRate / 2 &&
                 abs(scale) < MaximumTimeRate / 2)
