@@ -219,7 +219,7 @@ float ChkVar::render(rcontext *rc)
         glColor4ub(0,0,0,50);
         ovl->rect(xoffset, -2, width, rc->font->getHeight());
         glColor4ubv(clCompletionFnt->rgba);
-        *ovl << str;
+        *ovl << normalLuaStr(str);
 
         ovl->setXoffset(xoffset + width);
         // return to default color

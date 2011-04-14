@@ -165,6 +165,8 @@ public:
     ChkGCFun(std::string fun, std::string text = "", std::string tip = "");
     float render(rcontext *rc);
     bool isLink() { return true;};
+    std::string getText()
+        {return text;}
     std::string getHelpTip();
     void followLink();
 private:

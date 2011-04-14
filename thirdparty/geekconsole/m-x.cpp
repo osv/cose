@@ -390,9 +390,9 @@ static std::string _describeFunction(GeekConsole *gc, std::string function)
         if (s != "")
             ss << "  " << f->getInfo() << "\n";
         if (f->getType() == GCFunc::Alias) {
-            ss << "  It is alias to" << " \"" << makeHyperFcFunc(f->getAliasFun()) << "\"";
+            ss << "  It is alias to" << " \"" << makeHyperFcFunc(normalLuaStr(f->getAliasFun())) << "\"";
             if (f->getAliasParams() != "")
-                ss << " with params \"" << makeHyperFcFunc(f->getAliasParams()) << "\"\n";
+                ss << " with params \"" << makeHyperFcFunc(normalLuaStr(f->getAliasParams())) << "\"\n";
             else
                 ss << '\n';
         }
@@ -420,11 +420,11 @@ static std::string _describeFunction(GeekConsole *gc, std::string function)
                 string res;
                 res += (*bit).keyToStr();
                 res += INFO_TAGSTART "tab n=\"12\"" INFO_TAGEND;
-                res += " " + makeHyperFcFunc((*bit).gcFunName);
+                res += " " + makeHyperFcFunc(normalLuaStr((*bit).gcFunName));
                 if (!(*bit).params.empty())
                 {
                     res += INFO_TAGSTART "tab n=\"34\"" INFO_TAGEND;
-                    res += makeHyperFcFunc((*bit).params);
+                    res += makeHyperFcFunc(normalLuaStr((*bit).params));
                 }
                 ss << res << "\n";
             }
@@ -680,6 +680,9 @@ string bindsInfoDynNode(string filename, string nodename)
         res += "Up: Top\n\n";
         string bindspace;
         string key = nodename.substr(strlen(key_node));
+        GeekBind::KeyBind kb;
+        kb.set(key.c_str());
+        key = kb.keyToStr();
         size_t found = key.find('/');
         if (found != string::npos)
         {
