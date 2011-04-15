@@ -4392,6 +4392,7 @@ void FileInteractive::Interact(GeekConsole *_gc, string historyName)
 {
     ListInteractive::Interact(_gc, historyName);
     setColumns(defaultColumns);
+    dirEntire = "./";
     separatorChars = "/";
     fileExt.clear();
     dirCache.clear();
