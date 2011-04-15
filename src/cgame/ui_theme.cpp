@@ -19,6 +19,7 @@
 #include <agar/gui/opengl.h>
 #include "configfile.h"
 #include "geekconsole.h"
+#include "gvar.h"
 #include <agar/gui/drv_gl_common.h>
 
 namespace UI{
@@ -511,6 +512,10 @@ namespace UI{
                     cVarBindInt32Hex(bname + agar_color_vars[i].name,
                                      (int32 *)&c->i,
                                      c->i);
+                    std::string vname("render/color/agar/");
+                    gVar.BindColor(vname + agar_color_vars[i].name,
+                                   &c->i,
+                                   c->i);
 
                     // add to tlist
                     it = AG_TlistAdd(tl, NULL, _(agColorNames[i]));
@@ -559,7 +564,7 @@ namespace UI{
         themeInit = true;
 
         getGeekConsole()->registerFunction(GCFunc(loadColorTheme), "load color theme");
-        getGeekConsole()->registerFunction(GCFunc(saveColorTheme), "save color theme");
+        getGeekConsole()->registerFunction(GCFunc(saveColorTheme), "save color theme old");
     }
 
     void setupThemeStyle(PrimitiveStyle primitiveStyle)

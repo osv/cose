@@ -19,8 +19,11 @@
 // You should  have received a copy  of the GNU  Lesser General Public
 // License. If not, see <http://www.gnu.org/licenses/>.
 
+#include <iostream>
+#include <fstream>
 #include <string>
 #include <stdlib.h>
+#include <sys/stat.h>
 
 #include "gvar.h"
 #include "geekconsole.h"
@@ -1689,6 +1692,98 @@ static int varSetLastVal(GeekConsole *gc, int state, std::string value)
     return state;
 }
 
+static int varSave(GeekConsole *gc, int state, std::string value)
+{
+    static string varnames;
+    static string filename;
+    if (state == 0)
+    {
+        gc->setInteractive(listInteractive, "gvar-path", _("Variable(s) to save"));
+        listInteractive->setCompletion(gVar.GetVarNames(""));
+    }
+    else if (state == -1)
+        gc->setInfoText(describeVar(value));
+    else if (state == 1)
+    {
+        varnames = value;
+        gc->setInteractive(fileInteractive, "gvar-file-savename", string(_("Select file to save")) + " " + varnames);
+        fileInteractive->setLastFromHistory();
+        fileInteractive->setFileExtenstion(".celx;.cel");
+    } else if (state == 2)
+    {
+        struct stat stFileInfo;
+        filename = value;
+        // if file exist
+        if (!stat(value.c_str(),&stFileInfo))
+        {
+            // ask for overwrite
+            gc->setInteractive(listInteractive, "yes-no-gfs", _("Are you sure to overwrite?"), "File: \"" + value + "\"");
+            listInteractive->setCompletionFromSemicolonStr("yes;no");
+            listInteractive->setMatchCompletion(true);
+        }
+        else
+            state = 4; // ok, we can write file, so skip yes-no check
+    } else if (state == 3) // yes-no
+        if (value != "yes")
+        {
+            gc->setInteractive(fileInteractive, "gvar-file-savename", string(_("Select file to save")) + " " + varnames);
+            fileInteractive->setLastFromHistory();
+            fileInteractive->setFileExtenstion(".celx;.cel");
+            return 1; // recall with 1 state
+        }
+        else
+            state = 4;
+
+    if (state == 4)
+    {
+        //save
+        std::ofstream file(filename.c_str(), ofstream::out);
+        if (!file.good())
+        {
+            gc->beep();
+            gc->showText("File not created " + filename);
+            return state;
+        }
+
+        file << "-- -*- mode: lua -*-\n\ngvar.Set({\n";
+        vector<string> vars = gVar.GetVarNames(varnames);
+        vector<string>::iterator itv;
+        for (itv = vars.begin(); itv != vars.end(); itv++)
+        {
+            if ((*itv).empty() || ((*itv)[0] == '.'))
+                continue;
+
+            file << "   {\"" << normalLuaStr((*itv)) << "\",\t";
+            switch(gVar.GetType((*itv)))
+            {
+            case GeekVar::Int32:
+            case GeekVar::Double:
+            case GeekVar::Float:
+            case GeekVar::Int64:
+                file << doubleToString(gVar.GetDouble(*itv));
+                break;
+            case GeekVar::Bool:
+            {
+                bool b = gVar.GetBool(*itv);
+                if (b)
+                    file << "true";
+                else
+                    file << "false";
+                break;
+            }
+            default:
+                file << "\"" << normalLuaStr(gVar.GetFlagString(*itv)) << "\"";
+                break;
+            }
+            file << "},\n";
+        }
+        file << "})";
+        file.close();
+        gc->showText("Saved in " + filename);
+    }
+    return state;
+}
+
 static int aproposVarCust(GeekConsole *gc, int state, std::string value)
 {
     switch(state)
@@ -1947,6 +2042,11 @@ void initGCVarInteractivsFunctions()
     gc->registerFunction(GCFunc(aproposVarSum, _("Show summary of all meaningful variables "
                                                   "whose names match")),
                          "apropos variable summary");
+    gc->registerFunction(GCFunc(varSave, _("Save variables as celx (lua) file.\n"
+                                                  "You can load saved file by `open script'.")),
+                         "save variables");
+    gc->registerFunction(GCFunc("save variables", "render/color/", _("Save color theme.")),
+                         "save color theme");
 
     char dir[] = "INFO-DIR-SECTION Customize\n"
         "START-INFO-DIR-ENTRY\n"

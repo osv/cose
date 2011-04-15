@@ -1360,7 +1360,7 @@ void GeekConsole::createAutogen(const char *filename, bool update)
 
         infile.close();
     }
-    std::ofstream file(filename, ifstream::out);
+    std::ofstream file(filename, ofstream::out);
 
     file << before.str();
     file << "-- " << tag_begin << endl;
