@@ -224,8 +224,7 @@ public:
 
 protected:
     virtual void updateTextCompletion();
-    // set typedHistoryCompletion by filtering completion
-    void filterCompletion(std::vector<std::string> completion, std::string filter);
+
     std::vector<std::string> completionList;
     int pageScrollIdx;
     uint scrollSize; // number of compl. items to scroll
@@ -636,6 +635,10 @@ extern std::string normalLuaStr(std::string);
 /* Selection::getName  return  number of  DSO  or  star, this  version
   return full name of selection */
 extern std::string getSelectionName(Selection sel);
+
+// Split @filter by ' ' and return only those items that have all splited parts.
+extern void filterVector(const std::vector<std::string> &src,
+                         std::vector<std::string> &dst, const std::string filter);
 
 // init geekconsole
 extern void initGeekConsole(CelestiaCore *celApp);

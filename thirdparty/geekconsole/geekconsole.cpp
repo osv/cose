@@ -1347,6 +1347,30 @@ static string appendStr(std::string &a, std::string b)
         return b;
 }
 
+void filterVector(const std::vector<std::string> &src,
+                  std::vector<std::string> &dst, const std::string filter)
+{
+    // split buffer to str for match
+    vector<string> parts = splitString(filter, " ");
+    std::vector<std::string>::const_iterator it, pit;
+    bool skip;
+    for (it = src.begin();
+         it != src.end(); it++)
+    {
+        skip = false;
+        for (pit = parts.begin();
+             pit != parts.end(); pit++)
+            if (UTF8StrStr(*it, *pit) == -1)
+            {
+                skip = true;
+                break;
+            }
+
+        if (!skip)
+            dst.push_back(*it);
+    }
+}
+
 /*
   GeekConsole
  */
@@ -2963,36 +2987,8 @@ void ListInteractive::updateTextCompletion()
         }
     }
     else // Filter
-        filterCompletion(completionList, getBufferText());
+        filterVector(completionList, typedTextCompletion, getBufferText());
 }
-
-void ListInteractive::filterCompletion(std::vector<std::string> completion, std::string filter)
-{
-    int flt_length = UTF8Length(filter);
-    
-    // split buffer to str for match
-    vector<string> parts = splitString(filter, " ");
-    std::vector<std::string>::iterator it, pit;
-    bool skip;
-    for (it = completion.begin();
-             it != completion.end(); it++)
-    {
-        skip = false;
-        if (flt_length != 0)
-            for (pit = parts.begin();
-                 pit != parts.end(); pit++)
-            {
-                if (UTF8StrStr(*it, *pit) == -1)
-                {
-                    skip = true;
-                    break;
-                }
-            }
-        if (!skip)
-            typedTextCompletion.push_back(*it);
-    }
-}
-
 
 bool ListInteractive::tryComplete()
 {
@@ -3920,7 +3916,7 @@ void CelBodyInteractive::updateTextCompletion()
     {
         if (completionList.size())
         {
-            filterCompletion(completionList, str);
+            filterVector(completionList, typedTextCompletion, str);
         }
         else
         {
@@ -3932,11 +3928,11 @@ void CelBodyInteractive::updateTextCompletion()
                 filter = string(str, pos + 1);
                 complStr = string(str, 0, pos + 1);
             }
-            filterCompletion(celApp->getSimulation()->
+            filterVector(celApp->getSimulation()->
                              getObjectCompletion(complStr,
                                                  (celApp->getRenderer()->getLabelMode()
                                                   & Renderer::LocationLabels) != 0),
-                             filter);
+                             typedTextCompletion, filter);
         }
     }
 }
@@ -4260,7 +4256,7 @@ void FlagInteractive::updateTextCompletion()
         }
     }
     else
-        filterCompletion(completion, buftext);
+        filterVector(completionList, typedTextCompletion, buftext);
 }
 
 string FlagInteractive::getHelpText()
@@ -4606,7 +4602,7 @@ void FileInteractive::updateTextCompletion()
         }
     }
     else
-        filterCompletion(dirCache, getRightText());
+        filterVector(dirCache, typedTextCompletion, getRightText());
 }
 
 void FileInteractive::setDir(std::string dir, std::string entire)
