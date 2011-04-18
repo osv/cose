@@ -278,7 +278,8 @@ static int markObject(GeekConsole *gc, int state, std::string value)
             MarkerRepresentation markerRep(markSymbol);
             markerRep.setSize(markSize);
             markerRep.setColor(markColor);
-            markerRep.setLabel(sel.getName());
+            if (labelled)
+                markerRep.setLabel(getSelectionName(sel));
             sim->getUniverse()->unmarkObject(sel, 4);
 
             sim->getUniverse()->markObject(sel, markerRep, 4);

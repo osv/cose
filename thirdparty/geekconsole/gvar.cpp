@@ -1457,7 +1457,7 @@ static int setVarFlag(GeekConsole *gc, int state, std::string value)
         {
             Selection sel = gc->getCelCore()->getSimulation()->findObjectFromPath(value, true);
             if (!sel.empty())
-                value = sel.getName();
+                value = getSelectionName(sel);
         }
         else if (GeekVar::Flags32 == vartype)
         {
@@ -1633,15 +1633,11 @@ static int setVar(GeekConsole *gc, int state, std::string value)
     {
         // normalize body name for type Celbody
 
-        // TODO: normalize  cel body  name may be  not good  for human
-        // read:  "eps  eri/b" will  be  converted  to catalog  number
-        // "#16537/b".   Maybe need  to implement  other  getName2 for
-        // Selection that give star name instead of number!
         if (vartype == GeekVar::Celbody)
         {
             Selection sel = gc->getCelCore()->getSimulation()->findObjectFromPath(value, true);
             if (!sel.empty())
-                value = sel.getName();
+                value = getSelectionName(sel);
         }
         gVar.Set(varname, value);
         break;

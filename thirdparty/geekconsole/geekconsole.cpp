@@ -1146,6 +1146,59 @@ static void planetocentricCoords2Sstream(std::stringstream& ss,
         ss << ' ' << altitude << _("km");
 }
 
+std::string getSelectionName(Selection sel)
+{
+    if (!sel.empty())
+    {
+        CelestiaCore *celAppCore = getGeekConsole()->getCelCore();
+        Simulation *sim = celAppCore->getSimulation();
+        switch (sel.getType())
+        {
+        case Selection::Type_Star:
+            return sim->getUniverse()->getStarCatalog()->getStarName(*sel.star());
+        case Selection::Type_DeepSky:
+            return sim->getUniverse()->getDSOCatalog()->getDSOName(sel.deepsky());
+        case Selection::Type_Body:
+        {
+            string name = sel.body()->getName();
+            PlanetarySystem* system = sel.body()->getSystem();
+            while (system != NULL)
+            {
+                Body* parent = system->getPrimaryBody();
+                if (parent != NULL)
+                {
+                    name = parent->getName() + '/' + name;
+                    system = parent->getSystem();
+                }
+                else
+                {
+                    const Star* parentStar = system->getStar();
+                    if (parentStar != NULL)
+                        name = sim->getUniverse()->getStarCatalog()->getStarName(*parentStar) + '/' + name;
+                    system = NULL;
+                }
+            }
+            return name;
+        }
+        case Selection::Type_Location:
+        {
+            string name = sel.location()->getName();
+            if (sel.location()->getParentBody() == NULL)
+            {
+                return name;
+            }
+            else
+            {
+                return getSelectionName(sel.location()->getParentBody()) + '/' + name;
+            }
+        }
+        default:
+            break;
+        }
+    }
+    return "";
+}
+
 std::string describeSelection(Selection sel, CelestiaCore *celAppCore, bool doCustomDescribe)
 {
     std::stringstream ss;
@@ -3895,8 +3948,8 @@ void CelBodyInteractive::Interact(GeekConsole *_gc, string historyName)
     completedIdx = -1;
     lastCompletionSel.clear();
 
-    firstSelection = gc->getCelCore()->
-        getSimulation()->getSelection().getName();
+    firstSelection = getSelectionName(gc->getCelCore()->
+                                      getSimulation()->getSelection());
     update(getBufferText());
     completionList.clear();
     typedTextCompletion.clear();
@@ -4070,7 +4123,7 @@ void CelBodyInteractive::_updateMarkSelection(const std::string &text)
 
     celApp->getSimulation()->
         getUniverse()->markObject(sel, markerRep, 3);
-    lastCompletionSel = sel.getName();
+    lastCompletionSel = getSelectionName(sel);
 }
 
 void CelBodyInteractive::setCompletion(std::vector<std::string> completion)

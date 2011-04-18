@@ -633,6 +633,10 @@ private:
 // convert control, '"', '\' chars to \X or \DDD i.e. to readable lua string
 extern std::string normalLuaStr(std::string);
 
+/* Selection::getName  return  number of  DSO  or  star, this  version
+  return full name of selection */
+extern std::string getSelectionName(Selection sel);
+
 // init geekconsole
 extern void initGeekConsole(CelestiaCore *celApp);
 
