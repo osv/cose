@@ -763,12 +763,27 @@ void initGCStdInteractivsFunctions(GeekConsole *gc)
     gc->registerFunction(GCFunc(disableReferenceMark, _("Disable all reference marks for selected object")),
                          "disable ref marks");
     // aliases
-    gc->registerFunction(GCFunc("set flag", "#render/current/show#Toggle flags", _("Select objects for toggle render.")),
+    gc->registerFunction(GCFunc("set flag", "#render/current/show#toggle", _("Select objects for toggle render.")),
                          "toggle objects");
-    gc->registerFunction(GCFunc("set flag", "#render/current/label#Toggle flags", _("Select labels for toggle.")),
+    gc->registerFunction(GCFunc("set flag", "#render/current/show#set", _("Select objects to show.")),
+                         "show objects");
+    gc->registerFunction(GCFunc("set flag", "#render/current/show#unset", _("Select objects to hide.")),
+                         "hide objects");
+
+    gc->registerFunction(GCFunc("set flag", "#render/current/label#toggle", _("Select labels for toggle.")),
                          "toggle labels");
-    gc->registerFunction(GCFunc("set flag", "#render/current/orbit#Toggle flags", _("Select orbits for toggle.")),
+    gc->registerFunction(GCFunc("set flag", "#render/current/label#set", _("Select labels to show.")),
+                         "show labels");
+    gc->registerFunction(GCFunc("set flag", "#render/current/label#unset", _("Select labels to hide.")),
+                         "hide labels");
+
+    gc->registerFunction(GCFunc("set flag", "#render/current/orbit#toggle", _("Select orbits for toggle.")),
                          "toggle orbits");
+    gc->registerFunction(GCFunc("set flag", "#render/current/orbit#set", _("Select orbits to show.")),
+                         "show orbits");
+    gc->registerFunction(GCFunc("set flag", "#render/current/orbit#unset", _("Select orbits to hide.")),
+                         "hide orbits");
+
 
     gc->registerFunction(GCFunc(celCharEntered,  _("Send chars to celestia core.\n"
                                     "You usually don't need use it")),
