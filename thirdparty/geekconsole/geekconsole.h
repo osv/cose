@@ -368,53 +368,6 @@ public:
     string getHelpText();
 };
 
-// pager, text viewer, similar to `less` command
-class PagerInteractive: public GCInteractive
-{
-public:
-    PagerInteractive(std::string name);
-    void Interact(GeekConsole *_gc, std::string historyName);
-    void charEntered(const char *c_p, int modifiers);
-    void mouseWheel(float motion, int modifiers);
-    void renderCompletion(float height, float width);
-    void renderInteractive();
-    void setText(std::string text);
-    void appendText(std::string text); // append with text \n before
-    void setText(std::vector<std::string> text);
-    void appendText(std::vector<std::string> text);
-    void setLastFromHistory() {};
-    string makeSpace(std::string s1, int spaces, std::string s2, std::string base = "X");
-    enum {
-        PG_NOP = 0,
-        PG_ENTERDIGIT = 1,
-        PG_SEARCH_FWD = 2,
-        PG_SEARCH_BWD = 3,
-        PG_ESC = 4
-    };
-private:
-    void forward(int);
-
-    void processChar(const char *c_p, int modifiers);
-    std::vector<std::string> *lines;
-    std::vector<std::string> text;
-    std::vector<std::string> helpText; // help for display
-    int pageScrollIdx;
-    int leftScrollIdx; //  scroll
-    uint scrollSize;
-    bool richedEnd;
-    int state;
-    int width;
-    std::string lastSearchStr;
-    int N;
-
-    int chopLine;
-    int windowSize;
-    int halfWindowSize;
-    int getChopLine();
-    int getWindowSize();
-    int getHalfWindowSize();
-};
-
 // container for C and lua callback
 typedef int (* CFunc)(GeekConsole *gc, int state, std::string value);
 typedef void (* CFuncVoid)();
@@ -677,7 +630,6 @@ extern CelBodyInteractive *celBodyInteractive;
 extern ColorChooserInteractive *colorChooserInteractive;
 extern FlagInteractive *flagInteractive;
 extern FileInteractive *fileInteractive;
-extern PagerInteractive *pagerInteractive;
 extern KeyInteractive *keyInteractive;
 
 /* describeselection is used celestia body interactive.

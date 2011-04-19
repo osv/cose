@@ -331,48 +331,6 @@ static int unBindKey(GeekConsole *gc, int state, std::string value)
     return state;
 }
 
-static int describeBindings(GeekConsole *gc, int state, std::string value)
-{
-    if (state == 0)
-    {
-        gc->setInteractive(pagerInteractive);
-        std::stringstream ss;
-        ss << _("Key translations:\n");
-
-        std::vector<GeekBind::KeyBind>::iterator it;
-
-        const std::vector<GeekBind *> &gbs = gc->getGeekBinds();
-        std::vector<GeekBind *>::const_iterator gb;
-        std::vector<std::string> temp;
-        for (gb = gbs.begin();
-             gb != gbs.end(); gb++)
-        {
-            ss << "---\n"
-               << _("Bind space ") << "\"" <<
-                (*gb)->getName() << "\" (";
-            if ((*gb)->isActive)
-                ss << _("Active");
-            else
-                ss << _("Inactive");
-            ss << "):\n";
-            ss << "---\n";
-
-            std::vector<GeekBind::KeyBind> binds = (*gb)->getBinds();
-            for (it = binds.begin();
-                 it != binds.end(); it++)
-            {
-                ss << pagerInteractive->makeSpace(
-                    pagerInteractive->makeSpace((*it).keyToStr(), 12,
-                                                (*it).gcFunName),
-                    34, (*it).params) << "\n";
-            }
-            ss << "\n";
-        }
-        pagerInteractive->setText(ss.str());
-    }
-    return state;
-}
-
 /// return info about function, his binds
 static std::string _describeFunction(GeekConsole *gc, std::string function)
 {
@@ -470,9 +428,8 @@ static int describeFunction(GeekConsole *gc, int state, std::string value)
     }
     case 1:
     {
-        gc->setInteractive(pagerInteractive);
-        pagerInteractive->setText(
-            _describeFunction(gc, value));
+        gc->setInteractive(infoInteractive, "Info");
+        infoInteractive->setNode("*gcfun*", string("Function ") + value);
     }
     }
     return state;
@@ -680,15 +637,16 @@ string bindsInfoDynNode(string filename, string nodename)
         res += "Up: Top\n\n";
         string bindspace;
         string key = nodename.substr(strlen(key_node));
-        GeekBind::KeyBind kb;
-        kb.set(key.c_str());
-        key = kb.keyToStr();
         size_t found = key.find('/');
         if (found != string::npos)
         {
             bindspace = key.substr(0, found);
             key = key.substr(found +1);
         }
+        GeekBind::KeyBind kb;
+        kb.set(key.c_str());
+        key = kb.keyToStr();
+
         if (bindspace.empty())
         {
             res += "Describe key `" + key + "' in all bind spaces.\n***\n";
@@ -767,6 +725,28 @@ static int info(GeekConsole *gc, int state, std::string value)
     return state;
 }
 
+static int info2(GeekConsole *gc, int state, std::string value)
+{
+    static string node_filename;
+    if (state == 0)
+    {
+        gc->setInteractive(listInteractive, "info-file", _("File name"));
+        listInteractive->setCompletionFromSemicolonStr("Dir");
+    }
+    else if (state == 1)
+    {
+        node_filename = value;
+        gc->setInteractive(listInteractive, "info-nodename", _("Node name"));
+        listInteractive->setCompletionFromSemicolonStr("Top");
+    }
+    else if (state == 2)
+    {
+        gc->setInteractive(infoInteractive, "Info");
+        infoInteractive->setNode(node_filename, value);
+    }
+    return state;
+}
+
 static int info_last_node(GeekConsole *gc, int state, std::string value)
 {
     if (state == 0)
@@ -788,7 +768,7 @@ void initGCInteractives(GeekConsole *gc)
     gc->registerFunction(GCFunc(bindKey), "bind");
     gc->registerFunction(GCFunc(unBindKey), "unbind");
     gc->registerAndBind("", "C-h b",
-                        GCFunc(describeBindings, _("Display all key bindings")),
+                        GCFunc(".info", "#*binds*#Keys *all*", _("Display all key bindings")),
                         "describe bindings");
     gc->registerAndBind("", "C-h f",
                         GCFunc(describeFunction, _("Display documentation for the given function.")),
@@ -828,6 +808,7 @@ void initGCInteractives(GeekConsole *gc)
                                                   "Also bind to key")),
                         "macro end and call");
     gc->registerFunction(GCFunc(info, _("Read Info documents")), "info");
+    gc->registerFunction(GCFunc(info2, _("Read Info documents by specified file and node name.")), ".info");
     gc->registerFunction(GCFunc(info_last_node), "info, last visited node");
     gc->registerFunction(GCFunc(info_rebuild_dir, _("Rebuild directory node - the top of the INFO tree")),
                                        "info, rebuild dir node");
