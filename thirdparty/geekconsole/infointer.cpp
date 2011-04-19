@@ -200,7 +200,7 @@ float ChkVar::render(rcontext *rc)
         // now color
         Color32 c = getColor32FromText(str);
         glColor4ubv(c.rgba);
-        ovl->rect(x, y+1, w, h-2);
+        ovl->rect(x, y, w, h);
         // width correction
         xoffset += w + 4;
         ovl->setXoffset(xoffset);
