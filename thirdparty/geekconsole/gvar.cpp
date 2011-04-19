@@ -1785,7 +1785,7 @@ static int aproposVarCust(GeekConsole *gc, int state, std::string value)
     switch(state)
     {
     case 0:
-        gc->setInteractive(listInteractive, "", _("Pattern"));
+        gc->setInteractive(listInteractive, "apropos-gvar", _("Pattern"));
         break;
     case 1:
         if (value.empty())
@@ -1802,7 +1802,7 @@ static int aproposVarSum(GeekConsole *gc, int state, std::string value)
     switch(state)
     {
     case 0:
-        gc->setInteractive(listInteractive, "", _("Pattern"));
+        gc->setInteractive(listInteractive, "apropos-gvar", _("Pattern"));
         break;
     case 1:
         if (value.empty())
@@ -1893,17 +1893,14 @@ string customizeVar(string filename, string nodename)
             pattern = "";
         int buf_length = UTF8Length(pattern);
 
-        vector<string> vars = gVar.GetVarNames(groupName);
+        vector<string> vars;
+        filterVector(gVar.GetVarNames(groupName), vars, pattern);
         vector<string>::iterator it;
         for (it = vars.begin(); it != vars.end(); it++)
         {
-            if (buf_length == 0 ||
-                (UTF8StrStr(*it, pattern) != -1))
-            {
-                res += INFO_TAGSTART "descvar name=[[";
-                res += *it;
-                res += "]]" INFO_TAGEND "....\n";
-            }
+            res += INFO_TAGSTART "descvar name=[[";
+            res += *it;
+            res += "]]" INFO_TAGEND "....\n";
         }
         return res;
     }
@@ -1918,17 +1915,14 @@ string customizeVar(string filename, string nodename)
             pattern = "";
         int buf_length = UTF8Length(pattern);
 
-        vector<string> vars = gVar.GetVarNames(groupName);
+        vector<string> vars;
+        filterVector(gVar.GetVarNames(groupName), vars, pattern);
         vector<string>::iterator it;
         for (it = vars.begin(); it != vars.end(); it++)
         {
-            if (buf_length == 0 ||
-                (UTF8StrStr(*it, pattern) != -1))
-            {
-                res += INFO_TAGSTART "editvar2 name=[[";
-                res += *it;
-                res += "]]" INFO_TAGEND "\n";
-            }
+            res += INFO_TAGSTART "editvar2 name=[[";
+            res += *it;
+            res += "]]" INFO_TAGEND "\n";
         }
         res += "\n....\n\nMore information about variables *Note ";
         if (pattern.empty())
