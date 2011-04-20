@@ -65,7 +65,7 @@
 
 // TODO: Garbage collect for unused node contents.
 
-const char *hint_follownode = "S-RET - follow node";
+const char *hint_follownode = "S-RET, Mouse-1 follow link, Mouse-2 move backward, Mouse-3 next node";
 const char *dirCache_FileName = "dir.cache";
 const char *infoFileListCache_FileName = "info.cache";
 
@@ -493,6 +493,7 @@ void InfoInteractive::Interact(GeekConsole *_gc, string historyName)
     // selectedY = -1;
     // selectedX = -1;
     // pageScrollIdx = 0;
+    mouseY = -1;
 }
 
 // forward scrollIdx
@@ -1265,7 +1266,38 @@ void InfoInteractive::mouseWheel(float motion, int modifiers)
         charEntered("d", 0);
     else
         charEntered("u", GeekBind::CTRL);
+}
 
+// LB - follow link, MB - go backward, RB - go `Next' node
+void InfoInteractive::mouseButtonDown(float x, float y, int button)
+{
+    if (CelestiaCore::MiddleButton == button)
+        charEntered("l", 0);
+    else if (CelestiaCore::RightButton == button)
+        charEntered("}", 0);
+    // if LMouse down - try follow link
+    else if (selectedY >= 0 && selectedX >= 0
+        && selectedY < lines.size() && selectedX < lines[selectedY].chunks.size())
+    {
+        if (CelestiaCore::LeftButton == button)
+        {
+            GeekConsole::Beep *b = gc->getBeeper();
+            if (b)
+                b->match();
+
+            Chunk *chunk = lines[selectedY].chunks[selectedX];
+            chunk->followLink();
+        }
+    }
+}
+
+// save mouse  pos for  using in  render pass (where  it be  cleared -
+// mouseX = -1)
+void InfoInteractive::mouseMove(float x, float y)
+{
+    mouseX = x;
+    mouseY = y;
+    gc->descriptionStr = _(hint_follownode);
 }
 
 // Commands are based on both more and vi. Commands may be preceded by
@@ -1331,8 +1363,11 @@ void InfoInteractive::processChar(const char *c_p, int modifiers)
                    C == 'E' || c == CTRL_E || C == 'J' || c == CTRL_J) {
             if (modifiers & GeekBind::SHIFT)
             {
-                if (selectedY != -1 && selectedX != -1)
+                if (selectedY >=0 && selectedX >=0)
                 {
+                    GeekConsole::Beep *b = gc->getBeeper();
+                    if (b)
+                        b->match();
                     Chunk *chunk = lines[selectedY].chunks[selectedX];
                     chunk->followLink();
                 }
@@ -1509,9 +1544,9 @@ void InfoInteractive::processChar(const char *c_p, int modifiers)
             if (lines.empty())
                 return;
             int i = selectedY;
-            if (selectedY == -1 || selectedY >= (int)lines.size())
+            if (selectedY < 0 || selectedY >= (int)lines.size())
                 i = pageScrollIdx;
-            if (selectedX == -1)
+            if (selectedX < 0)
                 selectedX = 0;
             else
                 selectedX++;
@@ -1554,9 +1589,9 @@ void InfoInteractive::processChar(const char *c_p, int modifiers)
                 return;
             int i = selectedY;
             if (selectedY == -1 || selectedY >= (int)lines.size())
-                i = pageScrollIdx + scrollSize -1;
-            if (i >= (int)lines.size())
-                i = lines.size() -1;
+                i = pageScrollIdx + scrollSize;
+            if (i > (int)lines.size())
+                i = lines.size();
             if (selectedX == -1)
                 selectedX = lines[i].chunks.size();
             else
@@ -1608,6 +1643,7 @@ void InfoInteractive::renderCompletion(float height, float width)
 {
     float fwidth = font->getAdvance('X');
     float fh = font->getHeight();
+    float titleFontH = gc->getInteractiveFont()->getHeight();
     uint nb_lines = height / (fh + 1); // +1 because overlay margin be-twin '\n' is 1 pixel
     if (!nb_lines)
         return;
@@ -1620,6 +1656,8 @@ void InfoInteractive::renderCompletion(float height, float width)
 
     if (pageScrollIdx < 0)
         pageScrollIdx = 0;
+
+    int sy = floor((int)((mouseY - titleFontH) / (fh + 1)));
 
     // Default  color, each  chunk->render  must not  change GL  color
     // agter return.
@@ -1671,6 +1709,8 @@ void InfoInteractive::renderCompletion(float height, float width)
     // lines that ha
     std::vector<line_s>::iterator it;
     float totalHeight = 0.0f; // collected heights of rendered lines
+    float oldX;
+    mouseX += leftScrollIdx;
     for (j = 0, line = pageScrollIdx;
          line < lines.size() && j < nb_lines; line++, j++)
     {
@@ -1680,6 +1720,7 @@ void InfoInteractive::renderCompletion(float height, float width)
         {
             Chunk *chunk = lines[line].chunks[chk];
 
+            oldX = overlay->getXoffset();
             if (!(selectedY == (int)line && selectedX == (int)chk))
                 chunkHeight = chunk->render(&rc);
             else
@@ -1691,6 +1732,17 @@ void InfoInteractive::renderCompletion(float height, float width)
 
             if (chunkHeight > lineHeight)
                 lineHeight = chunkHeight;
+
+            // if mouse moved, so try select
+            if (mouseY != -1 && sy == j && mouseX > oldX && mouseX < overlay->getXoffset())
+            {
+                mouseY = -1;
+                if (chunk->isLink()) {
+                    selectedY = line;
+                    selectedX = chk;
+                    gc->setInfoText(chunk->getHelpTip());
+                }
+            }
         }
 
         overlay->endl();

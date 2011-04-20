@@ -225,6 +225,8 @@ public:
     void addNodeText(char *contents, int size);
     void charEntered(const char *c_p, int modifiers);
     void mouseWheel(float motion, int modifiers);
+    void mouseButtonDown(float /*x*/, float /*y*/, int button);
+    void mouseMove(float x, float y);
     void renderCompletion(float height, float width);
     void renderInteractive();
     void setLastFromHistory() {};
@@ -306,6 +308,7 @@ private:
     int getHalfWindowSize();
     int selectedY;
     int selectedX;
+    int mouseX, mouseY;
 
     std::string m_filename; // current file
     std::string m_nodename; // current node name
